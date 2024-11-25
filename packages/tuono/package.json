@@ -26,6 +26,16 @@
         "default": "./dist/cjs/build/index.js"
       }
     },
+    "./config": {
+      "import": {
+        "types": "./dist/esm/config/index.d.ts",
+        "default": "./dist/esm/config/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/config/index.d.ts",
+        "default": "./dist/cjs/config/index.js"
+      }
+    },
     "./ssr": {
       "import": {
         "types": "./dist/esm/ssr/index.d.ts",
@@ -61,7 +71,8 @@
   "bin": {
     "tuono-dev-ssr": "./bin/dev-ssr.js",
     "tuono-dev-watch": "./bin/watch.js",
-    "tuono-build-prod": "./bin/build-prod.js"
+    "tuono-build-prod": "./bin/build-prod.js",
+    "tuono-build-config": "./bin/build-config.js"
   },
   "files": [
     "dist",
