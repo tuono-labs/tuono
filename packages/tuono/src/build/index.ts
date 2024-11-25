@@ -3,18 +3,9 @@ import react from '@vitejs/plugin-react-swc'
 import ViteFsRouter from 'tuono-fs-router-vite-plugin'
 import { LazyLoadingPlugin } from 'tuono-lazy-fn-vite-plugin'
 import mdx from '@mdx-js/rollup'
-
-import { TuonoConfig } from '../config'
+import { loadConfig, blockingAsync } from './utils'
 
 const VITE_PORT = 3001
-
-const loadConfig = async (): Promise<TuonoConfig> => {
-	try {
-		return await import(`${process.cwd()}/.tuono/config/config.js`)
-	} catch {
-		return {}
-	}
-}
 
 const BASE_CONFIG: InlineConfig = {
 	root: '.tuono',
@@ -34,8 +25,8 @@ const BASE_CONFIG: InlineConfig = {
 	],
 }
 
-export function developmentSSRBundle() {
-	; (async () => {
+const developmentSSRBundle = () => {
+	blockingAsync(async () => {
 		const config = await loadConfig()
 		await build({
 			resolve: {
@@ -62,11 +53,11 @@ export function developmentSSRBundle() {
 				noExternal: true,
 			},
 		})
-	})()
+	})
 }
 
-export function developmentCSRWatch() {
-	; (async () => {
+const developmentCSRWatch = () => {
+	blockingAsync(async () => {
 		const config = await loadConfig()
 		const server = await createServer({
 			resolve: {
@@ -89,11 +80,11 @@ export function developmentCSRWatch() {
 			},
 		})
 		await server.listen()
-	})()
+	})
 }
 
-export function buildProd() {
-	; (async () => {
+const buildProd = () => {
+	blockingAsync(async () => {
 		const config = await loadConfig()
 		await build({
 			resolve: {
@@ -133,11 +124,11 @@ export function buildProd() {
 				noExternal: true,
 			},
 		})
-	})()
+	})
 }
 
-export function buildConfig() {
-	; (async () => {
+const buildConfig = () => {
+	blockingAsync(async () => {
 		await build({
 			root: '.tuono',
 			logLevel: 'silent',
@@ -157,5 +148,7 @@ export function buildConfig() {
 				},
 			},
 		})
-	})()
+	})
 }
+
+export { buildProd, buildConfig, developmentCSRWatch, developmentSSRBundle }
