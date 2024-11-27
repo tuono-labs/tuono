@@ -45,7 +45,7 @@
   "dependencies": {
     "react-intersection-observer": "^9.13.0",
     "vite": "^5.2.11",
-    "zustand": "4.4.7"
+    "zustand": "5.0.1"
   },
   "devDependencies": {
     "@tanstack/config": "^0.7.11",
