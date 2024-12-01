@@ -1,9 +1,14 @@
 import type { ReactNode, JSX } from 'react'
+
+import MdxProvider from '@/components/mdx-provider'
+import EditPage from '@/components/edit-page'
+
 import {
   ColorSchemeScript,
   createTheme,
   MantineProvider,
   AppShell,
+  Container,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { Head, useRouter } from 'tuono'
@@ -98,8 +103,13 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           }}
         >
           <Navbar opened={opened} toggle={toggle} />
-          {pathname.startsWith('/documentation') && <Sidebar close={toggle} />}
-          {children}
+          <Sidebar close={toggle} />
+          <AppShell.Main>
+            <Container id="mdx-root" component="article" size="md" p={20}>
+              <MdxProvider>{children}</MdxProvider>
+              <EditPage />
+            </Container>
+          </AppShell.Main>
         </AppShell>
       </MantineProvider>
     </>

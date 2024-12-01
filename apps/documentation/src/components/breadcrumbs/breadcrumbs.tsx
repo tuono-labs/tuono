@@ -28,12 +28,6 @@ export default function TuonoBreadcrumbs({
                   "position": 1,
                   "name": "Tuono - The React/Rust fullstack framework",
                   "item": "https://tuono.dev"
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "name": "Tuono - Documentation",
-                  "item": "https://tuono.dev/documentation"
                 }${breadcrumbs.length > 0 ? ',' : ''}
                 ${breadcrumbs
                   .map((br, i) =>
@@ -54,13 +48,7 @@ export default function TuonoBreadcrumbs({
         mb="md"
         mt="md"
       >
-        <Button
-          href="/documentation"
-          component={Link}
-          variant="subtle"
-          radius="xl"
-          p={5}
-        >
+        <Button href="/" component={Link} variant="subtle" radius="xl" p={5}>
           <IconBolt />
         </Button>
         {breadcrumbs.map((br) => (
