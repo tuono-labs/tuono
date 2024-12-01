@@ -3,7 +3,7 @@ name: Spell Checker
 on:
   push:
     branches:
-      - main
+      - 'main'
 
   pull_request:
 
