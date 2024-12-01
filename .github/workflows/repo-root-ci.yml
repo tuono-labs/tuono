@@ -1,4 +1,5 @@
 name: Repo root CI
+
 # All workflows are triggered based on specific paths,
 # the root repository is something that is not applicable to rust nor typescript
 # so it has been moved in a standalone workflow
@@ -6,14 +7,14 @@ name: Repo root CI
 on:
   push:
     branches:
-      - main
+      - 'main'
     paths:
       - '.github/**'
-      - './*'
+      - '*'
   pull_request:
     paths:
       - '.github/**'
-      - './*'
+      - '*'
 
 jobs:
   build-and-test:

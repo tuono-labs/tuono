@@ -3,13 +3,21 @@ name: Typescript CI
 on:
   push:
     branches:
-      - main
+      - 'main'
     paths:
+      # ⬇ Keep paths in sync with `ci-documentation.yml`
       - '.github/**'
+      - '*'
+      - '!Cargo.toml'
+      # ⬆ Keep paths in sync with `ci-documentation.yml`
       - 'packages/**'
   pull_request:
     paths:
+      # ⬇ Keep paths in sync with `ci-documentation.yml`
       - '.github/**'
+      - '*'
+      - '!Cargo.toml'
+      # ⬆ Keep paths in sync with `ci-documentation.yml`
       - 'packages/**'
 
 jobs:
