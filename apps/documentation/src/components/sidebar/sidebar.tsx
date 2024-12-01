@@ -10,11 +10,7 @@ interface SidebarProps {
 export default function Sidebar({ close }: SidebarProps): JSX.Element {
   return (
     <AppShell.Navbar p="md">
-      <SidebarLink
-        href="/documentation"
-        label="Getting started"
-        onClick={close}
-      />
+      <SidebarLink href="/" label="Home" onClick={close} />
       <SidebarLink
         href="/documentation/installation"
         label="Installation"
