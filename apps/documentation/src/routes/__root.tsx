@@ -25,7 +25,7 @@ interface RootRouteProps {
 const theme = createTheme({
   primaryColor: 'violet',
   primaryShade: { light: 6, dark: 9 },
-  fontFamily: 'Roboto',
+  fontFamily: 'Inter',
   respectReducedMotion: true,
   radius: {
     xs: '8px',
@@ -79,6 +79,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
       <ColorSchemeScript />
       <MantineProvider theme={theme}>
         <AppShell
+          layout="alt"
           header={{ height: 60 }}
           navbar={{
             width: 300,
@@ -86,7 +87,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             collapsed: { mobile: !opened },
           }}
         >
-          <Navbar opened={opened} toggle={toggle} />
+          <Navbar toggle={toggle} />
           <Sidebar close={toggle} />
           <AppShell.Main>
             <Container id="mdx-root" component="article" size="md" p={20}>
