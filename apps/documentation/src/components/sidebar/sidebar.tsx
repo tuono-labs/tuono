@@ -1,15 +1,36 @@
 import type { JSX } from 'react'
-import { AppShell } from '@mantine/core'
+import { AppShell, Badge, Flex, Title, Button } from '@mantine/core'
 
 import SidebarLink from './sidebar-link'
+import { IconX } from '@tabler/icons-react'
+import { useMediaQuery } from '@mantine/hooks'
 
 interface SidebarProps {
   close: () => void
 }
 
 export default function Sidebar({ close }: SidebarProps): JSX.Element {
+  const isSm = useMediaQuery('(min-width: 48em)')
   return (
     <AppShell.Navbar p="md">
+      <AppShell.Section>
+        <Flex mb={20} w="100%" justify="space-between">
+          <Flex
+            gap={10}
+            align="center"
+            w={isSm ? '100%' : 'auto'}
+            justify="center"
+          >
+            <Title order={3}>Tuono</Title>
+            <Badge mt={4} size="xs" variant="outline">
+              Docs
+            </Badge>
+          </Flex>
+          <Button onClick={close} hiddenFrom="sm" variant="transparent" p="0">
+            <IconX />
+          </Button>
+        </Flex>
+      </AppShell.Section>
       <SidebarLink href="/" label="Home" onClick={close} />
       <SidebarLink
         href="/documentation/installation"
