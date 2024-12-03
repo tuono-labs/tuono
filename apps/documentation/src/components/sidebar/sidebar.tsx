@@ -109,11 +109,6 @@ export default function Sidebar({ close }: SidebarProps): JSX.Element {
         <Divider my="md" />
         <SidebarLink label="Routing" href="#required-for-focus">
           <SidebarLink
-            label="Routing"
-            href="/documentation/routing"
-            onClick={close}
-          />
-          <SidebarLink
             href="/documentation/routing/intro"
             label="Project structure"
             onClick={close}
@@ -126,34 +121,34 @@ export default function Sidebar({ close }: SidebarProps): JSX.Element {
         </SidebarLink>
         <SidebarLink label="Rendering" href="#required-for-focus">
           <SidebarLink
-            label="Rendering"
+            label="Server side rendering"
             href="/documentation/routing"
             onClick={close}
           />
           <SidebarLink
             href="/documentation/routing/intro"
-            label="Project structure"
+            label="Static rendering"
             onClick={close}
           />
         </SidebarLink>
         <SidebarLink label="Styles" href="#required-for-focus">
           <SidebarLink
             href="/documentation/routing/intro"
-            label="Project structure"
+            label="CSS modules"
             onClick={close}
           />
         </SidebarLink>
         <SidebarLink label="Integrations" href="#required-for-focus">
           <SidebarLink
             href="/documentation/routing/intro"
-            label="Project structure"
+            label="MDX"
             onClick={close}
           />
         </SidebarLink>
         <SidebarLink label="Core concepts" href="#required-for-focus">
           <SidebarLink
             href="/documentation/routing/intro"
-            label="Project structure"
+            label="Multithreading"
             onClick={close}
           />
         </SidebarLink>
@@ -173,10 +168,18 @@ export default function Sidebar({ close }: SidebarProps): JSX.Element {
             onClick={close}
           />
         </SidebarLink>
-        <SidebarLink label="API reference" href="#required-for-focus">
+        <Divider my="md" />
+        <SidebarLink label="Components" href="#required-for-focus">
           <SidebarLink
             href="/documentation/routing/intro"
-            label="Project structure"
+            label="Head"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="Hooks" href="#required-for-focus">
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Head"
             onClick={close}
           />
         </SidebarLink>
