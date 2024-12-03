@@ -1,6 +1,10 @@
 .link {
   border-radius: 8px;
   margin-top: 0.25rem;
-  line-height: 1.25rem;
+  line-height: 1rem;
   font-weight: 500;
+}
+
+.link span {
+  font-size: 14px;
 }

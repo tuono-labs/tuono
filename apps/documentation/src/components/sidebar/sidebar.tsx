@@ -1,5 +1,13 @@
 import type { JSX } from 'react'
-import { AppShell, Badge, Flex, Title, Button } from '@mantine/core'
+import {
+  AppShell,
+  Badge,
+  Flex,
+  Divider,
+  Title,
+  Button,
+  ScrollArea,
+} from '@mantine/core'
 
 import SidebarLink from './sidebar-link'
 import { IconX } from '@tabler/icons-react'
@@ -31,95 +39,148 @@ export default function Sidebar({ close }: SidebarProps): JSX.Element {
           </Button>
         </Flex>
       </AppShell.Section>
-      <SidebarLink href="/" label="Home" onClick={close} />
-      <SidebarLink
-        href="/documentation/installation"
-        label="Installation"
-        onClick={close}
-      />
-      <SidebarLink
-        href="/documentation/tutorial"
-        label="Tutorial"
-        defaultOpened
-        onClick={close}
-      >
+      <AppShell.Section component={ScrollArea}>
+        <SidebarLink href="/" label="Home" onClick={close} />
+        <SidebarLink href="#required-for-focus" label="Getting started">
+          <SidebarLink
+            href="/installation"
+            label="Installation"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/development-setup"
+            label="Development setup"
+            onClick={close}
+          />
+          <SidebarLink href="/documentation/cli" label="CLI" onClick={close} />
+        </SidebarLink>
+        <SidebarLink href="#required-for-focus" label="Tutorial">
+          <SidebarLink
+            href="/documentation/tutorial"
+            label="Tutorial"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/development-setup"
+            label="Development setup"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/api-fetching"
+            label="API fetching"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/components"
+            label="Components"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/dynamic-routes"
+            label="Dynamic routes"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/error-handling"
+            label="Error handling"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/seo"
+            label="SEO and meta tags"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/redirections"
+            label="Server redirection"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/production"
+            label="Production build"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/tutorial/conclusion"
+            label="Conclusion"
+            onClick={close}
+          />
+        </SidebarLink>
+        <Divider my="md" />
+        <SidebarLink label="Routing" href="#required-for-focus">
+          <SidebarLink
+            label="Routing"
+            href="/documentation/routing"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+          <SidebarLink
+            label="Application state"
+            href="/documentation/application-state"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="Rendering" href="#required-for-focus">
+          <SidebarLink
+            label="Rendering"
+            href="/documentation/routing"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="Styles" href="#required-for-focus">
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="Integrations" href="#required-for-focus">
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="Core concepts" href="#required-for-focus">
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+        </SidebarLink>
         <SidebarLink
-          href="/documentation/tutorial/development-setup"
-          label="Development setup"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/api-fetching"
-          label="API fetching"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/components"
-          label="Components"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/dynamic-routes"
-          label="Dynamic routes"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/error-handling"
-          label="Error handling"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/seo"
-          label="SEO and meta tags"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/redirections"
-          label="Server redirection"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/production"
-          label="Production build"
-          onClick={close}
-        />
-        <SidebarLink
-          href="/documentation/tutorial/conclusion"
-          label="Conclusion"
-          onClick={close}
-        />
-      </SidebarLink>
-      <SidebarLink href="/documentation/cli" label="CLI" onClick={close} />
-      <SidebarLink
-        label="Application state"
-        href="/documentation/application-state"
-        onClick={close}
-      />
-
-      <SidebarLink
-        label="Routing"
-        href="/documentation/routing"
-        onClick={close}
-      >
-        <SidebarLink
-          href="/documentation/routing/intro"
-          label="Project structure"
-          onClick={close}
-        />
-      </SidebarLink>
-
-      <SidebarLink
-        label="Contributing"
-        href="/documentation/contributing"
-        leftSection="✨"
-        onClick={close}
-      >
-        <SidebarLink
-          href="/documentation/contributing/local-development"
-          label="Local development"
-          onClick={close}
-        />
-      </SidebarLink>
+          label="Contributing"
+          href="#required-for-focus"
+          leftSection="✨"
+        >
+          <SidebarLink
+            label="Guildelines"
+            href="/documentation/contributing"
+            onClick={close}
+          />
+          <SidebarLink
+            href="/documentation/contributing/local-development"
+            label="Local development"
+            onClick={close}
+          />
+        </SidebarLink>
+        <SidebarLink label="API reference" href="#required-for-focus">
+          <SidebarLink
+            href="/documentation/routing/intro"
+            label="Project structure"
+            onClick={close}
+          />
+        </SidebarLink>
+      </AppShell.Section>
     </AppShell.Navbar>
   )
 }
