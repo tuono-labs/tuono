@@ -113,6 +113,11 @@ export const sidebarElements: Array<SidebarElement> = [
       },
       {
         type: 'element',
+        label: 'Link and navigation',
+        href: '/documentation/routing/link-and-navigation',
+      },
+      {
+        type: 'element',
         label: 'Pages',
         href: '/documentation/routing/pages',
       },
@@ -130,11 +135,6 @@ export const sidebarElements: Array<SidebarElement> = [
         type: 'element',
         label: 'Layouts',
         href: '/documentation/routing/layouts',
-      },
-      {
-        type: 'element',
-        label: 'Link and navigation',
-        href: '/documentation/routing/link-and-navigation',
       },
       {
         type: 'element',
