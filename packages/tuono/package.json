@@ -101,7 +101,6 @@
     "@babel/template": "^7.24.0",
     "@babel/traverse": "^7.24.1",
     "@babel/types": "^7.24.0",
-    "@mdx-js/rollup": "^3.0.1",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^22.0.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
@@ -115,7 +114,7 @@
   "devDependencies": {
     "@types/babel-traverse": "^6.25.10",
     "@types/babel__traverse": "^7.20.6",
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.13",
     "@types/react-dom": "^18.3.0",
     "prettier": "^3.2.4",
     "vitest": "^2.0.0"
