@@ -1,6 +1,5 @@
-import path from 'path'
-
-import { pathToFileURL } from 'url'
+import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 import type { AliasOptions } from 'vite'
 
@@ -75,6 +74,8 @@ export const normalizeConfig = (config: TuonoConfig): TuonoConfig => {
   return {
     vite: {
       alias: normalizeViteAlias(config.vite?.alias),
+      optimizeDeps: config.vite?.optimizeDeps,
+      plugins: config.vite?.plugins ?? [],
     },
   }
 }
