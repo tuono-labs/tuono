@@ -9,6 +9,37 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 <Breadcrumbs breadcrumbs={[{ label: 'Dynamic routes' }]} />
 
-# Loading state
+# Dynamic routes
 
-Todo
+> 🚧 Only available for SSR apps. This feature will be soon available also for static generated apps.
+
+When you don't know the exact segment names ahead of time and
+want to create routes from dynamic data, you can use
+Dynamic Segments that are filled in at request time.
+
+## Convention
+
+A Dynamic Segment can be created by wrapping a
+file or folder name in square brackets: `[segmentName]`. For example, `[id]` or `[slug]`.
+
+## Example
+
+For example, a blog could include the following route `src/routes/blog/[slug].tsx`
+where [slug] is the Dynamic Segment for blog posts.
+
+```tsx
+import { useRouter } from 'tuono'
+
+export default function Page() {
+  const router = useRouter()
+  return <p>Post: {router.pathname}</p>
+}
+```
+
+## Catch all segments
+
+Dynamic Segments can be extended to catch-all subsequent segments by adding
+an ellipsis inside the brackets `[...segmentName]`.
+
+For example, `src/routes/shop/[...slug].tsx` will match `/shop/clothes`,
+but also `/shop/clothes/tops`, `/shop`, `/shop/clothes/tops/t-shirts`, and so on.

@@ -113,6 +113,11 @@ export const sidebarElements: Array<SidebarElement> = [
       },
       {
         type: 'element',
+        label: 'Dynamic routes',
+        href: '/documentation/routing/dynamic-routes',
+      },
+      {
+        type: 'element',
         label: 'Link and navigation',
         href: '/documentation/routing/link-and-navigation',
       },
@@ -125,11 +130,6 @@ export const sidebarElements: Array<SidebarElement> = [
         type: 'element',
         label: 'Loading state',
         href: '/documentation/routing/loading-state',
-      },
-      {
-        type: 'element',
-        label: 'Dynamic routes',
-        href: '/documentation/routing/dynamic-routes',
       },
       {
         type: 'element',
