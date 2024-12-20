@@ -119,3 +119,22 @@ describe('MessageChannelPolyfill', () => {
     expect(messagesPort2).toEqual(['Hello, port2!'])
   })
 })
+
+describe('MessagePort', () => {
+  it('should not send a message on close', () => {
+    const { port1, port2 } = new MessageChannelPolyfill()
+
+    const messages: Array<string> = []
+    port1.onmessage = (event: MessageEvent<string>): void => {
+      messages.push(event.data)
+    }
+
+    port2.postMessage('Test message')
+    expect(messages).toEqual(['Test message'])
+
+    port1.close()
+    port2.postMessage('Another message')
+
+    expect(messages).toEqual(['Test message'])
+  })
+})

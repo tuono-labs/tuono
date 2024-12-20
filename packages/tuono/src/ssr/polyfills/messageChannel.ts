@@ -28,8 +28,10 @@ export class MessagePortPolyfill implements MessagePort {
 
   otherPort: MessagePortPolyfill | null = null
   private onmessageListeners: Array<(ev: MessageEvent) => void> = []
+  private isClosed = false
 
   dispatchEvent(event: MessageEvent): boolean {
+    if (this.isClosed) return false
     if (this.onmessage) {
       this.onmessage(event)
     }
@@ -38,7 +40,7 @@ export class MessagePortPolyfill implements MessagePort {
   }
 
   postMessage(message: unknown): void {
-    if (!this.otherPort) return
+    if (this.isClosed || !this.otherPort) return
     const event = new MessageEvent('message', { data: message })
     this.otherPort.dispatchEvent(event)
   }
@@ -47,7 +49,7 @@ export class MessagePortPolyfill implements MessagePort {
     type: string,
     listener: EventListenerOrEventListenerObject,
   ): void {
-    if (type !== 'message') return
+    if (this.isClosed || type !== 'message') return
     if (
       typeof listener === 'function' &&
       !this.onmessageListeners.includes(listener)
@@ -60,7 +62,7 @@ export class MessagePortPolyfill implements MessagePort {
     type: string,
     listener: EventListenerOrEventListenerObject,
   ): void {
-    if (type !== 'message') return
+    if (this.isClosed || type !== 'message') return
     if (typeof listener === 'function') {
       const index = this.onmessageListeners.indexOf(
         listener as (ev: MessageEvent) => void,
@@ -76,7 +78,7 @@ export class MessagePortPolyfill implements MessagePort {
   }
 
   close(): void {
-    // do nothing at this moment}
+    this.isClosed = true
   }
 }
 
