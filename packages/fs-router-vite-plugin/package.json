@@ -50,7 +50,7 @@
     "vite": "^5.2.11"
   },
   "devDependencies": {
-    "@tanstack/config": "^0.7.11",
+    "@tanstack/config": "^0.14.0",
     "@types/babel__core": "^7.20.5",
     "vitest": "^2.0.0"
   }

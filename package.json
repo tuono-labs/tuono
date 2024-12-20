@@ -24,7 +24,7 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "9.15.0",
-    "@tanstack/config": "^0.7.0",
+    "@tanstack/config": "^0.14.0",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.13",
     "@vitejs/plugin-react": "^4.2.1",
