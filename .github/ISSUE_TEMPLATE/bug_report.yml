@@ -32,55 +32,24 @@ body:
       description: If applicable, add screenshots to help explain your problem.
     validations:
       required: false
-  - type: input
-    id: tuono-version
+  - type: textarea
+    id: system-info
     attributes:
-      label: Tuono version
-      placeholder: '[e.g. 0.4.0]'
+      label: System Info
+      description: Output of `npx envinfo --system --npmPackages 'tuono' --binaries --browsers`
+      render: shell
+      placeholder: System, Binaries, Browsers
     validations:
-      required: false
-  - type: input
-    id: os-version
+      required: true
+  - type: textarea
+    id: system-info-rust
     attributes:
-      label: OS
-      placeholder: '[e.g. MacOS, Windows]'
+      label: System info (Rust)
+      description: Output of `rustc --version && cargo --version && tuono --version`
+      render: shell
+      placeholder: 'rustc, cargo and tuono binary version'
     validations:
-      required: false
-  - type: input
-    id: browser-version
-    attributes:
-      label: Browser
-      placeholder: '[e.g. chrome, safari]'
-    validations:
-      required: false
-  - type: input
-    id: node-version
-    attributes:
-      label: Node version
-      placeholder: '[e.g. 20.0.0]'
-    validations:
-      required: false
-  - type: input
-    id: rust-version
-    attributes:
-      label: Rust version
-      placeholder: '[e.g. 1.79.0]'
-    validations:
-      required: false
-  - type: input
-    id: create-version
-    attributes:
-      label: Crate version
-      placeholder: '[e.g. 1.78.0]'
-    validations:
-      required: false
-  - type: input
-    id: node-package-manager-version
-    attributes:
-      label: Node Package Manger version
-      placeholder: '[e.g. pnpm: 9.5.0] '
-    validations:
-      required: false
+      required: true
   - type: textarea
     id: additional-context
     attributes:
