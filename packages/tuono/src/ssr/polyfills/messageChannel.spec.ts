@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import { MessageChannelPolyfill, MessagePortPolyfill } from './messageChannel'
 
 describe('MessagePortPolyfill', () => {
@@ -6,7 +7,7 @@ describe('MessagePortPolyfill', () => {
     const port = new MessagePortPolyfill()
     let messageReceived: string | null = null
 
-    port.onmessage = (event) => {
+    port.onmessage = (event: MessageEvent<string>): void => {
       messageReceived = event.data
     }
 
@@ -16,12 +17,14 @@ describe('MessagePortPolyfill', () => {
 
   it('should handle multiple event listeners', () => {
     const port = new MessagePortPolyfill()
-    const messages: string[] = []
+    const messages: Array<string> = []
 
-    const listener1 = (event: MessageEvent) =>
+    const listener1 = (event: MessageEvent): void => {
       messages.push('Listener1: ' + event.data)
-    const listener2 = (event: MessageEvent) =>
+    }
+    const listener2 = (event: MessageEvent): void => {
       messages.push('Listener2: ' + event.data)
+    }
 
     port.addEventListener('message', listener1)
     port.addEventListener('message', listener2)
@@ -35,9 +38,11 @@ describe('MessagePortPolyfill', () => {
 
   it('should not invoke removed event listeners', () => {
     const port = new MessagePortPolyfill()
-    const messages: string[] = []
+    const messages: Array<string> = []
 
-    const listener = (event: MessageEvent) => messages.push(event.data)
+    const listener = (event: MessageEvent<string>): void => {
+      messages.push(event.data)
+    }
 
     port.addEventListener('message', listener)
     port.dispatchEvent({ data: 'First message' } as MessageEvent)
@@ -52,7 +57,7 @@ describe('MessagePortPolyfill', () => {
     const port = new MessagePortPolyfill()
     let messageReceived: string | null = null
 
-    port.onmessage = (event) => {
+    port.onmessage = (event: MessageEvent<string>): void => {
       messageReceived = event.data
     }
 
@@ -64,9 +69,9 @@ describe('MessagePortPolyfill', () => {
 describe('MessageChannelPolyfill', () => {
   it('should send and receive messages between ports', () => {
     const channel = new MessageChannelPolyfill()
-    const messages: string[] = []
+    const messages: Array<string> = []
 
-    channel.port1.onmessage = (event) => {
+    channel.port1.onmessage = (event: MessageEvent<string>): void => {
       messages.push(event.data)
     }
 
@@ -78,9 +83,9 @@ describe('MessageChannelPolyfill', () => {
 
   it('should support addEventListener and removeEventListener', () => {
     const channel = new MessageChannelPolyfill()
-    const messages: string[] = []
+    const messages: Array<string> = []
 
-    const listener = (event: MessageEvent) => {
+    const listener = (event: MessageEvent<string>): void => {
       messages.push(event.data)
     }
 
@@ -96,14 +101,14 @@ describe('MessageChannelPolyfill', () => {
 
   it('should handle bidirectional communication between ports', () => {
     const channel = new MessageChannelPolyfill()
-    const messagesPort1: string[] = []
-    const messagesPort2: string[] = []
+    const messagesPort1: Array<string> = []
+    const messagesPort2: Array<string> = []
 
-    channel.port1.onmessage = (event) => {
+    channel.port1.onmessage = (event: MessageEvent<string>): void => {
       messagesPort1.push(event.data)
     }
 
-    channel.port2.onmessage = (event) => {
+    channel.port2.onmessage = (event: MessageEvent<string>): void => {
       messagesPort2.push(event.data)
     }
 

@@ -71,9 +71,13 @@ export class MessagePortPolyfill implements MessagePort {
     }
   }
 
-  start(): void { }
+  start(): void {
+    // do nothing at this moment
+  }
 
-  close(): void { }
+  close(): void {
+    // do nothing at this moment}
+  }
 }
 
 export class MessageChannelPolyfill implements MessageChannel {
