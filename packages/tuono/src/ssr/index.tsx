@@ -82,12 +82,12 @@ export function serverSideRendering(routeTree: RouteTree) {
     <body ${helmet.bodyAttributes.toString()}>
       <div id="__tuono">${app}</div>
       ${renderToStaticMarkup(
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `window.__TUONO_SSR_PROPS__=${payload}`,
-        }}
-      />,
-    )}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.__TUONO_SSR_PROPS__=${payload}`,
+          }}
+        />,
+      )}
 	  ${generateJsScripts(jsBundles, mode)}
       ${mode === 'Dev' ? VITE_DEV_AND_HMR : ''}
     </body>

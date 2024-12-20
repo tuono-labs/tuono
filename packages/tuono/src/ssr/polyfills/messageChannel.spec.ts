@@ -19,12 +19,12 @@ describe('MessagePortPolyfill', () => {
     const port = new MessagePortPolyfill()
     const messages: Array<string> = []
 
-    const listener1 = (event: MessageEvent): void => {
+    const listener1 = ((event: MessageEvent): void => {
       messages.push('Listener1: ' + event.data)
-    }
-    const listener2 = (event: MessageEvent): void => {
+    }) as EventListener
+    const listener2 = ((event: MessageEvent): void => {
       messages.push('Listener2: ' + event.data)
-    }
+    }) as EventListener
 
     port.addEventListener('message', listener1)
     port.addEventListener('message', listener2)
@@ -40,9 +40,9 @@ describe('MessagePortPolyfill', () => {
     const port = new MessagePortPolyfill()
     const messages: Array<string> = []
 
-    const listener = (event: MessageEvent<string>): void => {
+    const listener = ((event: MessageEvent<string>): void => {
       messages.push(event.data)
-    }
+    }) as EventListener
 
     port.addEventListener('message', listener)
     port.dispatchEvent({ data: 'First message' } as MessageEvent)
@@ -85,9 +85,9 @@ describe('MessageChannelPolyfill', () => {
     const channel = new MessageChannelPolyfill()
     const messages: Array<string> = []
 
-    const listener = (event: MessageEvent<string>): void => {
+    const listener = ((event: MessageEvent<string>): void => {
       messages.push(event.data)
-    }
+    }) as EventListener
 
     channel.port1.addEventListener('message', listener)
     channel.port2.postMessage('Hello, port1!')
