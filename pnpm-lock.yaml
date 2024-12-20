@@ -243,8 +243,8 @@ importers:
         specifier: ^5.2.11
         version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
       zustand:
-        specifier: 4.4.7
-        version: 4.4.7(@types/react@18.3.13)(react@18.3.1)
+        specifier: 5.0.2
+        version: 5.0.2(@types/react@18.3.13)(react@18.3.1)(use-sync-external-store@1.2.0(react@18.3.1))
     devDependencies:
       '@tanstack/config':
         specifier: ^0.7.11
@@ -3541,6 +3541,24 @@ packages:
       immer:
         optional: true
       react:
+        optional: true
+
+  zustand@5.0.2:
+    resolution: {integrity: sha512-8qNdnJVJlHlrKXi50LDqqUNmUbuBjoKLrYQBnoChIbVph7vni+sY+YpvdjXG9YLd/Bxr6scMcR+rm5H3aSqPaw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
         optional: true
 
   zwitch@2.0.4:
@@ -7399,5 +7417,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.13
       react: 18.3.1
+
+  zustand@5.0.2(@types/react@18.3.13)(react@18.3.1)(use-sync-external-store@1.2.0(react@18.3.1)):
+    optionalDependencies:
+      '@types/react': 18.3.13
+      react: 18.3.1
+      use-sync-external-store: 1.2.0(react@18.3.1)
 
   zwitch@2.0.4: {}
