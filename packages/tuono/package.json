@@ -106,7 +106,6 @@
     "@types/node": "^22.0.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "fast-text-encoding": "^1.0.6",
-    "message-port-polyfill": "^0.2.0",
     "react-helmet-async": "^2.0.5",
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-lazy-fn-vite-plugin": "workspace:*",

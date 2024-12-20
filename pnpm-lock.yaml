@@ -309,9 +309,6 @@ importers:
       fast-text-encoding:
         specifier: ^1.0.6
         version: 1.0.6
-      message-port-polyfill:
-        specifier: ^0.2.0
-        version: 0.2.0
       react:
         specifier: '>=16.3.0'
         version: 18.3.1
@@ -2389,9 +2386,6 @@ packages:
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
-
-  message-port-polyfill@0.2.0:
-    resolution: {integrity: sha512-bDET4Uvtw8p92Knys7X/2wj5QlX9OfuPxA0EVsYhkKYbqiE6tHdFR6k7NPShRx/ZAR/hVh4bo355iwHMSbE14A==}
 
   micromark-core-commonmark@2.0.2:
     resolution: {integrity: sha512-FKjQKbxd1cibWMM1P9N+H8TwlgGgSkWZMmfuVucLCHaYqeSvJ0hFeHsIa65pA2nYbes0f8LDHPMrd9X7Ujxg9w==}
@@ -5975,8 +5969,6 @@ snapshots:
   meow@12.1.1: {}
 
   merge2@1.4.1: {}
-
-  message-port-polyfill@0.2.0: {}
 
   micromark-core-commonmark@2.0.2:
     dependencies:

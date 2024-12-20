@@ -20,7 +20,7 @@ const VITE_SSR_PLUGINS: Array<Plugin> = [
        * Added to support `react@19`
        * @see https://github.com/tuono-labs/tuono/issues/218
        */
-      MessageChannel: ['message-port-polyfill', 'MessageChannelPolyfill'],
+      MessageChannel: ['tuono/ssr', 'MessageChannelPolyfill'],
     }),
   },
 ]
