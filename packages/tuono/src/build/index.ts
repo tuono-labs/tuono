@@ -15,6 +15,12 @@ const VITE_SSR_PLUGINS: Array<Plugin> = [
     enforce: 'post',
     ...inject({
       ReadableStream: ['web-streams-polyfill', 'ReadableStream'],
+
+      /**
+       * Added to support `react@19`
+       * @see https://github.com/tuono-labs/tuono/issues/218
+       */
+      MessageChannel: ['tuono/ssr', 'MessageChannelPolyfill'],
     }),
   },
 ]
