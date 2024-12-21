@@ -23,8 +23,9 @@
  */
 
 export class MessagePortPolyfill implements MessagePort {
-  onmessage: ((this: MessagePort, ev: MessageEvent) => any) | null = null
-  onmessageerror: ((this: MessagePort, ev: MessageEvent) => any) | null = null
+  onmessage: ((this: MessagePort, ev: MessageEvent) => unknown) | null = null
+  onmessageerror: ((this: MessagePort, ev: MessageEvent) => unknown) | null =
+    null
 
   otherPort: MessagePortPolyfill | null = null
   private onmessageListeners: Array<(ev: MessageEvent) => void> = []
