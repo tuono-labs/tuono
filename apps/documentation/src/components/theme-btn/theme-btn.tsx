@@ -17,9 +17,9 @@ export default function ThemeBtn(): JSX.Element {
 
   return (
     <ActionIcon
-      onClick={() =>
+      onClick={() => {
         setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')
-      }
+      }}
       variant="default"
       size="lg"
       aria-label="Toggle color scheme"

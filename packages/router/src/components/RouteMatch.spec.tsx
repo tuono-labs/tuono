@@ -42,7 +42,7 @@ describe('Test RouteMatch component', () => {
 
   test('It should correctly render nested routes', () => {
     vi.mock('../hooks/useServerSideProps.tsx', () => ({
-      useServerSideProps: (): { data: any; isLoading: boolean } => {
+      useServerSideProps: (): { data: unknown; isLoading: boolean } => {
         return {
           data: undefined,
           isLoading: false,

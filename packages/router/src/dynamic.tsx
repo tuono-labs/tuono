@@ -1,9 +1,9 @@
 import * as React from 'react'
-import type { ReactElement, ComponentType } from 'react'
+import type { ReactElement } from 'react'
 
 import type { RouteComponent } from './types'
 
-type ImportFn = () => Promise<{ default: React.ComponentType<any> }>
+type ImportFn = () => Promise<{ default: RouteComponent }>
 
 /**
  * Helper function to lazy load any component.
@@ -44,7 +44,7 @@ export const dynamic = (importFn: ImportFn): React.JSX.Element => {
 export const __tuono__internal__lazyLoadComponent = (
   factory: ImportFn,
 ): RouteComponent => {
-  let LoadedComponent: ComponentType<any> | undefined
+  let LoadedComponent: RouteComponent | undefined
   const LazyComponent = React.lazy(factory) as unknown as RouteComponent
 
   const loadComponent = (): Promise<void> =>
@@ -52,7 +52,9 @@ export const __tuono__internal__lazyLoadComponent = (
       LoadedComponent = module.default
     })
 
-  const Component = (props: any): ReactElement =>
+  const Component = (
+    props: React.ComponentProps<RouteComponent>,
+  ): ReactElement =>
     React.createElement(LoadedComponent || LazyComponent, props)
 
   Component.preload = loadComponent

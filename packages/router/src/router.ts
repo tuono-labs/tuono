@@ -17,8 +17,6 @@ interface RouterOptions {
   routeTree?: RouteTree
 }
 
-export type RouterType = any
-
 export function createRouter(options: CreateRouterOptions): Router {
   return new Router(options)
 }

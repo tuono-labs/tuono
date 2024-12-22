@@ -157,14 +157,14 @@ export async function routeGenerator(config = defaultConfig): Promise<void> {
     (d): number => (d.routePath.includes(`/${ROOT_PATH_ID}`) ? -1 : 1),
     (d): number => d.routePath.split('/').length,
     (d): number => (d.routePath.endsWith("index'") ? -1 : 1),
-    (d): any => d,
+    (d): RouteNode => d,
   ])
 
   const imports = [
     ...sortedRouteNodes.map((node) => {
       const extension = node.filePath.endsWith('mdx') ? '.mdx' : ''
       return `const ${
-        node.variableName
+        node.variableName as string
       }Import = dynamic(() => import('./${replaceBackslash(
         removeExt(
           path.relative(
@@ -181,18 +181,21 @@ export async function routeGenerator(config = defaultConfig): Promise<void> {
     ...sortedRouteNodes.map((node) => {
       const isRoot = node.routePath.endsWith(ROOT_PATH_ID)
       const rootDeclaration = isRoot ? ', isRoot: true' : ''
+      const variableName = node.variableName as string
 
-      return `const ${node.variableName} = createRoute({ component: ${node.variableName}Import${rootDeclaration} })`
+      return `const ${variableName} = createRoute({ component: ${variableName}Import${rootDeclaration} })`
     }),
   ].join('\n')
 
   const createRouteUpdates = [
     sortedRouteNodes
       .map((node) => {
+        const variableName = node.variableName as string
+        const cleanedPath = node.cleanedPath as string
         return [
-          `const ${node.variableName}Route = ${node.variableName}.update({
+          `const ${variableName}Route = ${variableName}.update({
           ${[
-            !node.path?.endsWith(ROOT_PATH_ID) && `path: '${node.cleanedPath}'`,
+            !node.path?.endsWith(ROOT_PATH_ID) && `path: '${cleanedPath}'`,
             `getParentRoute: () => ${node.parent?.variableName ?? 'root'}Route`,
             rustHandlersNodes.includes(node.path || '')
               ? 'hasHandler: true'
@@ -236,7 +239,7 @@ export async function routeGenerator(config = defaultConfig): Promise<void> {
 
   const routeTreeContent = await fsp
     .readFile(path.resolve(config.generatedRouteTree), 'utf-8')
-    .catch((e) => {
+    .catch((e: unknown) => {
       const err = e as Error & { code?: string }
       if (err.code === 'ENOENT') {
         return undefined

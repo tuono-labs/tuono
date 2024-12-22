@@ -67,5 +67,7 @@ export const useRouterStore = create<RouterState>()((set) => ({
   pendingMatches: [],
   cachedMatches: [],
   statusCode: 200,
-  updateLocation: (location: ParsedLocation): void => set({ location }),
+  updateLocation: (location: ParsedLocation): void => {
+    set({ location })
+  },
 }))

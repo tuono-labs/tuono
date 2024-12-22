@@ -64,7 +64,9 @@ export function TableOfContents({
       ),
     )
     window.addEventListener('scroll', handleScroll)
-    return (): void => window.removeEventListener('scroll', handleScroll)
+    return (): void => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [router.pathname])
 
   if (filteredHeadings.length === 0) {
