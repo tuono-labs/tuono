@@ -15,7 +15,7 @@ export default mergeConfig(
       './src/index.ts',
       './src/build/index.ts',
       './src/config/index.ts',
-      './src/ssr/index.tsx',
+      './src/ssr/index.ts',
       './src/hydration/index.tsx',
     ],
     srcDir: './src',
