@@ -25,10 +25,17 @@ export default tseslint.config(
       reportUnusedDisableDirectives: 'error',
     },
   },
+
   eslint.configs.recommended,
+
+  /* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access */
   eslintPluginImport.flatConfigs.recommended,
   eslintPluginImport.flatConfigs.typescript,
-  tseslint.configs.recommendedTypeChecked,
+  /* eslint-enable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access */
+
+  // eslint-disable-next-line import/no-named-as-default-member
+  tseslint.configs.strictTypeChecked,
+
   {
     languageOptions: {
       parserOptions: {
@@ -50,16 +57,13 @@ export default tseslint.config(
     rules: {
       // #region @typescript-eslint
       '@typescript-eslint/array-type': ['error', { default: 'generic' }],
-      '@typescript-eslint/no-wrapper-object-types': 'error',
-      '@typescript-eslint/no-empty-object-type': 'error',
-      '@typescript-eslint/no-unsafe-function-type': 'error',
-      '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-definitions': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports' },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/method-signature-style': ['error', 'property'],
       '@typescript-eslint/naming-convention': [
         'error',
@@ -74,18 +78,23 @@ export default tseslint.config(
           },
         },
       ],
-      '@typescript-eslint/no-deprecated': 'error',
       '@typescript-eslint/no-empty-function': 'error',
       '@typescript-eslint/no-empty-interface': 'error',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'error',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'error',
+
       '@typescript-eslint/no-inferrable-types': [
         'error',
         { ignoreParameters: true },
+      ],
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowAny: false,
+          allowBoolean: false,
+          allowNever: false,
+          allowNullish: false,
+          allowNumber: true,
+          allowRegExp: false,
+        },
       ],
       // #endregion @typescript-eslint
 
@@ -127,6 +136,7 @@ export default tseslint.config(
       'no-shadow': 'error',
       'no-undef': 'off',
       'sort-imports': 'off',
+      // #endregion misc
     },
   },
   {

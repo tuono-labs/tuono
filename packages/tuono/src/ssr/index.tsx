@@ -84,7 +84,7 @@ export function serverSideRendering(routeTree: RouteTree) {
       ${renderToStaticMarkup(
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.__TUONO_SSR_PROPS__=${payload}`,
+            __html: `window.__TUONO_SSR_PROPS__=${payload as string}`,
           }}
         />,
       )}

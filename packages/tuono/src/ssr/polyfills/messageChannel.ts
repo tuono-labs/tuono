@@ -38,7 +38,9 @@ export class MessagePortPolyfill implements MessagePort {
     if (this.onmessage) {
       this.onmessage(event)
     }
-    this.onmessageListeners.forEach((listener) => listener(event))
+    this.onmessageListeners.forEach((listener) => {
+      listener(event)
+    })
     return true
   }
 

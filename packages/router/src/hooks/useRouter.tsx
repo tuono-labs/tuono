@@ -16,7 +16,7 @@ interface UseRouterHook {
   /**
    * This object contains all the query params of the current route
    */
-  query: Record<string, any>
+  query: Record<string, unknown>
 
   /**
    * Returns the current pathname

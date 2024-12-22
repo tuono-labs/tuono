@@ -8,7 +8,7 @@ describe('Test useRoute fn', () => {
 
   test('match routes by ids', () => {
     vi.mock('./useInternalRouter.tsx', () => ({
-      useInternalRouter: (): { routesById: Record<string, any> } => {
+      useInternalRouter: (): { routesById: Record<string, { id: string }> } => {
         return {
           routesById: {
             '/': { id: '/' },

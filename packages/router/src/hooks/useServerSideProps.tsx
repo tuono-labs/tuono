@@ -13,7 +13,7 @@ interface UseServerSidePropsReturn<TData> {
 }
 
 interface TuonoApi {
-  data?: any
+  data?: unknown
   info: {
     redirect_destination?: string
   }

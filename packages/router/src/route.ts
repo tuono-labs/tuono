@@ -77,7 +77,7 @@ export class Route {
     this.fullPath = fullPath || ''
   }
 
-  addChildren(routes: Array<Route>): Route {
+  addChildren(routes: Array<Route>): this {
     this.children = routes
     return this
   }

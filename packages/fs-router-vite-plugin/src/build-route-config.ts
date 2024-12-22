@@ -3,7 +3,7 @@ import type { RouteNode } from './types'
 
 export function buildRouteConfig(nodes: Array<RouteNode>, depth = 1): string {
   const children = nodes.map((node) => {
-    const route = `${node.variableName}Route`
+    const route = `${node.variableName as string}Route`
 
     if (node.children?.length) {
       const childConfigs = buildRouteConfig(node.children, depth + 1)
