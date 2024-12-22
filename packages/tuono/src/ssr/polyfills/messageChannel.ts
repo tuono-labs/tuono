@@ -24,10 +24,12 @@
 
 export class MessagePortPolyfill implements MessagePort {
   onmessage: ((this: MessagePort, ev: MessageEvent) => unknown) | null = null
+  /** @warning this is declared to satisfy {@link MessagePort} interface requirements but is never called  */
   onmessageerror: ((this: MessagePort, ev: MessageEvent) => unknown) | null =
     null
 
   otherPort: MessagePortPolyfill | null = null
+
   private onmessageListeners: Array<(ev: MessageEvent) => void> = []
   private isClosed = false
 
@@ -42,6 +44,7 @@ export class MessagePortPolyfill implements MessagePort {
 
   postMessage(message: unknown): void {
     if (this.isClosed || !this.otherPort) return
+
     const event = new MessageEvent('message', { data: message })
     this.otherPort.dispatchEvent(event)
   }
@@ -51,11 +54,12 @@ export class MessagePortPolyfill implements MessagePort {
     listener: EventListenerOrEventListenerObject,
   ): void {
     if (this.isClosed || type !== 'message') return
+
     if (
       typeof listener === 'function' &&
       !this.onmessageListeners.includes(listener)
     ) {
-      this.onmessageListeners.push(listener as (ev: MessageEvent) => void)
+      this.onmessageListeners.push(listener)
     }
   }
 
@@ -64,10 +68,9 @@ export class MessagePortPolyfill implements MessagePort {
     listener: EventListenerOrEventListenerObject,
   ): void {
     if (this.isClosed || type !== 'message') return
+
     if (typeof listener === 'function') {
-      const index = this.onmessageListeners.indexOf(
-        listener as (ev: MessageEvent) => void,
-      )
+      const index = this.onmessageListeners.indexOf(listener)
       if (index !== -1) {
         this.onmessageListeners.splice(index, 1)
       }
@@ -90,6 +93,7 @@ export class MessageChannelPolyfill implements MessageChannel {
   constructor() {
     this.port1 = new MessagePortPolyfill()
     this.port2 = new MessagePortPolyfill()
+
     this.port1.otherPort = this.port2
     this.port2.otherPort = this.port1
   }
