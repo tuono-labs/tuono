@@ -2,6 +2,8 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginImport from 'eslint-plugin-import'
+// @ts-expect-error no types are available for this plugin
+import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 
 export default tseslint.config(
   {
@@ -139,6 +141,19 @@ export default tseslint.config(
       // #endregion misc
     },
   },
+
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    plugins: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      'react-hooks': eslintPluginReactHooks,
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+    },
+  },
+
   {
     files: ['apps/documentation/**'],
     settings: {

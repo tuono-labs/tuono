@@ -23,7 +23,7 @@ interface RouterState {
   updateLocation: (loc: ParsedLocation) => void
 }
 
-export const initRouterStore = (props?: ServerProps): void => {
+export const useInitRouterStore = (props?: ServerProps): void => {
   const updateLocation = useRouterStore((st) => st.updateLocation)
 
   // Init the store in the server in order to correctly
@@ -49,7 +49,7 @@ export const initRouterStore = (props?: ServerProps): void => {
       searchStr: search,
       search: Object.fromEntries(new URLSearchParams(search)),
     })
-  }, [])
+  }, [updateLocation])
 }
 
 export const useRouterStore = create<RouterState>()((set) => ({

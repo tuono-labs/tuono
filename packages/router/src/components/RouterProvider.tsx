@@ -2,7 +2,7 @@ import React from 'react'
 import type { ReactNode, JSX } from 'react'
 
 import { useListenBrowserUrlUpdates } from '../hooks/useListenBrowserUrlUpdates'
-import { initRouterStore } from '../hooks/useRouterStore'
+import { useInitRouterStore } from '../hooks/useRouterStore'
 import type { ServerProps } from '../types'
 import type { Router } from '../router'
 
@@ -39,7 +39,7 @@ export function RouterProvider({
   router,
   serverProps,
 }: RouterProviderProps): JSX.Element {
-  initRouterStore(serverProps)
+  useInitRouterStore(serverProps)
 
   useListenBrowserUrlUpdates()
 

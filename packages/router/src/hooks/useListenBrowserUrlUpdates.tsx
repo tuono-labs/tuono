@@ -9,23 +9,26 @@ import { useRouterStore } from './useRouterStore'
 export const useListenBrowserUrlUpdates = (): void => {
   const updateLocation = useRouterStore((st) => st.updateLocation)
 
-  const updateLocationOnPopStateChange = ({ target }: PopStateEvent): void => {
-    const { pathname, hash, href, search } = (target as typeof window).location
-
-    updateLocation({
-      pathname,
-      hash,
-      href,
-      searchStr: search,
-      search: Object.fromEntries(new URLSearchParams(search)),
-    })
-  }
-
   useEffect(() => {
+    const updateLocationOnPopStateChange = ({
+      target,
+    }: PopStateEvent): void => {
+      const { location } = target as typeof window
+      const { pathname, hash, href, search } = location
+
+      updateLocation({
+        pathname,
+        hash,
+        href,
+        searchStr: search,
+        search: Object.fromEntries(new URLSearchParams(search)),
+      })
+    }
+
     window.addEventListener('popstate', updateLocationOnPopStateChange)
 
     return (): void => {
       window.removeEventListener('popstate', updateLocationOnPopStateChange)
     }
-  }, [])
+  }, [updateLocation])
 }

@@ -20,6 +20,7 @@ export const RouteMatch = ({
 }: RouteMatchProps): React.JSX.Element => {
   const { data, isLoading } = useServerSideProps(route, serverSideProps)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const routes = React.useMemo(() => loadParentComponents(route), [route.id])
 
   return (
@@ -27,12 +28,6 @@ export const RouteMatch = ({
       <route.component data={data} isLoading={isLoading} />
     </TraverseRootComponents>
   )
-}
-
-interface ParentProps<TData = unknown> {
-  children: React.ReactNode
-  data: TData
-  isLoading: boolean
 }
 
 interface TraverseRootComponentsProps<TData = unknown> {
@@ -58,13 +53,7 @@ const TraverseRootComponents = React.memo(
     children,
   }: TraverseRootComponentsProps): React.JSX.Element => {
     if (routes.length > index) {
-      const Parent = React.useMemo(
-        () =>
-          routes[index]?.component as unknown as (
-            props: ParentProps,
-          ) => React.JSX.Element,
-        [],
-      )
+      const Parent = (routes[index] as Route).component
 
       return (
         <Parent data={data} isLoading={isLoading}>
