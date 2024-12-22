@@ -96,7 +96,7 @@ export function useServerSideProps<T>(
     return (): void => {
       setData(undefined)
     }
-  }, [location.pathname])
+  }, [location.pathname, route.options.hasHandler, updateLocation])
 
   return { isLoading, data: data as T }
 }

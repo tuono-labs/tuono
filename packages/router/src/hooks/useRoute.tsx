@@ -25,11 +25,11 @@ export function sanitizePathname(pathname: string): string {
  * Optimizations should occour on both
  */
 export default function useRoute(pathname?: string): Route | undefined {
+  const { routesById } = useInternalRouter()
+
   if (!pathname) return
 
   pathname = sanitizePathname(pathname)
-
-  const { routesById } = useInternalRouter()
 
   if (routesById[pathname]) return routesById[pathname]
 
