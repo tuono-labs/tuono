@@ -1,2 +1,2 @@
-export { MessageChannelPolyfill } from './polyfills/messageChannel'
+export { MessageChannelPolyfill } from './polyfills/MessageChannel'
 export { serverSideRendering } from './server'
