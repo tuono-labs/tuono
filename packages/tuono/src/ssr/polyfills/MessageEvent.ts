@@ -3,6 +3,7 @@ import { EventPolyfill } from './Event'
 /**
  * https://html.spec.whatwg.org/multipage/comms.html#the-messageevent-interface
  */
+// @ts-expect-error Not all the properties are implemented
 export class MessageEventPolyfill<T>
   extends EventPolyfill
   implements MessageEvent

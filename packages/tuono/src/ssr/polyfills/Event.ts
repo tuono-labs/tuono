@@ -1,6 +1,7 @@
 /**
  * https://dom.spec.whatwg.org/#interface-event
  */
+// @ts-expect-error Not all the properties are implemented
 export class EventPolyfill implements Event {
   type: string
   bubbles: boolean
