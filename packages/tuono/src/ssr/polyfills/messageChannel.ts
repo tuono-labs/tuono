@@ -23,78 +23,78 @@
  */
 
 export class MessagePortPolyfill implements MessagePort {
-  onmessage: ((this: MessagePort, ev: MessageEvent) => unknown) | null = null
-  /** @warning this is declared to satisfy {@link MessagePort} interface requirements but is never called  */
-  onmessageerror: ((this: MessagePort, ev: MessageEvent) => unknown) | null =
-    null
+	onmessage: ((this: MessagePort, ev: MessageEvent) => unknown) | null = null
+	/** @warning this is declared to satisfy {@link MessagePort} interface requirements but is never called  */
+	onmessageerror: ((this: MessagePort, ev: MessageEvent) => unknown) | null =
+		null
 
-  otherPort: MessagePortPolyfill | null = null
+	otherPort: MessagePortPolyfill | null = null
 
-  private onmessageListeners: Array<(ev: MessageEvent) => void> = []
-  private isClosed = false
+	private onmessageListeners: Array<(ev: MessageEvent) => void> = []
+	private isClosed = false
 
-  dispatchEvent(event: MessageEvent): boolean {
-    if (this.isClosed) return false
-    if (this.onmessage) {
-      this.onmessage(event)
-    }
-    this.onmessageListeners.forEach((listener) => listener(event))
-    return true
-  }
+	dispatchEvent(event: MessageEvent): boolean {
+		if (this.isClosed) return false
+		if (this.onmessage) {
+			this.onmessage(event)
+		}
+		this.onmessageListeners.forEach((listener) => listener(event))
+		return true
+	}
 
-  postMessage(message: unknown): void {
-    if (this.isClosed || !this.otherPort) return
+	postMessage(message: unknown): void {
+		if (this.isClosed || !this.otherPort) return
 
-    const event = new MessageEvent('message', { data: message })
-    this.otherPort.dispatchEvent(event)
-  }
+		const event = new MessageEvent('message', { data: message })
+		this.otherPort.dispatchEvent(event)
+	}
 
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-  ): void {
-    if (this.isClosed || type !== 'message') return
+	addEventListener(
+		type: string,
+		listener: EventListenerOrEventListenerObject,
+	): void {
+		if (this.isClosed || type !== 'message') return
 
-    if (
-      typeof listener === 'function' &&
-      !this.onmessageListeners.includes(listener)
-    ) {
-      this.onmessageListeners.push(listener)
-    }
-  }
+		if (
+			typeof listener === 'function' &&
+			!this.onmessageListeners.includes(listener)
+		) {
+			this.onmessageListeners.push(listener)
+		}
+	}
 
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-  ): void {
-    if (this.isClosed || type !== 'message') return
+	removeEventListener(
+		type: string,
+		listener: EventListenerOrEventListenerObject,
+	): void {
+		if (this.isClosed || type !== 'message') return
 
-    if (typeof listener === 'function') {
-      const index = this.onmessageListeners.indexOf(listener)
-      if (index !== -1) {
-        this.onmessageListeners.splice(index, 1)
-      }
-    }
-  }
+		if (typeof listener === 'function') {
+			const index = this.onmessageListeners.indexOf(listener)
+			if (index !== -1) {
+				this.onmessageListeners.splice(index, 1)
+			}
+		}
+	}
 
-  start(): void {
-    // do nothing at this moment
-  }
+	start(): void {
+		// do nothing at this moment
+	}
 
-  close(): void {
-    this.isClosed = true
-  }
+	close(): void {
+		this.isClosed = true
+	}
 }
 
 export class MessageChannelPolyfill implements MessageChannel {
-  readonly port1: MessagePortPolyfill
-  readonly port2: MessagePortPolyfill
+	readonly port1: MessagePortPolyfill
+	readonly port2: MessagePortPolyfill
 
-  constructor() {
-    this.port1 = new MessagePortPolyfill()
-    this.port2 = new MessagePortPolyfill()
+	constructor() {
+		this.port1 = new MessagePortPolyfill()
+		this.port2 = new MessagePortPolyfill()
 
-    this.port1.otherPort = this.port2
-    this.port2.otherPort = this.port1
-  }
+		this.port1.otherPort = this.port2
+		this.port2.otherPort = this.port1
+	}
 }

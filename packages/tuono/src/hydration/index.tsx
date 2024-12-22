@@ -2,7 +2,6 @@ import React from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
-import { HelmetProvider } from 'react-helmet-async'
 
 type RouteTree = ReturnType<typeof createRoute>
 
@@ -16,9 +15,7 @@ export function hydrate(routeTree: RouteTree): void {
   hydrateRoot(
     rootElement,
     <React.StrictMode>
-      <HelmetProvider>
-        <RouterProvider router={router} />
-      </HelmetProvider>
+      <RouterProvider router={router} />
     </React.StrictMode>,
   )
 }

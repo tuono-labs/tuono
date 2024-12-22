@@ -88,8 +88,8 @@
     "bin/**"
   ],
   "peerDependencies": {
-    "react": ">=16.3.0",
-    "react-dom": ">=16.3.0"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.24.4",
@@ -105,8 +105,8 @@
     "@types/babel__core": "^7.20.5",
     "@types/node": "^22.0.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
+    "event-source-polyfill": "^1.0.31",
     "fast-text-encoding": "^1.0.6",
-    "react-helmet-async": "^2.0.5",
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-lazy-fn-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
