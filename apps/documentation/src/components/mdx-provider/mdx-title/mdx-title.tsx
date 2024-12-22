@@ -16,6 +16,12 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
   )
 }
 
-export const h =
-  (order: 1 | 2 | 3 | 4 | 5 | 6) =>
-  (props: TitleProps): JSX.Element => <MdxTitle order={order} {...props} />
+export const h = (
+  order: 1 | 2 | 3 | 4 | 5 | 6,
+): React.ElementType<TitleProps> => {
+  function render(props: TitleProps): JSX.Element {
+    return <MdxTitle order={order} {...props} />
+  }
+  render.displayName = 'H'
+  return render
+}

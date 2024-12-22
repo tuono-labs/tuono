@@ -2,6 +2,7 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginImport from 'eslint-plugin-import'
+import eslintPluginReact from 'eslint-plugin-react'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 
@@ -37,6 +38,23 @@ export default tseslint.config(
 
   // eslint-disable-next-line import/no-named-as-default-member
   tseslint.configs.strictTypeChecked,
+
+  // @ts-expect-error flat is optional but always defined on runtime
+  eslintPluginReact.configs.flat.recommended,
+  // @ts-expect-error flat is optional but always defined on runtime
+  eslintPluginReact.configs.flat['jsx-runtime'],
+
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    plugins: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      'react-hooks': eslintPluginReactHooks,
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+    },
+  },
 
   {
     languageOptions: {
@@ -139,18 +157,6 @@ export default tseslint.config(
       'no-undef': 'off',
       'sort-imports': 'off',
       // #endregion misc
-    },
-  },
-
-  {
-    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-    plugins: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      'react-hooks': eslintPluginReactHooks,
-    },
-    rules: {
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'error',
     },
   },
 

@@ -1,7 +1,6 @@
 import 'fast-text-encoding' // Mandatory for React18
 import type { ReadableStream } from 'node:stream/web'
 
-import * as React from 'react'
 import { renderToStaticMarkup, renderToReadableStream } from 'react-dom/server'
 import type { HelmetServerState } from 'react-helmet-async'
 import { HelmetProvider } from 'react-helmet-async'
