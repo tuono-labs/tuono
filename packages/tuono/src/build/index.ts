@@ -21,6 +21,8 @@ const VITE_SSR_PLUGINS: Array<Plugin> = [
        * @see https://github.com/tuono-labs/tuono/issues/218
        */
       MessageChannel: ['tuono/ssr', 'MessageChannelPolyfill'],
+      MessageEvent: ['tuono/ssr', 'MessageEventPolyfill'],
+      Event: ['tuono/ssr', 'EventPolyfill'],
     }),
   },
 ]

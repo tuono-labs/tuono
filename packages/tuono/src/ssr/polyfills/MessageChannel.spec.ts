@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { MessageChannelPolyfill, MessagePortPolyfill } from './messageChannel'
+import { MessageChannelPolyfill, MessagePortPolyfill } from './MessageChannel'
 
 describe('MessagePortPolyfill', () => {
   it('should invoke onmessage when a message is posted', () => {

@@ -8,7 +8,6 @@ import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
-import { MessageChannelPolyfill } from './polyfills/messageChannel'
 import { streamToString } from './utils'
 
 type RouteTree = ReturnType<typeof createRoute>
@@ -95,5 +94,3 @@ export function serverSideRendering(routeTree: RouteTree) {
   `
   }
 }
-
-export { MessageChannelPolyfill }
