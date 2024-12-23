@@ -1,4 +1,4 @@
-import type { ParsedLocation } from '../hooks/useRouterStore'
+import type { ParsedLocation } from '../components/RouterContext'
 
 export function fromUrlToParsedLocation(href: string): ParsedLocation {
   const location = new URL(href, window.location.origin)

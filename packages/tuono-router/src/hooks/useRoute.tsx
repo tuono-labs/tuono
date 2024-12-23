@@ -1,6 +1,6 @@
 import type { Route } from '../route'
 
-import { useInternalRouter } from './useInternalRouter'
+import { useInternalRouter } from '../components/RouterContext'
 
 const DYNAMIC_PATH_REGEX = /\[(.*?)\]/
 
@@ -25,7 +25,8 @@ export function sanitizePathname(pathname: string): string {
  * Optimizations should occour on both
  */
 export default function useRoute(pathname?: string): Route | undefined {
-  const { routesById } = useInternalRouter()
+  const { router } = useInternalRouter()
+  const { routesById } = router
 
   if (!pathname) return
 

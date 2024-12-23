@@ -1,5 +1,7 @@
 import type React from 'react'
 
+import type { RouterContextType } from './components/RouterContext'
+
 import type { Router } from './router'
 
 declare global {
@@ -9,6 +11,6 @@ declare global {
       props?: unknown
     }
 
-    __TUONO_CONTEXT__?: React.Context<Router>
+    __TUONO_CONTEXT__?: React.Context<RouterContextType>
   }
 }

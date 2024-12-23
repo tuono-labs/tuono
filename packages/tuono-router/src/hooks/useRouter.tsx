@@ -1,4 +1,4 @@
-import { useRouterStore } from './useRouterStore'
+import { useInternalRouter } from '../components/RouterContext'
 
 interface PushOptions {
   /**
@@ -25,10 +25,7 @@ interface UseRouterHook {
 }
 
 export const useRouter = (): UseRouterHook => {
-  const [location, updateLocation] = useRouterStore((st) => [
-    st.location,
-    st.updateLocation,
-  ])
+  const { location, updateLocation } = useInternalRouter()
 
   const push = (path: string, opt?: PushOptions): void => {
     const { scroll = true } = opt || {}
