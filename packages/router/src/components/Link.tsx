@@ -4,13 +4,13 @@ import { useInView } from 'react-intersection-observer'
 import { useRouter } from '../hooks/useRouter'
 import useRoute from '../hooks/useRoute'
 
-interface TuonoLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'preload'> {
+interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   /**
    * If "true" the route gets loaded when the link enters the viewport.
    * @default true
    */
   preload?: boolean
+
   /**
    * If "false" the scroll offset will be kept across page navigation.
    * @default true
@@ -27,7 +27,7 @@ export default function Link(
     children,
     href,
     onClick,
-    ...otherProps
+    ...rest
   } = componentProps
 
   const router = useRouter()
@@ -54,7 +54,7 @@ export default function Link(
   }
 
   return (
-    <a {...otherProps} href={href} ref={ref} onClick={handleTransition}>
+    <a {...rest} href={href} ref={ref} onClick={handleTransition}>
       {children}
     </a>
   )
