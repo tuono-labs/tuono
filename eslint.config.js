@@ -16,8 +16,8 @@ export default tseslint.config(
       // #endregion shared
 
       // #region package-specific
-      'packages/fs-router-vite-plugin/tests/generator/**',
-      'packages/lazy-fn-vite-plugin/tests/sources/**',
+      'packages/tuono-fs-router-vite-plugin/tests/generator/**',
+      'packages/tuono-lazy-fn-vite-plugin/tests/sources/**',
 
       'packages/tuono/bin/**',
       // #endregion package-specific
