@@ -163,93 +163,6 @@ importers:
         specifier: ^5.6.3
         version: 5.6.3
 
-  packages/fs-router-vite-plugin:
-    dependencies:
-      '@babel/core':
-        specifier: ^7.24.4
-        version: 7.26.0
-      '@babel/types':
-        specifier: ^7.24.0
-        version: 7.26.0
-      prettier:
-        specifier: ^3.2.4
-        version: 3.4.1
-      vite:
-        specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
-    devDependencies:
-      '@tanstack/config':
-        specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
-      vitest:
-        specifier: ^2.0.0
-        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
-
-  packages/lazy-fn-vite-plugin:
-    dependencies:
-      '@babel/core':
-        specifier: ^7.24.4
-        version: 7.26.0
-      '@babel/types':
-        specifier: ^7.24.0
-        version: 7.26.0
-      vite:
-        specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
-    devDependencies:
-      '@tanstack/config':
-        specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
-      prettier:
-        specifier: ^3.2.4
-        version: 3.4.1
-      vitest:
-        specifier: ^2.0.0
-        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
-
-  packages/router:
-    dependencies:
-      react-intersection-observer:
-        specifier: ^9.13.0
-        version: 9.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      vite:
-        specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
-      zustand:
-        specifier: 4.4.7
-        version: 4.4.7(@types/react@18.3.13)(react@18.3.1)
-    devDependencies:
-      '@tanstack/config':
-        specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
-      '@testing-library/jest-dom':
-        specifier: ^6.6.0
-        version: 6.6.3
-      '@testing-library/react':
-        specifier: ^16.0.0
-        version: 16.0.1(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/react':
-        specifier: 18.3.13
-        version: 18.3.13
-      '@vitejs/plugin-react-swc':
-        specifier: 3.7.2
-        version: 3.7.2(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
-      jsdom:
-        specifier: ^25.0.0
-        version: 25.0.1
-      react:
-        specifier: 18.3.1
-        version: 18.3.1
-      vitest:
-        specifier: ^2.0.0
-        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
-
   packages/tuono:
     dependencies:
       '@babel/core':
@@ -299,13 +212,13 @@ importers:
         version: 2.0.5(react@18.3.1)
       tuono-fs-router-vite-plugin:
         specifier: workspace:*
-        version: link:../fs-router-vite-plugin
+        version: link:../tuono-fs-router-vite-plugin
       tuono-lazy-fn-vite-plugin:
         specifier: workspace:*
-        version: link:../lazy-fn-vite-plugin
+        version: link:../tuono-lazy-fn-vite-plugin
       tuono-router:
         specifier: workspace:*
-        version: link:../router
+        version: link:../tuono-router
       vite:
         specifier: ^5.2.11
         version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
@@ -334,6 +247,93 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+
+  packages/tuono-fs-router-vite-plugin:
+    dependencies:
+      '@babel/core':
+        specifier: ^7.24.4
+        version: 7.26.0
+      '@babel/types':
+        specifier: ^7.24.0
+        version: 7.26.0
+      prettier:
+        specifier: ^3.2.4
+        version: 3.4.1
+      vite:
+        specifier: ^5.2.11
+        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
+    devDependencies:
+      '@tanstack/config':
+        specifier: 0.7.13
+        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+
+  packages/tuono-lazy-fn-vite-plugin:
+    dependencies:
+      '@babel/core':
+        specifier: ^7.24.4
+        version: 7.26.0
+      '@babel/types':
+        specifier: ^7.24.0
+        version: 7.26.0
+      vite:
+        specifier: ^5.2.11
+        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
+    devDependencies:
+      '@tanstack/config':
+        specifier: 0.7.13
+        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
+      prettier:
+        specifier: ^3.2.4
+        version: 3.4.1
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+
+  packages/tuono-router:
+    dependencies:
+      react-intersection-observer:
+        specifier: ^9.13.0
+        version: 9.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      vite:
+        specifier: ^5.2.11
+        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
+      zustand:
+        specifier: 4.4.7
+        version: 4.4.7(@types/react@18.3.13)(react@18.3.1)
+    devDependencies:
+      '@tanstack/config':
+        specifier: 0.7.13
+        version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      '@testing-library/jest-dom':
+        specifier: ^6.6.0
+        version: 6.6.3
+      '@testing-library/react':
+        specifier: ^16.0.0
+        version: 16.0.1(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/react':
+        specifier: 18.3.13
+        version: 18.3.13
+      '@vitejs/plugin-react-swc':
+        specifier: 3.7.2
+        version: 3.7.2(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      jsdom:
+        specifier: ^25.0.0
+        version: 25.0.1
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
       vitest:
         specifier: ^2.0.0
         version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))

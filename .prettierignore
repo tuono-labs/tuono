@@ -3,4 +3,4 @@ pnpm-lock.yaml
 dist
 .tuono
 
-packages/lazy-fn-vite-plugin/tests/sources/*
+packages/tuono-lazy-fn-vite-plugin/tests/sources/*

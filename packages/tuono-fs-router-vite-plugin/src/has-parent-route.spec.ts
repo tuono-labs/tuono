@@ -6,7 +6,7 @@ const routes = [
   {
     filePath: 'posts/[post].tsx',
     fullPath:
-      '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/[post].tsx',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/[post].tsx',
     routePath: '/posts/[post]',
     variableName: 'Postspost',
     path: '/posts/[post]',
@@ -15,7 +15,7 @@ const routes = [
   {
     filePath: 'posts/__root.tsx',
     fullPath:
-      '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
     routePath: '/posts/__root',
     variableName: 'Postsroot',
     path: '/posts/__root',
@@ -24,7 +24,7 @@ const routes = [
   {
     filePath: 'index.tsx',
     fullPath:
-      '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/index.tsx',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/index.tsx',
     routePath: '/',
     variableName: 'Index',
     path: '/',
@@ -33,7 +33,7 @@ const routes = [
   {
     filePath: 'posts/my-post.tsx',
     fullPath:
-      '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/my-post.tsx',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/my-post.tsx',
     routePath: '/posts/my-post',
     variableName: 'PostsMyPost',
     path: '/posts/my-post',
@@ -44,7 +44,7 @@ const routes = [
 const parent = {
   filePath: 'posts/__root.tsx',
   fullPath:
-    '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
+    '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
   routePath: '/posts/__root',
   variableName: 'Postsroot',
   path: '/posts/__root',
@@ -54,7 +54,7 @@ const parent = {
 const myPost = {
   filePath: 'posts/my-post.tsx',
   fullPath:
-    '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/my-post.tsx',
+    '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/my-post.tsx',
   routePath: '/posts/my-post',
   variableName: 'PostsMyPost',
   path: '/posts/my-post',
@@ -64,7 +64,7 @@ const myPost = {
 const dynamicRoute = {
   filePath: 'posts/[post].tsx',
   fullPath:
-    '/tuono/packages/fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/[post].tsx',
+    '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/[post].tsx',
   routePath: '/posts/[post]',
   variableName: 'Postspost',
   path: '/posts/[post]',

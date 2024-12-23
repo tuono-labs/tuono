@@ -1,14 +1,14 @@
 {
-  "name": "tuono-fs-router-vite-plugin",
+  "name": "tuono-router",
   "version": "0.16.6",
-  "description": "Plugin for the tuono's file system router. Tuono is the react/rust fullstack framework",
+  "description": "React routing component for the framework tuono. Tuono is the react/rust fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build",
     "lint": "eslint .",
-    "format": "prettier -u --write --ignore-unknown '**/*'",
-    "format:check": "prettier --check --ignore-unknown '**/*'",
+    "format": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
+    "format:check": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
     "types": "tsc --noEmit",
     "test:watch": "vitest",
     "test": "vitest run"
@@ -16,7 +16,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuono-labs/tuono.git",
-    "directory": "packages/fs-router-vite-plugin"
+    "directory": "packages/tuono-router"
   },
   "keywords": [],
   "author": "Valerio Ageno",
@@ -43,15 +43,22 @@
     },
     "./package.json": "./package.json"
   },
+  "peerDependencies": {
+    "react": ">=16.3.0"
+  },
   "dependencies": {
-    "@babel/core": "^7.24.4",
-    "@babel/types": "^7.24.0",
-    "prettier": "^3.2.4",
-    "vite": "^5.2.11"
+    "react-intersection-observer": "^9.13.0",
+    "vite": "^5.2.11",
+    "zustand": "4.4.7"
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
-    "@types/babel__core": "^7.20.5",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "18.3.13",
+    "@vitejs/plugin-react-swc": "3.7.2",
+    "react": "18.3.1",
+    "jsdom": "^25.0.0",
     "vitest": "^2.0.0"
   }
 }
