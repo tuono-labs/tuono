@@ -50,26 +50,30 @@ function SidebarElements({ close }: SidebarProps): JSX.Element {
     <AppShell.Section component={ScrollArea}>
       {sidebarElements.map((el, i) => {
         if (el.type === 'divider') {
-          return <Divider my="md" mx={10} />
+          return <Divider key={`${el.type}-${i}`} my="md" mx={10} />
         }
+
         if (el.type === 'title') {
           return (
             <Text
+              key={`${el.type}-${i}`}
               size="xs"
               fw={700}
               fz={12}
               pl={12}
               py={5}
-              children={el.label}
-            />
+            >
+              {el.label}
+            </Text>
           )
         }
+
         if (el.children?.length) {
           return (
             <SidebarLink
+              key={`${el.type}-${i}`}
               href={el.href}
               label={el.label}
-              key={i}
               leftSection={el.leftIcon}
             >
               {el.children.map((child, index) => (
@@ -83,12 +87,13 @@ function SidebarElements({ close }: SidebarProps): JSX.Element {
             </SidebarLink>
           )
         }
+
         return (
           <SidebarLink
+            key={`${el.type}-${i}`}
             href={el.href}
             label={el.label}
             onClick={close}
-            key={i}
           />
         )
       })}

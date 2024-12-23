@@ -72,6 +72,7 @@ const TraverseRootComponents = React.memo(
     return <>{children}</>
   },
 )
+TraverseRootComponents.displayName = 'TraverseRootComponents'
 
 const loadParentComponents = (
   route: Route,

@@ -1,27 +1,37 @@
-import * as React from 'react'
-import type { AnchorHTMLAttributes } from 'react'
+import type * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 
 import { useRouter } from '../hooks/useRouter'
 import useRoute from '../hooks/useRoute'
 
-interface TuonoLinkProps {
+interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   /**
-   * If "true" the route gets loaded when the link enters the viewport. Default "true"
+   * If "true" the route gets loaded when the link enters the viewport.
+   * @default true
    */
   preload?: boolean
+
   /**
-   * If "false" the scroll offset will be kept across page navigation. Default "true"
+   * If "false" the scroll offset will be kept across page navigation.
+   * @default true
    */
   scroll?: boolean
 }
 
 export default function Link(
-  componentProps: AnchorHTMLAttributes<HTMLAnchorElement> & TuonoLinkProps,
+  componentProps: TuonoLinkProps,
 ): React.JSX.Element {
-  const { preload = true, scroll = true, ...props } = componentProps
+  const {
+    preload = true,
+    scroll = true,
+    children,
+    href,
+    onClick,
+    ...rest
+  } = componentProps
+
   const router = useRouter()
-  const route = useRoute(props.href)
+  const route = useRoute(href)
   const { ref } = useInView({
     onChange(inView) {
       if (inView && preload) route?.component.preload()
@@ -29,21 +39,23 @@ export default function Link(
     triggerOnce: true,
   })
 
-  const handleTransition: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
-    e.preventDefault()
-    props.onClick?.(e)
+  const handleTransition: React.MouseEventHandler<HTMLAnchorElement> = (
+    event,
+  ) => {
+    event.preventDefault()
+    onClick?.(event)
 
-    if (props.href?.startsWith('#')) {
-      window.location.hash = props.href
+    if (href?.startsWith('#')) {
+      window.location.hash = href
       return
     }
 
-    router.push(props.href || '', { scroll })
+    router.push(href || '', { scroll })
   }
 
   return (
-    <a {...props} ref={ref} onClick={handleTransition}>
-      {props.children}
+    <a {...rest} href={href} ref={ref} onClick={handleTransition}>
+      {children}
     </a>
   )
 }
