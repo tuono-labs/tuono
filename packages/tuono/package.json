@@ -114,11 +114,13 @@
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
+    "@tanstack/config": "0.7.13",
     "@types/babel-traverse": "^6.25.10",
     "@types/babel__traverse": "^7.20.6",
-    "@types/react": "^18.3.13",
-    "@types/react-dom": "^18.3.0",
-    "prettier": "^3.2.4",
+    "@types/react": "18.3.13",
+    "@types/react-dom": "18.3.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "vitest": "^2.0.0"
   },
   "sideEffects": false,
