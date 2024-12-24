@@ -1,4 +1,4 @@
-import { Suspense, type JSX } from 'react'
+import type { JSX } from 'react'
 
 import type { ServerProps } from '../types'
 import type { Router } from '../router'
