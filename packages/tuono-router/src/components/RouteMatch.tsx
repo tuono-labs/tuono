@@ -25,7 +25,9 @@ export const RouteMatch = ({
 
   return (
     <TraverseRootComponents routes={routes} data={data} isLoading={isLoading}>
-      <route.component data={data} isLoading={isLoading} />
+      <React.Suspense>
+        <route.component data={data} isLoading={isLoading} />
+      </React.Suspense>
     </TraverseRootComponents>
   )
 }

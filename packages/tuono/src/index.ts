@@ -1,5 +1,3 @@
-export { Helmet as Head } from 'react-helmet-async'
-
 export {
   createRoute,
   createRootRoute,
