@@ -1,22 +1,32 @@
-import 'fast-text-encoding' // Mandatory for React18
+import 'fast-text-encoding' // Mandatory TextEncoder and TextDecoder polyfills
+// eslint-disable-next-line import/order
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
-  ; (function(scope = {}) {
-    scope['MessageChannel'] = MessageChannelPolyfill
-  })(
-    typeof window !== 'undefined'
-      ? window
-      : typeof global !== 'undefined'
-        ? global
-        : this,
-  )
+
+/**
+ * The polyfill for MessageChannel need to be done here,
+ * otherwise React might encounter error since it
+ */
+// eslint-disable-next-line import/newline-after-import
+;(function (
+  scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
+): void {
+  scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
+})(
+  typeof window !== 'undefined'
+    ? window
+    : typeof global !== 'undefined'
+      ? global
+      : this,
+)
+
 import type { ReadableStream } from 'node:stream/web'
 
+import type { ReactNode } from 'react'
 import { renderToReadableStream } from 'react-dom/server'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
 import { streamToString } from './utils'
-import { ReactNode, Suspense } from 'react'
 
 type RouteTree = ReturnType<typeof createRoute>
 type Mode = 'Dev' | 'Prod'
