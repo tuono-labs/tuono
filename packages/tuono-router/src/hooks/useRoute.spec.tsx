@@ -3,21 +3,25 @@ import { cleanup } from '@testing-library/react'
 
 import useRoute from './useRoute'
 
-describe('Test useRoute fn', () => {
+describe('useRoute', () => {
   afterEach(cleanup)
 
   test('match routes by ids', () => {
-    vi.mock('./useInternalRouter.tsx', () => ({
-      useInternalRouter: (): { routesById: Record<string, { id: string }> } => {
+    vi.mock('../components/RouterContext.tsx', () => ({
+      useRouterContext: (): {
+        router: { routesById: Record<string, { id: string }> }
+      } => {
         return {
-          routesById: {
-            '/': { id: '/' },
-            '/about': { id: '/about' },
-            '/posts': { id: '/posts' }, // posts/index
-            '/posts/[post]': { id: '/posts/[post]' },
-            '/posts/defined-post': { id: '/posts/defined-post' },
-            '/posts/[post]/[comment]': { id: '/posts/[post]/[comment]' },
-            '/blog/[...catch_all]': { id: '/blog/[...catch_all]' },
+          router: {
+            routesById: {
+              '/': { id: '/' },
+              '/about': { id: '/about' },
+              '/posts': { id: '/posts' }, // posts/index
+              '/posts/[post]': { id: '/posts/[post]' },
+              '/posts/defined-post': { id: '/posts/defined-post' },
+              '/posts/[post]/[comment]': { id: '/posts/[post]/[comment]' },
+              '/blog/[...catch_all]': { id: '/blog/[...catch_all]' },
+            },
           },
         }
       },

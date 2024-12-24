@@ -5,12 +5,14 @@ export interface Segment {
   value: string
 }
 
+export interface ServerRouterInfo {
+  href: string
+  pathname: string
+  searchStr: string
+}
+
 export interface ServerProps<TProps = unknown> {
-  router: {
-    href: string
-    pathname: string
-    searchStr: string
-  }
+  router: ServerRouterInfo
   props: TProps
 }
 

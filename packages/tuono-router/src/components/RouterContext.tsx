@@ -1,22 +1,111 @@
-import React from 'react'
+import { createContext, useState, useEffect, useContext, useMemo } from 'react'
+import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
+import type { ServerRouterInfo } from '../types'
+
+export interface ParsedLocation {
+  href: string
+  pathname: string
+  search: Record<string, string>
+  searchStr: string
+  hash: string
+}
+
+interface RouterContextValue {
+  router: Router
+  location: ParsedLocation
+  updateLocation: (loc: ParsedLocation) => void
+}
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const routerContext = React.createContext<Router>(null!)
+const RouterContext = createContext<RouterContextValue>(null!)
 
-const TUONO_CONTEXT_GLOBAL_NAME = '__TUONO_CONTEXT__'
-
-export function getRouterContext(): React.Context<Router> {
+function getInitialLocation(
+  serverSideProps?: ServerRouterInfo,
+): ParsedLocation {
   if (typeof document === 'undefined') {
-    return routerContext
+    return {
+      pathname: serverSideProps?.pathname || '',
+      hash: '',
+      href: serverSideProps?.href || '',
+      searchStr: serverSideProps?.searchStr || '',
+      // TODO: Polyfill URLSearchParams
+      search: {},
+    }
   }
 
-  if (window[TUONO_CONTEXT_GLOBAL_NAME]) {
-    return window[TUONO_CONTEXT_GLOBAL_NAME]
+  const { location } = window
+  return {
+    pathname: location.pathname,
+    hash: location.hash,
+    href: location.href,
+    searchStr: location.search,
+    search: Object.fromEntries(new URLSearchParams(location.search)),
   }
+}
 
-  window[TUONO_CONTEXT_GLOBAL_NAME] = routerContext
+interface RouterContextProviderProps {
+  router: Router
+  children: ReactNode
+  serverSideProps?: ServerRouterInfo
+}
 
-  return routerContext
+export function RouterContextProvider({
+  router,
+  children,
+  serverSideProps,
+}: RouterContextProviderProps): ReactNode {
+  // Allow the router to update options on the router instance
+  router.update({ ...router.options } as Parameters<typeof router.update>[0])
+
+  const [location, setLocation] = useState<ParsedLocation>(() =>
+    getInitialLocation(serverSideProps),
+  )
+
+  /**
+   * Listen browser navigation events
+   */
+  useEffect(() => {
+    const updateLocationOnPopStateChange = ({
+      target,
+    }: PopStateEvent): void => {
+      const { location: targetLocation } = target as typeof window
+      const { pathname, hash, href, search } = targetLocation
+
+      setLocation({
+        pathname,
+        hash,
+        href,
+        searchStr: search,
+        search: Object.fromEntries(new URLSearchParams(search)),
+      })
+    }
+
+    window.addEventListener('popstate', updateLocationOnPopStateChange)
+
+    return (): void => {
+      window.removeEventListener('popstate', updateLocationOnPopStateChange)
+    }
+  }, [])
+
+  const contextValue: RouterContextValue = useMemo(
+    () => ({
+      router,
+      location,
+      updateLocation: setLocation,
+    }),
+    [location, router],
+  )
+
+  return (
+    <RouterContext.Provider value={contextValue}>
+      {children}
+    </RouterContext.Provider>
+  )
+}
+
+/** @warning DO NOT EXPORT THIS TO USER LAND */
+export function useRouterContext(): RouterContextValue {
+  return useContext(RouterContext)
 }

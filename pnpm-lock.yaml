@@ -306,12 +306,6 @@ importers:
       react-intersection-observer:
         specifier: ^9.13.0
         version: 9.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      vite:
-        specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
-      zustand:
-        specifier: 4.4.7
-        version: 4.4.7(@types/react@18.3.13)(react@18.3.1)
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
@@ -334,6 +328,9 @@ importers:
       react:
         specifier: 18.3.1
         version: 18.3.1
+      vite:
+        specifier: 5.4.11
+        version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
       vitest:
         specifier: ^2.0.0
         version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
