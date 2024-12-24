@@ -94,23 +94,23 @@ importers:
   examples/tuono-app:
     dependencies:
       react:
-        specifier: 19.0.0
+        specifier: ^19.0.0
         version: 19.0.0
       react-dom:
-        specifier: 19.0.0
+        specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
       tuono:
         specifier: link:../../packages/tuono
         version: link:../../packages/tuono
     devDependencies:
       '@types/react':
-        specifier: ^19.0.2
+        specifier: 19.0.2
         version: 19.0.2
       '@types/react-dom':
-        specifier: ^19.0.2
+        specifier: 19.0.2
         version: 19.0.2(@types/react@19.0.2)
       typescript:
-        specifier: ^5.6.3
+        specifier: 5.6.3
         version: 5.6.3
 
   examples/tuono-tutorial:
@@ -226,11 +226,8 @@ importers:
       '@tanstack/config':
         specifier: 0.7.13
         version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
-      '@types/babel-traverse':
-        specifier: ^6.25.10
-        version: 6.25.10
       '@types/babel__traverse':
-        specifier: ^7.20.6
+        specifier: 7.20.6
         version: 7.20.6
       '@types/react':
         specifier: 19.0.2
@@ -245,7 +242,7 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
       vitest:
-        specifier: ^2.0.0
+        specifier: 2.1.6
         version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
   packages/tuono-fs-router-vite-plugin:
@@ -1024,12 +1021,6 @@ packages:
 
   '@types/aria-query@5.0.4':
     resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
-
-  '@types/babel-traverse@6.25.10':
-    resolution: {integrity: sha512-B3XitTFG8YeXb5lr7Nj62t1DikCDuAJ/4BDeK6GCuWREEmdunI9DWnv+81oHl2yQBQPWY/C1PmV3vaRZB4LQmw==}
-
-  '@types/babel-types@7.0.16':
-    resolution: {integrity: sha512-5QXs9GBFTNTmilLlWBhnsprqpjfrotyrnzUdwDrywEL/DA4LuCWQT300BTOXA3Y9ngT9F2uvmCoIxI6z8DlJEA==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -4277,12 +4268,6 @@ snapshots:
   '@types/argparse@1.0.38': {}
 
   '@types/aria-query@5.0.4': {}
-
-  '@types/babel-traverse@6.25.10':
-    dependencies:
-      '@types/babel-types': 7.0.16
-
-  '@types/babel-types@7.0.16': {}
 
   '@types/babel__core@7.20.5':
     dependencies:

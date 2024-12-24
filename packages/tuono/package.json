@@ -88,8 +88,8 @@
     "bin/**"
   ],
   "peerDependencies": {
-    "react": ">=16.3.0",
-    "react-dom": ">=16.3.0"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.24.4",
@@ -114,13 +114,12 @@
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
-    "@types/babel-traverse": "^6.25.10",
-    "@types/babel__traverse": "^7.20.6",
+    "@types/babel__traverse": "7.20.6",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "2.1.6"
   },
   "sideEffects": false,
   "keywords": [
