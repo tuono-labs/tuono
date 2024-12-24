@@ -3,12 +3,12 @@ import { cleanup } from '@testing-library/react'
 
 import useRoute from './useRoute'
 
-describe('Test useRoute fn', () => {
+describe('useRoute', () => {
   afterEach(cleanup)
 
   test('match routes by ids', () => {
     vi.mock('../components/RouterContext.tsx', () => ({
-      useInternalRouter: (): {
+      useRouterContext: (): {
         router: { routesById: Record<string, { id: string }> }
       } => {
         return {
