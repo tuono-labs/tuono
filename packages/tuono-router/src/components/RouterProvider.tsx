@@ -1,5 +1,4 @@
-import type { JSX } from 'react'
-import { Suspense } from 'react'
+import { Suspense, type JSX } from 'react'
 
 import type { ServerProps } from '../types'
 import type { Router } from '../router'
@@ -20,13 +19,11 @@ export function RouterProvider({
   serverProps,
 }: RouterProviderProps): JSX.Element {
   return (
-    <Suspense>
-      <RouterContextProvider
-        router={router}
-        serverSideProps={serverProps?.router}
-      >
-        <Matches serverSideProps={serverProps?.props} />
-      </RouterContextProvider>
-    </Suspense>
+    <RouterContextProvider
+      router={router}
+      serverSideProps={serverProps?.router}
+    >
+      <Matches serverSideProps={serverProps?.props} />
+    </RouterContextProvider>
   )
 }

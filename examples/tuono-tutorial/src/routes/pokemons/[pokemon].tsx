@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import { Head, type TuonoProps } from 'tuono'
+import { type TuonoProps } from 'tuono'
 
 import PokemonView from '@/components/PokemonView'
 
@@ -15,9 +15,6 @@ export default function PokemonPage({
 }: TuonoProps<Pokemon>): JSX.Element {
   return (
     <>
-      <Head>
-        <title>{`Pokemon: ${data?.name}`}</title>
-      </Head>
       <PokemonView pokemon={data} />
     </>
   )
