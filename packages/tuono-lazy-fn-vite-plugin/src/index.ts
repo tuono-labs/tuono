@@ -119,12 +119,12 @@ const TurnLazyIntoStaticImport: BabelPluginItem = {
   },
 }
 
-interface LazyLoadingPluginOptions {
+interface TuonoLazyFnPluginOptions {
   include: FilterPattern
 }
 
-export function LazyLoadingPlugin(
-  options: LazyLoadingPluginOptions,
+export function TuonoLazyFnPlugin(
+  options: TuonoLazyFnPluginOptions,
 ): VitePlugin {
   const { include } = options
 
