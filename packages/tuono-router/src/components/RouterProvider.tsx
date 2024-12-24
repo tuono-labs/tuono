@@ -13,7 +13,7 @@ interface RouterProviderProps {
 }
 
 /**
- * This component is the tuono app entry point
+ * This component is used in the tuono app entry point
  */
 export function RouterProvider({
   router,

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { Route } from '../route'
 import { fromUrlToParsedLocation } from '../utils/from-url-to-parsed-location'
 
-import { useInternalRouter } from '../components/RouterContext'
+import { useRouterContext } from '../components/RouterContext'
 
 const isServer = typeof document === 'undefined'
 
@@ -37,7 +37,7 @@ export function useServerSideProps<T>(
   serverSideProps: T,
 ): UseServerSidePropsReturn<T> {
   const isFirstRendering = useRef<boolean>(true)
-  const { location, updateLocation } = useInternalRouter()
+  const { location, updateLocation } = useRouterContext()
   const [isLoading, setIsLoading] = useState<boolean>(
     // Force loading if has handler
     !!route.options.hasHandler &&

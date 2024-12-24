@@ -12,36 +12,14 @@ export interface ParsedLocation {
   hash: string
 }
 
-export interface RouterContextType {
+interface RouterContextValue {
   router: Router
   location: ParsedLocation
   updateLocation: (loc: ParsedLocation) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const routerContext = React.createContext<RouterContextType>(null!)
-
-const TUONO_CONTEXT_GLOBAL_NAME = '__TUONO_CONTEXT__'
-
-function getRouterContext(): React.Context<RouterContextType> {
-  if (typeof document === 'undefined') {
-    return routerContext
-  }
-
-  if (window[TUONO_CONTEXT_GLOBAL_NAME]) {
-    return window[TUONO_CONTEXT_GLOBAL_NAME]
-  }
-
-  window[TUONO_CONTEXT_GLOBAL_NAME] = routerContext
-
-  return routerContext
-}
-
-interface RouterContextProviderProps {
-  router: Router
-  children: ReactNode
-  serverSideProps?: ServerRouterInfo
-}
+const RouterContext = React.createContext<RouterContextValue>(null!)
 
 function getInitialLocation(
   serverSideProps?: ServerRouterInfo,
@@ -67,6 +45,12 @@ function getInitialLocation(
   }
 }
 
+interface RouterContextProviderProps {
+  router: Router
+  children: ReactNode
+  serverSideProps?: ServerRouterInfo
+}
+
 export function RouterContextProvider({
   router,
   children,
@@ -75,7 +59,7 @@ export function RouterContextProvider({
   // Allow the router to update options on the router instance
   router.update({ ...router.options } as Parameters<typeof router.update>[0])
 
-  const [location, updateLocation] = useState<ParsedLocation>(
+  const [location, setLocation] = useState<ParsedLocation>(() =>
     getInitialLocation(serverSideProps),
   )
 
@@ -89,7 +73,7 @@ export function RouterContextProvider({
       const { location: targetLocation } = target as typeof window
       const { pathname, hash, href, search } = targetLocation
 
-      updateLocation({
+      setLocation({
         pathname,
         hash,
         href,
@@ -103,21 +87,22 @@ export function RouterContextProvider({
     return (): void => {
       window.removeEventListener('popstate', updateLocationOnPopStateChange)
     }
-  }, [updateLocation])
+  }, [])
 
-  const RouterContext = getRouterContext()
-
-  const context: RouterContextType = {
+  const contextValue: RouterContextValue = {
     router,
     location,
-    updateLocation,
+    updateLocation: setLocation,
   }
 
   return (
-    <RouterContext.Provider value={context}>{children}</RouterContext.Provider>
+    <RouterContext.Provider value={contextValue}>
+      {children}
+    </RouterContext.Provider>
   )
 }
 
-export function useInternalRouter(): RouterContextType {
-  return React.useContext(getRouterContext())
+/** @warning DO NOT EXPORT THIS TO USER LAND */
+export function useRouterContext(): RouterContextValue {
+  return React.useContext(RouterContext)
 }

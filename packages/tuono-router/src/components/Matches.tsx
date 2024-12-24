@@ -4,7 +4,7 @@ import useRoute from '../hooks/useRoute'
 
 import { RouteMatch } from './RouteMatch'
 import NotFound from './NotFound'
-import { useInternalRouter } from './RouterContext'
+import { useRouterContext } from './RouterContext'
 
 interface MatchesProps<TServerSideProps = unknown> {
   // user defined props
@@ -12,7 +12,7 @@ interface MatchesProps<TServerSideProps = unknown> {
 }
 
 export function Matches({ serverSideProps }: MatchesProps): React.JSX.Element {
-  const { location } = useInternalRouter()
+  const { location } = useRouterContext()
 
   const route = useRoute(location.pathname)
 

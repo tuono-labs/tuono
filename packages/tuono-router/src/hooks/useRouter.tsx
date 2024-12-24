@@ -1,4 +1,6 @@
-import { useInternalRouter } from '../components/RouterContext'
+import React from 'react'
+
+import { useRouterContext } from '../components/RouterContext'
 
 interface PushOptions {
   /**
@@ -7,7 +9,7 @@ interface PushOptions {
   scroll?: boolean
 }
 
-interface UseRouterHook {
+interface UseRouterResult {
   /**
    * Redirects to the path passed as argument updating the browser history.
    */
@@ -24,26 +26,29 @@ interface UseRouterHook {
   pathname: string
 }
 
-export const useRouter = (): UseRouterHook => {
-  const { location, updateLocation } = useInternalRouter()
+export const useRouter = (): UseRouterResult => {
+  const { location, updateLocation } = useRouterContext()
 
-  const push = (path: string, opt?: PushOptions): void => {
-    const { scroll = true } = opt || {}
-    const url = new URL(path, window.location.origin)
+  const push = React.useCallback(
+    (path: string, opt?: PushOptions): void => {
+      const { scroll = true } = opt || {}
+      const url = new URL(path, window.location.origin)
 
-    updateLocation({
-      href: url.href,
-      pathname: url.pathname,
-      search: Object.fromEntries(url.searchParams),
-      searchStr: url.search,
-      hash: url.hash,
-    })
-    history.pushState(path, '', path)
+      updateLocation({
+        href: url.href,
+        pathname: url.pathname,
+        search: Object.fromEntries(url.searchParams),
+        searchStr: url.search,
+        hash: url.hash,
+      })
+      history.pushState(path, '', path)
 
-    if (scroll) {
-      window.scroll(0, 0)
-    }
-  }
+      if (scroll) {
+        window.scroll(0, 0)
+      }
+    },
+    [updateLocation],
+  )
 
   return {
     push,
