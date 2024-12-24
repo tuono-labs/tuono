@@ -168,39 +168,15 @@ importers:
       '@babel/core':
         specifier: ^7.24.4
         version: 7.26.0
-      '@babel/generator':
-        specifier: ^7.23.6
-        version: 7.26.2
       '@babel/plugin-syntax-jsx':
         specifier: ^7.24.1
         version: 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-syntax-typescript':
         specifier: ^7.24.1
         version: 7.25.9(@babel/core@7.26.0)
-      '@babel/plugin-transform-react-jsx':
-        specifier: ^7.23.4
-        version: 7.25.9(@babel/core@7.26.0)
-      '@babel/plugin-transform-typescript':
-        specifier: ^7.24.1
-        version: 7.25.9(@babel/core@7.26.0)
-      '@babel/template':
-        specifier: ^7.24.0
-        version: 7.25.9
-      '@babel/traverse':
-        specifier: ^7.24.1
-        version: 7.25.9
-      '@babel/types':
-        specifier: ^7.24.0
-        version: 7.26.0
       '@rollup/plugin-inject':
         specifier: ^5.0.5
         version: 5.0.5(rollup@4.25.0)
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
-      '@types/node':
-        specifier: ^22.0.0
-        version: 22.10.0
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
         version: 3.7.2(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
@@ -226,9 +202,15 @@ importers:
       '@tanstack/config':
         specifier: 0.7.13
         version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
+      '@types/babel__core':
+        specifier: 7.20.5
+        version: 7.20.5
       '@types/babel__traverse':
         specifier: 7.20.6
         version: 7.20.6
+      '@types/node':
+        specifier: 22.10.0
+        version: 22.10.0
       '@types/react':
         specifier: 19.0.2
         version: 19.0.2
