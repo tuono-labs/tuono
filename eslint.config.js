@@ -11,16 +11,20 @@ export default tseslint.config(
     ignores: [
       // #region shared
       '**/dist',
+      '**/out',
       '**/.tuono',
       '**/vite.config.ts.timestamp**',
       // #endregion shared
 
       // #region package-specific
       'packages/tuono-fs-router-vite-plugin/tests/generator/**',
+
       'packages/tuono-lazy-fn-vite-plugin/tests/sources/**',
 
       'packages/tuono/bin/**',
       // #endregion package-specific
+
+      'examples/**',
     ],
   },
   {
