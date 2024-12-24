@@ -308,10 +308,10 @@ importers:
         specifier: 0.7.13
         version: 0.7.13(@types/node@22.10.0)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
       '@testing-library/jest-dom':
-        specifier: ^6.6.0
+        specifier: 6.6.3
         version: 6.6.3
       '@testing-library/react':
-        specifier: ^16.1.0
+        specifier: 16.1.0
         version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.2(@types/react@19.0.2))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@types/react':
         specifier: 19.0.2
@@ -320,7 +320,7 @@ importers:
         specifier: 3.7.2
         version: 3.7.2(vite@5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49)))
       jsdom:
-        specifier: ^25.0.0
+        specifier: 25.0.1
         version: 25.0.1
       react:
         specifier: 19.0.0
@@ -329,7 +329,7 @@ importers:
         specifier: 5.4.11
         version: 5.4.11(@types/node@22.10.0)(sugarss@4.0.1(postcss@8.4.49))
       vitest:
-        specifier: ^2.0.0
+        specifier: 2.1.6
         version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
 packages:
