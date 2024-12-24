@@ -3,8 +3,8 @@
   "description": "The basic tutorial for tuono applications",
   "version": "0.0.1",
   "dependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tuono": "link:../../packages/tuono"
   },
   "devDependencies": {
