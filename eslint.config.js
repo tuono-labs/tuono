@@ -21,6 +21,8 @@ export default tseslint.config(
 
       'packages/tuono/bin/**',
       // #endregion package-specific
+
+      'examples/**',
     ],
   },
   {
