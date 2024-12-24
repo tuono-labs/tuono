@@ -6,8 +6,10 @@ use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 
-const GITHUB_TUONO_REPO_URL: &str =
-    "https://api.github.com/repos/tuono-labs/tuono/git/trees/main?recursive=1";
+const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
+
+const GITHUB_TUONO_TAG_COMMIT_TREES_URL: &str =
+    "https://api.github.com/repos/tuono-labs/tuono/git/trees/";
 
 const GITHUB_RAW_CONTENT_URL: &str = "https://raw.githubusercontent.com/tuono-labs/tuono/main/";
 
@@ -20,7 +22,17 @@ enum GithubFileType {
 }
 
 #[derive(Deserialize, Debug)]
-struct GithubResponse<T> {
+struct GithubTagObject {
+    sha: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct GithubTagResponse {
+    object: GithubTagObject,
+}
+
+#[derive(Deserialize, Debug)]
+struct GithubTreeResponse<T> {
     tree: Vec<T>,
 }
 
@@ -49,14 +61,30 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .build()
         .expect("Failed to build reqwest client");
 
-    let res = client
-        .get(GITHUB_TUONO_REPO_URL)
-        .send()
-        .expect("Failed to call the folder github API")
-        .json::<GithubResponse<GithubFile>>()
-        .expect("Failed to parse the repo structure");
+    let cli_version: &str = crate_version!();
 
-    let new_project_files = res
+    let res_tag = client
+        .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+        .send()
+        .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
+        .json::<GithubTagResponse>()
+        .expect("Failed to parse the tag response");
+
+    let sha_tagged_commit = res_tag.object.sha;
+
+    let res_tree = client
+        .get(format!(
+            "{}{}?recursive=1",
+            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
+        ))
+        .send()
+        .unwrap_or_else(|_| {
+            panic!("Failed to call the tagged commit tree github API for v{cli_version}")
+        })
+        .json::<GithubTreeResponse<GithubFile>>()
+        .expect("Failed to parse the tree structure");
+
+    let new_project_files = res_tree
         .tree
         .iter()
         .filter(|GithubFile { path, .. }| path.starts_with(&format!("examples/{template}/")))
