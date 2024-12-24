@@ -1,4 +1,4 @@
-import { type ReactNode, type JSX, Suspense } from 'react'
+import type { ReactNode, JSX } from 'react'
 
 interface RootRouteProps {
   children: ReactNode
@@ -7,7 +7,9 @@ interface RootRouteProps {
 export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   return (
     <html>
-      <body className="main">{children}</body>
+      <body>
+        <main>{children}</main>
+      </body>
     </html>
   )
 }
