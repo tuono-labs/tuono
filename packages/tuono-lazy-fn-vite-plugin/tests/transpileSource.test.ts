@@ -4,7 +4,7 @@ import os from 'node:os'
 import { it, expect, describe } from 'vitest'
 import type { Plugin } from 'vite'
 
-import { LazyLoadingPlugin } from '../src'
+import { TuonoLazyFnPlugin } from '../src'
 
 type ViteTransformHandler = Exclude<
   Plugin['transform'],
@@ -17,7 +17,7 @@ function getTransform(): (...args: Parameters<ViteTransformHandler>) => string {
   /** @warning Keep in sync with {@link createBaseViteConfigFromTuonoConfig} */
   const pluginFilesInclude = /\.(jsx|js|mdx|md|tsx|ts)$/
 
-  return LazyLoadingPlugin({ include: pluginFilesInclude }).transform as never
+  return TuonoLazyFnPlugin({ include: pluginFilesInclude }).transform as never
 }
 
 describe('"dynamic" sources', async () => {
