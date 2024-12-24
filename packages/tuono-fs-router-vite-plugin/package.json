@@ -7,8 +7,8 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "lint": "eslint .",
-    "format": "prettier -u --write --ignore-unknown '**/*'",
-    "format:check": "prettier --check --ignore-unknown '**/*'",
+    "format": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
+    "format:check": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
     "types": "tsc --noEmit",
     "test:watch": "vitest",
     "test": "vitest run"
