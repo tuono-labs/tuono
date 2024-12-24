@@ -35,24 +35,21 @@ type Mode = 'Dev' | 'Prod'
 
 const TUONO_DEV_SERVER_PORT = 3000
 const VITE_PROXY_PATH = '/vite-server'
-
-const VITE_DEV_AND_HMR = `import RefreshRuntime from 'http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}/@react-refresh'
-RefreshRuntime.injectIntoGlobalHook(window)
-window.$RefreshReg$ = () => {}
-window.$RefreshSig$ = () => (type) => type
-window.__vite_plugin_react_preamble_installed__ = true`
+const SCRIPT_BASE_URL = `http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}`
 
 const ViteScripts = (): ReactNode => (
   <>
-    <script type="module">{VITE_DEV_AND_HMR}</script>
-    <script
-      type="module"
-      src={`http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}/@vite/client`}
-    ></script>
-    <script
-      type="module"
-      src={`http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}/client-main.tsx`}
-    ></script>
+    <script type="module">
+      {[
+        `import RefreshRuntime from '${SCRIPT_BASE_URL}/@react-refresh'`,
+        'RefreshRuntime.injectIntoGlobalHook(window)',
+        'window.$RefreshReg$ = () => {}',
+        'window.$RefreshSig$ = () => (type) => type',
+        'window.__vite_plugin_react_preamble_installed__ = true',
+      ].join('\n')}
+    </script>
+    <script type="module" src={`${SCRIPT_BASE_URL}/@vite/client`}></script>
+    <script type="module" src={`${SCRIPT_BASE_URL}/client-main.tsx`}></script>
   </>
 )
 
@@ -86,11 +83,7 @@ export function serverSideRendering(routeTree: RouteTree) {
       <>
         <RouterProvider router={router} serverProps={serverProps as never} />
         {mode === 'Dev' && <ViteScripts />}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.__TUONO_SSR_PROPS__=${payload as string}`,
-          }}
-        />
+        <script>{`window.__TUONO_SSR_PROPS__=${payload as string}`}</script>
       </>,
     )
 
