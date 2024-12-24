@@ -89,11 +89,14 @@ export function RouterContextProvider({
     }
   }, [])
 
-  const contextValue: RouterContextValue = {
-    router,
-    location,
-    updateLocation: setLocation,
-  }
+  const contextValue: RouterContextValue = React.useMemo(
+    () => ({
+      router,
+      location,
+      updateLocation: setLocation,
+    }),
+    [location, router],
+  )
 
   return (
     <RouterContext.Provider value={contextValue}>
