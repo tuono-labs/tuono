@@ -8,7 +8,7 @@ const ROUTES_DIRECTORY_PATH = './src/routes'
 
 let lock = false
 
-export default function RouterGenerator(): Plugin {
+export function TuonoFsRouterPlugin(): Plugin {
   const generate = async (): Promise<void> => {
     if (lock) return
     lock = true
