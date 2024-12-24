@@ -64,25 +64,23 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     let cli_version: &str = crate_version!();
 
     let res_tag = client
-        .get(&format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+        .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
         .send()
-        .expect(&format!(
-            "Failed to call the tag github API for v{cli_version}"
-        ))
+        .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
         .json::<GithubTagResponse>()
         .expect("Failed to parse the tag response");
 
     let sha_tagged_commit = res_tag.object.sha;
 
     let res_tree = client
-        .get(&format!(
+        .get(format!(
             "{}{}?recursive=1",
             GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
         ))
         .send()
-        .expect(&format!(
-            "Failed to call the tagged commit tree github API for v{cli_version}"
-        ))
+        .unwrap_or_else(|_| {
+            panic!("Failed to call the tagged commit tree github API for v{cli_version}")
+        })
         .json::<GithubTreeResponse<GithubFile>>()
         .expect("Failed to parse the tree structure");
 
