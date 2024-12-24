@@ -1,6 +1,6 @@
 {
   "name": "tuono-router",
-  "version": "0.16.7",
+  "version": "0.16.8",
   "description": "React routing component for the framework tuono. Tuono is the react/rust fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
