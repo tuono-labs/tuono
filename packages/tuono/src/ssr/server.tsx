@@ -3,8 +3,10 @@ import 'fast-text-encoding' // Mandatory TextEncoder and TextDecoder polyfills
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 
 /**
- * The polyfill for MessageChannel need to be done here,
- * otherwise React might encounter error since it
+ * The polyfill for MessageChannel need to be done here.
+ * React might throw an error since it needs it right away,
+ * unlike other polyfills like ReadableStream or TextDecoder,
+ * and the polyfill itself is not hoisted
  */
 // eslint-disable-next-line import/newline-after-import
 ;(function (
