@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { createContext, useState, useEffect, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
@@ -19,7 +19,7 @@ interface RouterContextValue {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const RouterContext = React.createContext<RouterContextValue>(null!)
+const RouterContext = createContext<RouterContextValue>(null!)
 
 function getInitialLocation(
   serverSideProps?: ServerRouterInfo,
@@ -89,7 +89,7 @@ export function RouterContextProvider({
     }
   }, [])
 
-  const contextValue: RouterContextValue = React.useMemo(
+  const contextValue: RouterContextValue = useMemo(
     () => ({
       router,
       location,
@@ -107,5 +107,5 @@ export function RouterContextProvider({
 
 /** @warning DO NOT EXPORT THIS TO USER LAND */
 export function useRouterContext(): RouterContextValue {
-  return React.useContext(RouterContext)
+  return useContext(RouterContext)
 }
