@@ -29,8 +29,8 @@ RUN ["pnpm", "install", "-g", "turbo"]
 # Install cargo-watch for Rust live-reloading
 RUN ["cargo", "install", "cargo-watch"]
 
-# Set the working directory to /app
-WORKDIR /app
+# Set the working directory to /tuono
+WORKDIR /tuono
 
 # Copy project files into the container (excepted files/dir declared in .dockerignore)
 COPY . .
@@ -40,4 +40,4 @@ RUN ["pnpm", "install"]
 
 # Compile and add the directory with compiled binaries to the PATH for direct access
 RUN ["cargo", "build"]
-ENV PATH=/app/target/debug:$PATH
+ENV PATH=/tuono/target/debug:$PATH

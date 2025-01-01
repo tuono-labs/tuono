@@ -14,9 +14,9 @@ services:
       - "3000:3000" # frontend 
       - "3001:3001" # backend
     volumes: # mount the project into a volume but node_modules / .pnpm-store / target / .turbo directories won't by sync from container to host
-      - ..:/app
-      - /app/node_modules
-      - /app/.pnpm-store
-      - /app/target
-      - /app/.turbo
+      - ..:/tuono
+      - /tuono/node_modules
+      - /tuono/.pnpm-store
+      - /tuono/target
+      - /tuono/.turbo
     tty: true
