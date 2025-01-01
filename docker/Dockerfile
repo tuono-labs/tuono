@@ -19,12 +19,11 @@ RUN ["sh", "-c", ". /usr/local/nvm/nvm.sh && nvm install ${NODE_VERSION}"]
 # Ensure Node.js binaries are available in the PATH
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-# Install pnpm and turbo globally
+# Install pnpm
 RUN ["npm", "install", "-g", "pnpm"]
 RUN ["mkdir", "/pnpm"]
 ENV PATH=/pnpm:$PATH
 ENV PNPM_HOME=/pnpm
-RUN ["pnpm", "install", "-g", "turbo"]
 
 # Install cargo-watch for Rust live-reloading
 RUN ["cargo", "install", "cargo-watch"]
