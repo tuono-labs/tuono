@@ -1,26 +1,46 @@
-import 'fast-text-encoding' // Mandatory TextEncoder and TextDecoder polyfills
-// eslint-disable-next-line import/order
+/**
+ * POLYFILLS START HERE ---------------------------------------
+ *
+ * Tuono internally uses a V8 JS engine that implements very few
+ * browser/node/deno APIs in order to make it super fast and
+ * share it within a multi thread runtime.
+ *
+ * While this is the reason of its speed some JS APIs needed for server side rendering are
+ * still required to be polyfilled.
+ *
+ * We basically have three ways to polyfill APIs:
+ * 1. Create them with rust and expose them directly through the V8 engine to
+ * the JS source.
+ * 2. Polyfill them at the beginning of the JS source
+ * 3. Inject them when needed with rollup-inject plugin
+ *
+ * Why not all the libraries can be just injected with rollup-inject?
+ *
+ * Unfortunately the following APIs are JS classes so leaving to rollup the
+ * duty of linking them can cause to declare them after their usage.
+ *
+ * Classes are not hoisted leading then to a ReferenceError.
+ *
+ * The best solution is to create these polyfills within the rust environment
+ * and share the classes in the JS scope by passing them through the V8 engine (best for speed and
+ * code quality).
+ *
+ * This function might be a good entry point for adding such polyfills
+ * https://docs.rs/ssr_rs/latest/ssr_rs/struct.Ssr.html#method.add_global_fn
+ */
+import 'fast-text-encoding'
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 
-/**
- * The polyfill for MessageChannel need to be done here.
- * React might throw an error since it needs it right away,
- * unlike other polyfills like ReadableStream or TextDecoder,
- * and the polyfill itself is not hoisted
- */
 // eslint-disable-next-line import/newline-after-import
 ;(function (
   scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
 ): void {
   scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
-})(
-  typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-      ? global
-      : this,
-)
+})(this)
 
+/**
+ * POLYFILLS END HERE ----------------------------------------
+ */
 import type { ReadableStream } from 'node:stream/web'
 
 import type { ReactNode } from 'react'
