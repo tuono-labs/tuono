@@ -3,4 +3,6 @@ pnpm-lock.yaml
 dist
 .tuono
 
+vite.config.ts.timestamp-*
+
 packages/tuono-lazy-fn-vite-plugin/tests/sources/*
