@@ -11,8 +11,7 @@ services:
         NODE_VERSION: 22.11.0
     image: tuono-source-image
     ports:
-      - "3000:3000" # frontend 
-      - "3001:3001" # backend
+      - "3000:3000" # for apps/documentation frontend app
     volumes: # mount the project into a volume but node_modules / .pnpm-store / target / .turbo directories won't by sync from container to host
       - ..:/tuono
       - /tuono/node_modules
