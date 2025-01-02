@@ -9,7 +9,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   return (
     <html>
       <body>
-        <main className="main">
+        <main>
           <MDXProvider components={{}}>{children}</MDXProvider>
         </main>
       </body>
