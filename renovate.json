@@ -2,5 +2,17 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "ignorePaths": ["**/benches/**"],
-  "schedule": ["every 2 weeks on monday"]
+  "schedule": ["every 2 weeks on monday"],
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchPackageNames": [
+        "eslint",
+        "eslint-*",
+        "typescript-eslint",
+        "@eslint/**"
+      ],
+      "groupName": "devDependencies (eslint)"
+    }
+  ]
 }
