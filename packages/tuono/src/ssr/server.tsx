@@ -29,8 +29,9 @@
  * https://docs.rs/ssr_rs/latest/ssr_rs/struct.Ssr.html#method.add_global_fn
  */
 import 'fast-text-encoding'
-import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 
+// eslint-disable-next-line import/order
+import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 // eslint-disable-next-line import/newline-after-import
 ;(function (
   scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
@@ -43,68 +44,21 @@ import { MessageChannelPolyfill } from './polyfills/MessageChannel'
  */
 import type { ReadableStream } from 'node:stream/web'
 
-import type { ReactNode } from 'react'
 import { renderToReadableStream } from 'react-dom/server'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
+import {
+  ProductionScriptLinks,
+  ProductionCssLinks,
+} from './components/ProductionTags'
+import { ViteScripts } from './components/ViteScripts'
+
+import type { Mode } from './types'
 import { streamToString } from './utils'
 
 type RouteTree = ReturnType<typeof createRoute>
-type Mode = 'Dev' | 'Prod'
 
-const TUONO_DEV_SERVER_PORT = 3000
-const VITE_PROXY_PATH = '/vite-server'
-const SCRIPT_BASE_URL = `http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}`
-
-const ViteScripts = (): ReactNode => (
-  <>
-    <script type="module">
-      {[
-        `import RefreshRuntime from '${SCRIPT_BASE_URL}/@react-refresh'`,
-        'RefreshRuntime.injectIntoGlobalHook(window)',
-        'window.$RefreshReg$ = () => {}',
-        'window.$RefreshSig$ = () => (type) => type',
-        'window.__vite_plugin_react_preamble_installed__ = true',
-      ].join('\n')}
-    </script>
-    <script type="module" src={`${SCRIPT_BASE_URL}/@vite/client`}></script>
-    <script type="module" src={`${SCRIPT_BASE_URL}/client-main.tsx`}></script>
-  </>
-)
-
-interface ProductionBunldesProps {
-  bundles: Array<string>
-  mode: Mode
-}
-
-const ProductionCssLinks = ({
-  bundles,
-  mode,
-}: ProductionBunldesProps): ReactNode => {
-  if (mode === 'Dev') return null
-  return (
-    <>
-      {bundles.map((cssHref) => (
-        <link rel="stylesheet" type="text/css" href={`/${cssHref}`} />
-      ))}
-    </>
-  )
-}
-
-const ProductionScriptLinks = ({
-  bundles,
-  mode,
-}: ProductionBunldesProps): ReactNode => {
-  if (mode === 'Dev') return null
-  return (
-    <>
-      {bundles.map((scriptSrc) => (
-        <script type="module" src={`/${scriptSrc}`}></script>
-      ))}
-    </>
-  )
-}
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
     const serverProps = (payload ? JSON.parse(payload) : {}) as Record<
