@@ -44,12 +44,8 @@ import { renderToReadableStream } from 'react-dom/server'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
-import {
-  ProductionScriptLinks,
-  ProductionCssLinks,
-} from './components/ProductionTags'
-import { ViteScripts } from './components/ViteScripts'
-
+import { DevResources } from './components/DevResources'
+import { ProdResources } from './components/ProdResources'
 import type { Mode } from './types'
 import { streamToString } from './utils'
 
@@ -69,10 +65,13 @@ export function serverSideRendering(routeTree: RouteTree) {
 
     const stream = await renderToReadableStream(
       <>
-        <ProductionCssLinks mode={mode} bundles={cssBundles} />
-        <ProductionScriptLinks mode={mode} bundles={jsBundles} />
         <RouterProvider router={router} serverProps={serverProps as never} />
-        {mode === 'Dev' && <ViteScripts />}
+
+        {mode === 'Dev' && <DevResources />}
+        {mode === 'Prod' && (
+          <ProdResources cssBundles={cssBundles} jsBundles={jsBundles} />
+        )}
+
         <script>{`window.__TUONO_SSR_PROPS__=${payload as string}`}</script>
       </>,
     )

@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
+import type { JSX } from 'react'
 
 const TUONO_DEV_SERVER_PORT = 3000
 const VITE_PROXY_PATH = '/vite-server'
 const SCRIPT_BASE_URL = `http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}`
 
-export const ViteScripts = (): ReactNode => (
+export const DevResources = (): JSX.Element => (
   <>
     <script type="module">
       {[
