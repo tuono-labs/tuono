@@ -1,47 +1,43 @@
+// #region POLYFILLS
 /**
- * POLYFILLS START HERE ---------------------------------------
- *
  * Tuono internally uses a V8 JS engine that implements very few
  * browser/node/deno APIs in order to make it super fast and
  * share it within a multi thread runtime.
  *
- * While this is the reason of its speed some JS APIs needed for server side rendering are
- * still required to be polyfilled.
+ * While this is the reason of its speed, server side rendering
+ * requires some JS APIs that need to be polyfilled.
  *
  * We basically have three ways to polyfill APIs:
  * 1. Create them with rust and expose them directly through the V8 engine to
- * the JS source.
+ *    the JS source.
  * 2. Polyfill them at the beginning of the JS source
- * 3. Inject them when needed with rollup-inject plugin
+ *    (what we are doing here)
+ * 3. Inject them via rollup-inject plugin, when needed
  *
- * Why not all the libraries can be just injected with rollup-inject?
- *
- * Unfortunately the following APIs are JS classes so leaving to rollup the
- * duty of linking them can cause to declare them after their usage.
- *
- * Classes are not hoisted leading then to a ReferenceError.
+ * Q: Why not all the libraries can be just injected with rollup-inject?
+ * A: Leaving to rollup the duty of linking them can cause to declare them after their usage.
+ *    The following APIs are JS classes, and are not hoisted, hence this might
+ *    cause ReferenceError(s).
  *
  * The best solution is to create these polyfills within the rust environment
- * and share the classes in the JS scope by passing them through the V8 engine (best for speed and
- * code quality).
+ * and share the classes in the JS scope by passing them through the V8 engine
+ * (best for speed and code quality).
  *
  * This function might be a good entry point for adding such polyfills
  * https://docs.rs/ssr_rs/latest/ssr_rs/struct.Ssr.html#method.add_global_fn
  */
 import 'fast-text-encoding'
 
-// eslint-disable-next-line import/order
+/* eslint-disable import/order, import/newline-after-import */
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
-// eslint-disable-next-line import/newline-after-import
 ;(function (
   scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
 ): void {
   scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
 })(this)
+/* eslint-enable import/order, import/newline-after-import */
+// #endregion POLYFILLS
 
-/**
- * POLYFILLS END HERE ----------------------------------------
- */
 import type { ReadableStream } from 'node:stream/web'
 
 import { renderToReadableStream } from 'react-dom/server'
