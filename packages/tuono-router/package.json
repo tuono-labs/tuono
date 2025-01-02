@@ -50,7 +50,7 @@
     "react-intersection-observer": "^9.13.0"
   },
   "devDependencies": {
-    "@tanstack/config": "0.7.13",
+    "@tanstack/config": "0.15.0",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.0",
     "@types/react": "18.3.18",

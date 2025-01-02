@@ -114,7 +114,7 @@
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
-    "@tanstack/config": "0.7.13",
+    "@tanstack/config": "0.15.0",
     "@types/babel-traverse": "^6.25.10",
     "@types/babel__traverse": "^7.20.6",
     "@types/react": "18.3.18",
