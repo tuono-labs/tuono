@@ -83,30 +83,5 @@ export function serverSideRendering(routeTree: RouteTree) {
       // ReadableStream should be implemented in node)
       stream as unknown as ReadableStream<Uint8Array>,
     )
-
-    //return `<!doctype html>
-    //<html ${helmet.htmlAttributes.toString()}>
-    //<head>
-    //${helmet.title.toString()}
-    //${helmet.priority.toString()}
-    //${helmet.meta.toString()}
-    //${helmet.link.toString()}
-    //${helmet.script.toString()}
-    //${generateCssLinks(cssBundles, mode)}
-    //</head>
-    //<body ${helmet.bodyAttributes.toString()}>
-    //<div id="__tuono">${app}</div>
-    //${renderToStaticMarkup(
-    //<script
-    //dangerouslySetInnerHTML={{
-    //__html: `window.__TUONO_SSR_PROPS__=${payload as string}`,
-    //}}
-    ///>,
-    //)}
-    //${generateJsScripts(jsBundles, mode)}
-    //${mode === 'Dev' ? VITE_DEV_AND_HMR : ''}
-    //</body>
-    //</html>
-    //`
   }
 }
