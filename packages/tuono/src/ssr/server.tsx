@@ -53,20 +53,38 @@ const ViteScripts = (): ReactNode => (
   </>
 )
 
-// function generateCssLinks(cssBundles: Array<string>, mode: Mode): string {
-//   if (mode === 'Dev') return ''
-//   return cssBundles.reduce((acc, value) => {
-//     return acc + `<link rel="stylesheet" type="text/css" href="/${value}" />`
-//   }, '')
-// }
+interface ProductionBunldesProps {
+  bundles: Array<string>
+  mode: Mode
+}
 
-// function generateJsScripts(jsBundles: Array<string>, mode: Mode): string {
-//   if (mode === 'Dev') return ''
-//   return jsBundles.reduce((acc, value) => {
-//     return acc + `<script type="module" src="/${value}"></script>`
-//   }, '')
-// }
+const ProductionCssLinks = ({
+  bundles,
+  mode,
+}: ProductionBunldesProps): ReactNode => {
+  if (mode === 'Dev') return null
+  return (
+    <>
+      {bundles.map((cssHref) => (
+        <link rel="stylesheet" type="text/css" href={`/${cssHref}`} />
+      ))}
+    </>
+  )
+}
 
+const ProductionScriptLinks = ({
+  bundles,
+  mode,
+}: ProductionBunldesProps): ReactNode => {
+  if (mode === 'Dev') return null
+  return (
+    <>
+      {bundles.map((scriptSrc) => (
+        <script type="module" src={`/${scriptSrc}`}></script>
+      ))}
+    </>
+  )
+}
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
     const serverProps = (payload ? JSON.parse(payload) : {}) as Record<
@@ -75,12 +93,14 @@ export function serverSideRendering(routeTree: RouteTree) {
     >
 
     const mode = serverProps.mode as Mode
-    // const jsBundles = serverProps.jsBundles as Array<string>
-    // const cssBundles = serverProps.cssBundles as Array<string>
+    const jsBundles = serverProps.jsBundles as Array<string>
+    const cssBundles = serverProps.cssBundles as Array<string>
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
       <>
+        <ProductionCssLinks mode={mode} bundles={cssBundles} />
+        <ProductionScriptLinks mode={mode} bundles={jsBundles} />
         <RouterProvider router={router} serverProps={serverProps as never} />
         {mode === 'Dev' && <ViteScripts />}
         <script>{`window.__TUONO_SSR_PROPS__=${payload as string}`}</script>
