@@ -14,7 +14,7 @@ use std::process::Stdio;
 use crate::route::Route;
 
 const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
-const IGNORE_FILES: [&str; 1] = ["__root"];
+const IGNORE_FILES: [&str; 1] = ["__layout"];
 
 #[cfg(target_os = "windows")]
 const ROUTES_FOLDER_PATH: &str = "\\src\\routes";
@@ -333,8 +333,8 @@ mod tests {
         app.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
-            "/home/user/Documents/tuono/src/routes/__root.tsx",
-            "/home/user/Documents/tuono/src/routes/posts/__root.tsx",
+            "/home/user/Documents/tuono/src/routes/__layout.tsx",
+            "/home/user/Documents/tuono/src/routes/posts/__layout.tsx",
         ];
 
         routes.into_iter().for_each(|route| {

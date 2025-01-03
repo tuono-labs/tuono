@@ -42,7 +42,7 @@ interface TraverseRootComponentsProps<TData = unknown> {
 
 /*
  * This component traverses and renders
- * all the components that wraps the selected route (__root).
+ * all the components that wraps the selected route (__layout).
  * The parents components need to be memoized in order to avoid
  * re-rendering bugs when changing route.
  */

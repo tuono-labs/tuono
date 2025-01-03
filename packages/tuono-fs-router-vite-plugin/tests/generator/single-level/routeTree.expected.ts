@@ -2,12 +2,12 @@
 
 import { createRoute, dynamic } from 'tuono'
 
-import RootImport from './routes/__root'
+import RootLayoutImport from './routes/__layout'
 
 const AboutImport = dynamic(() => import('./routes/about'))
 const IndexImport = dynamic(() => import('./routes/index'))
 
-const rootRoute = createRoute({ isRoot: true, component: RootImport })
+const rootRoute = createRoute({ isRoot: true, component: RootLayoutImport })
 
 const About = createRoute({ component: AboutImport })
 const Index = createRoute({ component: IndexImport })

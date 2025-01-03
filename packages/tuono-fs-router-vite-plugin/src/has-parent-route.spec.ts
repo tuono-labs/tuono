@@ -13,12 +13,12 @@ const routes = [
     cleanedPath: '/posts/[post]',
   },
   {
-    filePath: 'posts/__root.tsx',
+    filePath: 'posts/__layout.tsx',
     fullPath:
-      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
-    routePath: '/posts/__root',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__layout.tsx',
+    routePath: '/posts/__layout',
     variableName: 'Postsroot',
-    path: '/posts/__root',
+    path: '/posts/__layout',
     cleanedPath: '/posts',
   },
   {
@@ -42,12 +42,12 @@ const routes = [
 ]
 
 const parent = {
-  filePath: 'posts/__root.tsx',
+  filePath: 'posts/__layout.tsx',
   fullPath:
-    '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__root.tsx',
-  routePath: '/posts/__root',
+    '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root/routes/posts/__layout.tsx',
+  routePath: '/posts/__layout',
   variableName: 'Postsroot',
-  path: '/posts/__root',
+  path: '/posts/__layout',
   cleanedPath: '/posts',
 }
 

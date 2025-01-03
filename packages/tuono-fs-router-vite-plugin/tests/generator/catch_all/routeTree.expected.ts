@@ -2,14 +2,14 @@
 
 import { createRoute, dynamic } from 'tuono'
 
-import RootImport from './routes/__root'
+import RootLayoutImport from './routes/__layout'
 
 const IndexImport = dynamic(() => import('./routes/index'))
 const PostscatchallImport = dynamic(
   () => import('./routes/posts/[...catch_all]'),
 )
 
-const rootRoute = createRoute({ isRoot: true, component: RootImport })
+const rootRoute = createRoute({ isRoot: true, component: RootLayoutImport })
 
 const Index = createRoute({ component: IndexImport })
 const Postscatchall = createRoute({ component: PostscatchallImport })

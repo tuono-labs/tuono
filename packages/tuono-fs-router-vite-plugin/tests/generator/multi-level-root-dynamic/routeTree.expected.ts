@@ -2,18 +2,18 @@
 
 import { createRoute, dynamic } from 'tuono'
 
-import RootImport from './routes/__root'
+import RootLayoutImport from './routes/__layout'
 
-const PostsrootImport = dynamic(() => import('./routes/posts/__root'))
+const PostslayoutImport = dynamic(() => import('./routes/posts/__layout'))
 const AboutImport = dynamic(() => import('./routes/about'))
 const IndexImport = dynamic(() => import('./routes/index'))
 const PostspostImport = dynamic(() => import('./routes/posts/[post]'))
 const PostsIndexImport = dynamic(() => import('./routes/posts/index'))
 const PostsMyPostImport = dynamic(() => import('./routes/posts/my-post'))
 
-const rootRoute = createRoute({ isRoot: true, component: RootImport })
+const rootRoute = createRoute({ isRoot: true, component: RootLayoutImport })
 
-const Postsroot = createRoute({ component: PostsrootImport, isRoot: true })
+const Postslayout = createRoute({ component: PostslayoutImport, isRoot: true })
 const About = createRoute({ component: AboutImport })
 const Index = createRoute({ component: IndexImport })
 const Postspost = createRoute({ component: PostspostImport })
@@ -22,7 +22,7 @@ const PostsMyPost = createRoute({ component: PostsMyPostImport })
 
 // Create/Update Routes
 
-const PostsrootRoute = Postsroot.update({
+const PostslayoutRoute = Postslayout.update({
   getParentRoute: () => rootRoute,
 })
 
@@ -38,17 +38,17 @@ const IndexRoute = Index.update({
 
 const PostspostRoute = Postspost.update({
   path: '/posts/[post]',
-  getParentRoute: () => PostsrootRoute,
+  getParentRoute: () => PostslayoutRoute,
 })
 
 const PostsIndexRoute = PostsIndex.update({
   path: '/posts',
-  getParentRoute: () => PostsrootRoute,
+  getParentRoute: () => PostslayoutRoute,
 })
 
 const PostsMyPostRoute = PostsMyPost.update({
   path: '/posts/my-post',
-  getParentRoute: () => PostsrootRoute,
+  getParentRoute: () => PostslayoutRoute,
 })
 
 // Create and export the route tree
@@ -56,7 +56,7 @@ const PostsMyPostRoute = PostsMyPost.update({
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AboutRoute,
-  PostsrootRoute.addChildren([
+  PostslayoutRoute.addChildren([
     PostsMyPostRoute,
     PostsIndexRoute,
     PostspostRoute,

@@ -54,7 +54,7 @@ then it will be accessible at `posts/1`, `posts/2`, etc.
 ## The Root route (Layout components)
 
 Tuono allows you to have a layout component to wrap all the routes included within the same folder.
-To define such component you will have to create a `__root.tsx` file (is allowed only a single `__root` file per folder).
+To define such component you will have to create a `__layout.tsx` file (is allowed only a single `__layout` file per folder).
 
 This file won't generate any route.
 
@@ -63,7 +63,7 @@ This file won't generate any route.
 A file created in this location will wrap all project route.
 
 ```tsx
-// src/routes/__root.tsx
+// src/routes/__layout.tsx
 export default function RootLayout({ children }) {
   return <main>{children}</main>
 }
@@ -74,8 +74,8 @@ export default function RootLayout({ children }) {
 A file created in this location will wrap only the routes defined within the `src/routes/posts` folder.
 
 ```tsx
-// src/routes/posts/__root.tsx
-export default function PostRootLayout({ children }) {
+// src/routes/posts/__layout.tsx
+export default function PostLayout({ children }) {
   return <article>{children}</article>
 }
 ```
@@ -86,9 +86,9 @@ Referring to the two examples above consider that:
 
 ```tsx
 <RootLayout>
-  <PostRootLayout>
+  <PostLayout>
     <ExamplePost />
-  </PostRootLayout>
+  </PostLayout>
 </RootLayout>
 ```
 
