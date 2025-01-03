@@ -3,7 +3,7 @@ use time::OffsetDateTime;
 use tuono_lib::axum::http::{header, HeaderMap, StatusCode};
 use tuono_lib::{Request, Response};
 
-const FILE_TO_EXCLUDE: [&str; 2] = ["sitemap.xml", "__root"];
+const FILES_TO_EXCLUDE: [&str; 2] = ["sitemap.xml", "__layout"];
 
 const SITEMAP: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -20,7 +20,7 @@ fn load_routes() -> Vec<String> {
         if !entry.is_dir() {
             let path = clean_path(format!("/{}", entry.to_string_lossy()));
 
-            if !FILE_TO_EXCLUDE
+            if !FILES_TO_EXCLUDE
                 .iter()
                 .any(|exclude| path.ends_with(exclude))
             {

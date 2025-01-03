@@ -1,4 +1,4 @@
-import { ROOT_PATH_ID } from './constants'
+import { LAYOUT_PATH_ID } from './constants'
 import { multiSortBy } from './utils'
 import type { RouteNode } from './types'
 
@@ -19,15 +19,15 @@ export function hasParentRoute(
     (d): number => d.routePath.length * -1,
     (d): string | undefined => d.variableName,
   ])
-    // Exclude base __root file
-    .filter((d) => d.routePath !== `/${ROOT_PATH_ID}`)
+    // Exclude base __layout file
+    .filter((d) => d.routePath !== `/${LAYOUT_PATH_ID}`)
 
   for (const route of sortedNodes) {
     if (route.routePath === '/') continue
 
     if (
       route.routePath.startsWith(parentRoutePath) &&
-      route.routePath.endsWith(ROOT_PATH_ID)
+      route.routePath.endsWith(LAYOUT_PATH_ID)
     ) {
       return route
     }

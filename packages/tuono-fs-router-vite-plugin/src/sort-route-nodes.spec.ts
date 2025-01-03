@@ -22,10 +22,10 @@ const routes = [
     cleanedPath: '/about',
   },
   {
-    filePath: '__root.tsx',
+    filePath: '__layout.tsx',
     fullPath:
-      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/__root.tsx',
-    routePath: '/__root',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/__layout.tsx',
+    routePath: '/__layout',
     variableName: 'root',
   },
   {
@@ -50,10 +50,10 @@ const routes = [
     variableName: 'PostsIndex',
   },
   {
-    filePath: 'posts/__root.tsx',
+    filePath: 'posts/__layout.tsx',
     fullPath:
-      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/posts/__root.tsx',
-    routePath: '/posts/__root',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/posts/__layout.tsx',
+    routePath: '/posts/__layout',
     variableName: 'Postsroot',
   },
 ]
@@ -78,10 +78,10 @@ const expectedSorting = [
     cleanedPath: '/about',
   },
   {
-    filePath: 'posts/__root.tsx',
+    filePath: 'posts/__layout.tsx',
     fullPath:
-      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/posts/__root.tsx',
-    routePath: '/posts/__root',
+      '/tuono/packages/tuono-fs-router-vite-plugin/tests/generator/multi-level-root-dynamic/routes/posts/__layout.tsx',
+    routePath: '/posts/__layout',
     variableName: 'Postsroot',
   },
   {
