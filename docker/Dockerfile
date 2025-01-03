@@ -1,42 +1,50 @@
-# Use the specified Rust version and base OS as the base image
+# ARGs obtained from the compose.yml file
+
 ARG BASE_OS
 ARG RUST_VERSION
+
 FROM rust:${RUST_VERSION}-${BASE_OS}
 
 # Nodejs installation
-RUN ["mkdir", "/usr/local/nvm"]
-ENV NVM_DIR /usr/local/nvm
 
-RUN ["apt", "update"]
-RUN ["apt", "install", "curl", "-y", "--no-install-recommends"]
+RUN ["mkdir", "/usr/local/node"]
+WORKDIR /usr/local/node
 
-RUN ["curl", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh", "-o", "/tmp/install_nvm.sh"]
-RUN ["bash", "/tmp/install_nvm.sh"]
+## Retrieves the targeted version of Node in the container
 
-ARG NODE_VERSION
-RUN ["sh", "-c", ". /usr/local/nvm/nvm.sh && nvm install ${NODE_VERSION}"]
+COPY .nvmrc /tmp/.nvmrc
 
-# Ensure Node.js binaries are available in the PATH
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+## Download the Node.js standelone binary archive && extract it && clean files
 
-# Install pnpm
+RUN ["/bin/sh", "-c", "NODE_VERSION=$(cat /tmp/.nvmrc) && \
+    wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz && \
+    tar xf node-v${NODE_VERSION}-linux-x64.tar.xz --strip-components 1 && \
+    rm node-v${NODE_VERSION}-linux-x64.tar.xz /tmp/.nvmrc"]
+
+## Ensure Node.js binaries are available in the PATH
+
+ENV PATH /usr/local/node/bin:$PATH
+
+# pnpm installation
+
 RUN ["npm", "install", "-g", "pnpm"]
-RUN ["mkdir", "/pnpm"]
-ENV PATH=/pnpm:$PATH
-ENV PNPM_HOME=/pnpm
 
-# Install cargo-watch for Rust live-reloading
+# cargo-watch installation (for Rust live-reloading during dev')
+
 RUN ["cargo", "install", "cargo-watch"]
 
-# Set the working directory to /tuono
-WORKDIR /tuono
+# global configuration done ! let's focus on the project itself
 
-# Copy project files into the container (excepted files/dir declared in .dockerignore)
+## Copy project files into the container (excepted files/dir declared in .dockerignore) to /tuono directory
+
+WORKDIR /tuono
 COPY . .
 
-# Install Node.js dependencies (defined in package.json)
+## Install Node.js dependencies (defined in package.json)
+
 RUN ["pnpm", "install"]
 
-# Compile and add the directory with compiled binaries to the PATH for direct access
+## Compile and add the directory with compiled binaries to the PATH for direct access
+
 RUN ["cargo", "build"]
 ENV PATH=/tuono/target/debug:$PATH
