@@ -11,7 +11,7 @@ const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuo
 const GITHUB_TUONO_TAG_COMMIT_TREES_URL: &str =
     "https://api.github.com/repos/tuono-labs/tuono/git/trees/";
 
-const GITHUB_RAW_CONTENT_URL: &str = "https://raw.githubusercontent.com/tuono-labs/tuono/main/";
+const GITHUB_RAW_CONTENT_URL: &str = "https://raw.githubusercontent.com/tuono-labs/tuono";
 
 #[derive(Deserialize, Debug)]
 enum GithubFileType {
@@ -61,6 +61,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .build()
         .expect("Failed to build reqwest client");
 
+    // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
     let res_tag = client
@@ -119,7 +120,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     {
         if let GithubFileType::Blob = element_type {
             let file_content = client
-                .get(format!("{GITHUB_RAW_CONTENT_URL}{path}"))
+                .get(format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}"))
                 .send()
                 .expect("Failed to call the folder github API")
                 .text()
