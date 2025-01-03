@@ -8,14 +8,15 @@ services:
       args:
         RUST_VERSION: 1.83
         BASE_OS: bookworm
-        NODE_VERSION: 22.11.0
     image: tuono-source-image
     ports:
       - "3000:3000" # for apps/documentation frontend app
-    volumes: # mount the project into a volume but node_modules / .pnpm-store / target / .turbo directories won't by sync from container to host
+    volumes: # mount the project into a volume but node_modules / .pnpm-store / target / ... directories won't by sync from container to host
       - ..:/tuono
       - /tuono/node_modules
       - /tuono/.pnpm-store
       - /tuono/target
       - /tuono/.turbo
+      - /tuono/apps/documentation/node_modules
+      - /tuono/apps/documentation/target
     tty: true
