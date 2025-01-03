@@ -21,14 +21,14 @@ The website now works and the HTTP errors are meaningful, but we should also tak
 for the web crawlers. The best way to do it is to enrich the meta tags like the `<title>` and the
 `<description>`.
 
-To do so `tuono` also exposes the `<Head />` component useful exactly for handling this scenario. Let's update the `/` and the
+To do so `tuono` fully supports [React19
+tags](https://react.dev/reference/react-dom/components/title). Let's update the `/` and the
 `/pokemons/[pokemon]` routes with this.
 
 ```diff
 // src/routes/index.tsx
 import type { JSX } from 'react'
 import type { TuonoProps } from "tuono";
-++ import { Head } from "tuono"
 
 interface Pokemon {
   name: string
@@ -47,9 +47,8 @@ export default function IndexPage({
 
   return (
     <>
-++    <Head>
-++      <title>Tuono tutorial</title>
-++    </Head>
+++    <title>Tuono tutorial</title>
+
       <header className="header">
         <a href="https://crates.io/crates/tuono" target="_blank">
           Crates
@@ -98,8 +97,6 @@ export default function Pokemon({ data }: TuonoProps): JSX.Element {
 ++    )
 }
 ```
-
-The `Head` component takes as children any valid HTML meta tag.
 
 import NavigationButtons from '../../../components/navigation-buttons'
 
