@@ -88,25 +88,16 @@
     "bin/**"
   ],
   "peerDependencies": {
-    "react": ">=16.3.0",
-    "react-dom": ">=16.3.0"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.24.4",
-    "@babel/generator": "^7.23.6",
     "@babel/plugin-syntax-jsx": "^7.24.1",
     "@babel/plugin-syntax-typescript": "^7.24.1",
-    "@babel/plugin-transform-react-jsx": "^7.23.4",
-    "@babel/plugin-transform-typescript": "^7.24.1",
-    "@babel/template": "^7.24.0",
-    "@babel/traverse": "^7.24.1",
-    "@babel/types": "^7.24.0",
     "@rollup/plugin-inject": "^5.0.5",
-    "@types/babel__core": "^7.20.5",
-    "@types/node": "^22.0.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "fast-text-encoding": "^1.0.6",
-    "react-helmet-async": "^2.0.5",
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-lazy-fn-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
@@ -115,13 +106,14 @@
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
-    "@types/babel-traverse": "^6.25.10",
-    "@types/babel__traverse": "^7.20.6",
-    "@types/react": "18.3.18",
-    "@types/react-dom": "18.3.5",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "vitest": "^2.0.0"
+    "@types/babel__core": "7.20.5",
+    "@types/babel__traverse": "7.20.6",
+    "@types/node": "22.10.3",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "vitest": "2.1.8"
   },
   "sideEffects": false,
   "keywords": [

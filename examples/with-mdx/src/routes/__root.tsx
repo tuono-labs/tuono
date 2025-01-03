@@ -7,8 +7,12 @@ interface RootRouteProps {
 
 export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   return (
-    <main className="main">
-      <MDXProvider components={{}}>{children}</MDXProvider>
-    </main>
+    <html>
+      <body>
+        <main>
+          <MDXProvider components={{}}>{children}</MDXProvider>
+        </main>
+      </body>
+    </html>
   )
 }

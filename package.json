@@ -24,7 +24,7 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "9.15.0",
-    "@types/node": "22.10.0",
+    "@types/node": "22.10.3",
     "eslint": "9.15.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-import": "2.31.0",
