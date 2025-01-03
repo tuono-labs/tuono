@@ -81,17 +81,14 @@ export default function IndexPage({
 ```diff
 // src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
--- import { TuonoProps } from "tuono";
-++ import { TuonoProps, Head } from "tuono";
+import { TuonoProps } from "tuono";
 import PokemonView from "../../components/PokemonView";
 
 export default function Pokemon({ data }: TuonoProps): JSX.Element {
 --  return <PokemonView pokemon={data} />;
 ++  return (
 ++        <>
-++            <Head>
-++                <title>Pokemon: ${data?.name}</title>
-++            </Head>
+++            <title>Pokemon: ${data?.name}</title>
 ++            <PokemonView pokemon={data} />
 ++        </>
 ++    )
