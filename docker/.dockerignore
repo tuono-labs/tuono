@@ -1,0 +1,19 @@
+# project
+node_modules
+.pnpm-store
+target
+.turbo
+
+# git
+.git
+.gitignore
+
+# docker
+docker/compose.yml
+docker/Dockerfile
+docker/.dockerignore
+
+# IDE
+.vscode
+.idea
+*.iml
