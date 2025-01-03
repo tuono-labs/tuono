@@ -14,9 +14,15 @@ services:
     volumes: # mount the project into a volume but node_modules / .pnpm-store / target / ... directories won't by sync from container to host
       - ..:/tuono
       - /tuono/node_modules
-      - /tuono/.pnpm-store
       - /tuono/target
+      - /tuono/.pnpm-store
       - /tuono/.turbo
       - /tuono/apps/documentation/node_modules
       - /tuono/apps/documentation/target
+      - /tuono/examples/tuono-app/node_modules
+      - /tuono/examples/tuono-app/target
+      - /tuono/examples/tuono-tutorial/node_modules
+      - /tuono/examples/tuono-tutorial/target
+      - /tuono/examples/with-mdx/node_modules
+      - /tuono/examples/with-mdx/target
     tty: true
