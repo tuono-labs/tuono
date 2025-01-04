@@ -24,6 +24,7 @@ const IndexRoute = Index.update({
 const PostscatchallRoute = Postscatchall.update({
   path: '/posts/[...catch_all]',
   getParentRoute: () => rootRoute,
+  hasHandler: true,
 })
 
 // Create and export the route tree
