@@ -1,0 +1,61 @@
+name: 'PR Title Checker'
+
+# This workflow ensures that PR titles adhere to a pattern
+# similar to conventional commits standard
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
+
+env:
+  PR_TITLE: ${{ github.event.pull_request.title }}
+
+jobs:
+  check_pr_title:
+    name: 'PR Title Checker'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check type
+        id: type
+        # @warning Keep in sync with apps/documentation/src/routes/documentation/contributing/pull-requests.mdx
+        run: |
+          VALID_COMMIT_TYPES="chore|ci|docs|feat|fix|refactor|test"
+          REGEX="^${VALID_COMMIT_TYPES})(\(.*\))?!?: .*"
+
+          if ! [[ $PR_TITLE =~ $REGEX ]]; then
+            echo "::error title=Type::The title has an incorrect type. Valid types are ${VALID_COMMIT_TYPES}"
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice title=Type::The title is using a valid type"
+            echo "result=ok" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check length
+        id: length
+        run: |
+          MAX_LENGTH=100
+          LENGTH=${#PR_TITLE}
+
+          if [ $LENGTH -gt $MAX_LENGTH ]; then
+            echo "::error title=Length::The title is longer than $MAX_LENGTH characters"
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice title=Length::The title length is within the maximum value of $MAX_LENGTH characters"
+            echo "result=ok" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check result
+        env:
+          FAILURE: ${{ contains(join(steps.*.outputs.result, ','), 'fail') }}
+        run: |
+          echo "Failure: $FAILURE"
+          if [ "$FAILURE" = "false" ]; then
+            exit 0
+          else
+            exit 1
+          fi

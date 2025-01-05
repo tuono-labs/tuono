@@ -1,16 +1,16 @@
 import type { JSX } from 'react'
 import { Box, Button, Text, Title, Flex } from '@mantine/core'
-import { Link } from 'tuono'
 import { IconArrowRight, IconArrowLeft } from '@tabler/icons-react'
+import { Link } from 'tuono'
 
-interface NavigationButton {
+interface NavigationButtonData {
   href: string
   title: string
 }
 
 interface NavigationButtonsProps {
-  prev?: NavigationButton
-  next?: NavigationButton
+  prev?: NavigationButtonData
+  next?: NavigationButtonData
 }
 
 export default function NavigationButtons({
@@ -25,7 +25,7 @@ export default function NavigationButtons({
   )
 }
 
-interface NavigationButtonProps extends NavigationButton {
+interface NavigationBtnProps extends NavigationButtonData {
   type: 'next' | 'prev'
 }
 
@@ -33,7 +33,7 @@ const NavigationBtn = ({
   type,
   title,
   href,
-}: NavigationButtonProps): JSX.Element => {
+}: NavigationBtnProps): JSX.Element => {
   const heading = type === 'next' ? 'Next' : 'Previous'
   const textAlign = type === 'next' ? 'left' : 'right'
   const variant = type === 'next' ? 'filled' : 'outline'
