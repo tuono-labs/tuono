@@ -1,0 +1,86 @@
+import MetaTags from '@/components/meta-tags'
+
+<MetaTags
+  title="Tuono - Contributing"
+  canonical="https://tuono.dev/documentation/contributing/pull-requests"
+  description="Contribute to Tuono. Learn here how to open a pull request."
+/>
+
+import Breadcrumbs, { Element } from '@/components/breadcrumbs'
+
+<Breadcrumbs
+  breadcrumbs={[
+    { label: '✨ Contributing', href: '/documentation/contributing' },
+    { label: 'Pull Requests' },
+  ]}
+/>
+
+# Pull Requests
+
+Once your changes are ready, you can create a PR!
+
+If you are not familiar with GitHub pull requests,
+you can check the [official documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
+
+---
+
+- If you are fixing a issue remember to link the issue itself in the PR description
+- If a new feature is being added, describe the intended use case that feature fulfills.
+
+> Bug fixes and new features should include tests.
+
+## Title
+
+The PR title must match the following format:
+
+```text
+<type>[optional scope]: <short description>
+```
+
+You can find commit examples in the [recent commits on main branch](https://github.com/tuono-labs/tuono/commits/main/)
+
+Here are some examples:
+
+- feat: add support for react 19
+- ci: create install-node-dependencies action
+- feat(packages/tuono-router): use React.Context to pass data
+- test(packages/tuono): messageChannel - use vi.fn
+
+> We do not care about the number, or style of commits in your branch history,
+> because we squash merge every PR into `main`.
+>
+> Feel free to commit in whatever style you feel comfortable with.
+
+### type
+
+Must be one of the following
+
+{/* @warning Keep in sync with .github/workflows/pr-title-checker.yml */}
+
+- `docs` - if you only change documentation, and not shipped code
+- `feat` - any new functionality additions
+- `fix` - any bug fixes that don't add new functionality
+- `refactor` - a code change that neither fixes a bug or adds a feature
+- `test` - if you only change tests, and not shipped code
+- `ci` - if you change something related to continuos integration
+- `chore` - anything else (e.g.: release)
+
+### optional scope
+
+A scope may be provided to a commit's type,
+to provide additional contextual information and is contained within parenthesis
+E.g.: `fix(crates/tuono): remove cargo warnings`
+
+### short description
+
+A succinct title for the PR.
+(The title max length is set to 100 characters)
+
+import NavigationButtons from '../../../components/navigation-buttons'
+
+<NavigationButtons
+  prev={{
+    title: 'Local development',
+    href: '/documentation/contributing/local-development',
+  }}
+/>

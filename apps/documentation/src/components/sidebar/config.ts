@@ -260,6 +260,11 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'Local development',
         href: '/documentation/contributing/local-development',
       },
+      {
+        type: 'element',
+        label: 'Pull requests',
+        href: '/documentation/contributing/pull-requests',
+      },
     ],
   },
 ]
