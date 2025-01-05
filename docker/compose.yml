@@ -10,7 +10,7 @@ services:
         BASE_OS: bookworm
     image: tuono-source-image
     ports:
-      - "3000:3000" # expose default port used by tuono server
+      - '3000:3000' # expose default port used by tuono server
     volumes: # mount the project into a volume but node_modules / .pnpm-store / target / ... directories won't by sync from container to host
       - ..:/tuono
       - /tuono/node_modules
