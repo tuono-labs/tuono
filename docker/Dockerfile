@@ -42,9 +42,9 @@ COPY . .
 
 ## Install Node.js dependencies (defined in package.json)
 
-RUN ["pnpm", "install"]
+RUN ["pnpm", "install", "--frozen-lockfile"]
 
 ## Compile and add the directory with compiled binaries to the PATH for direct access
 
-RUN ["cargo", "build"]
+RUN ["cargo", "build", "--frozen-lockfile"]
 ENV PATH=/tuono/target/debug:$PATH
