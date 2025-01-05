@@ -46,5 +46,5 @@ RUN ["pnpm", "install", "--frozen-lockfile"]
 
 ## Compile and add the directory with compiled binaries to the PATH for direct access
 
-RUN ["cargo", "build", "--frozen-lockfile"]
+RUN ["cargo", "build"]
 ENV PATH=/tuono/target/debug:$PATH
