@@ -1,13 +1,14 @@
 services:
   tuono:
+    platform: "linux/amd64"
     container_name: tuono-source-container
     hostname: tuono-source-container
     build:
       context: ../
       dockerfile: ./docker/Dockerfile
       args:
-        RUST_VERSION: 1.83
-        BASE_OS: bookworm
+        RUST_VERSION: 1.83 # if change, think to update the default ARGs in Dockerfile
+        BASE_OS: bookworm # if change, think to update the default ARGs in Dockerfile
     image: tuono-source-image
     ports:
       - '3000:3000' # expose default port used by tuono server

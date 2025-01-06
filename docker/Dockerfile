@@ -1,7 +1,7 @@
 # ARGs obtained from the compose.yml file
 
-ARG BASE_OS
-ARG RUST_VERSION
+ARG BASE_OS=bookworm
+ARG RUST_VERSION=1.83
 
 FROM rust:${RUST_VERSION}-${BASE_OS}
 
