@@ -30,9 +30,9 @@ git clone https://github.com/<your-name-here>/tuono
 cd tuono
 ```
 
-For the next steps, you can either set up the environment directly on your computer or use a ready-to-use Docker image (go to [Use Docker](#use-docker) part).
+For the next steps, you can either set up the environment directly on your computer or use a ready-to-use Docker image (go to the [Docker setup](#docker-setup) part).
 
-### Set up your computer directly
+### Local setup
 
 #### Rust tool chain
 
@@ -69,7 +69,7 @@ pnpm run check-all
 cargo build
 ```
 
-### Use Docker
+### Docker setup
 
 #### Introduction
 
@@ -79,14 +79,14 @@ Some IDEs (such as vscode with the [Dev Containers extension](https://marketplac
 
 **Before proceeding with this guide, make sure that the `node_modules` and `target` directories are either absent or empty in the subprojects of Tuono from your host machine where you want to contribute.** This ensures a clean and consistent environment when using Docker.
 
-#### Build the Docker Container for Tuono
+#### Build the Tuono's Docker Container
 
 First, ensure Docker is installed on your machine by following the instructions on the [Docker official site](https://docs.docker.com/engine/install/).
 
 Once Docker is installed, use the following command to build the image into a container named tuono-source-container:
 
 ```sh
-# Note: Execute this command at the project root
+# Note: Execute this command in the project root
 docker compose -f docker/compose.yml up --build -d
 ```
 
@@ -96,13 +96,13 @@ To verify that everything is working as expected, run the following command:
 docker images && docker ps -a --size
 ```
 
-Or on Windows :
+Or on Windows:
 
 ```powershell
 docker images; docker ps -a --size
 ```
 
-You should see the image named tuono-source-image and the container tuono-source-container. The container's status should be "Up".
+You should see the image named tuono-source-image and the container tuono-source-container. The container's status should be "up".
 
 Use the following command to connect to the container:
 
