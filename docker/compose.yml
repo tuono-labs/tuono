@@ -1,6 +1,6 @@
 services:
   tuono:
-    platform: "linux/amd64"
+    platform: linux/amd64
     container_name: tuono-source-container
     hostname: tuono-source-container
     build:
