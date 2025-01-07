@@ -25,10 +25,6 @@ RUN ["/bin/sh", "-c", "NODE_VERSION=$(cat /tmp/.nvmrc) && \
 
 ENV PATH /usr/local/node/bin:$PATH
 
-# pnpm installation
-
-RUN ["npm", "install", "-g", "pnpm"]
-
 # cargo-watch installation (for Rust live-reloading during dev')
 
 RUN ["cargo", "install", "cargo-watch"]
@@ -39,6 +35,11 @@ RUN ["cargo", "install", "cargo-watch"]
 
 WORKDIR /tuono
 COPY . .
+
+# pnpm installation based on version found in package.json
+
+RUN ["corepack", "enable"]
+RUN ["corepack", "install"]
 
 ## Install Node.js dependencies (defined in package.json)
 
