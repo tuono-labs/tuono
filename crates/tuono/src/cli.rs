@@ -36,6 +36,10 @@ enum Actions {
         /// examples
         #[arg(short, long)]
         template: Option<String>,
+
+        /// Install the latest version of tuono
+        #[arg(short, long)]
+        latest: bool,
     },
 }
 
@@ -167,8 +171,9 @@ pub fn app() -> std::io::Result<()> {
         Actions::New {
             folder_name,
             template,
+            latest,
         } => {
-            scaffold_project::create_new_project(folder_name, template);
+            scaffold_project::create_new_project(folder_name, template, latest);
         }
     }
 
