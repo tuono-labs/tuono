@@ -85,8 +85,7 @@ async function getRouteNodes(
         } else if (fullPath.match(/\.(rs)$/)) {
           const filePath = replaceBackslash(path.join(dir, dirent.name))
           const filePathNoExt = removeExt(filePath)
-          let routePath =
-            cleanPath(`/${filePathNoExt.split('.').join('/')}`) || ''
+          let routePath = cleanPath(`/${filePathNoExt}`) || ''
 
           if (routePath === 'index') {
             routePath = '/'

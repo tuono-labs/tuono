@@ -23,6 +23,4 @@ Consider [opening a new issue](https://github.com/tuono-labs/tuono/issues/new/ch
 
 **Did you write a patch that fixes a bug?**
 
-- Open a new GitHub pull request with the patch.
-- Ensure the PR description clearly describes the problem and solution. Include the relevant issue number, if applicable.
-- The pull requests must pass all the CI pipelines
+[Visit the documentation to learn how to open a pull request](https://tuono.dev/documentation/contributing/pull-requests)
