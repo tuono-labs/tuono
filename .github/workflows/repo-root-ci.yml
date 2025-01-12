@@ -9,12 +9,14 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/**'
       - '*'
+      - '.github/**'
+      - '.docker/**'
   pull_request:
     paths:
-      - '.github/**'
       - '*'
+      - '.github/**'
+      - '.docker/**'
 
 jobs:
   build-and-test:

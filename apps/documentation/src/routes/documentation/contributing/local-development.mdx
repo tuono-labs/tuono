@@ -30,12 +30,16 @@ git clone https://github.com/<your-name-here>/tuono
 cd tuono
 ```
 
-### Rust tool chain
+For the next steps, you can either set up the environment directly on your computer or use a ready-to-use Docker image (go to the [Docker setup](#docker-setup) part).
+
+### Local setup
+
+#### Rust tool chain
 
 Install the Rust programming language tool chain (`rust` and `cargo`).
 Follows instructions in the official [docs](https://rustup.rs/)
 
-### Node.js — runtime
+#### Node.js — runtime
 
 Install `Node.js`.
 You can follow the instructions from the [Node official site](https://nodejs.org/en/download/package-manager)
@@ -50,19 +54,60 @@ You can follow the instructions from the [Node official site](https://nodejs.org
 >
 > to simply pick up the correct version!
 
-### Node.js — package manager
+#### Node.js — package manager
 
 We use [`pnpm`](https://pnpm.io) as Node.js package manager.
 
 You can see which version of yarn we use by checking the `packageManager` field in the root `package.json`.
 
-### Pre-flight checks
+#### Pre-flight checks
 
 To check that everything is working properly, run:
 
 ```sh
 pnpm run check-all
 cargo build
+```
+
+### Docker setup
+
+#### Introduction
+
+Docker takes care of configuring the development environment, so you don’t need to worry about installing specific versions of packages like Node.js or pnpm. The Docker image handles this for you!
+Using Docker, **the only operations you’ll need to manage on your host machine are related to git**. (don't use phpnm, cargo, ... from your host machine)
+Some IDEs (such as vscode with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)) allow you to connect directly to the Docker container.
+
+**Before proceeding with this guide, make sure that the `node_modules` and `target` directories are either absent or empty in the subprojects of Tuono from your host machine where you want to contribute.** This ensures a clean and consistent environment when using Docker.
+
+#### Build the Tuono's Docker Container
+
+First, ensure Docker is installed on your machine by following the instructions on the [Docker official site](https://docs.docker.com/engine/install/).
+
+Once Docker is installed, use the following command to build the image into a container named tuono-source-container:
+
+```sh
+# Note: Execute this command in the project root
+docker compose -f docker/compose.yml up --build -d
+```
+
+To verify that everything is working as expected, run the following command:
+
+```sh
+docker images && docker ps -a --size
+```
+
+Or on Windows:
+
+```powershell
+docker images; docker ps -a --size
+```
+
+You should see the image named tuono-source-image and the container tuono-source-container. The container's status should be "up".
+
+Use the following command to connect to the container:
+
+```sh
+docker exec -it tuono-source-container /bin/bash
 ```
 
 ## Tuono development
