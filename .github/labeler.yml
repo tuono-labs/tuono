@@ -1,0 +1,36 @@
+# @see https://github.com/actions/labeler
+
+rust:
+  - changed-files:
+      - any-glob-to-any-file: ['crates/**', 'Cargo.toml']
+
+typescript:
+  - changed-files:
+      - any-glob-to-any-file:
+          [
+            'packages/**',
+            'package.json',
+            'pnpm-*.yaml',
+            'eslint.config.js',
+            'tsconfig.json',
+          ]
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['apps/documentation/**']
+
+'CI/CD':
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**']
+
+'repo maintenance':
+  - changed-files:
+      - any-glob-to-any-file:
+          [
+            '.npmrc',
+            '.nvmrc',
+            '.prettierrc',
+            '.prettierignore',
+            'renovate.json',
+            'turbo.json',
+          ]
