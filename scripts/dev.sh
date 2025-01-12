@@ -1,3 +1,3 @@
 #!/bin/bash
-pnpm dev & cargo watch -x build -w crates/
+cargo watch -x build -w crates/
 
