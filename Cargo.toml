@@ -9,6 +9,5 @@ exclude = [
 		"apps/documentation",
 		"examples/with-mdx",
 		"examples/tuono-app",
-		"examples/tuono-tutorial",
-		"benches/tuono"
+		"examples/tuono-tutorial"
 ]

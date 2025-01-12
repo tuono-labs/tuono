@@ -16,8 +16,8 @@
     "docs:format": "turbo format --filter=documentation",
     "docs:format:check": "turbo format:check --filter=documentation",
     "docs:types": "turbo types --filter=documentation",
-    "repo:root:format:check": "prettier . !./apps/** !./assets/** !./benches/** !./crates !./examples !./packages/** --check",
-    "repo:root:format": "prettier . !./apps/** !./assets/** !./benches/** !./crates !./examples !./packages/** --write",
+    "repo:root:format:check": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --check",
+    "repo:root:format": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --write",
     "check-all": "turbo build lint format:check types --filter=!./examples"
   },
   "author": "Valerio Ageno",

@@ -48,7 +48,7 @@ by Tuono based on the files defined within the `./src/routes` directory.
 The Tuono API tries to stick as much as possible to the Next.js one (or at least takes a huge inspiration
 from it). The major difference is the backend system. While Next.js relies entirely on Node/Deno/Bun,
 Tuono runs the server without any intermediary runtime. This enables impressive performance improvements
-(check the benchmarks [here](https://github.com/tuono-labs/tuono/tree/main/benches)).
+(check the benchmarks [here](https://github.com/tuono-labs/tuono-benchmarks)).
 
 ## Getting started
 
