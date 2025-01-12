@@ -1,0 +1,55 @@
+name: Docker CI
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build_and_test:
+    name: Build and Test Docker Image on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # macos-13 commented ; for now, this config takes more than 30mn to process within github action 
+          # - macos-13 # ( by default; 13 -> intel chipset)
+          # - windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install and run docker env. on Macos
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew install colima
+          brew install docker docker-compose
+          mkdir -p ~/.docker/cli-plugins
+          ln -sfn $(brew --prefix)/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+          colima start
+            
+      - name: Build and Run Docker Compose
+        run: |
+          docker compose -f docker/compose.yml up --build -d
+
+      - name: Check if container is running
+        run: |
+          docker ps --filter "name=tuono-source-container" --format "table {{.Names}}\t{{.Status}}"
+          if ! docker ps --filter "name=tuono-source-container" --format "{{.Status}}" | grep -q "Up"; then
+            echo "Error: Container 'tuono-source-container' is not running."
+            exit 1
+          fi
+
+      - name: Check commands inside container
+        run: |
+          docker exec tuono-source-container pnpm --version || { echo "Error: pnpm is not available."; exit 1; }
+          docker exec tuono-source-container tuono --version || { echo "Error: tuono is not available."; exit 1; }
+
+      - name: Tear Down Docker Compose
+        if: always()
+        run: |
+          docker compose -f docker/compose.yml down --volumes
