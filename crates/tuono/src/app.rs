@@ -6,6 +6,7 @@ use std::collections::{hash_map::Entry, HashMap};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
@@ -138,9 +139,18 @@ impl App {
     }
 
     pub fn build_react_prod(&self) {
-        Command::new(BUILD_JS_SCRIPT)
+        if !Path::new(BUILD_JS_SCRIPT).exists() {
+            eprintln!("Failed to find the build script. Please run `npm install`");
+            std::process::exit(1);
+        }
+        let output = Command::new(BUILD_JS_SCRIPT)
             .output()
             .expect("Failed to build the react source");
+        if !output.status.success() {
+            eprintln!("Failed to build the react source");
+            eprintln!("Error: {}", String::from_utf8_lossy(&output.stderr));
+            std::process::exit(1);
+        }
     }
 
     pub fn run_rust_server(&self) -> Child {
@@ -154,6 +164,10 @@ impl App {
     }
 
     pub fn build_tuono_config(&self) -> Result<std::process::Output, std::io::Error> {
+        if !Path::new(BUILD_TUONO_CONFIG).exists() {
+            eprintln!("Failed to find the build script. Please run `npm install`");
+            std::process::exit(1);
+        }
         Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
