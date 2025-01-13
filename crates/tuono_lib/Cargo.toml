@@ -34,7 +34,7 @@ colored = "2.1.0"
 
 tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.17.0"}
 # Match the same version used by axum
-tokio-tungstenite = "0.24.0"
+tokio-tungstenite = "0.26.0"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
 tungstenite = "0.24.0"
 http = "1.1.0"
