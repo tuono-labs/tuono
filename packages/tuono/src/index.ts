@@ -5,7 +5,8 @@ export {
   Link,
   dynamic,
   useRouter,
-  __tuono__internal__lazyLoadComponent,
 } from 'tuono-router'
+
+export { __tuono__internal__lazyLoadComponent } from './dynamic/route_lazy_loading'
 
 export type { TuonoProps } from './types'
