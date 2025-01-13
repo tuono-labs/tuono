@@ -11,7 +11,7 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # useRouter
 
-The useRouter hook provides access to various data about the current route. It returns a `UseRouterResult` interface, which can be used to access route data, and to navigate between pages, as seen in the below example:
+The useRouter hook provides access to various data about the current route. It returns an object of interface `UseRouterResult`, which can be used to access route data, and to navigate between pages, as seen in the below example:
 
 ```
 import { useRouter } from 'tuono'
@@ -25,9 +25,12 @@ export default function IndexPage() {
   }
 
   return (
-    <a href={"/foo"} onClick={handleClick}>
-      My link
-    </a>
+    <>
+      <p>pathname: {router.pathname}</p>
+      <a href={"/foo"} onClick={handleClick}>
+        My link
+      </a>
+    </>
   )
 }
 ```
