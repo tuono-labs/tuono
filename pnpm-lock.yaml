@@ -30,8 +30,8 @@ importers:
         specifier: 5.1.0
         version: 5.1.0(eslint@9.15.0)
       prettier:
-        specifier: 3.4.1
-        version: 3.4.1
+        specifier: 3.4.2
+        version: 3.4.2
       turbo:
         specifier: 2.2.3
         version: 2.2.3
@@ -237,7 +237,7 @@ importers:
         version: 7.26.3
       prettier:
         specifier: ^3.2.4
-        version: 3.4.1
+        version: 3.4.2
       vite:
         specifier: ^5.2.11
         version: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
@@ -272,7 +272,7 @@ importers:
         version: 7.20.5
       prettier:
         specifier: ^3.2.4
-        version: 3.4.1
+        version: 3.4.2
       vitest:
         specifier: 2.1.8
         version: 2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
@@ -2648,8 +2648,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier@3.4.1:
-    resolution: {integrity: sha512-G+YdqtITVZmOJje6QkXQWzl3fSfMxFwm1tjTyo9exhkmWSqC4Yhd1+lug++IlR2mvRVAxEDDWYkQdeSztajqgg==}
+  prettier@3.4.2:
+    resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6324,7 +6324,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier@3.4.1: {}
+  prettier@3.4.2: {}
 
   pretty-format@27.5.1:
     dependencies:
@@ -6851,7 +6851,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@babel/types': 7.26.3
-      prettier: 3.4.1
+      prettier: 3.4.2
       vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
     transitivePeerDependencies:
       - '@types/node'
