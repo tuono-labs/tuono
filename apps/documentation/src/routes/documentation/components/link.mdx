@@ -11,4 +11,27 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # Link
 
-TODO
+Tuono provides a `Link` component for clientside navigation between pages of your app. `Link` prefetches pages from any links above the fold, allowing for faster navigations without a full reload.
+
+```typescript jsx
+import { Link } from 'tuono'
+
+export default function Page() {
+  return <Link href="/page2">My Other Page</Link>
+}
+```
+
+> Additional considerations:
+>
+> - Any `<Link />` in the viewport is prefetched by default when it appears within the viewport.
+> - The corresponding data for server-rendered routes is fetched only when the `<Link />` is clicked.
+
+## Reference
+
+The `Link` component excepts the below optional props, as well as all those accepted by the HTML `a` tag.
+
+- `preload`: `boolean` - Whether to preload the page if the link is within the viewport. Defaults to `true`.
+- `scroll`: `boolean` - Whether to preserve scroll position between navigations. Defaults to `true`.
+- `href`: `string` - Relative path to the page in your application. Anchor names (links with hashtags) are also valid.
+
+The `Link` component uses [`router.push`](/documentation/hooks/use-router) under the hood.
