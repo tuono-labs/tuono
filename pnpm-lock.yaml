@@ -12,8 +12,8 @@ importers:
         specifier: 9.15.0
         version: 9.15.0
       '@types/node':
-        specifier: 22.10.3
-        version: 22.10.3
+        specifier: 22.10.5
+        version: 22.10.5
       eslint:
         specifier: 9.15.0
         version: 9.15.0
@@ -179,7 +179,7 @@ importers:
         version: 5.0.5(rollup@4.25.0)
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.2(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 3.7.2(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       fast-text-encoding:
         specifier: ^1.0.6
         version: 1.0.6
@@ -194,14 +194,14 @@ importers:
         version: link:../tuono-router
       vite:
         specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+        version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
       web-streams-polyfill:
         specifier: ^4.0.0
         version: 4.0.0
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.3)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 0.7.13(@types/node@22.10.5)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       '@types/babel__core':
         specifier: 7.20.5
         version: 7.20.5
@@ -209,8 +209,8 @@ importers:
         specifier: 7.20.6
         version: 7.20.6
       '@types/node':
-        specifier: 22.10.3
-        version: 22.10.3
+        specifier: 22.10.5
+        version: 22.10.5
       '@types/react':
         specifier: 19.0.2
         version: 19.0.2
@@ -225,7 +225,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+        version: 2.1.8(@types/node@22.10.5)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
   packages/tuono-fs-router-vite-plugin:
     dependencies:
@@ -240,17 +240,17 @@ importers:
         version: 3.4.2
       vite:
         specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+        version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.3)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 0.7.13(@types/node@22.10.5)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+        version: 2.1.8(@types/node@22.10.5)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
   packages/tuono-lazy-fn-vite-plugin:
     dependencies:
@@ -262,11 +262,11 @@ importers:
         version: 7.26.3
       vite:
         specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+        version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.3)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 0.7.13(@types/node@22.10.5)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
@@ -275,7 +275,7 @@ importers:
         version: 3.4.2
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+        version: 2.1.8(@types/node@22.10.5)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
   packages/tuono-router:
     dependencies:
@@ -285,7 +285,7 @@ importers:
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.3)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 0.7.13(@types/node@22.10.5)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       '@testing-library/jest-dom':
         specifier: 6.6.3
         version: 6.6.3
@@ -297,7 +297,7 @@ importers:
         version: 19.0.2
       '@vitejs/plugin-react-swc':
         specifier: 3.7.2
-        version: 3.7.2(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+        version: 3.7.2(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       jsdom:
         specifier: 25.0.1
         version: 25.0.1
@@ -306,10 +306,10 @@ importers:
         version: 19.0.0
       vite:
         specifier: 5.4.11
-        version: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+        version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
+        version: 2.1.8(@types/node@22.10.5)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49))
 
 packages:
 
@@ -1048,6 +1048,9 @@ packages:
 
   '@types/node@22.10.3':
     resolution: {integrity: sha512-DifAyw4BkrufCILvD3ucnuN8eydUfc/C1GlyrnI+LK6543w5/L3VeVgf05o3B4fqSXP1dKYLOZsKfutpxPzZrw==}
+
+  '@types/node@22.10.5':
+    resolution: {integrity: sha512-F8Q+SeGimwOo86fiovQh8qiXfFEh2/ocYv7tU5pJ3EXMSSxk1Joj5wefpFK2fHTf/N6HKGSxIDBT9f3gCxXPkQ==}
 
   '@types/prop-types@15.7.14':
     resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
@@ -3956,23 +3959,23 @@ snapshots:
       - acorn
       - supports-color
 
-  '@microsoft/api-extractor-model@7.28.13(@types/node@22.10.3)':
+  '@microsoft/api-extractor-model@7.28.13(@types/node@22.10.5)':
     dependencies:
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.3)
+      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.5)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.43.0(@types/node@22.10.3)':
+  '@microsoft/api-extractor@7.43.0(@types/node@22.10.5)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.28.13(@types/node@22.10.3)
+      '@microsoft/api-extractor-model': 7.28.13(@types/node@22.10.5)
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.3)
+      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.5)
       '@rushstack/rig-package': 0.5.2
-      '@rushstack/terminal': 0.10.0(@types/node@22.10.3)
-      '@rushstack/ts-command-line': 4.19.1(@types/node@22.10.3)
+      '@rushstack/terminal': 0.10.0(@types/node@22.10.5)
+      '@rushstack/ts-command-line': 4.19.1(@types/node@22.10.5)
       lodash: 4.17.21
       minimatch: 3.0.8
       resolve: 1.22.8
@@ -4077,7 +4080,7 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@rushstack/node-core-library@4.0.2(@types/node@22.10.3)':
+  '@rushstack/node-core-library@4.0.2(@types/node@22.10.5)':
     dependencies:
       fs-extra: 7.0.1
       import-lazy: 4.0.0
@@ -4086,23 +4089,23 @@ snapshots:
       semver: 7.5.4
       z-schema: 5.0.5
     optionalDependencies:
-      '@types/node': 22.10.3
+      '@types/node': 22.10.5
 
   '@rushstack/rig-package@0.5.2':
     dependencies:
       resolve: 1.22.8
       strip-json-comments: 3.1.1
 
-  '@rushstack/terminal@0.10.0(@types/node@22.10.3)':
+  '@rushstack/terminal@0.10.0(@types/node@22.10.5)':
     dependencies:
-      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.3)
+      '@rushstack/node-core-library': 4.0.2(@types/node@22.10.5)
       supports-color: 8.1.1
     optionalDependencies:
-      '@types/node': 22.10.3
+      '@types/node': 22.10.5
 
-  '@rushstack/ts-command-line@4.19.1(@types/node@22.10.3)':
+  '@rushstack/ts-command-line@4.19.1(@types/node@22.10.5)':
     dependencies:
-      '@rushstack/terminal': 0.10.0(@types/node@22.10.3)
+      '@rushstack/terminal': 0.10.0(@types/node@22.10.5)
       '@types/argparse': 1.0.38
       argparse: 1.0.10
       string-argv: 0.3.2
@@ -4168,7 +4171,7 @@ snapshots:
 
   '@tabler/icons@3.22.0': {}
 
-  '@tanstack/config@0.7.13(@types/node@22.10.3)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))':
+  '@tanstack/config@0.7.13(@types/node@22.10.5)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))':
     dependencies:
       '@commitlint/parse': 19.5.0
       commander: 12.1.0
@@ -4182,9 +4185,9 @@ snapshots:
       semver: 7.6.3
       simple-git: 3.27.0
       v8flags: 4.0.1
-      vite-plugin-dts: 3.9.1(@types/node@22.10.3)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
-      vite-plugin-externalize-deps: 0.8.0(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
-      vite-tsconfig-paths: 4.3.2(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+      vite-plugin-dts: 3.9.1(@types/node@22.10.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
+      vite-plugin-externalize-deps: 0.8.0(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
+      vite-tsconfig-paths: 4.3.2(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -4255,7 +4258,7 @@ snapshots:
 
   '@types/conventional-commits-parser@5.0.0':
     dependencies:
-      '@types/node': 22.10.3
+      '@types/node': 22.10.5
 
   '@types/debug@4.1.12':
     dependencies:
@@ -4284,6 +4287,10 @@ snapshots:
   '@types/ms@0.7.34': {}
 
   '@types/node@22.10.3':
+    dependencies:
+      undici-types: 6.20.0
+
+  '@types/node@22.10.5':
     dependencies:
       undici-types: 6.20.0
 
@@ -4401,6 +4408,13 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
+  '@vitejs/plugin-react-swc@3.7.2(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))':
+    dependencies:
+      '@swc/core': 1.9.3
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
+    transitivePeerDependencies:
+      - '@swc/helpers'
+
   '@vitest/expect@2.1.8':
     dependencies:
       '@vitest/spy': 2.1.8
@@ -4408,13 +4422,13 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.8(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))':
+  '@vitest/mocker@2.1.8(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))':
     dependencies:
       '@vitest/spy': 2.1.8
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
 
   '@vitest/pretty-format@2.1.8':
     dependencies:
@@ -7116,13 +7130,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@2.1.8(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)):
+  vite-node@2.1.8(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)):
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 1.1.2
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7134,9 +7148,9 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@3.9.1(@types/node@22.10.3)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))):
+  vite-plugin-dts@3.9.1(@types/node@22.10.5)(rollup@4.25.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))):
     dependencies:
-      '@microsoft/api-extractor': 7.43.0(@types/node@22.10.3)
+      '@microsoft/api-extractor': 7.43.0(@types/node@22.10.5)
       '@rollup/pluginutils': 5.1.3(rollup@4.25.0)
       '@vue/language-core': 1.8.27(typescript@5.7.2)
       debug: 4.4.0
@@ -7145,23 +7159,23 @@ snapshots:
       typescript: 5.7.2
       vue-tsc: 1.8.27(typescript@5.7.2)
     optionalDependencies:
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-externalize-deps@0.8.0(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))):
+  vite-plugin-externalize-deps@0.8.0(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))):
     dependencies:
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
 
-  vite-tsconfig-paths@4.3.2(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))):
+  vite-tsconfig-paths@4.3.2(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.2)
     optionalDependencies:
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -7176,10 +7190,20 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 4.0.1(postcss@8.4.49)
 
-  vitest@2.1.8(@types/node@22.10.3)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49)):
+  vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)):
+    dependencies:
+      esbuild: 0.21.5
+      postcss: 8.4.49
+      rollup: 4.25.0
+    optionalDependencies:
+      '@types/node': 22.10.5
+      fsevents: 2.3.3
+      sugarss: 4.0.1(postcss@8.4.49)
+
+  vitest@2.1.8(@types/node@22.10.5)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.4.49)):
     dependencies:
       '@vitest/expect': 2.1.8
-      '@vitest/mocker': 2.1.8(vite@5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49)))
+      '@vitest/mocker': 2.1.8(vite@5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49)))
       '@vitest/pretty-format': 2.1.8
       '@vitest/runner': 2.1.8
       '@vitest/snapshot': 2.1.8
@@ -7195,11 +7219,11 @@ snapshots:
       tinyexec: 0.3.2
       tinypool: 1.0.2
       tinyrainbow: 1.2.0
-      vite: 5.4.11(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
-      vite-node: 2.1.8(@types/node@22.10.3)(sugarss@4.0.1(postcss@8.4.49))
+      vite: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
+      vite-node: 2.1.8(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.10.3
+      '@types/node': 22.10.5
       jsdom: 25.0.1
     transitivePeerDependencies:
       - less
