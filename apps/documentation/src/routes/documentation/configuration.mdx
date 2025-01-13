@@ -11,4 +11,142 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # Configuration
 
-TODO
+`tuono.config.ts` is a configuration file used in Tuono framework to customize aspects of the 
+build process and development environment. Tuono leverages `Vite` - which is a modern, 
+fast build tool and development server for web applications.
+
+The `TuonoConfig` interface serves as a wrapper for `vite.config.ts` -
+
+```typescript
+// ->> node_modules/tuono/dist/esm/config/types.d.ts
+export interface TuonoConfig {
+    vite?: {
+        alias?: AliasOptions;
+        optimizeDeps?: DepOptimizationOptions;
+        plugins?: Array<Plugin>;
+    };
+}
+```
+
+As of the current version, it supports the following properties 
+
+- `alias`: Useful for configuring custom source alias paths during imports, similar to `Next.js`. [ 👉 Read more here](https://vite.dev/config/shared-options)
+- `optimizeDeps`: Vite's dependency optimizer used only during dev. [ 👉 Read more here](https://vite.dev/config/dep-optimization-options)
+- `plugins`:  Useful for extending vite's functionality. [ 👉 Read more here](https://vite.dev/guide/using-plugins)
+
+We will cover one of the properties `alias` here in detail
+
+## 1. Configure Path Alias in Tuono
+
+After configuring aliases, you can use them in your imports (very similar to `Next.js` framework):
+
+```typescript
+// Instead of
+import MyComponent from '../../../components/MyComponent'; // relative to src folder
+
+// You can use
+import MyComponent from '@/components/MyComponent'; // considers 'src' as baseFolder
+```
+
+To achieve this, you need to add the following configuration to your `tuono.config.ts`
+
+```typescript
+// ->> tuono.config.ts
+import type { TuonoConfig } from "tuono/config";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+function getDirname(importMetaUrl: string): string {
+  return dirname(fileURLToPath(importMetaUrl));
+}
+
+const __dirname = getDirname(import.meta.url);
+
+const config: TuonoConfig = {
+  vite: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+    
+  },
+};
+
+export default config;
+```
+
+As Tuono uses Typescript, you should also update `compilerOptions` under `tsconfig.json` file to include these aliases for proper type checking
+
+> *NOTE: please add the following code-snippet under `compilerOptions` and not replace `tsconfig.json`*
+
+```json
+/* ->> tsconfig.json*/
+{
+  "compilerOptions": {
+    ...
+    /* src alias "@" configuration */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    ...
+  }
+}
+```
+
+One last thing is to add `@types/node` to your project, so Typescript stops complaining during file inputs.
+
+```bash
+# add @types/node to your project
+npm i -D @types/node
+```
+
+
+With these you're good to go! ✨
+
+## Practical Usecases
+
+### 01. Design libraries - ShadCN
+
+You can use libraries like `ShadCN` along with Tuono with this feature. Just follow their instruction on `Vite` site  upto `Step 03`. [👉 Link provided here](https://ui.shadcn.com/docs/installation/vite)
+
+### 02. More Path Aliases
+
+You can even keep extending aliases to `@components` or `@services` by just adding them to `tuono.config.ts` like so -
+
+```typescript
+// ->> tuono.config.ts
+// NOTE: 💡 THIS IS COMPLETELY OPTIONAL
+import type { TuonoConfig } from "tuono/config";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+function getDirname(importMetaUrl: string): string {
+  return dirname(fileURLToPath(importMetaUrl));
+}
+
+const __dirname = getDirname(import.meta.url);
+
+const config: TuonoConfig = {
+  vite: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      // NOTE: 💡 only works if you have a 'components' & 'services' folder under 'src'
+      // NOTE: 💡 similarly, you need to also configure tsconfig.json
+      '@components': path.resolve(__dirname, './src/components'), // ..optional
+      '@services': path.resolve(__dirname, './src/services'), // ..optional
+    },
+    
+  },
+};
+
+export default config;
+
+
+```
+
+---
+
+
+
