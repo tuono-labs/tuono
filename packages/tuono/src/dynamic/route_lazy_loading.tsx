@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 
-import type { RouteComponent } from './types'
+import type { RouteComponent } from 'tuono-router'
 
 type ImportFn = () => Promise<{ default: RouteComponent }>
 

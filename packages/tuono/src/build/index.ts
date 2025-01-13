@@ -67,7 +67,7 @@ function createBaseViteConfigFromTuonoConfig(
       react({ include: pluginFilesInclude }),
 
       TuonoFsRouterPlugin(),
-      TuonoLazyFnPlugin({ include: pluginFilesInclude }),
+      //TuonoLazyFnPlugin({ include: pluginFilesInclude }),
     ],
   }
 
