@@ -234,7 +234,7 @@ importers:
         version: 7.26.0
       '@babel/types':
         specifier: ^7.24.0
-        version: 7.26.3
+        version: 7.26.5
       prettier:
         specifier: ^3.2.4
         version: 3.4.2
@@ -259,7 +259,7 @@ importers:
         version: 7.26.0
       '@babel/types':
         specifier: ^7.24.0
-        version: 7.26.3
+        version: 7.26.5
       vite:
         specifier: ^5.2.11
         version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
@@ -441,6 +441,10 @@ packages:
 
   '@babel/types@7.26.3':
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.26.5':
+    resolution: {integrity: sha512-L6mZmwFDK6Cjh1nRCLXpa6no13ZIioJDz7mdkzHv399pThrTa/k0nUlNaenOeh2kWu/iaOQYElEpKPUswUa9Vg==}
     engines: {node: '>=6.9.0'}
 
   '@commitlint/parse@19.5.0':
@@ -3701,6 +3705,11 @@ snapshots:
       - supports-color
 
   '@babel/types@7.26.3':
+    dependencies:
+      '@babel/helper-string-parser': 7.25.9
+      '@babel/helper-validator-identifier': 7.25.9
+
+  '@babel/types@7.26.5':
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
