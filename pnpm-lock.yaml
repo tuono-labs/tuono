@@ -197,7 +197,7 @@ importers:
         version: 5.4.11(@types/node@22.10.5)(sugarss@4.0.1(postcss@8.4.49))
       web-streams-polyfill:
         specifier: ^4.0.0
-        version: 4.0.0
+        version: 4.1.0
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
@@ -3424,6 +3424,10 @@ packages:
 
   web-streams-polyfill@4.0.0:
     resolution: {integrity: sha512-0zJXHRAYEjM2tUfZ2DiSOHAa2aw1tisnnhU3ufD57R8iefL+DcdJyRBRyJpG+NUimDgbTI/lH+gAE1PAvV3Cgw==}
+    engines: {node: '>= 8'}
+
+  web-streams-polyfill@4.1.0:
+    resolution: {integrity: sha512-A7Jxrg7+eV+eZR/CIdESDnRGFb6/bcKukGvJBB5snI6cw3is1c2qamkYstC1bY1p08TyMRlN9eTMkxmnKJBPBw==}
     engines: {node: '>= 8'}
 
   webidl-conversions@7.0.0:
@@ -7269,6 +7273,8 @@ snapshots:
       xml-name-validator: 5.0.0
 
   web-streams-polyfill@4.0.0: {}
+
+  web-streams-polyfill@4.1.0: {}
 
   webidl-conversions@7.0.0: {}
 
