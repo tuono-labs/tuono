@@ -6,33 +6,37 @@ import * as React from 'react'
 
 const isServerSide = typeof window === 'undefined'
 
-type ComponentModule<P = {}> = { default: React.ComponentType<P> }
+interface ComponentModule<T> {
+  default: React.ComponentType<T>
+}
 
 interface DynamicOptions {
   ssr?: boolean
-  loading?: React.ComponentType<any> | null
+  loading?: React.ComponentType<unknown> | null
 }
 
-type Loader = () => Promise<React.ComponentType<any> | ComponentModule<any>>
+type Loader<T = object> = () => Promise<
+  React.ComponentType<T> | ComponentModule<T>
+>
 
-interface LoadableOptions extends DynamicOptions {
-  loader: Loader
+interface LoadableOptions<T> extends DynamicOptions {
+  loader: Loader<T>
 }
 
-export type LoadableFn<P = {}> = (
-  opts: LoadableOptions,
-) => React.ComponentType<P>
+type LoadableFn = <T = object>(
+  options: LoadableOptions<T>,
+) => React.ComponentType<T>
 
-const defaultLoaderOptions: LoadableOptions = {
+const defaultLoaderOptions: LoadableOptions<object> = {
   ssr: true,
   loading: null,
   loader: () => Promise.resolve(() => null),
 }
 
-function noSSR<P = {}>(
-  LoadableInitializer: LoadableFn<P>,
-  loadableOptions: LoadableOptions,
-): React.ComponentType<P> {
+function noSSR<T = object>(
+  LoadableInitializer: LoadableFn,
+  loadableOptions: LoadableOptions<T>,
+): React.ComponentType<T> {
   if (!isServerSide) {
     return LoadableInitializer(loadableOptions)
   }
@@ -41,15 +45,20 @@ function noSSR<P = {}>(
 
   const Loading = loadableOptions.loading
   // This will only be rendered on the server side
-  return () => <Loading />
+  function NoSSRLoading(): React.JSX.Element {
+    return <Loading />
+  }
+  return NoSSRLoading
 }
 
-const Loadable = (options: LoadableOptions) => {
+const Loadable = <T = object,>(
+  options: LoadableOptions<T>,
+): React.ComponentType<T> => {
   const opts = { ...defaultLoaderOptions, ...options }
   const Lazy = React.lazy(() => opts.loader().then())
   const Loading = opts.loading
 
-  function LoadableComponent(props: any): React.JSX.Element {
+  function LoadableComponent(props: T): React.JSX.Element {
     const fallbackElement = Loading ? <Loading /> : null
 
     const Wrap = Loading ? React.Suspense : React.Fragment
@@ -71,12 +80,12 @@ const Loadable = (options: LoadableOptions) => {
  * This function lets you dynamically import a component.
  * It uses [React.lazy()](https://react.dev/reference/react/lazy) with [Suspense](https://react.dev/reference/react/Suspense) under the hood.
  */
-export const dynamic = <P = {},>(
-  importFn: Loader,
+export const dynamic = <T = object,>(
+  importFn: Loader<T>,
   opts?: DynamicOptions,
-): React.ComponentType<P> => {
-  if (typeof opts?.ssr === 'boolean' && !opts?.ssr) {
-    return noSSR(Loadable, { ...opts, loader: importFn })
+): React.ComponentType<T> => {
+  if (typeof opts?.ssr === 'boolean' && !opts.ssr) {
+    return noSSR<T>(Loadable, { ...opts, loader: importFn })
   }
-  return Loadable({ ...opts, loader: importFn })
+  return Loadable<T>({ ...opts, loader: importFn })
 }
