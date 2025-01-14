@@ -11,102 +11,39 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # Configuration
 
-`tuono.config.ts` is a configuration file used in Tuono framework to customize aspects of the 
-build process and development environment. The config file is written in typescript, so you can rely on type-check and autosuggestion provided by the `TuonoConfig` type,
-which is exported by `tuono/config`.
+Tuono can be configured using the `tuono.config.ts` file,
+which allows you to customize various aspects of the build process and development environment.
+
+The config file is written in TypeScript,
+so you can take advantage of type checking and auto-suggestions provided by the `TuonoConfig` type,
+which is exported from `tuono/config`.
 
 ```ts
-import type { TuonoConfig } from 'tuono/config';
+import type { TuonoConfig } from 'tuono/config'
 
-const config: TuonoConfig = { /* typesafe config */ }
+const config: TuonoConfig = {
+  /* typesafe config */
+}
 
 export default config
 ```
 
-## Vite
+## vite
 
-Tuono leverages `Vite` - which is a modern, fast build tool and development server for web applications. The config file `tuono.config.ts` supports the following properties of vite -
+Tuono leverages Vite, a modern and fast build tool and development server for web applications.
 
-### Vite.alias
+As a result, **some** Vite configuration properties can be set in the `tuono.config.ts` file under the `vite` property.
 
-Useful for configuring custom source alias paths during imports, similar to `Next.js`. [ 👉 Read more here](https://vite.dev/config/shared-options)
+### vite.alias
 
-### Vite.optimizeDeps
+Useful for configuring custom source alias paths during imports. [ 👉 Read more here](https://vite.dev/config/shared-options)
+
+> 💡 You can find a working example in the `tuono-tutorial` template or in the documentation itself!
+
+### vite.optimizeDeps
 
 Vite's dependency optimizer used only during dev. [ 👉 Read more here](https://vite.dev/config/dep-optimization-options)
 
-### Vite.plugins
+### vite.plugins
 
 Useful for extending vite's functionality. [ 👉 Read more here](https://vite.dev/guide/using-plugins)
-
-
-## Using Vite alias for Path configuration
-
-With aliases, you can call in your imports very similar to `Next.js` framework:
-
-```typescript
-// Instead of
-import MyComponent from '../../../components/MyComponent'; // relative to src folder
-
-// You can use
-import MyComponent from '@/components/MyComponent'; // considers 'src' as baseFolder
-```
-
-To achieve this, you need to add the following configuration to your `tuono.config.ts`
-
-```typescript
-// ->> tuono.config.ts
-import type { TuonoConfig } from "tuono/config";
-import path, { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-function getDirname(importMetaUrl: string): string {
-  return dirname(fileURLToPath(importMetaUrl));
-}
-
-const __dirname = getDirname(import.meta.url);
-
-const config: TuonoConfig = {
-  vite: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-    
-  },
-};
-
-export default config;
-```
-
-As Tuono uses Typescript, you should also update `compilerOptions` under `tsconfig.json` file to include these aliases for proper type checking
-
-> *NOTE: please add the following code-snippet under `compilerOptions` and not replace `tsconfig.json`*
-
-```json
-/* ->> tsconfig.json*/
-{
-  "compilerOptions": {
-    ...
-    /* src alias "@" configuration */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    ...
-  }
-}
-```
-
-One last thing is to add `@types/node` to your project, so Typescript stops complaining during file inputs.
-
-```bash
-# add @types/node to your project
-npm i -D @types/node
-```
-
-
-With these you're good to go! ✨
-
----
