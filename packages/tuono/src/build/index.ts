@@ -3,7 +3,6 @@ import { build, createServer, mergeConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import inject from '@rollup/plugin-inject'
 import { TuonoFsRouterPlugin } from 'tuono-fs-router-vite-plugin'
-import { TuonoLazyFnPlugin } from 'tuono-lazy-fn-vite-plugin'
 
 import type { TuonoConfig } from '../config'
 
