@@ -3,7 +3,6 @@ export {
   createRootRoute,
   createRouter,
   Link,
-  dynamic,
   useRouter,
 } from 'tuono-router'
 
