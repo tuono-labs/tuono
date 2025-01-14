@@ -16,10 +16,12 @@ The Tuono router facilitates client-side route transitions between pages, enhanc
 - Enabling smooth navigation in single-page applications (SPAs)
 - Preventing page reloads during site navigation
 
-Tuono provides two choices for navigation between pages:
+Tuono provides two choices for navigation between pages of your app:
 
-- The `Link` component - to be used in place of an `a` tag
-- The `useRouter` hook - to be used programmatically change routes, or to access data about the current route
+- The `Link` component - used in place of an `a` tag
+- The `useRouter` hook - used to programmatically change routes, or to access data about the current route
+
+Use the `a` tag for navigating to other websites.
 
 ## The `Link` component
 
@@ -51,7 +53,7 @@ The example above uses multiple links. Each one maps a path (`href`) to a known 
 - `/about` → `src/routes/about.tsx`
 - `/blog/hello-world` → `src/routes/blog/[slug].tsx`
 
-> For more information about this component visit the [dedicated API reference page](/documentation/components/link).
+> For more information about this component visit the [Link component API reference page](/documentation/components/link).
 
 ## The `useRouter` hook
 
@@ -76,4 +78,4 @@ export default function GoToAboutPage() {
 }
 ```
 
-> For more information about this hook visit the [dedicated API reference page](/documentation/hooks/use-router).
+> For more information about this hook visit the [useRouter API reference page](/documentation/hooks/use-router).

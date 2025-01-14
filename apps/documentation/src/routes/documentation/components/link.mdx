@@ -21,6 +21,8 @@ export default function Page() {
 }
 ```
 
+For navigating to pages outside of your app (other websites), you should use the `a` tag.
+
 > Additional considerations:
 >
 > - Any `<Link />` in the viewport is prefetched by default when it appears within the viewport.
@@ -28,10 +30,8 @@ export default function Page() {
 
 ## Reference
 
-The `Link` component excepts the below optional props, as well as all those accepted by the HTML `a` tag.
+The `Link` component excepts the below props, as well as all those accepted by the HTML `a` tag. Optional props are denoted with a question mark.
 
-- `preload`: `boolean` - Whether to preload the page if the link is within the viewport. Defaults to `true`.
-- `scroll`: `boolean` - Whether to preserve scroll position between navigations. Defaults to `true`.
 - `href`: `string` - Relative path to the page in your application. Anchor names (links with hashtags) are also valid.
-
-The `Link` component uses [`router.push`](/documentation/hooks/use-router) under the hood.
+- `preload?`: `boolean` - Whether to preload the page if the link is within the viewport. Defaults to `true`.
+- `scroll?`: `boolean` - Whether to preserve scroll position between navigations. Defaults to `true`.
