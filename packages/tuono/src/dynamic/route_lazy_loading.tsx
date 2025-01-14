@@ -5,7 +5,7 @@ import type { RouteComponent } from 'tuono-router'
 
 type ImportFn = () => Promise<{ default: RouteComponent }>
 
-export const __tuono__internal__lazyLoadComponent = (
+export const __tuono__internal__lazyLoadRoute = (
   factory: ImportFn,
 ): RouteComponent => {
   let LoadedComponent: RouteComponent | undefined
