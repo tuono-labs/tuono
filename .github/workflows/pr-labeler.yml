@@ -1,0 +1,27 @@
+name: 'PR Labeler'
+
+# @see https://github.com/actions/labeler
+# @see .github/labeler.yml
+
+on:
+  - pull_request_target
+
+jobs:
+  labeler:
+    name: 'Manage labels'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      # Add checkout step to load labeler.yml locally,
+      # rather than from an API request
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/labeler@v5
+        with:
+          sync-labels: true

@@ -2,7 +2,7 @@
   "name": "workspace",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387",
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
   "scripts": {
     "dev": "turbo dev --filter=./packages/*",
     "build": "turbo build --filter=./packages/*",
@@ -16,23 +16,23 @@
     "docs:format": "turbo format --filter=documentation",
     "docs:format:check": "turbo format:check --filter=documentation",
     "docs:types": "turbo types --filter=documentation",
-    "repo:root:format:check": "prettier . !./apps/** !./assets/** !./benches/** !./crates !./examples !./packages/** --check",
-    "repo:root:format": "prettier . !./apps/** !./assets/** !./benches/** !./crates !./examples !./packages/** --write",
+    "repo:root:format:check": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --check",
+    "repo:root:format": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --write",
     "check-all": "turbo build lint format:check types --filter=!./examples"
   },
   "author": "Valerio Ageno",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "9.15.0",
-    "@types/node": "22.10.3",
-    "eslint": "9.15.0",
-    "eslint-import-resolver-typescript": "3.6.3",
+    "@eslint/js": "9.18.0",
+    "@types/node": "22.10.6",
+    "eslint": "9.18.0",
+    "eslint-import-resolver-typescript": "3.7.0",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-react": "7.37.3",
+    "eslint-plugin-react": "7.37.4",
     "eslint-plugin-react-hooks": "5.1.0",
-    "prettier": "3.4.1",
-    "turbo": "2.2.3",
-    "typescript": "5.6.3",
-    "typescript-eslint": "8.15.0"
+    "prettier": "3.4.2",
+    "turbo": "2.3.3",
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.20.0"
   }
 }

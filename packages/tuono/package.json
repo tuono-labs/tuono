@@ -108,9 +108,9 @@
     "@tanstack/config": "0.7.13",
     "@types/babel__core": "7.20.5",
     "@types/babel__traverse": "7.20.6",
-    "@types/node": "22.10.3",
-    "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.2",
+    "@types/node": "22.10.6",
+    "@types/react": "19.0.6",
+    "@types/react-dom": "19.0.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "vitest": "2.1.8"

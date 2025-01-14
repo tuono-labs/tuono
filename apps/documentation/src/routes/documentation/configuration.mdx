@@ -11,4 +11,39 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # Configuration
 
-TODO
+Tuono can be configured using the `tuono.config.ts` file,
+which allows you to customize various aspects of the build process and development environment.
+
+The config file is written in TypeScript,
+so you can take advantage of type checking and auto-suggestions provided by the `TuonoConfig` type,
+which is exported from `tuono/config`.
+
+```ts
+import type { TuonoConfig } from 'tuono/config'
+
+const config: TuonoConfig = {
+  /* typesafe config */
+}
+
+export default config
+```
+
+## vite
+
+Tuono leverages Vite, a modern and fast build tool and development server for web applications.
+
+As a result, **some** Vite configuration properties can be set in the `tuono.config.ts` file under the `vite` property.
+
+### vite.alias
+
+Useful for configuring custom source alias paths during imports. [ 👉 Read more here](https://vite.dev/config/shared-options)
+
+> 💡 You can find a working example in the `tuono-tutorial` template or in the documentation itself!
+
+### vite.optimizeDeps
+
+Vite's dependency optimizer used only during dev. [ 👉 Read more here](https://vite.dev/config/dep-optimization-options)
+
+### vite.plugins
+
+Useful for extending vite's functionality. [ 👉 Read more here](https://vite.dev/guide/using-plugins)

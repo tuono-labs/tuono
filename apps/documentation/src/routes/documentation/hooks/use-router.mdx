@@ -11,4 +11,40 @@ import Breadcrumbs, { Element } from '@/components/breadcrumbs'
 
 # useRouter
 
-TODO
+The `useRouter` hook provides access to various data about the current route, as well as methods to navigate between pages, as seen in the below example:
+
+```typescript jsx
+import { useRouter } from 'tuono'
+
+export default function IndexPage() {
+  const router = useRouter()
+
+  return (
+    <>
+      <p>pathname: {router.pathname}</p>
+      <button onClick={() => router.push("/foo")}>
+        My link
+      </button>
+    </>
+  )
+}
+```
+
+## `router` object
+
+- `pathname`: `string` - Returns the current path name
+- `query`: `Record<string, string>` - This object contains all the query params of the current route
+
+The following methods are included inside `router`:
+
+### `router.push`
+
+Handles client side page navigation quickly. Useful for internal links, or for when you need to change url in some JS.
+
+```ts
+router.push(path, options)
+```
+
+- `path`: `string` - The path of the page you want to navigate to
+- `options`: `PushOptions` - Optional config object for additional control
+  - `scroll`: `boolean` - If `false` the scroll offset will be kept across page navigation. Default `true`

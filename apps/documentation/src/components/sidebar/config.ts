@@ -239,7 +239,7 @@ export const sidebarElements: Array<SidebarElement> = [
   },
   {
     type: 'element',
-    label: 'tuono.config.ts',
+    label: 'Configuration',
     href: '/documentation/configuration',
   },
 

@@ -18,7 +18,7 @@ interface UseRouterResult {
   /**
    * This object contains all the query params of the current route
    */
-  query: Record<string, unknown>
+  query: Record<string, string>
 
   /**
    * Returns the current pathname
