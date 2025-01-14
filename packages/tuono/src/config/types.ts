@@ -4,6 +4,6 @@ export interface TuonoConfig {
   vite?: {
     alias?: AliasOptions
     optimizeDeps?: DepOptimizationOptions
-    plugins?: PluginOption[]
+    plugins?: Array<PluginOption>
   }
 }
