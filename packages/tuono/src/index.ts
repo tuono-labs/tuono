@@ -3,7 +3,6 @@ export {
   createRootRoute,
   createRouter,
   Link,
-  RouterProvider,
   dynamic,
   useRouter,
   __tuono__internal__lazyLoadComponent,
