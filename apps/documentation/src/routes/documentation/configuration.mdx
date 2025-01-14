@@ -36,14 +36,24 @@ As a result, **some** Vite configuration properties can be set in the `tuono.con
 
 ### vite.alias
 
-Useful for configuring custom source alias paths during imports. [ 👉 Read more here](https://vite.dev/config/shared-options)
+Useful for configuring custom source alias paths during imports
+
+- Type:
+  - `Record<string, string>`
+  - `Array<{ find: string | RegExp, replacement: string, customResolver?: ResolverFunction | ResolverObject }>`
+- [Vite documentation: resolve.alias](https://vite.dev/config/shared-options#resolve-alias)
 
 > 💡 You can find a working example in the `tuono-tutorial` template or in the documentation itself!
 
 ### vite.optimizeDeps
 
-Vite's dependency optimizer used only during dev. [ 👉 Read more here](https://vite.dev/config/dep-optimization-options)
+Vite's dependency optimizer used only during dev
+
+- [Vite documentation: Dep Optimization Options](https://vite.dev/config/dep-optimization-options)
 
 ### vite.plugins
 
-Useful for extending vite's functionality. [ 👉 Read more here](https://vite.dev/guide/using-plugins)
+Useful for extending vite's functionality
+
+- Type: `Array<Plugin | Array<Plugin> | Promise<Plugin | Array<Plugin>>`
+- [Vite documentation: plugins](https://vite.dev/guide/using-plugins)
