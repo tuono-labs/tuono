@@ -74,10 +74,11 @@ cargo build
 #### Introduction
 
 Docker takes care of configuring the development environment, so you don’t need to worry about installing specific versions of packages like Node.js or pnpm. The Docker image handles this for you!
-Using Docker, **the only operations you’ll need to manage on your host machine are related to git**. (don't use phpnm, cargo, ... from your host machine)
+Using Docker, **the only operations you’ll need to manage on your host machine are related to git**. (don't use pnpm, cargo, ... from your host machine)
 Some IDEs (such as vscode with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)) allow you to connect directly to the Docker container.
 
-**Before proceeding with this guide, make sure that the `node_modules` and `target` directories are either absent or empty in the subprojects of Tuono from your host machine where you want to contribute.** This ensures a clean and consistent environment when using Docker.
+**Before proceeding with this guide, make sure that the `node_modules` and `target` directories are either absent or empty in the subprojects of Tuono from your host machine where you want to contribute.**
+This ensures a clean and consistent environment when using Docker.
 
 #### Build the Tuono's Docker Container
 
