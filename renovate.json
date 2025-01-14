@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "schedule": ["every 2 weeks on monday"],
+  "schedule": ["every Monday"],
   "prConcurrentLimit": 5,
   "packageRules": [
     {
