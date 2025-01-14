@@ -167,16 +167,17 @@ export async function routeGenerator(config = defaultConfig): Promise<void> {
   const imports = [
     ...sortedRouteNodes.map((node) => {
       const extension = node.filePath.endsWith('mdx') ? '.mdx' : ''
-      return `const ${node.variableName as string
-        }Import = ${DYNAMIC_FN}(() => import('./${replaceBackslash(
-          removeExt(
-            path.relative(
-              path.dirname(config.generatedRouteTree),
-              path.resolve(config.folderName, node.filePath),
-            ),
-            false,
+      return `const ${
+        node.variableName as string
+      }Import = ${DYNAMIC_FN}(() => import('./${replaceBackslash(
+        removeExt(
+          path.relative(
+            path.dirname(config.generatedRouteTree),
+            path.resolve(config.folderName, node.filePath),
           ),
-        )}${extension}'))`
+          false,
+        ),
+      )}${extension}'))`
     }),
   ].join('\n')
 
