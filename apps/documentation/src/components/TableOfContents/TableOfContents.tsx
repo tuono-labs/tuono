@@ -8,7 +8,7 @@ import { IconList } from '@tabler/icons-react'
 import { Box, rem, ScrollArea, Text } from '@mantine/core'
 
 import { getHeadings, type Heading } from './getHeadings'
-import classes from './table-of-content.module.css'
+import classes from './TableOfContents.module.css'
 
 function getActiveElement(rects: Array<DOMRect>): number {
   if (rects.length === 0) {
