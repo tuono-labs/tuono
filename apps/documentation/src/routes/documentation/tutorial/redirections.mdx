@@ -1,4 +1,4 @@
-import MetaTags from '@/components/meta-tags'
+import MetaTags from '@/components/MetaTags'
 
 <MetaTags
   title="Tuono - Redirection"
@@ -6,7 +6,7 @@ import MetaTags from '@/components/meta-tags'
   description="Learn how to redirect to different route from the server"
 />
 
-import Breadcrumbs, { Element } from '@/components/breadcrumbs'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 <Breadcrumbs
   breadcrumbs={[
@@ -50,7 +50,7 @@ Now let's create the button in the home page to actually point to it!
 Now at [http://localhost:3000/](http:/localhost:3000/) You will find a new link at the beginning of the list.
 Click on it and see the application automatically redirecting you to your favourite pokemon's route!
 
-import NavigationButtons from '../../../components/navigation-buttons'
+import NavigationButtons from '../../../components/NavigationButtons'
 
 <NavigationButtons
   prev={{ title: 'SEO and meta tags', href: '/documentation/tutorial/seo' }}
