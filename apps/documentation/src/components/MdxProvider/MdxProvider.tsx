@@ -7,6 +7,7 @@ import MdxQuote from './MdxQuote'
 import MdxCode from './MdxCode'
 import { h } from './MdxTitle'
 import MdxBold from './MdxBold'
+import MdxTable from './MdxTable'
 
 interface MdxProviderProps {
   children: ReactNode
@@ -30,6 +31,12 @@ export default function MdxProvider({
         h5: h(5),
         h6: h(6),
         strong: MdxBold,
+        table: MdxTable,
+        thead: MdxTable.Thead,
+        tbody: MdxTable.Tbody,
+        tr: MdxTable.Tr,
+        th: MdxTable.Th,
+        td: MdxTable.Td,
       }}
     >
       {children}
