@@ -7,7 +7,7 @@ import {
 import { IconSun, IconMoon } from '@tabler/icons-react'
 import cx from 'clsx'
 
-import classes from './theme-btn.module.css'
+import classes from './ThemeBtn.module.css'
 
 export default function ThemeBtn(): JSX.Element {
   const { setColorScheme } = useMantineColorScheme()

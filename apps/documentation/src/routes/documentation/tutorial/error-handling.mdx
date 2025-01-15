@@ -1,4 +1,4 @@
-import MetaTags from '@/components/meta-tags'
+import MetaTags from '@/components/MetaTags'
 
 <MetaTags
   title="Tuono - Error handling"
@@ -6,7 +6,7 @@ import MetaTags from '@/components/meta-tags'
   description="Learn how to handle the server side error on your Tuono project"
 />
 
-import Breadcrumbs, { Element } from '@/components/breadcrumbs'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 <Breadcrumbs
   breadcrumbs={[
@@ -105,7 +105,7 @@ async fn get_all_pokemons(_req: Request, fetch: Client) -> Response {
 If you now try to load a not-existing Pokémon (`http://localhost:3000/pokemons/tuono-pokemon`) you will
 correctly receive a 404 status code in the console.
 
-import NavigationButtons from '../../../components/navigation-buttons'
+import NavigationButtons from '../../../components/NavigationButtons'
 
 <NavigationButtons
   prev={{

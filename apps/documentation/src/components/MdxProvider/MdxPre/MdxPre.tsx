@@ -1,7 +1,7 @@
 import type { JSX } from 'react'
 import { CodeHighlight } from '@mantine/code-highlight'
 
-import styles from './mdx-pre.module.css'
+import styles from './MdxPre.module.css'
 
 interface PreProps {
   children: {

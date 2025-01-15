@@ -14,8 +14,8 @@ import {
 import { IconX } from '@tabler/icons-react'
 import { useMediaQuery } from '@mantine/hooks'
 
-import { sidebarElements } from './config'
-import SidebarLink from './sidebar-link'
+import { sidebarElements } from './sidebarElements'
+import SidebarLink from './SidebarLink'
 
 interface SidebarProps {
   close: () => void

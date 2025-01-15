@@ -1,12 +1,12 @@
 import type { JSX, ReactNode } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 
-import MdxLink from './mdx-link'
-import MdxPre from './mdx-pre'
-import MdxQuote from './mdx-quote'
-import MdxCode from './mdx-code'
-import { h } from './mdx-title'
-import MdxBold from './mdx-bold/mdx-bold'
+import MdxLink from './MdxLink'
+import MdxPre from './MdxPre'
+import MdxQuote from './MdxQuote'
+import MdxCode from './MdxCode'
+import { h } from './MdxTitle'
+import MdxBold from './MdxBold'
 
 interface MdxProviderProps {
   children: ReactNode

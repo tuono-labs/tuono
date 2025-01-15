@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { Link, useRouter } from 'tuono'
 import { IconChevronRight } from '@tabler/icons-react'
 
-import styles from './sidebar-link.module.css'
+import styles from './SidebarLink.module.css'
 
 interface SidebarLinkProps {
   label: string

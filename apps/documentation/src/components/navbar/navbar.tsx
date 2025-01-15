@@ -2,7 +2,7 @@ import type { JSX } from 'react'
 import { AppShell, Box, Burger, Button, Flex } from '@mantine/core'
 import { Link } from 'tuono'
 
-import Actions from './actions'
+import NavbarActions from './NavbarActions'
 
 interface NavbarProps {
   toggle: () => void
@@ -24,7 +24,7 @@ export default function Navbar({ toggle }: NavbarProps): JSX.Element {
         </Button>
         <Box />
         <Flex align="center" gap={8}>
-          <Actions />
+          <NavbarActions />
           <Burger onClick={toggle} hiddenFrom="sm" size="sm" />
         </Flex>
       </Flex>

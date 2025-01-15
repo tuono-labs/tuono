@@ -1,5 +1,3 @@
-import Breadcrumbs, { BreadcrumbElement } from './breadcrumbs'
+import Breadcrumbs from './Breadcrumbs'
 
 export default Breadcrumbs
-
-export { BreadcrumbElement as Element }

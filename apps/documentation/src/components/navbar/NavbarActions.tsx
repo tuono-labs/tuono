@@ -2,9 +2,9 @@ import type { JSX } from 'react'
 import { Flex, ActionIcon, Group } from '@mantine/core'
 import { IconBrandGithub, IconBrandDiscord } from '@tabler/icons-react'
 
-import ThemeBtn from '../theme-btn'
+import ThemeBtn from '../ThemeBtn'
 
-export default function Actions(): JSX.Element {
+export default function NavbarActions(): JSX.Element {
   return (
     <Flex gap={8}>
       <Group gap={8}>

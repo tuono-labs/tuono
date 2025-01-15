@@ -7,12 +7,8 @@ import { useRouter, Link } from 'tuono'
 import { IconList } from '@tabler/icons-react'
 import { Box, rem, ScrollArea, Text } from '@mantine/core'
 
-import { getHeadings, type Heading } from './get-headings'
+import { getHeadings, type Heading } from './getHeadings'
 import classes from './table-of-content.module.css'
-
-interface TableOfContentsProps {
-  withTabs: boolean
-}
 
 function getActiveElement(rects: Array<DOMRect>): number {
   if (rects.length === 0) {
@@ -34,6 +30,10 @@ function getActiveElement(rects: Array<DOMRect>): number {
   )
 
   return closest.index
+}
+
+interface TableOfContentsProps {
+  withTabs: boolean
 }
 
 export function TableOfContents({

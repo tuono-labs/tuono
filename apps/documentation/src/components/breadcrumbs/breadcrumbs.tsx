@@ -1,49 +1,54 @@
-import type { JSX } from 'react'
-import { Breadcrumbs, Button } from '@mantine/core'
+import { useMemo, type JSX } from 'react'
+import { Breadcrumbs as MantineBreadcrumbs, Button } from '@mantine/core'
 import { Link, Head } from 'tuono'
 
 import { IconChevronRight, IconBolt } from '@tabler/icons-react'
 
-interface Breadcrumb {
+interface BreadcrumbData {
   href?: string
   label: string
 }
 interface BreadcrumbsProps {
-  breadcrumbs: Array<Breadcrumb>
+  breadcrumbs: Array<BreadcrumbData>
 }
 
-export default function TuonoBreadcrumbs({
+export default function Breadcrumbs({
   breadcrumbs = [],
 }: BreadcrumbsProps): JSX.Element {
+  const ldJson = useMemo(() => {
+    const _ldJson = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Tuono - The React/Rust fullstack framework',
+          item: 'https://tuono.dev' as string | undefined,
+        },
+      ],
+    }
+
+    _ldJson.itemListElement.push(
+      ...breadcrumbs.map((br, i) => ({
+        '@type': 'ListItem' as const,
+        position: i + 3,
+        name: br.label,
+        item: br.href ? `https://tuono.dev${br.href}` : undefined,
+      })),
+    )
+
+    return _ldJson
+  }, [breadcrumbs])
+
   return (
     <>
       <Head>
         <script type="application/ld+json">
-          {`{
-              "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              "itemListElement": [
-				{
-                  "@type": "ListItem",
-                  "position": 1,
-                  "name": "Tuono - The React/Rust fullstack framework",
-                  "item": "https://tuono.dev"
-                }${breadcrumbs.length > 0 ? ',' : ''}
-                ${breadcrumbs
-                  .map((br, i) =>
-                    JSON.stringify({
-                      '@type': 'ListItem',
-                      position: i + 3,
-                      name: br.label,
-                      item: br.href ? `https://tuono.dev${br.href}` : undefined,
-                    }),
-                  )
-                  .join(',')}]
-            }
-          `}
+          {JSON.stringify(ldJson, null, 2)}
         </script>
       </Head>
-      <Breadcrumbs
+      <MantineBreadcrumbs
         separator={<IconChevronRight size="1.1rem" stroke={1.5} />}
         mb="md"
         mt="md"
@@ -54,7 +59,7 @@ export default function TuonoBreadcrumbs({
         {breadcrumbs.map((br) => (
           <BreadcrumbElement href={br.href} label={br.label} key={br.label} />
         ))}
-      </Breadcrumbs>
+      </MantineBreadcrumbs>
     </>
   )
 }
