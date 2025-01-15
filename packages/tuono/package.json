@@ -99,7 +99,6 @@
     "@vitejs/plugin-react-swc": "^3.7.0",
     "fast-text-encoding": "^1.0.6",
     "tuono-fs-router-vite-plugin": "workspace:*",
-    "tuono-lazy-fn-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
     "vite": "^5.2.11",
     "web-streams-polyfill": "^4.0.0"
