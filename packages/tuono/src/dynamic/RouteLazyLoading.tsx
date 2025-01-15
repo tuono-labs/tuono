@@ -1,15 +1,13 @@
-import * as React from 'react'
+import { lazy, createElement } from 'react'
 import type { ReactElement } from 'react'
 
 import type { RouteComponent } from 'tuono-router'
 
 type ImportFn = () => Promise<{ default: RouteComponent }>
 
-export const __tuono__internal__lazyLoadRoute = (
-  factory: ImportFn,
-): RouteComponent => {
+export const RouteLazyLoading = (factory: ImportFn): RouteComponent => {
   let LoadedComponent: RouteComponent | undefined
-  const LazyComponent = React.lazy(factory) as unknown as RouteComponent
+  const LazyComponent = lazy<RouteComponent>(factory)
 
   const loadComponent = (): Promise<void> =>
     factory().then((module) => {
@@ -18,8 +16,7 @@ export const __tuono__internal__lazyLoadRoute = (
 
   const Component = (
     props: React.ComponentProps<RouteComponent>,
-  ): ReactElement =>
-    React.createElement(LoadedComponent || LazyComponent, props)
+  ): ReactElement => createElement(LoadedComponent || LazyComponent, props)
 
   Component.preload = loadComponent
 

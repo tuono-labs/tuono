@@ -2,8 +2,8 @@
  * This component is heavily inspired by Next.js dynamic function
  * Link: https://github.com/vercel/next.js/blob/1df81bcea62800198884438a2bb27ba14c9d506a/packages/next/src/shared/lib/dynamic.tsx
  */
-import * as React from 'react'
-
+import { lazy, Suspense, Fragment } from 'react'
+import type { ComponentType } from 'react'
 const isServerSide = typeof window === 'undefined'
 
 interface ComponentModule<T> {
@@ -23,9 +23,7 @@ interface LoadableOptions<T> extends DynamicOptions {
   loader: Loader<T>
 }
 
-type LoadableFn = <T = object>(
-  options: LoadableOptions<T>,
-) => React.ComponentType<T>
+type LoadableFn = <T = object>(options: LoadableOptions<T>) => ComponentType<T>
 
 const defaultLoaderOptions: LoadableOptions<object> = {
   ssr: true,
@@ -51,17 +49,15 @@ function noSSR<T = object>(
   return NoSSRLoading
 }
 
-const Loadable = <T = object,>(
-  options: LoadableOptions<T>,
-): React.ComponentType<T> => {
+function Loadable<T = object>(options: LoadableOptions<T>): ComponentType<T> {
   const opts = { ...defaultLoaderOptions, ...options }
-  const Lazy = React.lazy(() => opts.loader().then())
+  const Lazy = lazy(() => opts.loader().then())
   const Loading = opts.loading
 
   function LoadableComponent(props: T): React.JSX.Element {
     const fallbackElement = Loading ? <Loading /> : null
 
-    const Wrap = Loading ? React.Suspense : React.Fragment
+    const Wrap = Loading ? Suspense : Fragment
     const wrapProps = Loading ? { fallback: fallbackElement } : {}
 
     // TODO: In case ssr = false handle also the assets preloading
@@ -80,10 +76,10 @@ const Loadable = <T = object,>(
  * This function lets you dynamically import a component.
  * It uses [React.lazy()](https://react.dev/reference/react/lazy) with [Suspense](https://react.dev/reference/react/Suspense) under the hood.
  */
-export const dynamic = <T = object,>(
+export function dynamic<T = object>(
   importFn: Loader<T>,
   opts?: DynamicOptions,
-): React.ComponentType<T> => {
+): ComponentType<T> {
   if (typeof opts?.ssr === 'boolean' && !opts.ssr) {
     return noSSR<T>(Loadable, { ...opts, loader: importFn })
   }
