@@ -4,6 +4,7 @@
  */
 import { lazy, Suspense, Fragment } from 'react'
 import type { ComponentType } from 'react'
+
 const isServerSide = typeof window === 'undefined'
 
 interface ComponentModule<T> {
