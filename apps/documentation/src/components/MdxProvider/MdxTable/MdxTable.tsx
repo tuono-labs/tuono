@@ -8,16 +8,7 @@ type MdxTableProps = DetailedHTMLProps<
 
 function MdxTable(props: MdxTableProps) {
   return (
-    <Table
-      striped
-      highlightOnHover
-      withTableBorder
-      withColumnBorders
-      stickyHeader
-      stickyHeaderOffset={60}
-      className="my-4"
-      {...props}
-    >
+    <Table highlightOnHover stickyHeader stickyHeaderOffset={60} {...props}>
       {props.children}
     </Table>
   )
