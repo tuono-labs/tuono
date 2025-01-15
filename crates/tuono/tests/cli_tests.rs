@@ -124,19 +124,16 @@ fn it_successfully_create_catch_all_routes() {
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/[...all_routes].rs"]"#));
     assert!(temp_main_rs_content.contains("mod dyn_catch_all_all_routes;"));
+    println!("temp_main_rs_content: {:?}", temp_main_rs_content);
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post__tuono_internal_api))"#
+        r#".route("/api/{*all_apis}", post(api_dyn_catch_all_all_apis::post__tuono_internal_api))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
-    ));
-
-    assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
+        r#".route("/{*all_routes}", get(dyn_catch_all_all_routes::tuono__internal__route))"#
     ));
 
     assert!(temp_main_rs_content
-        .contains(r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__api))"#));
+        .contains(r#".route("/__tuono/data/{*all_routes}", get(dyn_catch_all_all_routes::tuono__internal__api))"#));
 }
