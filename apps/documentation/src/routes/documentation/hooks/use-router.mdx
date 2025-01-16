@@ -7,22 +7,27 @@ import MetaTags from '@/components/MetaTags'
 
 import Breadcrumbs from '@/components/Breadcrumbs'
 
-<Breadcrumbs breadcrumbs={[{ label: 'Hooks' }]} />
+<Breadcrumbs breadcrumbs={[{ label: 'useRouter' }]} />
 
 # useRouter
 
 The `useRouter` hook provides access to various data about the current route, as well as methods to navigate between pages, as seen in the below example:
 
-```typescript jsx
+```tsx
+import { JSX } from 'react'
 import { useRouter } from 'tuono'
 
-export default function IndexPage() {
+export default function IndexPage(): JSX.Element {
   const router = useRouter()
 
   return (
     <>
       <p>pathname: {router.pathname}</p>
-      <button onClick={() => router.push("/foo")}>
+      <button
+        onClick={() => {
+          router.push('/foo')
+        }}
+      >
         My link
       </button>
     </>
@@ -30,7 +35,7 @@ export default function IndexPage() {
 }
 ```
 
-## `router` object
+## `useRouter` result
 
 - `pathname`: `string` - Returns the current path name
 - `query`: `Record<string, string>` - This object contains all the query params of the current route
