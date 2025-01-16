@@ -11,36 +11,36 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 # Tailwind CSS
 
-[Tailwind CSS](https://tailwindcss.com) is a popular utility-first CSS framework.
+[Tailwind CSS](https://tailwindcss.com) is a popular utility-first CSS framework. Tuono currently only supports Tailwind CSS v4, which will ship to production [later this month](https://github.com/tailwindlabs/tailwindcss/discussions/13938#discussioncomment-11785562).
 
 ## Installation
 
 1. Install Tailwind CSS via your Node.js preferred package manager.
 
-```sh
-npm install tailwindcss@next @tailwindcss/vite@next
-```
+    ```sh
+    npm install tailwindcss@next @tailwindcss/vite@next
+    ```
 
 2. Add the Tailwind CSS vite plugin to `tuono.config.ts`, as seen in the example below:
 
-```ts
-import type { TuonoConfig } from 'tuono/config'
-import tailwindcss from '@tailwindcss/vite'
+    ```ts
+    import type { TuonoConfig } from 'tuono/config'
+    import tailwindcss from '@tailwindcss/vite'
 
-const config: TuonoConfig = {
-  vite: {
-    plugins: [tailwindcss()],
-  },
-}
+    const config: TuonoConfig = {
+      vite: {
+        plugins: [tailwindcss()],
+      },
+    }
 
-export default config
-```
+    export default config
+    ```
 
 3. Add the Tailwind CSS directives to `src/styles/global.css`.
 
-```css
-@import 'tailwindcss';
-```
+    ```css
+    @import 'tailwindcss';
+    ```
 
 ## Usage
 
