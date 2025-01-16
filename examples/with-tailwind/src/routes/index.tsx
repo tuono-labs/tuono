@@ -15,8 +15,8 @@ export default function IndexPage({
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-8 border border-neutral-200 max-w-md w-full">
+      <div className="min-h-screen flex items-center justify-normal sm:justify-center p-4">
+        <div className="bg-white rounded-lg p-8 border-0 sm:border border-neutral-200 max-w-[unset] sm:max-w-md w-full">
           <h1 className="text-4xl font-bold mb-4 text-center">
             Welcome to Tuono
           </h1>
