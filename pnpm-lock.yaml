@@ -69,7 +69,7 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       remark-gfm:
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       tuono:
         specifier: npm:tuono@0.16.9
