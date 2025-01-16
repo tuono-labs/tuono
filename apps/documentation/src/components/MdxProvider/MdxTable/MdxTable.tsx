@@ -1,12 +1,13 @@
 import type { DetailedHTMLProps, TableHTMLAttributes } from 'react'
 import { Table } from '@mantine/core'
+import type React from 'react'
 
 type MdxTableProps = DetailedHTMLProps<
   TableHTMLAttributes<HTMLTableElement>,
   HTMLTableElement
 >
 
-function MdxTable(props: MdxTableProps) {
+function MdxTable(props: MdxTableProps): React.JSX.Element {
   return (
     <Table highlightOnHover stickyHeader stickyHeaderOffset={60} {...props}>
       {props.children}
