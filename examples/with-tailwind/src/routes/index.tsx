@@ -21,8 +21,8 @@ export default function IndexPage({
             Welcome to Tuono
           </h1>
           <p className="text-gray-600 text-center mb-6">
-            This is a simple example of how to use using Tailwind CSS utility
-            classes in Tuono.
+            This is a simple example of how to use Tailwind CSS utility classes
+            in Tuono.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <a
