@@ -1,6 +1,6 @@
 [package]
 name = "tuono"
-version = "0.17.1"
+version = "0.17.0"
 edition = "2021"
 authors = ["V. Ageno <valerioageno@yahoo.it>"]
 description = "Superfast React fullstack framework"
