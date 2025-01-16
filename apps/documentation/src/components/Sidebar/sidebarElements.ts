@@ -170,6 +170,11 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'CSS modules',
         href: '/documentation/styles/css-modules',
       },
+      {
+        type: 'element',
+        label: 'Tailwind CSS',
+        href: '/documentation/styles/tailwind-css',
+      },
     ],
   },
   {
