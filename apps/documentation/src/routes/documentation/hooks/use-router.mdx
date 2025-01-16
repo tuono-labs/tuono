@@ -45,17 +45,8 @@ Handles client side page navigation quickly. Useful for internal links, or for w
 router.push(path, options)
 ```
 
-| Prop      | Type          | Required | Default value | Description                                    |
-| --------- | ------------- | -------- | ------------- | ---------------------------------------------- |
-| `path`    | `string`      | Yes      | -             | The path of the page you want to navigate to.  |
-| `options` | `PushOptions` | -        | -             | Optional config object for additional control. |
-
-### `PushOptions`
-
-| Key      | Type      | Required | Description                                                       |
-| -------- | --------- | -------- | ----------------------------------------------------------------- |
-| `scroll` | `boolean` | -        | If `false` the scroll offset will be kept across page navigation. |
-
-- `path`: `string` - The path of the page you want to navigate to
-- `options`: `PushOptions` - Optional config object for additional control
-  - `scroll`: `boolean` - If `false` the scroll offset will be kept across page navigation. Default `true`
+| Prop             | Type                | Default value | Description                                                       |
+| ---------------- | ------------------- | ------------- | ----------------------------------------------------------------- |
+| `path`           | `string` (Required) | -             | The path of the page you want to navigate to.                     |
+| `options`        | `PushOptions`       | -             | Optional config object for additional control.                    |
+| `options.scroll` | `boolean`           | `true`        | If `false` the scroll offset will be kept across page navigation. |
