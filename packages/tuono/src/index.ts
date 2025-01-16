@@ -3,9 +3,10 @@ export {
   createRootRoute,
   createRouter,
   Link,
-  dynamic,
   useRouter,
-  __tuono__internal__lazyLoadComponent,
 } from 'tuono-router'
+
+export { RouteLazyLoading as __tuono__internal__lazyLoadRoute } from './dynamic/RouteLazyLoading'
+export { dynamic } from './dynamic/dynamic'
 
 export type { TuonoProps } from './types'

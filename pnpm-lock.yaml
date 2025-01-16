@@ -189,9 +189,6 @@ importers:
       tuono-fs-router-vite-plugin:
         specifier: workspace:*
         version: link:../tuono-fs-router-vite-plugin
-      tuono-lazy-fn-vite-plugin:
-        specifier: workspace:*
-        version: link:../tuono-lazy-fn-vite-plugin
       tuono-router:
         specifier: workspace:*
         version: link:../tuono-router
@@ -251,31 +248,6 @@ importers:
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
-      vitest:
-        specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.6)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.5.0))
-
-  packages/tuono-lazy-fn-vite-plugin:
-    dependencies:
-      '@babel/core':
-        specifier: ^7.24.4
-        version: 7.26.0
-      '@babel/types':
-        specifier: ^7.24.0
-        version: 7.26.3
-      vite:
-        specifier: ^5.2.11
-        version: 5.4.11(@types/node@22.10.6)(sugarss@4.0.1(postcss@8.5.0))
-    devDependencies:
-      '@tanstack/config':
-        specifier: 0.7.13
-        version: 0.7.13(@types/node@22.10.6)(esbuild@0.21.5)(rollup@4.25.0)(typescript@5.7.3)(vite@5.4.11(@types/node@22.10.6)(sugarss@4.0.1(postcss@8.5.0)))
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
-      prettier:
-        specifier: ^3.2.4
-        version: 3.4.2
       vitest:
         specifier: 2.1.8
         version: 2.1.8(@types/node@22.10.6)(jsdom@25.0.1)(sugarss@4.0.1(postcss@8.5.0))

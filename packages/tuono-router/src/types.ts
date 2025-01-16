@@ -1,4 +1,4 @@
-import type { ComponentType as ReactComponentType, ReactNode } from 'react'
+import type { ReactNode, ComponentType } from 'react'
 
 export interface Segment {
   type: 'pathname' | 'param' | 'wildcard'
@@ -23,6 +23,6 @@ export interface RouteProps<TData = unknown> {
   children?: ReactNode
 }
 
-export type RouteComponent = ReactComponentType<RouteProps> & {
+export type RouteComponent = ComponentType<RouteProps> & {
   preload: () => void
 }
