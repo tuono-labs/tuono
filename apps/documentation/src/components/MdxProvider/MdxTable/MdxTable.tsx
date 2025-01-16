@@ -8,9 +8,10 @@ type MdxTableProps = DetailedHTMLProps<
 >
 
 function MdxTable(props: MdxTableProps): React.JSX.Element {
+  const { children, ...rest } = props
   return (
-    <Table highlightOnHover stickyHeader stickyHeaderOffset={60} {...props}>
-      {props.children}
+    <Table highlightOnHover stickyHeader stickyHeaderOffset={60} {...rest}>
+      {children}
     </Table>
   )
 }
