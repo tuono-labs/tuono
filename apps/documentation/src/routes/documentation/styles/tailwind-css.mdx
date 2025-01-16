@@ -1,0 +1,55 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Tailwind CSS"
+  canonical="https://tuono.dev/documentation/styles/css-modules"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'Tailwind CSS' }]} />
+
+# Tailwind CSS
+
+[Tailwind CSS](https://tailwindcss.com) is a popular utility-first CSS framework. Tuono support starts from Tailwind CSS v4.
+
+## Installation
+
+1. Install Tailwind CSS via your Node.js preferred package manager.
+
+   ```sh
+   npm install tailwindcss@next @tailwindcss/vite@next
+   ```
+
+2. Add the Tailwind CSS vite plugin to `tuono.config.ts`, as seen in the example below:
+
+   ```ts
+   import type { TuonoConfig } from 'tuono/config'
+   import tailwindcss from '@tailwindcss/vite'
+
+   const config: TuonoConfig = {
+     vite: {
+       plugins: [tailwindcss()],
+     },
+   }
+
+   export default config
+   ```
+
+3. Add the Tailwind CSS directives to `src/styles/global.css`.
+
+   ```css
+   @import 'tailwindcss';
+   ```
+
+## Usage
+
+Tailwind CSS is ready to go! You can now start using utility classes anywhere in your app.
+
+```tsx
+import { JSX } from 'react'
+
+export default function Example(): JSX.Element {
+  return <h1 className="text-6xl font-bold">Tuono + Tailwind CSS!</h1>
+}
+```
