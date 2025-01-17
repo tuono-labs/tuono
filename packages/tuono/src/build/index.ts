@@ -6,9 +6,11 @@ import { TuonoFsRouterPlugin } from 'tuono-fs-router-vite-plugin'
 
 import type { TuonoConfig } from '../config'
 
-import { loadConfig, blockingAsync } from './utils'
+import type { InternalTuonoConfig } from './types'
 
-const VITE_PORT = 3001
+import { blockingAsync } from './utils'
+import { loadConfig } from './config'
+
 const VITE_SSR_PLUGINS: Array<Plugin> = [
   {
     enforce: 'post',
@@ -109,7 +111,8 @@ const developmentSSRBundle = (): void => {
 
 const developmentCSRWatch = (): void => {
   blockingAsync(async () => {
-    const config = await loadConfig()
+    const config = (await loadConfig()) as unknown as InternalTuonoConfig
+
     const server = await createServer(
       mergeConfig<InlineConfig, InlineConfig>(
         createBaseViteConfigFromTuonoConfig(config),
@@ -118,7 +121,8 @@ const developmentCSRWatch = (): void => {
           base: '/vite-server/',
 
           server: {
-            port: VITE_PORT,
+            host: config.server.host,
+            port: config.server.port + 1,
             strictPort: true,
           },
           build: {
@@ -137,7 +141,7 @@ const developmentCSRWatch = (): void => {
 
 const buildProd = (): void => {
   blockingAsync(async () => {
-    const config = await loadConfig()
+    const config = (await loadConfig()) as unknown as InternalTuonoConfig
 
     await build(
       mergeConfig<InlineConfig, InlineConfig>(
