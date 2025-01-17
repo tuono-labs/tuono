@@ -30,5 +30,7 @@ export const loadConfig = async (): Promise<InternalTuonoConfig> => {
   } catch (err) {
     console.error('Failed to load tuono.config.ts')
     console.error(err)
+    // The CLI will fail so it is "safe" to cast the wrong type
+    return {} as unknown as InternalTuonoConfig
   }
 }
