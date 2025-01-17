@@ -86,7 +86,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   const [opened, { toggle }] = useDisclosure()
 
   return (
-    <>
+    <html>
       <>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -109,27 +109,29 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
         />
         <link rel="manifest" href="/site.webmanifest" />
       </>
-      <ColorSchemeScript />
-      <MantineProvider theme={theme} cssVariablesResolver={resolver}>
-        <AppShell
-          layout="alt"
-          header={{ height: 60 }}
-          navbar={{
-            width: 300,
-            breakpoint: 'sm',
-            collapsed: { mobile: !opened },
-          }}
-        >
-          <Navbar toggle={toggle} />
-          <Sidebar close={toggle} />
-          <AppShell.Main>
-            <Container id="mdx-root" component="article" size="md" p={20}>
-              <MdxProvider>{children}</MdxProvider>
-              <EditPage />
-            </Container>
-          </AppShell.Main>
-        </AppShell>
-      </MantineProvider>
-    </>
+      <body>
+        <MantineProvider theme={theme} cssVariablesResolver={resolver}>
+          <AppShell
+            layout="alt"
+            header={{ height: 60 }}
+            navbar={{
+              width: 300,
+              breakpoint: 'sm',
+              collapsed: { mobile: !opened },
+            }}
+          >
+            <Navbar toggle={toggle} />
+            <Sidebar close={toggle} />
+            <AppShell.Main>
+              <Container id="mdx-root" component="article" size="md" p={20}>
+                <MdxProvider>{children}</MdxProvider>
+                <EditPage />
+              </Container>
+            </AppShell.Main>
+          </AppShell>
+        </MantineProvider>
+        <ColorSchemeScript />
+      </body>
+    </html>
   )
 }

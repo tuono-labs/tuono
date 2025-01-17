@@ -43,7 +43,7 @@ export default function Breadcrumbs({
 
   return (
     <>
-      <script async type="application/ld+json">
+      <script type="application/ld+json">
         {JSON.stringify(ldJson, null, 2)}
       </script>
       <MantineBreadcrumbs
