@@ -9,7 +9,6 @@ import {
 } from '@mantine/core'
 import type { CSSVariablesResolver } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { Head } from 'tuono'
 
 import EditPage from '@/components/EditPage'
 import MdxProvider from '@/components/MdxProvider'
@@ -88,7 +87,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
 
   return (
     <>
-      <Head>
+      <>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
@@ -109,7 +108,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-      </Head>
+      </>
       <ColorSchemeScript />
       <MantineProvider theme={theme} cssVariablesResolver={resolver}>
         <AppShell
