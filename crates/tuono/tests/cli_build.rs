@@ -1,8 +1,8 @@
 mod utils;
 use assert_cmd::Command;
-use predicates::prelude::*;
 use serial_test::serial;
 use std::fs;
+use std::os::unix::fs::PermissionsExt;
 use utils::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
@@ -13,7 +13,7 @@ const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
 fn it_successfully_create_the_index_route() {
     let temp_tuono_project = TempTuonoProject::new();
 
-    temp_tuono_project.add_route("./src/routes/index.rs");
+    temp_tuono_project.add_file("./src/routes/index.rs");
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
@@ -101,7 +101,7 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
 fn it_successfully_create_catch_all_routes() {
     let temp_tuono_project = TempTuonoProject::new();
 
-    temp_tuono_project.add_route("./src/routes/[...all_routes].rs");
+    temp_tuono_project.add_file("./src/routes/[...all_routes].rs");
 
     temp_tuono_project.add_api(
         "./src/routes/api/[...all_apis].rs",
@@ -144,7 +144,7 @@ fn it_successfully_create_catch_all_routes() {
 
 #[test]
 #[serial]
-fn it_fails_without_installed_node_modules() {
+fn it_fails_without_installed_build_config_script() {
     TempTuonoProject::new();
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
@@ -157,15 +157,17 @@ fn it_fails_without_installed_node_modules() {
 
 #[test]
 #[serial]
-fn it_passes_with_node_modules_present() {
+fn it_fails_without_installed_build_script() {
     let temp_tuono_project = TempTuonoProject::new();
 
+    let file = temp_tuono_project.add_file("./node_modules/.bin/tuono-build-config");
+    let mut perms = file.metadata().unwrap().permissions();
+    perms.set_mode(0o755);
+    let _ = file.set_permissions(perms);
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
-
-    temp_tuono_project.add_route("./node_modules/.bin/tuono-build-config");
     test_tuono_build
         .arg("build")
         .assert()
         .failure()
-        .stderr(predicate::str::contains("Permission denied"));
+        .stderr("Failed to find the build script. Please run `npm install`\n");
 }
