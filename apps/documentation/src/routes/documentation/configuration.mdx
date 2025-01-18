@@ -1,14 +1,57 @@
-import MetaTags from '@/components/meta-tags'
+import MetaTags from '@/components/MetaTags'
 
 <MetaTags
   title="Tuono - tuono.config.ts"
   canonical="https://tuono.dev/documentation/configuration"
 />
 
-import Breadcrumbs, { Element } from '@/components/breadcrumbs'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 <Breadcrumbs breadcrumbs={[{ label: 'Configuration' }]} />
 
 # Configuration
 
-TODO
+Tuono can be configured using the `tuono.config.ts` file,
+which allows you to customize various aspects of the build process and development environment.
+
+The config file is written in TypeScript,
+so you can take advantage of type checking and auto-suggestions provided by the `TuonoConfig` type,
+which is exported from `tuono/config`.
+
+```ts
+import type { TuonoConfig } from 'tuono/config'
+
+const config: TuonoConfig = {
+  /* typesafe config */
+}
+
+export default config
+```
+
+## vite
+
+Tuono leverages Vite, a modern and fast build tool and development server for web applications.
+
+As a result, **some** Vite configuration properties can be set in the `tuono.config.ts` file under the `vite` property.
+
+### vite.alias
+
+Useful for configuring custom source alias paths during imports
+
+- Type:
+  - `Record<string, string>`
+  - `Array<{ find: string | RegExp, replacement: string, customResolver?: ResolverFunction | ResolverObject }>`
+- [Vite documentation: resolve.alias](https://vite.dev/config/shared-options#resolve-alias)
+
+### vite.optimizeDeps
+
+Vite's dependency optimizer used only during dev
+
+- [Vite documentation: Dep Optimization Options](https://vite.dev/config/dep-optimization-options)
+
+### vite.plugins
+
+Useful for extending vite's functionality
+
+- Type: `Array<Plugin | Array<Plugin> | Promise<Plugin | Array<Plugin>>`
+- [Vite documentation: plugins](https://vite.dev/guide/using-plugins)
