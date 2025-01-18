@@ -1,18 +1,19 @@
-import type { DetailedHTMLProps, TableHTMLAttributes } from 'react'
-import { Table } from '@mantine/core'
-import type React from 'react'
+import type { DetailedHTMLProps, TableHTMLAttributes, JSX } from 'react'
+import { Table, ScrollArea } from '@mantine/core'
 
 type MdxTableProps = DetailedHTMLProps<
   TableHTMLAttributes<HTMLTableElement>,
   HTMLTableElement
 >
 
-function MdxTable(props: MdxTableProps): React.JSX.Element {
+function MdxTable(props: MdxTableProps): JSX.Element {
   const { children, ...rest } = props
   return (
-    <Table highlightOnHover stickyHeader stickyHeaderOffset={60} {...rest}>
-      {children}
-    </Table>
+    <ScrollArea type="auto">
+      <Table highlightOnHover {...rest}>
+        {children}
+      </Table>
+    </ScrollArea>
   )
 }
 
