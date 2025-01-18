@@ -67,16 +67,8 @@ jobs:
     timeout-minutes: 1
     if: always()
     needs: [build_and_test, lint_and_fmt]
-    env:
-      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
-      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
     steps:
-      - name: Check for failure or cancelled jobs result
-        shell: bash
-        run: |
-          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
-          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
-            exit 0
-          else
-            exit 1
-          fi
+      - name: Check jobs result
+        uses: ./.github/actions/check-jobs-result
+        with:
+          results: ${{ join(needs.*.result, ',') }}
