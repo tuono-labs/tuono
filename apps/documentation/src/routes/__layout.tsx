@@ -17,6 +17,7 @@ import Sidebar from '@/components/Sidebar'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
+import { mantineHtmlProps } from '@mantine/core'
 
 interface RootRouteProps {
   children: ReactNode
@@ -86,8 +87,8 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   const [opened, { toggle }] = useDisclosure()
 
   return (
-    <html>
-      <>
+    <html lang="en" {...mantineHtmlProps}>
+      <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
@@ -108,7 +109,8 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-      </>
+        <ColorSchemeScript />
+      </head>
       <body>
         <MantineProvider theme={theme} cssVariablesResolver={resolver}>
           <AppShell
@@ -130,7 +132,6 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             </AppShell.Main>
           </AppShell>
         </MantineProvider>
-        <ColorSchemeScript />
       </body>
     </html>
   )
