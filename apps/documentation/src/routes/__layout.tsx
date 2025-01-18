@@ -6,8 +6,9 @@ import {
   MantineProvider,
   AppShell,
   Container,
+  mantineHtmlProps,
+  type CSSVariablesResolver,
 } from '@mantine/core'
-import type { CSSVariablesResolver } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 import EditPage from '@/components/EditPage'
@@ -17,7 +18,6 @@ import Sidebar from '@/components/Sidebar'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
-import { mantineHtmlProps } from '@mantine/core'
 
 interface RootRouteProps {
   children: ReactNode
