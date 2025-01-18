@@ -3,7 +3,7 @@ name: Docker CI
 on:
   push:
     branches:
-      - 'main'
+      - 'chore-add-image-build-test-to-github-actions'
 
 jobs:
   build_and_test:
@@ -15,7 +15,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          # macos-13 commented ; for now, this config takes more than 30mn to process within github action 
+          # macos-13 commented ; for now, this config takes more than 30mn to process within github action
           # - macos-13 # ( by default; 13 -> intel chipset)
           # - windows-latest
 
@@ -31,7 +31,7 @@ jobs:
           mkdir -p ~/.docker/cli-plugins
           ln -sfn $(brew --prefix)/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
           colima start
-            
+
       - name: Build and Run Docker Compose
         run: |
           docker compose -f docker/compose.yml up --build -d
@@ -48,6 +48,15 @@ jobs:
         run: |
           docker exec tuono-source-container pnpm --version || { echo "Error: pnpm is not available."; exit 1; }
           docker exec tuono-source-container tuono --version || { echo "Error: tuono is not available."; exit 1; }
+
+      - name: run cargo test
+        run: docker exec tuono-source-container cargo test
+
+      - name: Install node dependencies in each tuono's sub-projets
+        run: docker exec tuono-source-container bash -c 'for dir in /tuono/packages/*; do [ -d "$dir" ] && (cd "$dir" && yes | pnpm install --frozen-lockfile); done'
+
+      - name: run pnpm test
+        run: docker exec tuono-source-container pnpm test
 
       - name: Tear Down Docker Compose
         if: always()
