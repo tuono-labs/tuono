@@ -140,3 +140,16 @@ fn it_successfully_create_catch_all_routes() {
     assert!(temp_main_rs_content
         .contains(r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__api))"#));
 }
+
+#[test]
+#[serial]
+fn it_fails_without_installed_node_modules() {
+    TempTuonoProject::new();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .assert()
+        .failure()
+        .stderr("Failed to find the build script. Please run `npm install`\n");
+}
