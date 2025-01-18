@@ -1,5 +1,6 @@
 mod utils;
 use assert_cmd::Command;
+use predicates::prelude::*;
 use serial_test::serial;
 use std::fs;
 use utils::TempTuonoProject;
@@ -152,4 +153,19 @@ fn it_fails_without_installed_node_modules() {
         .assert()
         .failure()
         .stderr("Failed to find the build script. Please run `npm install`\n");
+}
+
+#[test]
+#[serial]
+fn it_passes_with_node_modules_present() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+
+    temp_tuono_project.add_route("./node_modules/.bin/tuono-build-config");
+    test_tuono_build
+        .arg("build")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("Permission denied"));
 }
