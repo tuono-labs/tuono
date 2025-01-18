@@ -8,18 +8,10 @@ on:
   push:
     branches:
       - 'main'
-    paths:
-      - '*'
-      - '.github/**'
-      - '.docker/**'
   pull_request:
-    paths:
-      - '*'
-      - '.github/**'
-      - '.docker/**'
 
 jobs:
-  build-and-test:
+  format:
     name: Check format
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -33,3 +25,23 @@ jobs:
 
       - name: Test project
         run: pnpm repo:root:format:check
+
+  ci_ok:
+    name: OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs: [format]
+    env:
+      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
+      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
+    steps:
+      - name: Check for failure or cancelled jobs result
+        shell: bash
+        run: |
+          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
+          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
+            exit 0
+          else
+            exit 1
+          fi
