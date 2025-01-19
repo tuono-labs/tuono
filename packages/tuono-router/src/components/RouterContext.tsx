@@ -111,7 +111,6 @@ export function RouterContextProvider({
   )
 }
 
-/** @warning DO NOT EXPORT THIS TO USER LAND */
 export function useRouterContext(): RouterContextValue {
   return useContext(RouterContext)
 }
