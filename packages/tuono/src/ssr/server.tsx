@@ -40,6 +40,7 @@ import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 
 import type { ReadableStream } from 'node:stream/web'
 
+import { StrictMode } from 'react'
 import { renderToReadableStream } from 'react-dom/server'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
@@ -58,7 +59,9 @@ export function serverSideRendering(routeTree: RouteTree) {
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <RouterProvider router={router} serverProps={serverProps as never} />,
+      <StrictMode>
+        <RouterProvider router={router} serverProps={serverProps as never} />
+      </StrictMode>,
     )
 
     await stream.allReady
