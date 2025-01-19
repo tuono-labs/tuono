@@ -1,4 +1,5 @@
 import type { JSX } from 'react'
+import { StrictMode } from 'react'
 
 import type { ServerProps } from '../types'
 import type { Router } from '../router'
@@ -19,8 +20,10 @@ export function RouterProvider({
   serverProps,
 }: RouterProviderProps): JSX.Element {
   return (
-    <RouterContextProvider router={router} serverSideProps={serverProps}>
-      <Matches serverSideProps={serverProps?.props} />
-    </RouterContextProvider>
+    <StrictMode>
+      <RouterContextProvider router={router} serverSideProps={serverProps}>
+        <Matches serverSideProps={serverProps?.props} />
+      </RouterContextProvider>
+    </StrictMode>
   )
 }
