@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import type { Router } from '../router'
 import type { ServerRouterInfo, ServerProps } from '../types'
 
-const isServer = typeof window === 'undefined'
+const isServerSide = typeof window === 'undefined'
 
 export interface ParsedLocation {
   href: string
@@ -94,7 +94,7 @@ export function RouterContextProvider({
 
   const contextValue: RouterContextValue = useMemo(
     () => ({
-      serverSideProps: isServer
+      serverSideProps: isServerSide
         ? serverSideProps
         : (window.__TUONO_SSR_PROPS__ as ServerProps),
       router,
