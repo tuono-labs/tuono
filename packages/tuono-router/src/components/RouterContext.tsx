@@ -17,8 +17,8 @@ export interface ParsedLocation {
 interface RouterContextValue {
   router: Router
   location: ParsedLocation
-  updateLocation: (loc: ParsedLocation) => void
   serverSideProps?: ServerProps
+  updateLocation: (loc: ParsedLocation) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
