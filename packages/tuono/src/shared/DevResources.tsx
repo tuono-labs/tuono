@@ -6,7 +6,7 @@ const SCRIPT_BASE_URL = `http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_P
 
 export const DevResources = (): JSX.Element => (
   <>
-    <script type="module">
+    <script type="module" async>
       {[
         `import RefreshRuntime from '${SCRIPT_BASE_URL}/@react-refresh'`,
         'RefreshRuntime.injectIntoGlobalHook(window)',
@@ -15,7 +15,15 @@ export const DevResources = (): JSX.Element => (
         'window.__vite_plugin_react_preamble_installed__ = true',
       ].join('\n')}
     </script>
-    <script type="module" src={`${SCRIPT_BASE_URL}/@vite/client`}></script>
-    <script type="module" src={`${SCRIPT_BASE_URL}/client-main.tsx`}></script>
+    <script
+      type="module"
+      async
+      src={`${SCRIPT_BASE_URL}/@vite/client`}
+    ></script>
+    <script
+      type="module"
+      async
+      src={`${SCRIPT_BASE_URL}/client-main.tsx`}
+    ></script>
   </>
 )

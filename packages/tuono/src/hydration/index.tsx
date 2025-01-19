@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
@@ -11,8 +11,8 @@ export function hydrate(routeTree: RouteTree): void {
 
   hydrateRoot(
     document,
-    <React.StrictMode>
+    <StrictMode>
       <RouterProvider router={router} />
-    </React.StrictMode>,
+    </StrictMode>,
   )
 }
