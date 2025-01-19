@@ -28,17 +28,17 @@ impl TempTuonoProject {
         self.temp_dir.path()
     }
 
-    pub fn add_route<'a>(&self, path: &'a str) {
+    pub fn add_file<'a>(&self, path: &'a str) -> File {
         let path = PathBuf::from(path);
         create_all(
             path.parent().expect("Route path does not have any parent"),
             false,
         )
         .expect("Failed to create parent route directory");
-        File::create(path).expect("Failed to create the route file");
+        File::create(path).expect("Failed to create the route file")
     }
 
-    pub fn add_api<'a>(&self, path: &'a str, content: &'a str) {
+    pub fn add_file_with_content<'a>(&self, path: &'a str, content: &'a str) {
         let path = PathBuf::from(path);
         create_all(
             path.parent().expect("Route path does not have any parent"),

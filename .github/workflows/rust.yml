@@ -4,15 +4,7 @@ on:
   push:
     branches:
       - 'main'
-    paths:
-      - '.github/**'
-      - 'Cargo.toml'
-      - 'crates/**'
   pull_request:
-    paths:
-      - '.github/**'
-      - 'Cargo.toml'
-      - 'crates/**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -40,6 +32,7 @@ jobs:
             os: 'ubuntu-latest'
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -56,6 +49,7 @@ jobs:
   lint_and_fmt:
     name: Check format and lint rust crates
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -66,3 +60,23 @@ jobs:
 
       - run: cargo fmt --all -- --check
       - run: cargo clippy -- -D warnings
+
+  ci_ok:
+    name: Rust CI OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs: [build_and_test, lint_and_fmt]
+    env:
+      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
+      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
+    steps:
+      - name: Check for failure or cancelled jobs result
+        shell: bash
+        run: |
+          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
+          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
+            exit 0
+          else
+            exit 1
+          fi
