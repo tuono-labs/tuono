@@ -2,7 +2,9 @@ import { createContext, useState, useEffect, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
-import type { ServerRouterInfo } from '../types'
+import type { ServerRouterInfo, ServerProps } from '../types'
+
+const isServer = typeof document === 'undefined'
 
 export interface ParsedLocation {
   href: string
@@ -16,6 +18,7 @@ interface RouterContextValue {
   router: Router
   location: ParsedLocation
   updateLocation: (loc: ParsedLocation) => void
+  serverSideProps?: ServerProps
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -48,7 +51,7 @@ function getInitialLocation(
 interface RouterContextProviderProps {
   router: Router
   children: ReactNode
-  serverSideProps?: ServerRouterInfo
+  serverSideProps?: ServerProps
 }
 
 export function RouterContextProvider({
@@ -60,7 +63,7 @@ export function RouterContextProvider({
   router.update({ ...router.options } as Parameters<typeof router.update>[0])
 
   const [location, setLocation] = useState<ParsedLocation>(() =>
-    getInitialLocation(serverSideProps),
+    getInitialLocation(serverSideProps?.router),
   )
 
   /**
@@ -91,6 +94,9 @@ export function RouterContextProvider({
 
   const contextValue: RouterContextValue = useMemo(
     () => ({
+      serverSideProps: isServer
+        ? serverSideProps
+        : (window.__TUONO_SSR_PROPS__ as ServerProps),
       router,
       location,
       updateLocation: setLocation,

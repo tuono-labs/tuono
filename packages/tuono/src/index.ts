@@ -4,6 +4,7 @@ export {
   createRouter,
   Link,
   useRouter,
+  TuonoScripts,
 } from 'tuono-router'
 
 export { RouteLazyLoading as __tuono__internal__lazyLoadRoute } from './dynamic/RouteLazyLoading'

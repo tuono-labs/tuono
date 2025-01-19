@@ -30,11 +30,11 @@ import 'fast-text-encoding'
 
 /* eslint-disable import/order, import/newline-after-import */
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
-;(function (
-  scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
-): void {
-  scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
-})(this)
+  ; (function(
+    scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
+  ): void {
+    scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
+  })(this)
 /* eslint-enable import/order, import/newline-after-import */
 // #endregion POLYFILLS
 
@@ -64,16 +64,7 @@ export function serverSideRendering(routeTree: RouteTree) {
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <>
-        <RouterProvider router={router} serverProps={serverProps as never} />
-
-        {mode === 'Dev' && <DevResources />}
-        {mode === 'Prod' && (
-          <ProdResources cssBundles={cssBundles} jsBundles={jsBundles} />
-        )}
-
-        <script>{`window.__TUONO_SSR_PROPS__=${payload as string}`}</script>
-      </>,
+      <RouterProvider router={router} serverProps={serverProps as never} />,
     )
 
     await stream.allReady
