@@ -2,7 +2,6 @@ mod utils;
 use assert_cmd::Command;
 use serial_test::serial;
 use std::fs;
-use std::os::unix::fs::PermissionsExt;
 use utils::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
@@ -39,7 +38,7 @@ fn it_successfully_create_the_index_route() {
 fn it_successfully_create_an_api_route() {
     let temp_tuono_project = TempTuonoProject::new();
 
-    temp_tuono_project.add_api("./src/routes/api/health_check.rs", POST_API_FILE);
+    temp_tuono_project.add_file_with_content("./src/routes/api/health_check.rs", POST_API_FILE);
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
@@ -68,7 +67,7 @@ fn it_successfully_create_an_api_route() {
 fn it_successfully_create_multiple_api_for_the_same_file() {
     let temp_tuono_project = TempTuonoProject::new();
 
-    temp_tuono_project.add_api(
+    temp_tuono_project.add_file_with_content(
         "./src/routes/api/health_check.rs",
         &format!("{POST_API_FILE}{GET_API_FILE}"),
     );
@@ -103,7 +102,7 @@ fn it_successfully_create_catch_all_routes() {
 
     temp_tuono_project.add_file("./src/routes/[...all_routes].rs");
 
-    temp_tuono_project.add_api(
+    temp_tuono_project.add_file_with_content(
         "./src/routes/api/[...all_apis].rs",
         &format!("{POST_API_FILE}"),
     );
@@ -160,10 +159,13 @@ fn it_fails_without_installed_build_config_script() {
 fn it_fails_without_installed_build_script() {
     let temp_tuono_project = TempTuonoProject::new();
 
-    let file = temp_tuono_project.add_file("./node_modules/.bin/tuono-build-config");
-    let mut perms = file.metadata().unwrap().permissions();
-    perms.set_mode(0o755);
-    let _ = file.set_permissions(perms);
+    temp_tuono_project
+        .add_file_with_content("./node_modules/.bin/tuono-build-config", "#!/bin/bash");
+    Command::new("chmod")
+        .arg("+x")
+        .arg("./node_modules/.bin/tuono-build-config")
+        .assert()
+        .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
         .arg("build")
