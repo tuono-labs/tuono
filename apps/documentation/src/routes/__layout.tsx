@@ -1,4 +1,5 @@
 import type { ReactNode, JSX } from 'react'
+import { TuonoScripts } from 'tuono'
 
 import {
   ColorSchemeScript,
@@ -132,6 +133,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             </AppShell.Main>
           </AppShell>
         </MantineProvider>
+        <TuonoScripts />
       </body>
     </html>
   )

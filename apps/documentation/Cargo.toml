@@ -8,7 +8,7 @@ name = "tuono"
 path = ".tuono/main.rs"
 
 [dependencies]
-tuono_lib = "0.17.1"
+tuono_lib = "0.17.3"
 glob = "0.3.1"
 time = { version = "0.3", features = ["macros"] }
 serde = { version = "1.0.202", features = ["derive"] }
