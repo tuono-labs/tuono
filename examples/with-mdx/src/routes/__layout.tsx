@@ -1,5 +1,6 @@
 import type { ReactNode, JSX } from 'react'
 import { MDXProvider } from '@mdx-js/react'
+import { TuonoScripts } from 'tuono'
 
 interface RootLayoutProps {
   children: ReactNode
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
         <main>
           <MDXProvider components={{}}>{children}</MDXProvider>
         </main>
+        <TuonoScripts />
       </body>
     </html>
   )
