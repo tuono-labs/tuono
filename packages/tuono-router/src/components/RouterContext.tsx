@@ -2,7 +2,9 @@ import { createContext, useState, useEffect, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
-import type { ServerRouterInfo } from '../types'
+import type { ServerRouterInfo, ServerProps } from '../types'
+
+const isServerSide = typeof window === 'undefined'
 
 export interface ParsedLocation {
   href: string
@@ -15,6 +17,7 @@ export interface ParsedLocation {
 interface RouterContextValue {
   router: Router
   location: ParsedLocation
+  serverSideProps?: ServerProps
   updateLocation: (loc: ParsedLocation) => void
 }
 
@@ -48,7 +51,7 @@ function getInitialLocation(
 interface RouterContextProviderProps {
   router: Router
   children: ReactNode
-  serverSideProps?: ServerRouterInfo
+  serverSideProps?: ServerProps
 }
 
 export function RouterContextProvider({
@@ -60,7 +63,7 @@ export function RouterContextProvider({
   router.update({ ...router.options } as Parameters<typeof router.update>[0])
 
   const [location, setLocation] = useState<ParsedLocation>(() =>
-    getInitialLocation(serverSideProps),
+    getInitialLocation(serverSideProps?.router),
   )
 
   /**
@@ -91,11 +94,14 @@ export function RouterContextProvider({
 
   const contextValue: RouterContextValue = useMemo(
     () => ({
+      serverSideProps: isServerSide
+        ? serverSideProps
+        : window.__TUONO_SSR_PROPS__,
       router,
       location,
       updateLocation: setLocation,
     }),
-    [location, router],
+    [location, router, serverSideProps],
   )
 
   return (
@@ -105,7 +111,6 @@ export function RouterContextProvider({
   )
 }
 
-/** @warning DO NOT EXPORT THIS TO USER LAND */
 export function useRouterContext(): RouterContextValue {
   return useContext(RouterContext)
 }

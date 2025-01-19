@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::sync::Arc;
 use watchexec_supervisor::command::{Command, Program};
 
@@ -20,6 +21,10 @@ const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
 const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
 
 fn watch_react_src() -> Job {
+    if !Path::new(DEV_SSR_BIN_SRC).exists() {
+        eprintln!("Failed to find script to run dev watch. Please run `npm install`");
+        std::process::exit(1);
+    }
     start_job(Arc::new(Command {
         program: Program::Exec {
             prog: DEV_WATCH_BIN_SRC.into(),
@@ -42,6 +47,10 @@ fn build_rust_src() -> Job {
 }
 
 fn build_react_ssr_src() -> Job {
+    if !Path::new(DEV_SSR_BIN_SRC).exists() {
+        eprintln!("Failed to find script to run dev ssr. Please run `npm install`");
+        std::process::exit(1);
+    }
     start_job(Arc::new(Command {
         program: Program::Exec {
             prog: DEV_SSR_BIN_SRC.into(),

@@ -4,26 +4,11 @@ on:
   push:
     branches:
       - 'main'
-    paths:
-      # ⬇ Keep paths in sync with `ci-documentation.yml`
-      - '.github/**'
-      - '*'
-      - '!Cargo.toml'
-      # ⬆ Keep paths in sync with `ci-documentation.yml`
-      - 'packages/**'
   pull_request:
-    paths:
-      # ⬇ Keep paths in sync with `ci-documentation.yml`
-      - '.github/**'
-      - '*'
-      - '!Cargo.toml'
-      # ⬆ Keep paths in sync with `ci-documentation.yml`
-      - 'packages/**'
 
 jobs:
   build_and_test:
     name: Check build and test
-    timeout-minutes: 15
 
     strategy:
       fail-fast: true
@@ -34,6 +19,7 @@ jobs:
           - 'windows-latest'
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -68,3 +54,23 @@ jobs:
 
       - name: Types
         run: pnpm types
+
+  ci_ok:
+    name: Typescript CI OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs: [build_and_test, lint_and_fmt]
+    env:
+      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
+      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
+    steps:
+      - name: Check for failure or cancelled jobs result
+        shell: bash
+        run: |
+          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
+          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
+            exit 0
+          else
+            exit 1
+          fi
