@@ -96,7 +96,7 @@ export function RouterContextProvider({
     () => ({
       serverSideProps: isServerSide
         ? serverSideProps
-        : (window.__TUONO_SSR_PROPS__ as ServerProps),
+        : window.__TUONO_SSR_PROPS__,
       router,
       location,
       updateLocation: setLocation,
