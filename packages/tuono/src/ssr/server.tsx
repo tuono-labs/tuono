@@ -30,11 +30,11 @@ import 'fast-text-encoding'
 
 /* eslint-disable import/order, import/newline-after-import */
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'
-  ; (function(
-    scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
-  ): void {
-    scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
-  })(this)
+;(function (
+  scope: Partial<Pick<typeof globalThis, 'MessageChannel'>> = {},
+): void {
+  scope['MessageChannel'] = scope['MessageChannel'] ?? MessageChannelPolyfill
+})(this)
 /* eslint-enable import/order, import/newline-after-import */
 // #endregion POLYFILLS
 
