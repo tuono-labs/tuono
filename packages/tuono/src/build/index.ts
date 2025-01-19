@@ -9,7 +9,7 @@ import type { TuonoConfig } from '../config'
 import type { InternalTuonoConfig } from './types'
 
 import { blockingAsync } from './utils'
-import { loadConfig } from './config'
+import { createJsonConfig, loadConfig } from './config'
 
 const VITE_SSR_PLUGINS: Array<Plugin> = [
   {
@@ -188,7 +188,7 @@ const buildProd = (): void => {
 }
 
 const buildConfig = (): void => {
-  blockingAsync(async () => {
+  blockingAsync(async (): Promise<void> => {
     await build({
       root: '.tuono',
       logLevel: 'silent',
@@ -206,6 +206,9 @@ const buildConfig = (): void => {
         },
       },
     })
+
+    const config = await loadConfig()
+    await createJsonConfig(config)
   })
 }
 
