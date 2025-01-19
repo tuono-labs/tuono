@@ -14,6 +14,9 @@ export interface ServerRouterInfo {
 export interface ServerProps<TProps = unknown> {
   router: ServerRouterInfo
   props: TProps
+  jsBundles: Array<string>
+  cssBundles: Array<string>
+  mode: 'Dev' | 'Prod'
 }
 
 export interface RouteProps<TData = unknown> {

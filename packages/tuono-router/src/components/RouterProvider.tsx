@@ -19,10 +19,7 @@ export function RouterProvider({
   serverProps,
 }: RouterProviderProps): JSX.Element {
   return (
-    <RouterContextProvider
-      router={router}
-      serverSideProps={serverProps?.router}
-    >
+    <RouterContextProvider router={router} serverSideProps={serverProps}>
       <Matches serverSideProps={serverProps?.props} />
     </RouterContextProvider>
   )

@@ -1,4 +1,5 @@
 export { RouterProvider } from './components/RouterProvider'
+export { useRouterContext } from './components/RouterContext'
 export { default as Link } from './components/Link'
 export { createRouter } from './router'
 export { createRoute, createRootRoute } from './route'
