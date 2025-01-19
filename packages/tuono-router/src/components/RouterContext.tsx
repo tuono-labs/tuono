@@ -101,7 +101,7 @@ export function RouterContextProvider({
       location,
       updateLocation: setLocation,
     }),
-    [location, router],
+    [location, router, serverSideProps],
   )
 
   return (
