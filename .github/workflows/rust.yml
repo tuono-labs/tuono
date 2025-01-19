@@ -62,7 +62,7 @@ jobs:
       - run: cargo clippy -- -D warnings
 
   ci_ok:
-    name: OK
+    name: Rust CI OK
     runs-on: ubuntu-latest
     timeout-minutes: 1
     if: always()

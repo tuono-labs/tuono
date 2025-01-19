@@ -27,7 +27,7 @@ jobs:
         run: pnpm repo:root:format:check
 
   ci_ok:
-    name: OK
+    name: Repo root CI OK
     runs-on: ubuntu-latest
     timeout-minutes: 1
     if: always()
