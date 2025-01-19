@@ -41,7 +41,7 @@ import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 import type { ReadableStream } from 'node:stream/web'
 
 import { renderToReadableStream } from 'react-dom/server'
-import { RouterProvider, createRouter } from 'tuono-router'
+import { createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
 import { TuonoEntryPoint } from '../shared/TuonoEntryPoint'
@@ -60,9 +60,7 @@ export function serverSideRendering(routeTree: RouteTree) {
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <TuonoEntryPoint>
-        <RouterProvider router={router} serverProps={serverProps as never} />
-      </TuonoEntryPoint>,
+      <TuonoEntryPoint router={router} serverProps={serverProps as never} />,
     )
 
     await stream.allReady
