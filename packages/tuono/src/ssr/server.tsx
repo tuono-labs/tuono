@@ -44,9 +44,6 @@ import { renderToReadableStream } from 'react-dom/server'
 import { RouterProvider, createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
-import { DevResources } from './components/DevResources'
-import { ProdResources } from './components/ProdResources'
-import type { Mode } from './types'
 import { streamToString } from './utils'
 
 type RouteTree = ReturnType<typeof createRoute>
@@ -58,9 +55,6 @@ export function serverSideRendering(routeTree: RouteTree) {
       unknown
     >
 
-    const mode = serverProps.mode as Mode
-    const jsBundles = serverProps.jsBundles as Array<string>
-    const cssBundles = serverProps.cssBundles as Array<string>
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(

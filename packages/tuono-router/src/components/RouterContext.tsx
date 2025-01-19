@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import type { Router } from '../router'
 import type { ServerRouterInfo, ServerProps } from '../types'
 
-const isServer = typeof document === 'undefined'
+const isServer = typeof window === 'undefined'
 
 export interface ParsedLocation {
   href: string

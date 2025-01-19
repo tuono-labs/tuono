@@ -4,10 +4,13 @@ export {
   createRouter,
   Link,
   useRouter,
-  TuonoScripts,
 } from 'tuono-router'
 
-export { RouteLazyLoading as __tuono__internal__lazyLoadRoute } from './dynamic/RouteLazyLoading'
-export { dynamic } from './dynamic/dynamic'
+export {
+  dynamic,
+  RouteLazyLoading as __tuono__internal__lazyLoadRoute,
+} from './shared/dynamic'
+
+export { TuonoScripts } from './shared/TuonoScripts'
 
 export type { TuonoProps } from './types'
