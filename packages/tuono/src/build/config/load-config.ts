@@ -29,6 +29,7 @@ export const loadConfig = async (): Promise<InternalTuonoConfig> => {
     return normalizeConfig(configFile.default)
   } catch (err) {
     console.error('Failed to load tuono.config.ts')
-    throw err as Error
+    console.error(err)
+    return {} as InternalTuonoConfig
   }
 }
