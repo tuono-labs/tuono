@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs'
-import * as path from 'path'
+import fs from 'fs/promises'
+import path from 'path'
 
 import type { InternalTuonoConfig } from '../types'
 
@@ -9,15 +9,14 @@ import {
   SERVER_CONFIG_NAME,
 } from '../constants'
 
-const CONFIG_PATH = [
+const CONFIG_PATH = path.join(
   DOT_TUONO_FOLDER_NAME,
   CONFIG_FOLDER_NAME,
   SERVER_CONFIG_NAME,
-].join(path.sep)
-
+)
 /**
  * This function is used to remove the `vite` property from the config object.
- * This is needed because the `vite` property is not needed neither by the server nor the client.
+ * The `vite` property is only used at build time, so it is not needed by either the server or the client.
  */
 function removeViteProperties(
   config: InternalTuonoConfig,
@@ -28,12 +27,12 @@ function removeViteProperties(
 }
 
 /**
- * This function creates a JSON config file that can be used by the server and
- * then shared to the client as prop.
- * The created file will be created at `.tuono/config/config.json`.
+ * This function creates a JSON config file for the server,
+ * that will be shared with the client as a prop.
+ * The file will be saved at`.tuono/config/config.json`.
  *
- * The file needs to be a JSON in order to be easily read by the server written
- * in rust.
+ * The file is in JSON format to ensure it's easily read by the server,
+ * which is written in Rust.
  */
 export async function createJsonConfig(
   config: InternalTuonoConfig,

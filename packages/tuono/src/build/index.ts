@@ -6,8 +6,6 @@ import { TuonoFsRouterPlugin } from 'tuono-fs-router-vite-plugin'
 
 import type { TuonoConfig } from '../config'
 
-import type { InternalTuonoConfig } from './types'
-
 import { blockingAsync } from './utils'
 import { createJsonConfig, loadConfig } from './config'
 
@@ -111,7 +109,7 @@ const developmentSSRBundle = (): void => {
 
 const developmentCSRWatch = (): void => {
   blockingAsync(async () => {
-    const config = (await loadConfig()) as unknown as InternalTuonoConfig
+    const config = await loadConfig()
 
     const server = await createServer(
       mergeConfig<InlineConfig, InlineConfig>(
@@ -141,7 +139,7 @@ const developmentCSRWatch = (): void => {
 
 const buildProd = (): void => {
   blockingAsync(async () => {
-    const config = (await loadConfig()) as unknown as InternalTuonoConfig
+    const config = await loadConfig()
 
     await build(
       mergeConfig<InlineConfig, InlineConfig>(
