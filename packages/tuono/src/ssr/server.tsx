@@ -40,10 +40,11 @@ import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 
 import type { ReadableStream } from 'node:stream/web'
 
-import { StrictMode } from 'react'
 import { renderToReadableStream } from 'react-dom/server'
-import { RouterProvider, createRouter } from 'tuono-router'
-import type { createRoute } from 'tuono-router'
+import { createRouter } from 'tuono-router'
+import type { createRoute, ServerProps } from 'tuono-router'
+
+import { TuonoEntryPoint } from '../shared/TuonoEntryPoint'
 
 import { streamToString } from './utils'
 
@@ -51,17 +52,12 @@ type RouteTree = ReturnType<typeof createRoute>
 
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
-    const serverProps = (payload ? JSON.parse(payload) : {}) as Record<
-      string,
-      unknown
-    >
+    const serverProps = (payload ? JSON.parse(payload) : {}) as ServerProps
 
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <StrictMode>
-        <RouterProvider router={router} serverProps={serverProps as never} />
-      </StrictMode>,
+      <TuonoEntryPoint router={router} serverProps={serverProps} />,
     )
 
     await stream.allReady

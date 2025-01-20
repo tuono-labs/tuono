@@ -21,6 +21,7 @@ export function createRouter(options: CreateRouterOptions): Router {
   return new Router(options)
 }
 
+export type RouterType = InstanceType<typeof Router>
 export class Router {
   options?: RouterOptions
   basePath = '/'
