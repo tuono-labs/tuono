@@ -42,7 +42,7 @@ import type { ReadableStream } from 'node:stream/web'
 
 import { renderToReadableStream } from 'react-dom/server'
 import { createRouter } from 'tuono-router'
-import type { createRoute } from 'tuono-router'
+import type { createRoute, ServerProps } from 'tuono-router'
 
 import { TuonoEntryPoint } from '../shared/TuonoEntryPoint'
 
@@ -52,10 +52,9 @@ type RouteTree = ReturnType<typeof createRoute>
 
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
-    const serverProps = (payload ? JSON.parse(payload) : {}) as Record<
-      string,
-      unknown
-    >
+    const serverProps = (
+      payload ? JSON.parse(payload) : {}
+    ) as ServerProps | null
 
     const router = createRouter({ routeTree }) // Render the app
 
