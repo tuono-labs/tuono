@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Head } from 'tuono'
 
 interface MetaTagsProps {
   title: string
@@ -15,7 +14,7 @@ export default function MetaTags({
   canonical,
 }: MetaTagsProps): ReactNode {
   return (
-    <Head>
+    <>
       <title>{title}</title>
       <link rel="canonical" href={canonical} />
       <meta
@@ -41,6 +40,6 @@ export default function MetaTags({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content="https://tuono.dev/og-cover.png" />
-    </Head>
+    </>
   )
 }

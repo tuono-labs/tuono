@@ -1,4 +1,5 @@
 import type { ReactNode, JSX } from 'react'
+import { TuonoScripts } from 'tuono'
 
 import {
   ColorSchemeScript,
@@ -6,10 +7,10 @@ import {
   MantineProvider,
   AppShell,
   Container,
+  mantineHtmlProps,
+  type CSSVariablesResolver,
 } from '@mantine/core'
-import type { CSSVariablesResolver } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { Head } from 'tuono'
 
 import EditPage from '@/components/EditPage'
 import MdxProvider from '@/components/MdxProvider'
@@ -87,8 +88,8 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   const [opened, { toggle }] = useDisclosure()
 
   return (
-    <>
-      <Head>
+    <html lang="en" {...mantineHtmlProps}>
+      <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
@@ -109,28 +110,31 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-      </Head>
-      <ColorSchemeScript />
-      <MantineProvider theme={theme} cssVariablesResolver={resolver}>
-        <AppShell
-          layout="alt"
-          header={{ height: 60 }}
-          navbar={{
-            width: 300,
-            breakpoint: 'sm',
-            collapsed: { mobile: !opened },
-          }}
-        >
-          <Navbar toggle={toggle} />
-          <Sidebar close={toggle} />
-          <AppShell.Main>
-            <Container id="mdx-root" component="article" size="md" p={20}>
-              <MdxProvider>{children}</MdxProvider>
-              <EditPage />
-            </Container>
-          </AppShell.Main>
-        </AppShell>
-      </MantineProvider>
-    </>
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <MantineProvider theme={theme} cssVariablesResolver={resolver}>
+          <AppShell
+            layout="alt"
+            header={{ height: 60 }}
+            navbar={{
+              width: 300,
+              breakpoint: 'sm',
+              collapsed: { mobile: !opened },
+            }}
+          >
+            <Navbar toggle={toggle} />
+            <Sidebar close={toggle} />
+            <AppShell.Main>
+              <Container id="mdx-root" component="article" size="md" p={20}>
+                <MdxProvider>{children}</MdxProvider>
+                <EditPage />
+              </Container>
+            </AppShell.Main>
+          </AppShell>
+        </MantineProvider>
+        <TuonoScripts />
+      </body>
+    </html>
   )
 }

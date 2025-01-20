@@ -1,6 +1,6 @@
 import { useMemo, type JSX } from 'react'
 import { Breadcrumbs as MantineBreadcrumbs, Button } from '@mantine/core'
-import { Link, Head } from 'tuono'
+import { Link } from 'tuono'
 
 import { IconChevronRight, IconBolt } from '@tabler/icons-react'
 
@@ -43,11 +43,9 @@ export default function Breadcrumbs({
 
   return (
     <>
-      <Head>
-        <script type="application/ld+json">
-          {JSON.stringify(ldJson, null, 2)}
-        </script>
-      </Head>
+      <script type="application/ld+json">
+        {JSON.stringify(ldJson, null, 2)}
+      </script>
       <MantineBreadcrumbs
         separator={<IconChevronRight size="1.1rem" stroke={1.5} />}
         mb="md"
