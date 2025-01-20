@@ -52,9 +52,7 @@ type RouteTree = ReturnType<typeof createRoute>
 
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
-    const serverProps = (
-      payload ? JSON.parse(payload) : {}
-    ) as ServerProps | null
+    const serverProps = (payload ? JSON.parse(payload) : {}) as ServerProps
 
     const router = createRouter({ routeTree }) // Render the app
 
