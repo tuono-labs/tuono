@@ -60,7 +60,7 @@ export function serverSideRendering(routeTree: RouteTree) {
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <TuonoEntryPoint router={router} serverProps={serverProps as never} />,
+      <TuonoEntryPoint router={router} serverProps={serverProps} />,
     )
 
     await stream.allReady

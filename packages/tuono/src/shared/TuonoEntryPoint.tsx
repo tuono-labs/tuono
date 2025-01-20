@@ -1,9 +1,9 @@
 import { type JSX, StrictMode } from 'react'
-import { type createRouter, RouterProvider } from 'tuono-router'
+import { type RouterType, type ServerProps, RouterProvider } from 'tuono-router'
 
 interface TuonoEntryPointProps {
-  router: ReturnType<typeof createRouter>
-  serverProps?: never
+  router: RouterType
+  serverProps?: ServerProps
 }
 
 export function TuonoEntryPoint({
