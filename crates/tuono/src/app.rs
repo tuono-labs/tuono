@@ -1,3 +1,4 @@
+use crate::mode::Mode;
 use glob::glob;
 use glob::GlobError;
 use http::Method;
@@ -11,6 +12,7 @@ use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
 use std::process::Stdio;
+use tuono_internal::config::Config;
 
 use crate::route::Route;
 
@@ -33,11 +35,12 @@ const BUILD_JS_SCRIPT: &str = "./node_modules/.bin/tuono-build-prod";
 #[cfg(not(target_os = "windows"))]
 const BUILD_TUONO_CONFIG: &str = "./node_modules/.bin/tuono-build-config";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct App {
     pub route_map: HashMap<String, Route>,
     pub base_path: PathBuf,
     pub has_app_state: bool,
+    pub config: Option<Config>,
 }
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
@@ -56,6 +59,7 @@ impl App {
             route_map: HashMap::new(),
             base_path: base_path.clone(),
             has_app_state: has_app_state(base_path).unwrap_or(false),
+            config: None,
         };
 
         app.collect_routes();
@@ -138,6 +142,38 @@ impl App {
         self.route_map.iter().any(|(_, route)| route.is_dynamic)
     }
 
+    pub fn check_server_availability(&self, mode: Mode) {
+        // At this point the config should be available
+        let config = self.config.as_ref().unwrap();
+
+        let rust_listener =
+            std::net::TcpListener::bind(format!("{}:{}", config.server.host, config.server.port));
+
+        if let Err(_e) = rust_listener {
+            eprintln!("Error: Failed to bind to port {}", config.server.port);
+            eprintln!(
+            "Please ensure that port {} is not already in use by another process or application.",
+            config.server.port
+        );
+            std::process::exit(1);
+        }
+
+        if mode == Mode::Dev {
+            let vite_port = config.server.port + 1;
+            let vite_listener =
+                std::net::TcpListener::bind(format!("{}:{}", config.server.host, vite_port));
+
+            if let Err(_e) = vite_listener {
+                eprintln!("Error: Failed to bind to port {}", vite_port);
+                eprintln!(
+                "Please ensure that port {} is not already in use by another process or application.",
+                vite_port
+            );
+                std::process::exit(1);
+            }
+        }
+    }
+
     pub fn build_react_prod(&self) {
         if !Path::new(BUILD_JS_SCRIPT).exists() {
             eprintln!("Failed to find the build script. Please run `npm install`");
@@ -163,16 +199,25 @@ impl App {
             .expect("Failed to run the rust server")
     }
 
-    pub fn build_tuono_config(&self) -> Result<std::process::Output, std::io::Error> {
+    pub fn build_tuono_config(&mut self) -> Result<std::process::Output, std::io::Error> {
         if !Path::new(BUILD_TUONO_CONFIG).exists() {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
-        Command::new(BUILD_TUONO_CONFIG)
+        let cmd = Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .output()
+            .output();
+
+        if let Ok(config) = Config::get() {
+            self.config = Some(config);
+        } else {
+            eprintln!("[CLI] Failed to read tuono.config.ts");
+            std::process::exit(1);
+        };
+
+        cmd
     }
     pub fn get_used_http_methods(&self) -> HashSet<Method> {
         let mut acc = HashSet::new();
