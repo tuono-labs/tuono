@@ -3,7 +3,7 @@
  */
 import type { JSX } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { useRouter, Link } from 'tuono'
+import { useRouter } from 'tuono'
 import { IconList } from '@tabler/icons-react'
 import { Box, rem, ScrollArea, Text } from '@mantine/core'
 
@@ -76,10 +76,11 @@ export function TableOfContents({
   const items = filteredHeadings.map((heading, index) => (
     <Text
       key={heading.id}
-      component={Link}
+      component="a"
       fz="sm"
       p={10}
       className={classes.link}
+      truncate
       mod={{ active: active === index }}
       href={`#${heading.id}`}
       __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
@@ -105,6 +106,7 @@ export function TableOfContents({
           </div>
           <ScrollArea.Autosize
             mah={`calc(100vh - ${rem(140)})`}
+            style={{ overflow: 'hidden' }}
             type="never"
             offsetScrollbars
           >

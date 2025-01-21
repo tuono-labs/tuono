@@ -19,6 +19,7 @@ import Sidebar from '@/components/Sidebar'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
+import TableOfContents from '@/components/TableOfContents'
 
 interface RootRouteProps {
   children: ReactNode
@@ -126,9 +127,12 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             <Navbar toggle={toggle} />
             <Sidebar close={toggle} />
             <AppShell.Main>
-              <Container id="mdx-root" component="article" size="md" p={20}>
-                <MdxProvider>{children}</MdxProvider>
-                <EditPage />
+              <Container display="flex">
+                <Container id="mdx-root" component="article" size="md" p={20}>
+                  <MdxProvider>{children}</MdxProvider>
+                  <EditPage />
+                </Container>
+                <TableOfContents withTabs={false} />
               </Container>
             </AppShell.Main>
           </AppShell>
