@@ -61,7 +61,7 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn create_new_project(folder_name: Option<String>, template: Option<String>, select_main_branch_template: Option<String>) {
+pub fn create_new_project(folder_name: Option<String>, template: Option<String>, select_main_branch_template: Option<bool>) {
     let folder = folder_name.unwrap_or(".".to_string());
 
     // In case of missing select the tuono example
@@ -162,7 +162,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
             } else {
                 format!("{GITHUB_RAW_CONTENT_URL}/{path}")
             };
-            
+
             let file_content = client
                 .get(raw_content_url)
                 .send()
