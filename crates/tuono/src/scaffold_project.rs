@@ -50,7 +50,11 @@ struct GithubFile {
 
 fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     let mut file = File::create(&path).unwrap_or_else(|err| {
-        exit_with_error(&format!("Failed to create file {}: {}", path.display(), err));
+        exit_with_error(&format!(
+            "Failed to create file {}: {}",
+            path.display(),
+            err
+        ));
     });
     let _ = file.write_all(content.as_bytes());
 
@@ -76,9 +80,11 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .and_then(|response| response.json::<GithubTagResponse>())
         .unwrap_or_else(|_| {
             exit_with_error(&format!(
-                "Error: Failed to call or parse the tag github API for v{cli_version}"))
+                "Error: Failed to call or parse the tag github API for v{cli_version}"
+            ))
         });
 
+    panic!("hellloo {:?}", res_tag.object.sha);
     let sha_tagged_commit = res_tag.object.sha;
 
     let res_tree = client
@@ -174,22 +180,20 @@ fn create_directories(
 fn update_package_json_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let package_json_path = folder_path.join(PathBuf::from("package.json"));
-    let package_json = fs::read_to_string(&package_json_path).unwrap_or_else(|err| {
-        exit_with_error(&format!("Failed to read package.json: {}", err))
-    });
+    let package_json = fs::read_to_string(&package_json_path)
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read package.json: {}", err)));
     let package_json = package_json.replace("link:../../packages/tuono", v);
 
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .open(package_json_path)
-        .unwrap_or_else(|err| {
-            exit_with_error(&format!("Failed to open package.json: {}", err))
-        });
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open package.json: {}", err)));
 
-    file.write_all(package_json.as_bytes()).unwrap_or_else(|err| {
-        exit_with_error(&format!("Failed to write to package.json: {}", err))
-    });
+    file.write_all(package_json.as_bytes())
+        .unwrap_or_else(|err| {
+            exit_with_error(&format!("Failed to write to package.json: {}", err))
+        });
 
     Ok(())
 }
@@ -197,9 +201,8 @@ fn update_package_json_version(folder_path: &Path) -> io::Result<()> {
 fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let cargo_toml_path = folder_path.join(PathBuf::from("Cargo.toml"));
-    let cargo_toml = fs::read_to_string(&cargo_toml_path).unwrap_or_else(|err| {
-        exit_with_error(&format!("Failed to read Cargo.toml: {}", err))
-    });
+    let cargo_toml = fs::read_to_string(&cargo_toml_path)
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read Cargo.toml: {}", err)));
     let cargo_toml =
         cargo_toml.replace("{ path = \"../../crates/tuono_lib/\"}", &format!("\"{v}\""));
 
@@ -207,13 +210,10 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
         .write(true)
         .truncate(true)
         .open(cargo_toml_path)
-        .unwrap_or_else(|err| {
-            exit_with_error(&format!("Failed to open Cargo.toml: {}", err))
-        });
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open Cargo.toml: {}", err)));
 
-    file.write_all(cargo_toml.as_bytes()).unwrap_or_else(|err| {
-        exit_with_error(&format!("Failed to write to Cargo.toml: {}", err))
-    });
+    file.write_all(cargo_toml.as_bytes())
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)));
 
     Ok(())
 }
