@@ -204,7 +204,7 @@ impl App {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
-        let cmd = Command::new(BUILD_TUONO_CONFIG)
+        let config_build_command = Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -212,11 +212,12 @@ impl App {
 
         if let Ok(config) = Config::get() {
             self.config = Some(config);
-            return cmd;
         } else {
             eprintln!("[CLI] Failed to read tuono.config.ts");
             std::process::exit(1);
         };
+
+        config_build_command
     }
     pub fn get_used_http_methods(&self) -> HashSet<Method> {
         let mut acc = HashSet::new();
