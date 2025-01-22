@@ -5,7 +5,7 @@ import type { JSX } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'tuono'
 import { IconList } from '@tabler/icons-react'
-import { Box, rem, ScrollArea, Text } from '@mantine/core'
+import { Box, rem, Text } from '@mantine/core'
 
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
@@ -82,7 +82,6 @@ export function TableOfContents({
       fz="sm"
       p={10}
       className={classes.link}
-      truncate
       mod={{ active: active === index }}
       href={`#${heading.id}`}
       __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
@@ -106,14 +105,7 @@ export function TableOfContents({
             />
             <Text className={classes.title}>Table of contents</Text>
           </div>
-          <ScrollArea.Autosize
-            mah={`calc(100vh - ${rem(140)})`}
-            scrollbars="y"
-            type="never"
-            offsetScrollbars
-          >
-            <div className={classes.items}>{items}</div>
-          </ScrollArea.Autosize>
+          <div className={classes.items}>{items}</div>
         </div>
       </div>
     </Box>
