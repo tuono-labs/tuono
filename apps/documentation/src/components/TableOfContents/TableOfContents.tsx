@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'tuono'
 import { IconList } from '@tabler/icons-react'
 import { Box, rem, ScrollArea, Text } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
 
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
@@ -35,18 +34,17 @@ function getActiveElement(rects: Array<DOMRect>): number {
 
 interface TableOfContentsProps {
   withTabs: boolean
+  className?: string
 }
 
 export function TableOfContents({
   withTabs,
+  className,
 }: TableOfContentsProps): JSX.Element | null {
   const [active, setActive] = useState(0)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<Heading>>([])
   const router = useRouter()
-  const matches = useMediaQuery('(max-width: 80em)', true, {
-    getInitialValueInEffect: false,
-  })
 
   const filteredHeadings = headings.filter((heading) => heading.depth > 1)
 
@@ -97,8 +95,7 @@ export function TableOfContents({
     <Box
       component="nav"
       mod={{ 'with-tabs': withTabs }}
-      className={classes.wrapper}
-      hidden={matches}
+      className={classes.wrapper + ' ' + className}
     >
       <div className={classes.inner}>
         <div>

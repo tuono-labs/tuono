@@ -1,6 +1,12 @@
 /*
  * Component inspired by: https://github.com/mantinedev/mantine/tree/master/apps/mantine.dev/src/components/TableOfContents
  */
+@media (max-width: 80em) {
+  .wrapper {
+    display: none;
+  }
+}
+
 .wrapper {
   padding-left: var(--mantine-spacing-md);
   position: sticky;

@@ -6,20 +6,17 @@ import {
   createTheme,
   MantineProvider,
   AppShell,
-  Container,
   mantineHtmlProps,
   type CSSVariablesResolver,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import EditPage from '@/components/EditPage'
-import MdxProvider from '@/components/MdxProvider'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
-import TableOfContents from '@/components/TableOfContents'
+import MdxWrapper from '@/components/MdxWrapper'
 
 interface RootRouteProps {
   children: ReactNode
@@ -127,13 +124,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             <Navbar toggle={toggle} />
             <Sidebar close={toggle} />
             <AppShell.Main>
-              <Container display="flex">
-                <Container id="mdx-root" component="article" size="md" p={20}>
-                  <MdxProvider>{children}</MdxProvider>
-                  <EditPage />
-                </Container>
-                <TableOfContents withTabs={false} />
-              </Container>
+              <MdxWrapper>{children}</MdxWrapper>
             </AppShell.Main>
           </AppShell>
         </MantineProvider>
