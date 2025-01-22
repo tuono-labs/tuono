@@ -210,11 +210,6 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Head',
-        href: '/documentation/components/head',
-      },
-      {
-        type: 'element',
         label: 'Link',
         href: '/documentation/components/link',
       },
