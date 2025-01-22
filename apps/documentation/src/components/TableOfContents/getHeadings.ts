@@ -8,6 +8,17 @@ export interface Heading {
   getNode: () => HTMLHeadingElement
 }
 
+function getCleanedText(element: HTMLElement): string {
+  const clone = element.cloneNode(true) as HTMLElement;
+
+  clone.querySelectorAll('code, pre').forEach((codeBlock) => {
+    const textNode = document.createTextNode(codeBlock.textContent || '');
+    codeBlock.replaceWith(textNode);
+  });
+
+  return clone.textContent?.trim() || '';
+}
+
 function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
   const result: Array<Heading> = []
 
@@ -15,11 +26,10 @@ function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
     if (heading.id) {
       result.push({
         depth: parseInt(heading.getAttribute('data-order') || '1', 10),
-        content: heading.getAttribute('data-heading') || '',
+        content: getCleanedText(heading),
         id: heading.id,
-        getNode: () =>
-          document.getElementById(heading.id) as HTMLHeadingElement,
-      })
+        getNode: () => document.getElementById(heading.id) as HTMLHeadingElement,
+      });
     }
   }
 

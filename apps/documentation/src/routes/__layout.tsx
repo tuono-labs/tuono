@@ -11,12 +11,12 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
+import MdxWrapper from '@/components/MdxWrapper'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
-import MdxWrapper from '@/components/MdxWrapper'
 
 interface RootRouteProps {
   children: ReactNode
