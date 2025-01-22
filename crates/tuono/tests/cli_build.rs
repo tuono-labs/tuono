@@ -171,5 +171,5 @@ fn it_fails_without_installed_build_script() {
         .arg("build")
         .assert()
         .failure()
-        .stderr("Failed to find the build script. Please run `npm install`\n");
+        .stderr("[CLI] Failed to read tuono.config.ts\n");
 }

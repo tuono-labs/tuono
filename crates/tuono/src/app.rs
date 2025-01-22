@@ -212,12 +212,11 @@ impl App {
 
         if let Ok(config) = Config::get() {
             self.config = Some(config);
+            return cmd;
         } else {
             eprintln!("[CLI] Failed to read tuono.config.ts");
             std::process::exit(1);
         };
-
-        cmd
     }
     pub fn get_used_http_methods(&self) -> HashSet<Method> {
         let mut acc = HashSet::new();
