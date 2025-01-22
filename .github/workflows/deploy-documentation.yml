@@ -27,7 +27,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install tuono
-        run: cargo install tuono@0.16.9
+        run: cargo install tuono@0.17.3
 
       - name: Build project
         working-directory: ./apps/documentation
