@@ -108,7 +108,7 @@ export function TableOfContents({
           </div>
           <ScrollArea.Autosize
             mah={`calc(100vh - ${rem(140)})`}
-            style={{ overflow: 'hidden' }}
+            scrollbars="y"
             type="never"
             offsetScrollbars
           >

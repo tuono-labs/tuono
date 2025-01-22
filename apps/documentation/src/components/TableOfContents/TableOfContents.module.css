@@ -13,7 +13,7 @@
   top: var(--mantine-spacing-xl);
   right: 0;
   padding-top: 55px;
-  flex: 0 0 calc(var(--docs-table-of-contents-width) - 20px);
+  flex: 0 0 calc(200px - 20px);
   min-width: 200px;
   height: 100vh;
 
@@ -51,7 +51,7 @@
   border-left: 1px solid transparent;
   padding: 8px var(--mantine-spacing-md);
   margin-left: -1px;
-  padding-left: calc(var(--toc-link-offset) * var(--mantine-spacing-lg));
+  padding-left: calc(1 * var(--mantine-spacing-lg));
   border-top-right-radius: var(--mantine-radius-sm);
   border-bottom-right-radius: var(--mantine-radius-sm);
 
@@ -68,10 +68,7 @@
     border-right: 1px solid transparent;
     margin-left: 0;
     margin-right: -1px;
-    border-top-left-radius: var(--mantine-radius-sm);
-    border-bottom-left-radius: var(--mantine-radius-sm);
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: var(--mantine-radius-sm) 0 0 var(--mantine-radius-sm);
   }
 
   &[data-active] {
