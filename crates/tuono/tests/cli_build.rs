@@ -7,6 +7,12 @@ use utils::TempTuonoProject;
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
 
+#[cfg(target_os = "windows")]
+const BUILD_TUONO_CONFIG: &str = ".\\node_modules\\.bin\\tuono-build-config.cmd";
+
+#[cfg(not(target_os = "windows"))]
+const BUILD_TUONO_CONFIG: &str = "./node_modules/.bin/tuono-build-config";
+
 #[test]
 #[serial]
 fn it_successfully_create_the_index_route() {
@@ -158,12 +164,10 @@ fn it_fails_without_installed_build_config_script() {
 #[serial]
 fn it_fails_without_installed_build_script() {
     let temp_tuono_project = TempTuonoProject::new();
-
-    temp_tuono_project
-        .add_file_with_content("./node_modules/.bin/tuono-build-config", "#!/bin/bash");
+    temp_tuono_project.add_file_with_content(BUILD_TUONO_CONFIG, "#!/bin/bash");
     Command::new("chmod")
         .arg("+x")
-        .arg("./node_modules/.bin/tuono-build-config")
+        .arg(BUILD_TUONO_CONFIG)
         .assert()
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
