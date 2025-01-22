@@ -1,15 +1,15 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fs::read_to_string;
 use std::io;
 use std::path::PathBuf;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ServerConfig {
     pub host: String,
     pub port: u16,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Config {
     pub server: ServerConfig,
 }
