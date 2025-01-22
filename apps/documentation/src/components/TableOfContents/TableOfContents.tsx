@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'tuono'
 import { IconList } from '@tabler/icons-react'
 import { Box, rem, ScrollArea, Text } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
-import { useMediaQuery } from '@mantine/hooks'
 
 function getActiveElement(rects: Array<DOMRect>): number {
   if (rects.length === 0) {
