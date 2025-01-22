@@ -35,7 +35,7 @@ enum Actions {
         template: Option<String>,
         /// Load the main branch templates
         #[arg(short, long)]
-        latest: Option<bool>
+        latest: Option<bool>,
     },
 }
 
@@ -145,7 +145,7 @@ pub fn app() -> std::io::Result<()> {
         Actions::New {
             folder_name,
             template,
-            latest
+            latest,
         } => {
             scaffold_project::create_new_project(folder_name, template, latest);
         }

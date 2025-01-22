@@ -1,11 +1,11 @@
 use clap::crate_version;
 use reqwest::blocking;
+use reqwest::blocking::Client;
 use serde::Deserialize;
 use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
-use reqwest::blocking::Client;
 
 const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
 
@@ -62,7 +62,11 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn create_new_project(folder_name: Option<String>, template: Option<String>, select_main_branch_template: Option<bool>) {
+pub fn create_new_project(
+    folder_name: Option<String>,
+    template: Option<String>,
+    select_main_branch_template: Option<bool>,
+) {
     let folder = folder_name.unwrap_or(".".to_string());
 
     // In case of missing select the tuono example
@@ -87,7 +91,9 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
                     "Error: Failed to call or parse the tag github API for v{cli_version}"
                 ))
             } else {
-                exit_with_error("Failed to call the tagged commit tree github API for latest version");
+                exit_with_error(
+                    "Failed to call the tagged commit tree github API for latest version",
+                );
             }
         });
 
@@ -141,7 +147,11 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let tag = if select_main_branch_template.unwrap() { "main" } else { &format!("v{cli_version}") };
+            let tag = if select_main_branch_template.unwrap() {
+                "main"
+            } else {
+                &format!("v{cli_version}")
+            };
             let url = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path);
 
             let file_content = client
@@ -170,7 +180,11 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
     outro(folder);
 }
 
-fn generate_tree_url(select_main_branch_template: Option<bool>, client: &Client, cli_version: &str) -> String {
+fn generate_tree_url(
+    select_main_branch_template: Option<bool>,
+    client: &Client,
+    cli_version: &str,
+) -> String {
     if select_main_branch_template.is_some() {
         format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
     } else {
