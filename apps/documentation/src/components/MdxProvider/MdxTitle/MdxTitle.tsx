@@ -1,4 +1,4 @@
-import type { JSX, ReactNode } from 'react'
+import type { ElementType, JSX, ReactNode } from 'react'
 import { Title, type TitleProps } from '@mantine/core'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
@@ -16,35 +16,29 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
 function idGen(children: ReactNode): string {
   if (Array.isArray(children)) {
     const result = children
-      .map((child: ReactNode) => {
+      .map((child) => {
         if (typeof child === 'string') {
-          return child;
+          return child
         }
-        if (child && typeof child === 'object') {
-          if (child.hasOwnProperty('props') && child.props?.children) {
-            return child.props.children;
-          }
-          return '';
+        if (typeof child === 'object' && child !== null && 'props' in child) {
+          const childWithProps = child as { props?: { children?: ReactNode } }
+          return typeof childWithProps.props?.children === 'string'
+            ? childWithProps.props.children
+            : ''
         }
-
-        return '';
+        return ''
       })
-      .join('');
+      .join('')
 
-    return result
-      .toLowerCase()
-      .replaceAll(' ', '-');
+    return result.toLowerCase().replace(/\s+/g, '-')
   }
 
-  // Fallback for non-array children
-  return String(children ?? ' ')
-    .toLowerCase()
-    .replaceAll(' ', '-');
+  return typeof children === 'string'
+    ? children.toLowerCase().replace(/\s+/g, '-')
+    : ''
 }
 
-export const h = (
-  order: 1 | 2 | 3 | 4 | 5 | 6,
-): React.ElementType<TitleProps> => {
+export const h = (order: 1 | 2 | 3 | 4 | 5 | 6): ElementType<TitleProps> => {
   function render(props: TitleProps): JSX.Element {
     return <MdxTitle order={order} {...props} />
   }
