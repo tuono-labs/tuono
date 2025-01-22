@@ -9,6 +9,7 @@ import { Box, rem, ScrollArea, Text } from '@mantine/core'
 
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
+import { useMediaQuery } from '@mantine/hooks'
 
 function getActiveElement(rects: Array<DOMRect>): number {
   if (rects.length === 0) {
@@ -43,6 +44,9 @@ export function TableOfContents({
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<Heading>>([])
   const router = useRouter()
+  const matches = useMediaQuery('(max-width: 80em)', true, {
+    getInitialValueInEffect: false,
+  })
 
   const filteredHeadings = headings.filter((heading) => heading.depth > 1)
 
@@ -94,6 +98,7 @@ export function TableOfContents({
       component="nav"
       mod={{ 'with-tabs': withTabs }}
       className={classes.wrapper}
+      hidden={matches}
     >
       <div className={classes.inner}>
         <div>
