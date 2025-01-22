@@ -9,6 +9,7 @@
   padding-top: 55px;
   flex: 0 0 calc(var(--docs-table-of-contents-width) - 20px);
   width: 200px;
+  height: 100vh;
 
   @mixin rtl {
     padding-left: 0;
