@@ -7,6 +7,12 @@ use utils::TempTuonoProject;
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
 
+#[cfg(target_os = "windows")]
+const BUILD_TUONO_CONFIG: &str = ".\\node_modules\\.bin\\tuono-build-config.cmd";
+
+#[cfg(not(target_os = "windows"))]
+const BUILD_TUONO_CONFIG: &str = "./node_modules/.bin/tuono-build-config";
+
 #[test]
 #[serial]
 fn it_successfully_create_the_index_route() {
@@ -144,7 +150,7 @@ fn it_successfully_create_catch_all_routes() {
 #[test]
 #[serial]
 fn it_fails_without_installed_build_config_script() {
-    TempTuonoProject::new();
+    let _guard = TempTuonoProject::new();
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
@@ -158,12 +164,10 @@ fn it_fails_without_installed_build_config_script() {
 #[serial]
 fn it_fails_without_installed_build_script() {
     let temp_tuono_project = TempTuonoProject::new();
-
-    temp_tuono_project
-        .add_file_with_content("./node_modules/.bin/tuono-build-config", "#!/bin/bash");
+    temp_tuono_project.add_file_with_content(BUILD_TUONO_CONFIG, "#!/bin/bash");
     Command::new("chmod")
         .arg("+x")
-        .arg("./node_modules/.bin/tuono-build-config")
+        .arg(BUILD_TUONO_CONFIG)
         .assert()
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
@@ -171,5 +175,5 @@ fn it_fails_without_installed_build_script() {
         .arg("build")
         .assert()
         .failure()
-        .stderr("Failed to find the build script. Please run `npm install`\n");
+        .stderr("[CLI] Failed to read tuono.config.ts\n");
 }

@@ -11,9 +11,6 @@ use crate::scaffold_project;
 use crate::source_builder::{bundle_axum_source, check_tuono_folder, create_client_entry_files};
 use crate::watch;
 
-const TUONO_PORT: u16 = 3000;
-const VITE_PORT: u16 = 3001;
-
 #[derive(Subcommand, Debug)]
 enum Actions {
     /// Start the development environment
@@ -54,47 +51,22 @@ fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
     Ok(app)
 }
 
-fn check_ports(mode: Mode) {
-    let rust_listener = std::net::TcpListener::bind(format!("0.0.0.0:{TUONO_PORT}"));
-
-    if let Err(_e) = rust_listener {
-        eprintln!("Error: Failed to bind to port {}", TUONO_PORT);
-        eprintln!(
-            "Please ensure that port {} is not already in use by another process or application.",
-            TUONO_PORT
-        );
-        std::process::exit(1);
-    }
-
-    if mode == Mode::Dev {
-        let vite_listener = std::net::TcpListener::bind(format!("0.0.0.0:{VITE_PORT}"));
-
-        if let Err(_e) = vite_listener {
-            eprintln!("Error: Failed to bind to port {}", VITE_PORT);
-            eprintln!(
-                "Please ensure that port {} is not already in use by another process or application.",
-                VITE_PORT
-            );
-            std::process::exit(1);
-        }
-    }
-}
-
 pub fn app() -> std::io::Result<()> {
     let args = Args::parse();
 
     match args.action {
         Actions::Dev => {
-            check_ports(Mode::Dev);
+            let mut app = init_tuono_folder(Mode::Dev)?;
 
-            let app = init_tuono_folder(Mode::Dev)?;
             app.build_tuono_config()
                 .expect("Failed to build tuono.config.ts");
+
+            app.check_server_availability(Mode::Dev);
 
             watch::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
-            let app = init_tuono_folder(Mode::Prod)?;
+            let mut app = init_tuono_folder(Mode::Prod)?;
 
             if no_js_emit {
                 println!("Rust build successfully finished");
@@ -110,11 +82,11 @@ pub fn app() -> std::io::Result<()> {
             app.build_tuono_config()
                 .expect("Failed to build tuono.config.ts");
 
+            app.check_server_availability(Mode::Prod);
+
             app.build_react_prod();
 
             if ssg {
-                check_ports(Mode::Prod);
-
                 println!("SSG: generation started");
 
                 let static_dir = PathBuf::from("out/static");
@@ -145,8 +117,11 @@ pub fn app() -> std::io::Result<()> {
                 // Wait for server
                 let mut is_server_ready = false;
 
+                let config = app.config.as_ref().unwrap();
+
                 while !is_server_ready {
-                    let server_url = format!("http://localhost:{}", TUONO_PORT);
+                    let server_url =
+                        format!("http://{}:{}", config.server.host, config.server.port);
                     if reqwest.get(server_url).send().is_ok() {
                         is_server_ready = true
                     }
