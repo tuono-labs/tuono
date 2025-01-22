@@ -84,7 +84,6 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
             ))
         });
 
-    panic!("hellloo {:?}", res_tag.object.sha);
     let sha_tagged_commit = res_tag.object.sha;
 
     let res_tree = client
@@ -94,7 +93,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         ))
         .send()
         .unwrap_or_else(|_| {
-            panic!("Failed to call the tagged commit tree github API for v{cli_version}")
+            exit_with_error("Failed to call the tagged commit tree github API for v{cli_version}")
         })
         .json::<GithubTreeResponse<GithubFile>>()
         .expect("Failed to parse the tree structure");
