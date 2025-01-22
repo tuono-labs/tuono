@@ -144,7 +144,7 @@ fn it_successfully_create_catch_all_routes() {
 #[test]
 #[serial]
 fn it_fails_without_installed_build_config_script() {
-    TempTuonoProject::new();
+    let _guard = TempTuonoProject::new();
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
