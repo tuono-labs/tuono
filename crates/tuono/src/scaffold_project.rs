@@ -5,6 +5,7 @@ use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+use reqwest::blocking::Client;
 
 const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
 
@@ -74,24 +75,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
-    let tree_url: String = if select_main_branch_template.is_some() {
-        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
-    } else {
-        // This string does not include the "v" version prefix
-        let res_tag = client
-            .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
-            .send()
-            .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
-            .json::<GithubTagResponse>()
-            .expect("Failed to parse the tag response");
-
-        let sha_tagged_commit = res_tag.object.sha;
-
-        format!(
-            "{}{}?recursive=1",
-            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
-        )
-    };
+    let tree_url: String = generate_tree_url(select_main_branch_template, &client, cli_version);
 
     let res_tag: GithubTagResponse = client
         .get(format!("{}v{}", tree_url, cli_version))
@@ -157,14 +141,11 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let raw_content_url = if select_main_branch_template.is_some() {
-                format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}")
-            } else {
-                format!("{GITHUB_RAW_CONTENT_URL}/{path}")
-            };
+            let tag = if select_main_branch_template.unwrap() { "main" } else { &format!("v{cli_version}") };
+            let url = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path);
 
             let file_content = client
-                .get(raw_content_url)
+                .get(url)
                 .send()
                 .map_err(|_| exit_with_error("Failed to call the folder github API"))
                 .and_then(|response| {
@@ -187,6 +168,27 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>,
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
     outro(folder);
+}
+
+fn generate_tree_url(select_main_branch_template: Option<bool>, client: &Client, cli_version: &str) -> String {
+    if select_main_branch_template.is_some() {
+        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
+    } else {
+        // This string does not include the "v" version prefix
+        let res_tag = client
+            .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+            .send()
+            .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
+            .json::<GithubTagResponse>()
+            .expect("Failed to parse the tag response");
+
+        let sha_tagged_commit = res_tag.object.sha;
+
+        format!(
+            "{}{}?recursive=1",
+            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
+        )
+    }
 }
 
 fn create_directories(
