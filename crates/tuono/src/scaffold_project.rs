@@ -49,12 +49,9 @@ struct GithubFile {
 }
 
 fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
-    let mut file = match File::create(&path) {
-        Ok(file) => file,
-        Err(err) => {
-            exit_with_error(&format!("Failed to create file {}: {}", path.display(), err));
-        }
-    };
+    let mut file = File::create(&path).unwrap_or_else(|err| {
+        exit_with_error(&format!("Failed to create file {}: {}", path.display(), err));
+    });
     let _ = file.write_all(content.as_bytes());
 
     Ok(())
@@ -65,11 +62,10 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
-
-    let client = match blocking::Client::builder().user_agent("").build() {
-        Ok(client) => client,
-        Err(_) => exit_with_error("Error: Failed to build request client"),
-    };
+    let client = blocking::Client::builder()
+        .user_agent("")
+        .build()
+        .unwrap_or_else(|_| exit_with_error("Error: Failed to build request client"));
 
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
@@ -80,9 +76,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .and_then(|response| response.json::<GithubTagResponse>())
         .unwrap_or_else(|_| {
             exit_with_error(&format!(
-                "Error: Failed to call or parse the tag github API for v{}",
-                cli_version
-            ))
+                "Error: Failed to call or parse the tag github API for v{cli_version}"))
         });
 
     let sha_tagged_commit = res_tag.object.sha;
@@ -107,13 +101,15 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
 
     if new_project_files.is_empty() {
         eprintln!("Error: Template '{template}' not found");
-        exit_with_error(&format!("Error: Template '{template}' not found. Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples"));
+        println!("Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples");
+        std::process::exit(1);
     }
 
     if folder != "." {
         if Path::new(&folder).exists() {
             eprintln!("Error: Directory '{folder}' already exists");
-            exit_with_error(&format!("Error: Directory '{folder}' already exists. Hint: you can scaffold a tuono project within an existing folder with 'cd {folder} && tuono new .'"));
+            println!("Hint: you can scaffold a tuono project within an existing folder with 'cd {folder} && tuono new .'");
+            std::process::exit(1);
         }
         create_dir(&folder).unwrap();
     }
@@ -178,25 +174,22 @@ fn create_directories(
 fn update_package_json_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let package_json_path = folder_path.join(PathBuf::from("package.json"));
-    let package_json = match fs::read_to_string(&package_json_path) {
-        Ok(content) => content,
-        Err(err) => exit_with_error(&format!("Failed to read package.json: {}", err)),
-    };
+    let package_json = fs::read_to_string(&package_json_path).unwrap_or_else(|err| {
+        exit_with_error(&format!("Failed to read package.json: {}", err))
+    });
     let package_json = package_json.replace("link:../../packages/tuono", v);
 
-    let mut file = match OpenOptions::new()
+    let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .open(package_json_path)
-    {
-        Ok(file) => file,
-        Err(err) => exit_with_error(&format!("Failed to open package.json: {}", err)),
-    };
+        .unwrap_or_else(|err| {
+            exit_with_error(&format!("Failed to open package.json: {}", err))
+        });
 
-    match file.write_all(package_json.as_bytes()) {
-        Ok(_) => (),
-        Err(err) => exit_with_error(&format!("Failed to write to package.json: {}", err)),
-    }
+    file.write_all(package_json.as_bytes()).unwrap_or_else(|err| {
+        exit_with_error(&format!("Failed to write to package.json: {}", err))
+    });
 
     Ok(())
 }
@@ -204,26 +197,23 @@ fn update_package_json_version(folder_path: &Path) -> io::Result<()> {
 fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let cargo_toml_path = folder_path.join(PathBuf::from("Cargo.toml"));
-    let cargo_toml = match fs::read_to_string(&cargo_toml_path) {
-        Ok(file) => file,
-        Err(err) => exit_with_error(&format!("Failed to write to package.json: {}", err)),
-    };
+    let cargo_toml = fs::read_to_string(&cargo_toml_path).unwrap_or_else(|err| {
+        exit_with_error(&format!("Failed to read Cargo.toml: {}", err))
+    });
     let cargo_toml =
         cargo_toml.replace("{ path = \"../../crates/tuono_lib/\"}", &format!("\"{v}\""));
 
-    let mut file = match OpenOptions::new()
+    let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .open(cargo_toml_path)
-    {
-        Ok(file) => file,
-        Err(err) => exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)),
-    };
+        .unwrap_or_else(|err| {
+            exit_with_error(&format!("Failed to open Cargo.toml: {}", err))
+        });
 
-    match file.write_all(cargo_toml.as_bytes()) {
-        Ok(_) => (),
-        Err(err) => exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)),
-    }
+    file.write_all(cargo_toml.as_bytes()).unwrap_or_else(|err| {
+        exit_with_error(&format!("Failed to write to Cargo.toml: {}", err))
+    });
 
     Ok(())
 }
