@@ -37,6 +37,9 @@
 }
 
 .link {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   display: block;
   border-left: 1px solid transparent;
   padding: 8px var(--mantine-spacing-md);
