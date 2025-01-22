@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { JSX, ReactNode } from 'react'
 import { Title, type TitleProps } from '@mantine/core'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
@@ -8,12 +8,38 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
       data-order={props.order}
       mt={20}
       {...props}
-      // eslint-disable-next-line @typescript-eslint/no-base-to-string
-      id={String(props.children ?? '')
-        .toLowerCase()
-        .replaceAll(' ', '-')}
+      id={idGen(props.children)}
     />
   )
+}
+
+function idGen(children: ReactNode): string {
+  if (Array.isArray(children)) {
+    const result = children
+      .map((child: ReactNode) => {
+        if (typeof child === 'string') {
+          return child;
+        }
+        if (child && typeof child === 'object') {
+          if (child.hasOwnProperty('props') && child.props?.children) {
+            return child.props.children;
+          }
+          return '';
+        }
+
+        return '';
+      })
+      .join('');
+
+    return result
+      .toLowerCase()
+      .replaceAll(' ', '-');
+  }
+
+  // Fallback for non-array children
+  return String(children ?? ' ')
+    .toLowerCase()
+    .replaceAll(' ', '-');
 }
 
 export const h = (

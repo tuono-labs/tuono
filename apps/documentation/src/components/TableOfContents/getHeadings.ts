@@ -41,7 +41,6 @@ function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
 
 export function getHeadings(): Array<Heading> {
   const root = document.getElementById('mdx-root')
-  console.log(root)
 
   if (!root) {
     return []
