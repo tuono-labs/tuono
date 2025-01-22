@@ -1,5 +1,7 @@
-import TableOfContents from '@/components/TableOfContents'
+import { JSX } from 'react'
 import { Container } from '@mantine/core'
+import TableOfContents from '@/components/TableOfContents'
+
 import EditPage from '../EditPage'
 import MdxProvider from '../MdxProvider'
 import classes from './MdxWrapper.module.css'
@@ -8,7 +10,7 @@ interface MdxWrapperProps {
   children: React.ReactNode
 }
 
-export function MdxWrapper({ children }: MdxWrapperProps) {
+export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
     <div className={classes.wrapper}>
       <Container

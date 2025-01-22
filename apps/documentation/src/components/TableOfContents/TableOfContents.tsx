@@ -95,7 +95,7 @@ export function TableOfContents({
     <Box
       component="nav"
       mod={{ 'with-tabs': withTabs }}
-      className={classes.wrapper + ' ' + className}
+      className={`${classes.wrapper} ${className}`}
     >
       <div className={classes.inner}>
         <div>
