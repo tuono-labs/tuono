@@ -238,6 +238,7 @@ mod tests {
             mode,
             js_bundles: None,
             css_bundles: None,
+            dev_config: None,
         }
     }
 
