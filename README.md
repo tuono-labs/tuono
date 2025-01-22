@@ -30,6 +30,7 @@ The [documentation](https://tuono.dev/) is available on
 [tuono.dev](https://tuono.dev/).
 
 ## Installation
+
 Available on MacOS, Linux and Windows.
 
 ```sh
