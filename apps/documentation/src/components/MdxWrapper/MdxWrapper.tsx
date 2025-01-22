@@ -1,12 +1,12 @@
 import type { JSX } from 'react'
 import { Container } from '@mantine/core'
 
+import TableOfContents from '@/components/TableOfContents'
+
 import EditPage from '../EditPage'
 import MdxProvider from '../MdxProvider'
 
 import classes from './MdxWrapper.module.css'
-
-import TableOfContents from '@/components/TableOfContents'
 
 interface MdxWrapperProps {
   children: React.ReactNode
