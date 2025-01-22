@@ -20,12 +20,14 @@ function getCleanedText(element: HTMLElement): string {
 }
 
 function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
-  const result: Array<Heading> = []
+  const result: Array<Heading> = [];
 
   for (const heading of headings) {
-    if (heading.id) {
+    const depth = parseInt(heading.getAttribute('data-order') || '1', 10);
+
+    if (depth <= 3 && heading.id) {
       result.push({
-        depth: parseInt(heading.getAttribute('data-order') || '1', 10),
+        depth,
         content: getCleanedText(heading),
         id: heading.id,
         getNode: () => document.getElementById(heading.id) as HTMLHeadingElement,
@@ -33,7 +35,7 @@ function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
     }
   }
 
-  return result
+  return result;
 }
 
 export function getHeadings(): Array<Heading> {
