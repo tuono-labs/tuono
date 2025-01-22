@@ -93,7 +93,9 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         ))
         .send()
         .unwrap_or_else(|_| {
-            exit_with_error("Failed to call the tagged commit tree github API for v{cli_version}")
+            exit_with_error(&format!(
+                "Failed to call the tagged commit tree github API for v{cli_version}"
+            ))
         })
         .json::<GithubTreeResponse<GithubFile>>()
         .expect("Failed to parse the tree structure");
