@@ -61,7 +61,7 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn create_new_project(folder_name: Option<String>, template: Option<String>) {
+pub fn create_new_project(folder_name: Option<String>, template: Option<String>, select_main_branch_template: Option<String>) {
     let folder = folder_name.unwrap_or(".".to_string());
 
     // In case of missing select the tuono example
@@ -74,14 +74,37 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
+    let tree_url: String = if select_main_branch_template.is_some() {
+        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
+    } else {
+        // This string does not include the "v" version prefix
+        let res_tag = client
+            .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+            .send()
+            .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
+            .json::<GithubTagResponse>()
+            .expect("Failed to parse the tag response");
+
+        let sha_tagged_commit = res_tag.object.sha;
+
+        format!(
+            "{}{}?recursive=1",
+            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
+        )
+    };
+
     let res_tag: GithubTagResponse = client
-        .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+        .get(format!("{}v{}", tree_url, cli_version))
         .send()
         .and_then(|response| response.json::<GithubTagResponse>())
         .unwrap_or_else(|_| {
-            exit_with_error(&format!(
-                "Error: Failed to call or parse the tag github API for v{cli_version}"
-            ))
+            if select_main_branch_template.is_some() {
+                exit_with_error(&format!(
+                    "Error: Failed to call or parse the tag github API for v{cli_version}"
+                ))
+            } else {
+                exit_with_error("Failed to call the tagged commit tree github API for latest version");
+            }
         });
 
     let sha_tagged_commit = res_tag.object.sha;
@@ -134,8 +157,14 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
+            let raw_content_url = if select_main_branch_template.is_some() {
+                format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}")
+            } else {
+                format!("{GITHUB_RAW_CONTENT_URL}/{path}")
+            };
+            
             let file_content = client
-                .get(format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}"))
+                .get(raw_content_url)
                 .send()
                 .map_err(|_| exit_with_error("Failed to call the folder github API"))
                 .and_then(|response| {
