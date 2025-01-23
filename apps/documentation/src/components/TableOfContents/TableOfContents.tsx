@@ -4,8 +4,7 @@
 import type { JSX } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'tuono'
-import { IconList } from '@tabler/icons-react'
-import { Box, rem, Text } from '@mantine/core'
+import { Box, Text } from '@mantine/core'
 
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
