@@ -164,7 +164,6 @@ fn generate_tree_url(
     client: &Client,
     cli_version: &str,
 ) -> String {
-    println!("{}", select_main_branch_template.unwrap_or(false));
     if select_main_branch_template.unwrap_or(false) {
         format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
     } else {

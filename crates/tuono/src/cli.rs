@@ -34,7 +34,7 @@ enum Actions {
         #[arg(short, long)]
         template: Option<String>,
         /// Load the latest commit available on the main branch
-        #[arg(short, long)]
+        #[arg(long)]
         head: Option<bool>,
     },
 }
