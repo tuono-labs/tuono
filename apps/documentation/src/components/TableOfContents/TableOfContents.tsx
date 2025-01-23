@@ -80,7 +80,9 @@ export function TableOfContents({
       key={heading.id}
       component="a"
       fz="sm"
-      p={10}
+      px={8}
+      w="fit-content"
+      py={4}
       className={classes.link}
       mod={{ active: active === index }}
       href={`#${heading.id}`}
@@ -99,11 +101,7 @@ export function TableOfContents({
       <div className={classes.inner}>
         <div>
           <div className={classes.header}>
-            <IconList
-              style={{ width: rem(20), height: rem(20) }}
-              stroke={1.5}
-            />
-            <Text className={classes.title}>Table of contents</Text>
+            <Text className={classes.title}>On this page</Text>
           </div>
           <div className={classes.items}>{items}</div>
         </div>

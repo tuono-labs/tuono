@@ -1,28 +1,11 @@
-/*
- * Component inspired by: https://github.com/mantinedev/mantine/tree/master/apps/mantine.dev/src/components/TableOfContents
- */
-@media (max-width: 80em) {
-  .wrapper {
-    display: none;
-  }
-}
-
 .wrapper {
-  padding-left: var(--mantine-spacing-md);
   position: sticky;
   top: var(--mantine-spacing-xl);
-  right: 0;
   padding-top: 55px;
-  flex: 0 0 calc(200px - 20px);
-  min-width: 200px;
+  flex: 0 0 calc(250px - 20px);
+  min-width: 220px;
+  max-width: 220px;
   height: 100vh;
-
-  @mixin rtl {
-    padding-left: 0;
-    padding-right: var(--mantine-spacing-md);
-    right: auto;
-    left: 0;
-  }
 
   &[data-with-tabs] {
     padding-top: 0;
@@ -71,24 +54,36 @@
     border-radius: var(--mantine-radius-sm) 0 0 var(--mantine-radius-sm);
   }
 
+  &:hover {
+    border-color: var(--mantine-color-violet-1);
+
+    @mixin light {
+      color: var(--mantine-color-black);
+    }
+
+    @mixin dark {
+      color: var(--mantine-color-violet-1);
+    }
+  }
+
   &[data-active] {
     border-color: var(--mantine-color-violet-5);
 
     @mixin light {
       color: var(--mantine-color-violet-8);
-      background-color: var(--mantine-color-violet-0);
     }
 
     @mixin dark {
       color: var(--mantine-color-violet-1);
-      background-color: #534a6d;
     }
   }
 }
 
 .header {
+  left: 0;
   display: flex;
   align-items: center;
+  gap: 10px;
   margin-bottom: var(--mantine-spacing-md);
 }
 

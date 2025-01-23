@@ -36,8 +36,8 @@ const theme = createTheme({
   },
   fontSizes: {
     // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    xs: '16px',
-    sm: '16px',
+    xs: '14px',
+    sm: '14px',
   },
   colors: {
     dark: [

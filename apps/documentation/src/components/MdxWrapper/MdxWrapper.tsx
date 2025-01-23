@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import { Container } from '@mantine/core'
+import { Container, Flex, Box, Center } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 
@@ -14,18 +14,25 @@ interface MdxWrapperProps {
 
 export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
-    <div className={classes.wrapper}>
-      <Container
-        id="mdx-root"
-        component="article"
-        size="md"
-        p={20}
-        className={classes.container}
-      >
-        <MdxProvider>{children}</MdxProvider>
-        <EditPage />
-      </Container>
-      <TableOfContents withTabs={false} className={classes.tableOfContents} />
-    </div>
+    <Center>
+      <Flex justify="center">
+        <Container
+          id="mdx-root"
+          component="article"
+          size={800}
+          p={24}
+          className={classes.container}
+        >
+          <MdxProvider>{children}</MdxProvider>
+          <EditPage />
+        </Container>
+        <Box>
+          <TableOfContents
+            withTabs={false}
+            className={classes.tableOfContents}
+          />
+        </Box>
+      </Flex>
+    </Center>
   )
 }
