@@ -81,29 +81,8 @@ pub fn create_new_project(
 
     let tree_url: String = generate_tree_url(select_main_branch_template, &client, cli_version);
 
-    let res_tag: GithubTagResponse = client
-        .get(format!("{}v{}", tree_url, cli_version))
-        .send()
-        .and_then(|response| response.json::<GithubTagResponse>())
-        .unwrap_or_else(|_| {
-            if select_main_branch_template.is_some() {
-                exit_with_error(&format!(
-                    "Error: Failed to call or parse the tag github API for v{cli_version}"
-                ))
-            } else {
-                exit_with_error(
-                    "Failed to call the tagged commit tree github API for latest version",
-                );
-            }
-        });
-
-    let sha_tagged_commit = res_tag.object.sha;
-
     let res_tree = client
-        .get(format!(
-            "{}{}?recursive=1",
-            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
-        ))
+        .get(tree_url)
         .send()
         .unwrap_or_else(|_| {
             exit_with_error(&format!(
@@ -147,7 +126,7 @@ pub fn create_new_project(
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let tag = if select_main_branch_template.unwrap() {
+            let tag = if select_main_branch_template.unwrap_or(false) {
                 "main"
             } else {
                 &format!("v{cli_version}")
@@ -185,7 +164,8 @@ fn generate_tree_url(
     client: &Client,
     cli_version: &str,
 ) -> String {
-    if select_main_branch_template.is_some() {
+    println!("{}", select_main_branch_template.unwrap_or(false));
+    if select_main_branch_template.unwrap_or(false) {
         format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
     } else {
         // This string does not include the "v" version prefix
