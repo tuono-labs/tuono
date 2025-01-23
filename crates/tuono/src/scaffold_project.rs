@@ -65,7 +65,7 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
 pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
-    select_main_branch_template: Option<bool>,
+    select_head: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
 
@@ -79,7 +79,7 @@ pub fn create_new_project(
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
-    let tree_url: String = generate_tree_url(select_main_branch_template, &client, cli_version);
+    let tree_url: String = generate_tree_url(select_head, &client, cli_version);
 
     let res_tree = client
         .get(tree_url)
@@ -126,7 +126,7 @@ pub fn create_new_project(
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let tag = if select_main_branch_template.unwrap_or(false) {
+            let tag = if select_head.unwrap_or(false) {
                 "main"
             } else {
                 &format!("v{cli_version}")
