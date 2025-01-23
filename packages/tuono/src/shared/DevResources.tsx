@@ -1,29 +1,33 @@
 import type { JSX } from 'react'
+import { useRouterContext } from 'tuono-router'
 
-const TUONO_DEV_SERVER_PORT = 3000
 const VITE_PROXY_PATH = '/vite-server'
-const SCRIPT_BASE_URL = `http://localhost:${TUONO_DEV_SERVER_PORT}${VITE_PROXY_PATH}`
+const DEFAULT_SERVER_CONFIG = { host: 'localhost', port: 3000 }
 
-export const DevResources = (): JSX.Element => (
-  <>
-    <script type="module" async>
-      {[
-        `import RefreshRuntime from '${SCRIPT_BASE_URL}/@react-refresh'`,
-        'RefreshRuntime.injectIntoGlobalHook(window)',
-        'window.$RefreshReg$ = () => {}',
-        'window.$RefreshSig$ = () => (type) => type',
-        'window.__vite_plugin_react_preamble_installed__ = true',
-      ].join('\n')}
-    </script>
-    <script
-      type="module"
-      async
-      src={`${SCRIPT_BASE_URL}/@vite/client`}
-    ></script>
-    <script
-      type="module"
-      async
-      src={`${SCRIPT_BASE_URL}/client-main.tsx`}
-    ></script>
-  </>
-)
+export const DevResources = (): JSX.Element => {
+  const { serverSideProps } = useRouterContext()
+  const { host, port } =
+    serverSideProps?.devServerConfig ?? DEFAULT_SERVER_CONFIG
+
+  const viteBaseUrl = `http://${host}:${port}${VITE_PROXY_PATH}`
+
+  return (
+    <>
+      <script type="module" async>
+        {[
+          `import RefreshRuntime from '${viteBaseUrl}/@react-refresh'`,
+          'RefreshRuntime.injectIntoGlobalHook(window)',
+          'window.$RefreshReg$ = () => {}',
+          'window.$RefreshSig$ = () => (type) => type',
+          'window.__vite_plugin_react_preamble_installed__ = true',
+        ].join('\n')}
+      </script>
+      <script type="module" async src={`${viteBaseUrl}/@vite/client`}></script>
+      <script
+        type="module"
+        async
+        src={`${viteBaseUrl}/client-main.tsx`}
+      ></script>
+    </>
+  )
+}
