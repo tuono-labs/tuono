@@ -1,20 +1,14 @@
+use crate::url::get_url;
 use clap::crate_version;
 use reqwest::blocking;
 use serde::Deserialize;
-use std::env;
+use std::env::{self};
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 
-const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
-
-const GITHUB_TUONO_TAG_COMMIT_TREES_URL: &str =
-    "https://api.github.com/repos/tuono-labs/tuono/git/trees/";
-
-const GITHUB_RAW_CONTENT_URL: &str = "https://raw.githubusercontent.com/tuono-labs/tuono";
-
 #[derive(Deserialize, Debug)]
-enum GithubFileType {
+pub enum GithubFileType {
     #[serde(rename = "blob")]
     Blob,
     #[serde(rename = "tree")]
@@ -22,7 +16,7 @@ enum GithubFileType {
 }
 
 #[derive(Deserialize, Debug)]
-struct GithubTagObject {
+pub struct GithubTagObject {
     sha: String,
 }
 
@@ -32,12 +26,12 @@ struct GithubTagResponse {
 }
 
 #[derive(Deserialize, Debug)]
-struct GithubTreeResponse<T> {
+pub struct GithubTreeResponse<T> {
     tree: Vec<T>,
 }
 
 #[derive(Deserialize, Debug)]
-struct GithubFile {
+pub struct GithubFile {
     path: String,
     #[serde(rename(deserialize = "type"))]
     element_type: GithubFileType,
@@ -52,6 +46,7 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
 
 pub fn create_new_project(folder_name: Option<String>, template: Option<String>) {
     let folder = folder_name.unwrap_or(".".to_string());
+    let url = get_url();
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
@@ -65,18 +60,26 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     let cli_version: &str = crate_version!();
 
     let res_tag = client
-        .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+        .get(format!("{}v{}", url.github_tuono_tags_url, cli_version))
         .send()
-        .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
+        .unwrap_or_else(|err| panic!("Failed to call the tag github API for v{err}"))
         .json::<GithubTagResponse>()
         .expect("Failed to parse the tag response");
 
+
     let sha_tagged_commit = res_tag.object.sha;
+    println!(
+        "res tree {}",
+        format!(
+            "{}{}?recursive=1",
+            url.github_tuono_tag_commit_trees_url, sha_tagged_commit
+        )
+    );
 
     let res_tree = client
         .get(format!(
             "{}{}?recursive=1",
-            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
+            url.github_tuono_tag_commit_trees_url, sha_tagged_commit
         ))
         .send()
         .unwrap_or_else(|_| {
@@ -119,8 +122,9 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
+            let content = url.github_raw_content_url.clone();
             let file_content = client
-                .get(format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}"))
+                .get(format!("{content}/v{cli_version}/{path}"))
                 .send()
                 .expect("Failed to call the folder github API")
                 .text()
