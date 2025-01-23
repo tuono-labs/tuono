@@ -23,8 +23,8 @@ pub struct Payload<'a> {
     js_bundles: Option<Vec<&'a String>>,
     #[serde(rename(serialize = "cssBundles"))]
     css_bundles: Option<Vec<&'a String>>,
-    #[serde(rename(serialize = "devConfig"))]
-    dev_config: Option<&'a ServerConfig>,
+    #[serde(rename(serialize = "devServerConfig"))]
+    dev_server_config: Option<&'a ServerConfig>,
 }
 
 impl<'a> Payload<'a> {
@@ -35,7 +35,7 @@ impl<'a> Payload<'a> {
 
         let mode = *GLOBAL_MODE.get().expect("Failed to load the current mode");
 
-        let dev_config = if mode == Mode::Dev {
+        let dev_server_config = if mode == Mode::Dev {
             Some(&config.server)
         } else {
             None
@@ -47,7 +47,7 @@ impl<'a> Payload<'a> {
             mode,
             js_bundles: None,
             css_bundles: None,
-            dev_config,
+            dev_server_config,
         }
     }
 
@@ -238,7 +238,7 @@ mod tests {
             mode,
             js_bundles: None,
             css_bundles: None,
-            dev_config: None,
+            dev_server_config: None,
         }
     }
 

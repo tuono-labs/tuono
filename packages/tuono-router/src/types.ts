@@ -17,7 +17,7 @@ export interface ServerProps<TProps = unknown> {
   jsBundles: Array<string>
   cssBundles: Array<string>
   mode: 'Dev' | 'Prod'
-  devConfig: {
+  devServerConfig: {
     port: number
     host: string
   }
