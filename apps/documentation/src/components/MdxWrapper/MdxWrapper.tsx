@@ -1,5 +1,5 @@
-import type { JSX } from 'react'
-import { Container, Flex, Box, Center } from '@mantine/core'
+import type { JSX, ReactNode } from 'react'
+import { Container, Box } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 
@@ -9,30 +9,27 @@ import MdxProvider from '../MdxProvider'
 import classes from './MdxWrapper.module.css'
 
 interface MdxWrapperProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
-    <Center>
-      <Flex justify="center">
-        <Container
+      <Container size={1000} className={classes.wrapper}>
+        <Box
           id="mdx-root"
           component="article"
-          size={800}
           p={24}
           className={classes.container}
         >
           <MdxProvider>{children}</MdxProvider>
           <EditPage />
-        </Container>
+        </Box>
         <Box>
           <TableOfContents
             withTabs={false}
             className={classes.tableOfContents}
           />
         </Box>
-      </Flex>
-    </Center>
+      </Container>
   )
 }
