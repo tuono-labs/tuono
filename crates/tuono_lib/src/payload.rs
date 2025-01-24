@@ -28,7 +28,7 @@ pub struct Payload<'a> {
 }
 
 impl<'a> Payload<'a> {
-    pub fn new(req: &'a Request, props: &'a dyn Serialize) -> Payload<'a> {
+    pub fn new(req: &'a Request, data: &'a dyn Serialize) -> Payload<'a> {
         let config = GLOBAL_CONFIG
             .get()
             .expect("Failed to load the current config");
@@ -43,7 +43,7 @@ impl<'a> Payload<'a> {
 
         Payload {
             location: req.location(),
-            data: props,
+            data,
             mode,
             js_bundles: None,
             css_bundles: None,
