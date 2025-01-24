@@ -1,4 +1,3 @@
-use crate::url::get_url;
 use clap::crate_version;
 use reqwest::blocking;
 use serde::Deserialize;
@@ -6,6 +5,8 @@ use std::env::{self};
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+
+use crate::externalUrl::ExternalUrl;
 
 #[derive(Deserialize, Debug)]
 pub enum GithubFileType {
@@ -46,7 +47,7 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
 
 pub fn create_new_project(folder_name: Option<String>, template: Option<String>) {
     let folder = folder_name.unwrap_or(".".to_string());
-    let url = get_url();
+    let url = ExternalUrl::new();
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
@@ -121,7 +122,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let content = url.github_raw_content_url.clone();
+            let content: String = url.github_raw_content_url.clone();
             let file_content = client
                 .get(format!("{content}v{cli_version}/{path}"))
                 .send()
@@ -132,7 +133,6 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
             let path = PathBuf::from(&path.replace(&format!("examples/{template}/"), ""));
 
             let file_path = folder_path.join(&path);
-
             create_file(file_path, file_content).expect("failed to create file");
         }
     }
@@ -154,7 +154,6 @@ fn create_directories(
         if let GithubFileType::Tree = element_type {
             let path = PathBuf::from(&path.replace(&format!("examples/{template}/"), ""));
 
-            println!("file {:?}", folder_path);
             let dir_path = folder_path.join(&path);
             if let Err(e) = create_dir(&dir_path) {
                 eprintln!("Failed to create directory {}: {}", dir_path.display(), e);

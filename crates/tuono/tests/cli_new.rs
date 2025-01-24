@@ -1,4 +1,5 @@
 use assert_cmd::Command;
+use clap::crate_version;
 use serial_test::serial;
 use std::fs;
 use wiremock::matchers::{method, path, query_param};
@@ -11,9 +12,10 @@ use utils::{set_up_mock_server, TempTuonoProject};
 #[serial]
 async fn test_scaffold_project() {
     let mock_server = set_up_mock_server().await;
+    let cli_version: &str = crate_version!();
 
     Mock::given(method("GET"))
-        .and(path("v0.17.3"))
+        .and(path(&format!("v{cli_version}")))
         .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
             "object": {
                 "sha": "1234567890abcdef"
@@ -49,7 +51,7 @@ async fn test_scaffold_project() {
         .await;
 
     Mock::given(method("GET"))
-        .and(path("v0.17.3/examples/tuono-app/src/main.rs"))
+        .and(path(&format!("v{cli_version}/examples/tuono-app/src/main.rs")))
         .respond_with(
             ResponseTemplate::new(200)
                 .set_body_string("fn main() { println!(\"Hello, world!\"); }"),
@@ -58,7 +60,7 @@ async fn test_scaffold_project() {
         .await;
 
     Mock::given(method("GET"))
-        .and(path("v0.17.3/examples/tuono-app/Cargo.toml"))
+        .and(path(&format!("v{cli_version}/examples/tuono-app/Cargo.toml")))
         .respond_with(ResponseTemplate::new(200).set_body_string(
             "[package] name = \"tuono-tutorial\" version = \"0.0.1\" edition = \"2021\" [[bin]] name = \"tuono\" path = \".tuono/main.rs\" [dependencies] tuono_lib = { path = \"../../crates/tuono_lib/\"} serde = { version = \"1.0.202\", features = [\"derive\"] } reqwest = \"0.12.9\""
         ))
@@ -81,8 +83,6 @@ async fn test_scaffold_project() {
 
     let main_rs_content = fs::read_to_string(main_rs_path).unwrap();
     let cargo_toml_content = fs::read_to_string(cargo_toml_path).unwrap();
-
-    println!("main rs contec {:?}", main_rs_content);
 
     assert_eq!(
         main_rs_content,
