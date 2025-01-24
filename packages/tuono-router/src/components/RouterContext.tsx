@@ -23,14 +23,14 @@ interface RouterContextValue {
 const RouterContext = createContext({} as RouterContextValue)
 
 function getInitialLocation(
-  serverPayloadLocation?: ServerInitialLocation,
+  serverPayloadLocation: ServerInitialLocation,
 ): ParsedLocation {
   if (isServerSide) {
     return {
-      pathname: serverPayloadLocation?.pathname || '',
+      pathname: serverPayloadLocation.pathname || '',
       hash: '',
-      href: serverPayloadLocation?.href || '',
-      searchStr: serverPayloadLocation?.searchStr || '',
+      href: serverPayloadLocation.href || '',
+      searchStr: serverPayloadLocation.searchStr || '',
       // TODO: Polyfill URLSearchParams
       search: {},
     }
