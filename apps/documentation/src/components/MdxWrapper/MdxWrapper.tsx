@@ -25,7 +25,7 @@ export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
         <EditPage />
       </Box>
       <Box>
-        <TableOfContents withTabs={false} />
+        <TableOfContents />
       </Box>
     </Container>
   )

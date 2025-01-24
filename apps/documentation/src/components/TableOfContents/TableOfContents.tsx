@@ -6,13 +6,9 @@ import { Box, Text } from '@mantine/core'
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
-interface TableOfContentsProps {
-  withTabs: boolean
-}
+interface TableOfContentsProps {}
 
-export function TableOfContents({
-  withTabs,
-}: TableOfContentsProps): JSX.Element | null {
+export function TableOfContents({}: TableOfContentsProps): JSX.Element | null {
   const [active, setActive] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
@@ -87,11 +83,7 @@ export function TableOfContents({
   }
 
   return (
-    <Box
-      component="nav"
-      mod={{ 'with-tabs': withTabs }}
-      className={classes.wrapper}
-    >
+    <Box component="nav" className={classes.wrapper}>
       <div className={classes.inner}>
         <div>
           <div className={classes.header}>
