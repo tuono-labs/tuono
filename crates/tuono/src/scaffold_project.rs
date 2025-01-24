@@ -68,13 +68,6 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .expect("Failed to parse the tag response");
 
     let sha_tagged_commit = res_tag.object.sha;
-    println!(
-        "res tree {}",
-        format!(
-            "{}{}?recursive=1",
-            url.github_tuono_tag_commit_trees_url, sha_tagged_commit
-        )
-    );
 
     let res_tree = client
         .get(format!(
@@ -99,7 +92,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         println!("Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples");
         std::process::exit(1);
     }
-    println!("FOLDER {}", folder);
+
     if folder != "." {
         if Path::new(&folder).exists() {
             eprintln!("Error: Directory '{folder}' already exists");
