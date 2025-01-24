@@ -51,7 +51,7 @@ describe('Test RouteMatch component', () => {
       },
     }))
 
-    render(<RouteMatch route={route} serverPayloadData={{}} />)
+    render(<RouteMatch route={route} serverInitialData={{}} />)
     expect(screen.getByTestId('root')).toHaveTextContent(
       'root route parent route current route',
     )

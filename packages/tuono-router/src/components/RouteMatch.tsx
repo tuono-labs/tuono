@@ -6,7 +6,7 @@ import { useServerPayloadData } from '../hooks/useServerPayloadData'
 interface RouteMatchProps<TServerPayloadData = unknown> {
   route: Route
   // User defined server side props
-  serverPayloadData: TServerPayloadData
+  serverInitialData: TServerPayloadData
 }
 
 /**
@@ -16,9 +16,9 @@ interface RouteMatchProps<TServerPayloadData = unknown> {
  */
 export const RouteMatch = ({
   route,
-  serverPayloadData,
+  serverInitialData: serverInitialData,
 }: RouteMatchProps): React.JSX.Element => {
-  const { data, isLoading } = useServerPayloadData(route, serverPayloadData)
+  const { data, isLoading } = useServerPayloadData(route, serverInitialData)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const routes = React.useMemo(() => loadParentComponents(route), [route.id])

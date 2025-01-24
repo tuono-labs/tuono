@@ -34,7 +34,7 @@ interface UseServerPayloadDataResult<TData> {
 export function useServerPayloadData<TServerPayloadData>(
   route: Route,
   // User defined data
-  serverSideData: TServerPayloadData,
+  serverInitialData: TServerPayloadData,
 ): UseServerPayloadDataResult<TServerPayloadData> {
   const isFirstRendering = useRef<boolean>(true)
   const { location, updateLocation } = useRouterContext()
@@ -48,8 +48,7 @@ export function useServerPayloadData<TServerPayloadData>(
   )
 
   const [data, setData] = useState<TServerPayloadData | undefined>(
-    (serverSideData ??
-      window.__TUONO_SERVER_PAYLOAD__?.data) as TServerPayloadData,
+    serverInitialData,
   )
 
   useEffect(() => {

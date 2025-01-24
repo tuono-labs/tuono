@@ -1,6 +1,6 @@
 import type { JSX } from 'react'
 
-import type { ServerPayload } from '../types'
+import type { ServerInitialLocation } from '../types'
 import type { Router } from '../router'
 
 import { RouterContextProvider } from './RouterContext'
@@ -8,19 +8,24 @@ import { Matches } from './Matches'
 
 interface RouterProviderProps {
   router: Router
-  serverPayload?: ServerPayload
+  serverInitialLocation: ServerInitialLocation
+  serverInitialData: unknown
 }
 
 /**
- * This component is used in the tuono app entry point
+ * This component is used in every tuono app entry point
  */
 export function RouterProvider({
   router,
-  serverPayload,
+  serverInitialLocation,
+  serverInitialData,
 }: RouterProviderProps): JSX.Element {
   return (
-    <RouterContextProvider router={router} serverPayload={serverPayload}>
-      <Matches serverPayloadData={serverPayload?.data} />
+    <RouterContextProvider
+      router={router}
+      serverInitialLocation={serverInitialLocation}
+    >
+      <Matches serverInitialData={serverInitialData} />
     </RouterContextProvider>
   )
 }

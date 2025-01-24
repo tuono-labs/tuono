@@ -5,11 +5,11 @@ import type { ServerPayload } from '../types'
 
 const isServerSide = typeof window === 'undefined'
 
-interface TuonoContextData {
+interface TuonoContextValue {
   serverPayload: ServerPayload
 }
 
-const TuonoContext = createContext({} as TuonoContextData)
+const TuonoContext = createContext({} as TuonoContextValue)
 
 interface TuonoContextProviderProps {
   serverPayload?: ServerPayload
@@ -30,12 +30,12 @@ export function TuonoContextProvider(
     return {
       /** Maybe this logic should be integrated using defaults */
       serverPayload: _serverPayload,
-    } as TuonoContextData
+    } as TuonoContextValue
   }, [serverPayload])
 
   return <TuonoContext value={contextValue}>{children}</TuonoContext>
 }
 
-export function useTuonoContextServerPayload(): TuonoContextData['serverPayload'] {
+export function useTuonoContextServerPayload(): TuonoContextValue['serverPayload'] {
   return useContext(TuonoContext).serverPayload
 }

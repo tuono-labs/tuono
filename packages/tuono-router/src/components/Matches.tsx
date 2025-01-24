@@ -8,11 +8,11 @@ import { useRouterContext } from './RouterContext'
 
 interface MatchesProps<TServerPayloadData = unknown> {
   // user defined props
-  serverPayloadData: TServerPayloadData
+  serverInitialData: TServerPayloadData
 }
 
 export function Matches({
-  serverPayloadData,
+  serverInitialData,
 }: MatchesProps): React.JSX.Element {
   const { location } = useRouterContext()
 
@@ -22,5 +22,5 @@ export function Matches({
     return <NotFound />
   }
 
-  return <RouteMatch route={route} serverPayloadData={serverPayloadData} />
+  return <RouteMatch route={route} serverInitialData={serverInitialData} />
 }

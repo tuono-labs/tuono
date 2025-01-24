@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
-import type { ServerPayload } from '../types'
+import type { ServerInitialLocation } from '../types'
 
 const isServerSide = typeof window === 'undefined'
 
@@ -17,14 +17,13 @@ export interface ParsedLocation {
 interface RouterContextValue {
   router: Router
   location: ParsedLocation
-  serverPayload?: ServerPayload
   updateLocation: (loc: ParsedLocation) => void
 }
 
 const RouterContext = createContext({} as RouterContextValue)
 
 function getInitialLocation(
-  serverPayloadLocation?: ServerPayload['location'],
+  serverPayloadLocation?: ServerInitialLocation,
 ): ParsedLocation {
   if (isServerSide) {
     return {
@@ -49,20 +48,20 @@ function getInitialLocation(
 
 interface RouterContextProviderProps {
   router: Router
+  serverInitialLocation: ServerInitialLocation
   children: ReactNode
-  serverPayload?: ServerPayload
 }
 
 export function RouterContextProvider({
   router,
+  serverInitialLocation,
   children,
-  serverPayload,
 }: RouterContextProviderProps): ReactNode {
   // Allow the router to update options on the router instance
   router.update({ ...router.options } as Parameters<typeof router.update>[0])
 
   const [location, setLocation] = useState<ParsedLocation>(() =>
-    getInitialLocation(serverPayload?.location),
+    getInitialLocation(serverInitialLocation),
   )
 
   /**
@@ -93,14 +92,11 @@ export function RouterContextProvider({
 
   const contextValue: RouterContextValue = useMemo(
     () => ({
-      serverPayload: isServerSide
-        ? serverPayload
-        : window.__TUONO_SERVER_PAYLOAD__,
       router,
       location,
       updateLocation: setLocation,
     }),
-    [location, router, serverPayload],
+    [location, router],
   )
 
   return (
