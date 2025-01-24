@@ -1,18 +1,20 @@
 import { type JSX, StrictMode } from 'react'
-import { type RouterType, type ServerProps, RouterProvider } from 'tuono-router'
+import { type RouterInstanceType, RouterProvider } from 'tuono-router'
+
+import type { ServerPayload } from '../types'
 
 interface TuonoEntryPointProps {
-  router: RouterType
-  serverProps?: ServerProps
+  router: RouterInstanceType
+  serverPayload?: ServerPayload
 }
 
 export function TuonoEntryPoint({
   router,
-  serverProps,
+  serverPayload,
 }: TuonoEntryPointProps): JSX.Element {
   return (
     <StrictMode>
-      <RouterProvider router={router} serverProps={serverProps} />
+      <RouterProvider router={router} serverPayload={serverPayload} />
     </StrictMode>
   )
 }

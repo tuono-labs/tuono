@@ -12,7 +12,7 @@ export default function NotFound(): React.JSX.Element {
 
   // Check if exists a custom 404 error page
   if (custom404Route) {
-    return <RouteMatch route={custom404Route} serverSideProps={{}} />
+    return <RouteMatch route={custom404Route} serverPayloadData={{}} />
   }
 
   return (

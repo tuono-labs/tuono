@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
-import type { ServerRouterInfo, ServerProps } from '../types'
+import type { ServerPayload } from '../types'
 
 const isServerSide = typeof window === 'undefined'
 
@@ -17,7 +17,7 @@ export interface ParsedLocation {
 interface RouterContextValue {
   router: Router
   location: ParsedLocation
-  serverSideProps?: ServerProps
+  serverPayload?: ServerPayload
   updateLocation: (loc: ParsedLocation) => void
 }
 
@@ -25,45 +25,45 @@ interface RouterContextValue {
 const RouterContext = createContext<RouterContextValue>(null!)
 
 function getInitialLocation(
-  serverSideProps?: ServerRouterInfo,
+  serverPayloadLocation?: ServerPayload['location'],
 ): ParsedLocation {
-  if (typeof document === 'undefined') {
+  if (isServerSide) {
     return {
-      pathname: serverSideProps?.pathname || '',
+      pathname: serverPayloadLocation?.pathname || '',
       hash: '',
-      href: serverSideProps?.href || '',
-      searchStr: serverSideProps?.searchStr || '',
+      href: serverPayloadLocation?.href || '',
+      searchStr: serverPayloadLocation?.searchStr || '',
       // TODO: Polyfill URLSearchParams
       search: {},
     }
   }
 
-  const { location } = window
+  const { pathname, hash, href, search } = window.location
   return {
-    pathname: location.pathname,
-    hash: location.hash,
-    href: location.href,
-    searchStr: location.search,
-    search: Object.fromEntries(new URLSearchParams(location.search)),
+    pathname,
+    hash,
+    href,
+    searchStr: search,
+    search: Object.fromEntries(new URLSearchParams(search)),
   }
 }
 
 interface RouterContextProviderProps {
   router: Router
   children: ReactNode
-  serverSideProps?: ServerProps
+  serverPayload?: ServerPayload
 }
 
 export function RouterContextProvider({
   router,
   children,
-  serverSideProps,
+  serverPayload,
 }: RouterContextProviderProps): ReactNode {
   // Allow the router to update options on the router instance
   router.update({ ...router.options } as Parameters<typeof router.update>[0])
 
   const [location, setLocation] = useState<ParsedLocation>(() =>
-    getInitialLocation(serverSideProps?.router),
+    getInitialLocation(serverPayload?.location),
   )
 
   /**
@@ -94,14 +94,14 @@ export function RouterContextProvider({
 
   const contextValue: RouterContextValue = useMemo(
     () => ({
-      serverSideProps: isServerSide
-        ? serverSideProps
-        : window.__TUONO_SSR_PROPS__,
+      serverPayload: isServerSide
+        ? serverPayload
+        : window.__TUONO_SERVER_PAYLOAD__,
       router,
       location,
       updateLocation: setLocation,
     }),
-    [location, router, serverSideProps],
+    [location, router, serverPayload],
   )
 
   return (

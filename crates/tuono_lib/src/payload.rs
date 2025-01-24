@@ -16,8 +16,8 @@ fn has_dynamic_path(route: &str) -> bool {
 #[derive(SerdeSerialize)]
 /// This is the payload sent to the client for hydration
 pub struct Payload<'a> {
-    router: Location,
-    props: &'a dyn Serialize,
+    location: Location,
+    data: &'a dyn Serialize,
     mode: Mode,
     #[serde(rename(serialize = "jsBundles"))]
     js_bundles: Option<Vec<&'a String>>,
@@ -42,8 +42,8 @@ impl<'a> Payload<'a> {
         };
 
         Payload {
-            router: req.location(),
-            props,
+            location: req.location(),
+            data: props,
             mode,
             js_bundles: None,
             css_bundles: None,
@@ -79,7 +79,7 @@ impl<'a> Payload<'a> {
         let mut js_bundles_sources = vec![&main_bundle.file];
         let mut css_bundles_sources = main_bundle.css.iter().collect::<Vec<&String>>();
 
-        let pathname = &self.router.pathname();
+        let pathname = &self.location.pathname();
 
         let bundle_data = manifest.get(*pathname);
 
@@ -233,8 +233,8 @@ mod tests {
         let location = Location::from(uri);
 
         Payload {
-            router: location,
-            props: &None::<Option<()>>,
+            location,
+            data: &None::<Option<()>>,
             mode,
             js_bundles: None,
             css_bundles: None,

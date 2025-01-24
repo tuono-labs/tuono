@@ -2,11 +2,11 @@ import type { JSX } from 'react'
 import { useRouterContext } from 'tuono-router'
 
 export const ProdResources = (): JSX.Element => {
-  const { serverSideProps } = useRouterContext()
+  const { serverPayload } = useRouterContext()
 
   return (
     <>
-      {serverSideProps?.cssBundles.map((cssHref) => (
+      {serverPayload?.cssBundles?.map((cssHref) => (
         <link
           key={cssHref}
           rel="stylesheet"
@@ -16,7 +16,7 @@ export const ProdResources = (): JSX.Element => {
         />
       ))}
 
-      {serverSideProps?.jsBundles.map((scriptSrc) => (
+      {serverPayload?.jsBundles?.map((scriptSrc) => (
         <script key={scriptSrc} type="module" src={`/${scriptSrc}`}></script>
       ))}
     </>

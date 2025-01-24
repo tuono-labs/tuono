@@ -1,6 +1,6 @@
 import type { JSX } from 'react'
 
-import type { ServerProps } from '../types'
+import type { ServerPayload } from '../types'
 import type { Router } from '../router'
 
 import { RouterContextProvider } from './RouterContext'
@@ -8,7 +8,7 @@ import { Matches } from './Matches'
 
 interface RouterProviderProps {
   router: Router
-  serverProps?: ServerProps
+  serverPayload?: ServerPayload
 }
 
 /**
@@ -16,11 +16,11 @@ interface RouterProviderProps {
  */
 export function RouterProvider({
   router,
-  serverProps,
+  serverPayload,
 }: RouterProviderProps): JSX.Element {
   return (
-    <RouterContextProvider router={router} serverSideProps={serverProps}>
-      <Matches serverSideProps={serverProps?.props} />
+    <RouterContextProvider router={router} serverPayload={serverPayload}>
+      <Matches serverPayloadData={serverPayload?.data} />
     </RouterContextProvider>
   )
 }

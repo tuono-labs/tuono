@@ -5,19 +5,29 @@ export interface Segment {
   value: string
 }
 
-export interface ServerRouterInfo {
+interface ServerPayloadLocation {
   href: string
   pathname: string
   searchStr: string
 }
 
-export interface ServerProps<TProps = unknown> {
-  router: ServerRouterInfo
-  props: TProps
-  jsBundles: Array<string>
-  cssBundles: Array<string>
-  mode: 'Dev' | 'Prod'
-  devServerConfig: {
+/**
+ * @see crates/tuono_lib/src/payload.rs
+ * @warning keep in sync with the same interface inside tuono until router is not specialized
+ */
+export interface ServerPayload<TData = unknown> {
+  mode: 'Prod' | 'Dev'
+
+  location: ServerPayloadLocation
+
+  data: TData
+
+  /** Available only on 'Prod' mode */
+  jsBundles: Array<string> | null
+  cssBundles: Array<string> | null
+
+  /** Available only on 'Dev' mode */
+  devServerConfig?: {
     port: number
     host: string
   }

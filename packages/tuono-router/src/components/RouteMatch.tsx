@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import type { Route } from '../route'
-import { useServerSideProps } from '../hooks/useServerSideProps'
+import { useServerPayloadData } from '../hooks/useServerPayloadData'
 
-interface RouteMatchProps<TServerSideProps = unknown> {
+interface RouteMatchProps<TServerPayloadData = unknown> {
   route: Route
   // User defined server side props
-  serverSideProps: TServerSideProps
+  serverPayloadData: TServerPayloadData
 }
 
 /**
@@ -16,9 +16,9 @@ interface RouteMatchProps<TServerSideProps = unknown> {
  */
 export const RouteMatch = ({
   route,
-  serverSideProps,
+  serverPayloadData,
 }: RouteMatchProps): React.JSX.Element => {
-  const { data, isLoading } = useServerSideProps(route, serverSideProps)
+  const { data, isLoading } = useServerPayloadData(route, serverPayloadData)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const routes = React.useMemo(() => loadParentComponents(route), [route.id])

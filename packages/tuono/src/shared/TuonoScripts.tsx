@@ -6,13 +6,13 @@ import { DevResources } from './DevResources'
 import { ProdResources } from './ProdResources'
 
 export function TuonoScripts(): JSX.Element {
-  const { serverSideProps } = useRouterContext()
+  const { serverPayload } = useRouterContext()
 
   return (
     <>
-      <script>{`window.__TUONO_SSR_PROPS__=${JSON.stringify(serverSideProps)}`}</script>
-      {serverSideProps?.mode === 'Dev' && <DevResources />}
-      {serverSideProps?.mode === 'Prod' && <ProdResources />}
+      <script>{`window.__TUONO_SERVER_PAYLOAD__=${JSON.stringify(serverPayload)}`}</script>
+      {serverPayload?.mode === 'Dev' && <DevResources />}
+      {serverPayload?.mode === 'Prod' && <ProdResources />}
     </>
   )
 }

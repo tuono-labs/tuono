@@ -5,9 +5,8 @@ const VITE_PROXY_PATH = '/vite-server'
 const DEFAULT_SERVER_CONFIG = { host: 'localhost', port: 3000 }
 
 export const DevResources = (): JSX.Element => {
-  const { serverSideProps } = useRouterContext()
-  const { host, port } =
-    serverSideProps?.devServerConfig ?? DEFAULT_SERVER_CONFIG
+  const { serverPayload } = useRouterContext()
+  const { host, port } = serverPayload?.devServerConfig ?? DEFAULT_SERVER_CONFIG
 
   const viteBaseUrl = `http://${host}:${port}${VITE_PROXY_PATH}`
 
