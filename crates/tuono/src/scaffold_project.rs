@@ -160,8 +160,7 @@ fn generate_raw_content_url(select_head: Option<bool>, cli_version: &str, path: 
     } else {
         &format!("v{cli_version}")
     };
-    let url = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path);
-    url
+    format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path)
 }
 
 fn generate_tree_url(select_head: Option<bool>, client: &Client, cli_version: &str) -> String {
@@ -172,15 +171,13 @@ fn generate_tree_url(select_head: Option<bool>, client: &Client, cli_version: &s
         let res_tag = client
             .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
             .send()
-            .unwrap_or_else(|_| panic!("Failed to call the tag github API for v{cli_version}"))
+            .unwrap_or_else(|_| exit_with_error("Failed to call the tag github API for v{cli_version}"))
             .json::<GithubTagResponse>()
-            .expect("Failed to parse the tag response");
-
-        let sha_tagged_commit = res_tag.object.sha;
+            .unwrap_or_else(|_| exit_with_error("Failed to parse the tag response"));
 
         format!(
             "{}{}?recursive=1",
-            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
+            GITHUB_TUONO_TAG_COMMIT_TREES_URL, res_tag.object.sha
         )
     }
 }
