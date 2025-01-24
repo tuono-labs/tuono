@@ -1,18 +1,17 @@
 import type { JSX } from 'react'
 
-import { useRouterContext } from 'tuono-router'
-
 import { DevResources } from './DevResources'
 import { ProdResources } from './ProdResources'
+import { useTuonoContextServerPayload } from './TuonoContext'
 
 export function TuonoScripts(): JSX.Element {
-  const { serverPayload } = useRouterContext()
+  const serverPayload = useTuonoContextServerPayload()
 
   return (
     <>
       <script>{`window.__TUONO_SERVER_PAYLOAD__=${JSON.stringify(serverPayload)}`}</script>
-      {serverPayload?.mode === 'Dev' && <DevResources />}
-      {serverPayload?.mode === 'Prod' && <ProdResources />}
+      {serverPayload.mode === 'Dev' && <DevResources />}
+      {serverPayload.mode === 'Prod' && <ProdResources />}
     </>
   )
 }

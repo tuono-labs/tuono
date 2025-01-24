@@ -21,8 +21,7 @@ interface RouterContextValue {
   updateLocation: (loc: ParsedLocation) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const RouterContext = createContext<RouterContextValue>(null!)
+const RouterContext = createContext({} as RouterContextValue)
 
 function getInitialLocation(
   serverPayloadLocation?: ServerPayload['location'],
@@ -111,6 +110,7 @@ export function RouterContextProvider({
   )
 }
 
+/** @warning This hook should not be exported in user land */
 export function useRouterContext(): RouterContextValue {
   return useContext(RouterContext)
 }

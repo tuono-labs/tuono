@@ -3,6 +3,8 @@ import { type RouterInstanceType, RouterProvider } from 'tuono-router'
 
 import type { ServerPayload } from '../types'
 
+import { TuonoContextProvider } from './TuonoContext'
+
 interface TuonoEntryPointProps {
   router: RouterInstanceType
   serverPayload?: ServerPayload
@@ -14,7 +16,9 @@ export function TuonoEntryPoint({
 }: TuonoEntryPointProps): JSX.Element {
   return (
     <StrictMode>
-      <RouterProvider router={router} serverPayload={serverPayload} />
+      <TuonoContextProvider serverPayload={serverPayload}>
+        <RouterProvider router={router} serverPayload={serverPayload} />
+      </TuonoContextProvider>
     </StrictMode>
   )
 }
