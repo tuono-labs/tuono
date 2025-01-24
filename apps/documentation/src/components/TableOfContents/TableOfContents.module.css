@@ -11,6 +11,10 @@
     padding-top: 0;
     top: calc(var(--mantine-spacing-xl) + 60px);
   }
+
+  @media (max-width: 60em) {
+    display: none;
+  }
 }
 
 .inner {

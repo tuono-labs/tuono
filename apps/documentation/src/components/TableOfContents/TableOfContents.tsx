@@ -8,12 +8,10 @@ import classes from './TableOfContents.module.css'
 
 interface TableOfContentsProps {
   withTabs: boolean
-  className?: string
 }
 
 export function TableOfContents({
   withTabs,
-  className,
 }: TableOfContentsProps): JSX.Element | null {
   const [active, setActive] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
@@ -66,7 +64,7 @@ export function TableOfContents({
     <Box
       component="nav"
       mod={{ 'with-tabs': withTabs }}
-      className={`${classes.wrapper} ${className || ''}`}
+      className={classes.wrapper}
     >
       <div className={classes.inner}>
         <div>

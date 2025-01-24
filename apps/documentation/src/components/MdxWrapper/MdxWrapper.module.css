@@ -5,9 +5,3 @@
 .container {
   margin-top: var(--mantine-spacing-xl);
 }
-
-.tableOfContents {
-  @media (max-width: 60em) {
-    display: none;
-  }
-}
