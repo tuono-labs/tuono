@@ -41,7 +41,7 @@ export function TableOfContents({
         }
       },
       {
-        rootMargin: '-50px 0px -80% 0px', // Adjust for sticky headers
+        rootMargin: '-50px 0px -80% 0px',
         threshold: [0.1, 0.5, 1.0],
       },
     )
@@ -51,13 +51,14 @@ export function TableOfContents({
     })
     observerRef.current = observer
 
-    // Handle clicks on links to ensure smooth scroll & update observer
     const handleHashChange = (): void => {
       setTimeout(() => {
         observerRef.current?.disconnect()
         observerRef.current = observer
-        headingsRef.current.forEach((node) => { observer.observe(node); })
-      }, 300) // Delay to allow scroll completion
+        headingsRef.current.forEach((node) => {
+          observer.observe(node)
+        })
+      }, 300)
     }
 
     window.addEventListener('hashchange', handleHashChange)
@@ -68,8 +69,11 @@ export function TableOfContents({
     }
   }, [router.pathname])
 
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>, id: string): void => {
-    event.preventDefault() // Prevent default jump behavior
+  const handleClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    id: string,
+  ): void => {
+    event.preventDefault()
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -104,7 +108,9 @@ export function TableOfContents({
                 className={classes.link}
                 mod={{ active: active === index + 1 }}
                 href={`#${heading.id}`}
-                onClick={(e) => { handleClick(e, heading.id); }}
+                onClick={(e) => {
+                  handleClick(e, heading.id)
+                }}
                 __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
               >
                 {heading.content}
