@@ -6,6 +6,7 @@ use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+use serial_test::serial;
 
 const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
 
@@ -254,4 +255,22 @@ fn outro(folder_name: String) {
 
     println!("\nRun the local environment:");
     println!("tuono dev");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn generate_valid_content_url_from_head() {
+        let expected = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, "main", "examples/tuono-app");
+        let generated = generate_raw_content_url(Some(true), crate_version!(), &String::from("examples/tuono-app"));
+        assert_eq!(expected, generated)
+    }
+
+    #[test]
+    fn generate_valid_content_url_from_cli_version() {
+        let expected = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, &format!("v{}", crate_version!()), "examples/tuono-app");
+        let generated = generate_raw_content_url(Some(false), crate_version!(), &String::from("examples/tuono-app"));
+        assert_eq!(expected, generated)
+    }
 }
