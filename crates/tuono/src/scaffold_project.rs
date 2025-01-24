@@ -154,11 +154,7 @@ pub fn create_new_project(
     outro(folder);
 }
 
-fn generate_raw_content_url(
-    select_head: Option<bool>,
-    cli_version: &str,
-    path: &String,
-) -> String {
+fn generate_raw_content_url(select_head: Option<bool>, cli_version: &str, path: &String) -> String {
     let tag = if select_head.unwrap_or(false) {
         "main"
     } else {
@@ -168,11 +164,7 @@ fn generate_raw_content_url(
     url
 }
 
-fn generate_tree_url(
-    select_head: Option<bool>,
-    client: &Client,
-    cli_version: &str,
-) -> String {
+fn generate_tree_url(select_head: Option<bool>, client: &Client, cli_version: &str) -> String {
     if select_head.unwrap_or(false) {
         format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL)
     } else {
