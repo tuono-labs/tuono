@@ -2,7 +2,6 @@ use clap::crate_version;
 use reqwest::blocking;
 use reqwest::blocking::Client;
 use serde::Deserialize;
-use serial_test::serial;
 use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
