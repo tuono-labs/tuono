@@ -81,7 +81,8 @@ export function TableOfContents({
     }
   }
 
-  if (headings.length <= 0) {
+  // Avoid to show it in case of a TODO page
+  if (headings.length === 1) {
     return null
   }
 
