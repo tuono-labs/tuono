@@ -12,9 +12,6 @@ interface RouterProviderProps {
   serverInitialData: unknown
 }
 
-/**
- * This component is used in every tuono app entry point
- */
 export function RouterProvider({
   router,
   serverInitialLocation,

@@ -106,7 +106,9 @@ export function RouterContextProvider({
   )
 }
 
-/** @warning This hook should not be exported in user land */
+/**
+ * @warning THIS SHOULD NOT BE EXPOSED TO USERLAND
+ */
 export function useRouterContext(): RouterContextValue {
   return useContext(RouterContext)
 }

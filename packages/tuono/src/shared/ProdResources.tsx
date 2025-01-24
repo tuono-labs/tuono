@@ -3,11 +3,11 @@ import type { JSX } from 'react'
 import { useTuonoContextServerPayload } from './TuonoContext'
 
 export const ProdResources = (): JSX.Element => {
-  const serverPayload = useTuonoContextServerPayload()
+  const { cssBundles, jsBundles } = useTuonoContextServerPayload()
 
   return (
     <>
-      {serverPayload.cssBundles?.map((cssHref) => (
+      {cssBundles?.map((cssHref) => (
         <link
           key={cssHref}
           rel="stylesheet"
@@ -17,7 +17,7 @@ export const ProdResources = (): JSX.Element => {
         />
       ))}
 
-      {serverPayload.jsBundles?.map((scriptSrc) => (
+      {jsBundles?.map((scriptSrc) => (
         <script key={scriptSrc} type="module" src={`/${scriptSrc}`}></script>
       ))}
     </>

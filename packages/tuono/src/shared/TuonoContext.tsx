@@ -17,25 +17,34 @@ interface TuonoContextProviderProps {
   children: ReactNode
 }
 
+/**
+ * @warning THIS SHOULD NOT BE EXPOSED TO USERLAND
+ *
+ * @see https://github.com/tuono-labs/tuono/issues/410
+ */
 export function TuonoContextProvider(
   props: TuonoContextProviderProps,
 ): JSX.Element {
   const { serverPayload, children } = props
 
-  const contextValue = useMemo(() => {
-    const _serverPayload = isServerSide
-      ? serverPayload
-      : window.__TUONO_SERVER_PAYLOAD__
+  const contextValue: TuonoContextValue = useMemo(() => {
+    // At least one of these two should be defined
+    const _serverPayload = (
+      isServerSide ? serverPayload : window.__TUONO_SERVER_PAYLOAD__
+    ) as ServerPayload
 
     return {
-      /** Maybe this logic should be integrated using defaults */
+      // Maybe this logic should be integrated using defaults
       serverPayload: _serverPayload,
-    } as TuonoContextValue
+    }
   }, [serverPayload])
 
   return <TuonoContext value={contextValue}>{children}</TuonoContext>
 }
 
+/**
+ * @warning THIS SHOULD NOT BE EXPOSED TO USERLAND
+ */
 export function useTuonoContextServerPayload(): TuonoContextValue['serverPayload'] {
   return useContext(TuonoContext).serverPayload
 }

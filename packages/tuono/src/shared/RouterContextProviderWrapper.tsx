@@ -8,6 +8,13 @@ interface RouterContextProviderWrapperProps {
   router: RouterInstanceType
 }
 
+/**
+ * This component is needed to get the data from {@link TuonoContext}
+ * since the provider is also located in {@link TuonoEntryPoint}
+ * hence the context cannot be accessed directly there
+ *
+ * @see https://github.com/tuono-labs/tuono/issues/410
+ */
 export function RouterContextProviderWrapper(
   props: RouterContextProviderWrapperProps,
 ): JSX.Element {
