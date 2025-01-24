@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { JSX, MouseEvent } from 'react'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'tuono'
 import { Box, Text } from '@mantine/core'
@@ -51,10 +51,31 @@ export function TableOfContents({
     })
     observerRef.current = observer
 
+    // Handle clicks on links to ensure smooth scroll & update observer
+    const handleHashChange = (): void => {
+      setTimeout(() => {
+        observerRef.current?.disconnect()
+        observerRef.current = observer
+        headingsRef.current.forEach((node) => { observer.observe(node); })
+      }, 300) // Delay to allow scroll completion
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+
     return (): void => {
       observer.disconnect()
+      window.removeEventListener('hashchange', handleHashChange)
     }
   }, [router.pathname])
+
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>, id: string): void => {
+    event.preventDefault() // Prevent default jump behavior
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      history.pushState(null, '', `#${id}`)
+    }
+  }
 
   if (headings.length <= 0) {
     return null
@@ -83,6 +104,7 @@ export function TableOfContents({
                 className={classes.link}
                 mod={{ active: active === index + 1 }}
                 href={`#${heading.id}`}
+                onClick={(e) => { handleClick(e, heading.id); }}
                 __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
               >
                 {heading.content}
