@@ -126,12 +126,7 @@ pub fn create_new_project(
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let tag = if select_head.unwrap_or(false) {
-                "main"
-            } else {
-                &format!("v{cli_version}")
-            };
-            let url = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path);
+            let url = generate_raw_content_url(select_head, cli_version, path);
 
             let file_content = client
                 .get(url)
@@ -159,13 +154,27 @@ pub fn create_new_project(
     outro(folder);
 }
 
+fn generate_raw_content_url(
+    select_main_branch_template: Option<bool>,
+    cli_version: &str,
+    path: &String,
+) -> String {
+    let tag = if select_main_branch_template.unwrap_or(false) {
+        "main"
+    } else {
+        &format!("v{cli_version}")
+    };
+    let url = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path);
+    url
+}
+
 fn generate_tree_url(
     select_main_branch_template: Option<bool>,
     client: &Client,
     cli_version: &str,
 ) -> String {
     if select_main_branch_template.unwrap_or(false) {
-        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL).to_string()
+        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL)
     } else {
         // This string does not include the "v" version prefix
         let res_tag = client
