@@ -2,11 +2,11 @@ use clap::crate_version;
 use reqwest::blocking;
 use reqwest::blocking::Client;
 use serde::Deserialize;
+use serial_test::serial;
 use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
-use serial_test::serial;
 
 const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
 
@@ -172,7 +172,9 @@ fn generate_tree_url(select_head: Option<bool>, client: &Client, cli_version: &s
         let res_tag = client
             .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
             .send()
-            .unwrap_or_else(|_| exit_with_error("Failed to call the tag github API for v{cli_version}"))
+            .unwrap_or_else(|_| {
+                exit_with_error("Failed to call the tag github API for v{cli_version}")
+            })
             .json::<GithubTagResponse>()
             .unwrap_or_else(|_| exit_with_error("Failed to parse the tag response"));
 
@@ -262,15 +264,31 @@ mod tests {
     use super::*;
     #[test]
     fn generate_valid_content_url_from_head() {
-        let expected = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, "main", "examples/tuono-app");
-        let generated = generate_raw_content_url(Some(true), crate_version!(), &String::from("examples/tuono-app"));
+        let expected = format!(
+            "{}/{}/{}",
+            GITHUB_RAW_CONTENT_URL, "main", "examples/tuono-app"
+        );
+        let generated = generate_raw_content_url(
+            Some(true),
+            crate_version!(),
+            &String::from("examples/tuono-app"),
+        );
         assert_eq!(expected, generated)
     }
 
     #[test]
     fn generate_valid_content_url_from_cli_version() {
-        let expected = format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, &format!("v{}", crate_version!()), "examples/tuono-app");
-        let generated = generate_raw_content_url(Some(false), crate_version!(), &String::from("examples/tuono-app"));
+        let expected = format!(
+            "{}/{}/{}",
+            GITHUB_RAW_CONTENT_URL,
+            &format!("v{}", crate_version!()),
+            "examples/tuono-app"
+        );
+        let generated = generate_raw_content_url(
+            Some(false),
+            crate_version!(),
+            &String::from("examples/tuono-app"),
+        );
         assert_eq!(expected, generated)
     }
 }
