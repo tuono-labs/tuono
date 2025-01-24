@@ -14,22 +14,19 @@ interface MdxWrapperProps {
 
 export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
-      <Container size={1000} className={classes.wrapper}>
-        <Box
-          id="mdx-root"
-          component="article"
-          p={24}
-          className={classes.container}
-        >
-          <MdxProvider>{children}</MdxProvider>
-          <EditPage />
-        </Box>
-        <Box>
-          <TableOfContents
-            withTabs={false}
-            className={classes.tableOfContents}
-          />
-        </Box>
-      </Container>
+    <Container size={1000} className={classes.wrapper}>
+      <Box
+        id="mdx-root"
+        component="article"
+        p={24}
+        className={classes.container}
+      >
+        <MdxProvider>{children}</MdxProvider>
+        <EditPage />
+      </Box>
+      <Box>
+        <TableOfContents withTabs={false} className={classes.tableOfContents} />
+      </Box>
+    </Container>
   )
 }

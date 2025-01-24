@@ -1,60 +1,73 @@
 import type { JSX } from 'react'
 import { useRef, useState, useEffect } from 'react'
-import { useRouter } from 'tuono';
-import { Box, Text } from '@mantine/core';
+import { useRouter } from 'tuono'
+import { Box, Text } from '@mantine/core'
 
-import { getHeadings, type Heading } from './getHeadings';
-import classes from './TableOfContents.module.css';
+import { getHeadings, type Heading } from './getHeadings'
+import classes from './TableOfContents.module.css'
 
 interface TableOfContentsProps {
-  withTabs: boolean;
-  className?: string;
+  withTabs: boolean
+  className?: string
 }
 
-export function TableOfContents({ withTabs, className }: TableOfContentsProps): JSX.Element | null {
-  const [active, setActive] = useState<number | null>(null);
-  const [headings, setHeadings] = useState<Array<Heading>>([]);
-  const headingsRef = useRef<Array<HTMLElement>>([]);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const router = useRouter();
+export function TableOfContents({
+  withTabs,
+  className,
+}: TableOfContentsProps): JSX.Element | null {
+  const [active, setActive] = useState<number | null>(null)
+  const [headings, setHeadings] = useState<Array<Heading>>([])
+  const headingsRef = useRef<Array<HTMLElement>>([])
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    const _headings = getHeadings();
-    setHeadings(_headings);
-    headingsRef.current = _headings.map((heading) => heading.getNode());
+    const _headings = getHeadings()
+    setHeadings(_headings)
+    headingsRef.current = _headings.map((heading) => heading.getNode())
 
     if (observerRef.current) {
-      observerRef.current.disconnect();
+      observerRef.current.disconnect()
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         const visibleEntries = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
 
         if (visibleEntries.length > 0) {
-          setActive(_headings.findIndex((h) => h.id === visibleEntries[0].target.id));
+          setActive(
+            _headings.findIndex((h) => h.id === visibleEntries[0].target.id),
+          )
         }
       },
       {
         rootMargin: '-50px 0px -80% 0px', // Adjust for sticky headers
         threshold: [0.1, 0.5, 1.0],
-      }
-    );
+      },
+    )
 
-    headingsRef.current.forEach((node) => { observer.observe(node); });
-    observerRef.current = observer;
+    headingsRef.current.forEach((node) => {
+      observer.observe(node)
+    })
+    observerRef.current = observer
 
-    return (): void => { observer.disconnect(); };
-  }, [router.pathname]);
+    return (): void => {
+      observer.disconnect()
+    }
+  }, [router.pathname])
 
   if (headings.length <= 0) {
-    return null;
+    return null
   }
 
   return (
-    <Box component="nav" mod={{ 'with-tabs': withTabs }} className={`${classes.wrapper} ${className || ''}`}>
+    <Box
+      component="nav"
+      mod={{ 'with-tabs': withTabs }}
+      className={`${classes.wrapper} ${className || ''}`}
+    >
       <div className={classes.inner}>
         <div>
           <div className={classes.header}>
@@ -81,5 +94,5 @@ export function TableOfContents({ withTabs, className }: TableOfContentsProps): 
         </div>
       </div>
     </Box>
-  );
+  )
 }
