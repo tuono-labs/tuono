@@ -4,6 +4,7 @@
 //! You can find the full documentation at [tuono.dev](https://tuono.dev/)
 
 mod catch_all;
+mod config;
 mod logger;
 mod manifest;
 mod mode;

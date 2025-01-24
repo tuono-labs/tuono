@@ -1,3 +1,4 @@
+use crate::config::GLOBAL_CONFIG;
 use axum::body::Body;
 use axum::extract::Path;
 
@@ -5,12 +6,20 @@ use axum::http::{HeaderName, HeaderValue};
 use axum::response::{IntoResponse, Response};
 use reqwest::Client;
 
-const VITE_URL: &str = "http://localhost:3001/vite-server";
-
 pub async fn vite_reverse_proxy(Path(path): Path<String>) -> impl IntoResponse {
     let client = Client::new();
 
-    match client.get(format!("{VITE_URL}/{path}")).send().await {
+    let config = GLOBAL_CONFIG
+        .get()
+        .expect("Failed to get the internal config");
+
+    let vite_url = format!(
+        "http://{}:{}/vite-server",
+        config.server.host,
+        config.server.port + 1
+    );
+
+    match client.get(format!("{vite_url}/{path}")).send().await {
         Ok(res) => {
             let mut response_builder = Response::builder().status(res.status().as_u16());
 
