@@ -66,7 +66,6 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         .json::<GithubTagResponse>()
         .expect("Failed to parse the tag response");
 
-
     let sha_tagged_commit = res_tag.object.sha;
     println!(
         "res tree {}",
@@ -99,7 +98,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         println!("Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples");
         std::process::exit(1);
     }
-
+    println!("FOLDER {}", folder);
     if folder != "." {
         if Path::new(&folder).exists() {
             eprintln!("Error: Directory '{folder}' already exists");
@@ -124,7 +123,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
         if let GithubFileType::Blob = element_type {
             let content = url.github_raw_content_url.clone();
             let file_content = client
-                .get(format!("{content}/v{cli_version}/{path}"))
+                .get(format!("{content}v{cli_version}/{path}"))
                 .send()
                 .expect("Failed to call the folder github API")
                 .text()
@@ -155,8 +154,12 @@ fn create_directories(
         if let GithubFileType::Tree = element_type {
             let path = PathBuf::from(&path.replace(&format!("examples/{template}/"), ""));
 
+            println!("file {:?}", folder_path);
             let dir_path = folder_path.join(&path);
-            create_dir(&dir_path).unwrap();
+            if let Err(e) = create_dir(&dir_path) {
+                eprintln!("Failed to create directory {}: {}", dir_path.display(), e);
+                std::process::exit(1);
+            }
         }
     }
     Ok(())

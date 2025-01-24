@@ -15,10 +15,10 @@ pub fn get_url() -> ExternalUrl {
     let mut github_tuono_tag_commit_trees_url =
         "https://api.github.com/repos/tuono-labs/tuono/git/trees/".to_string();
     let mut github_raw_content_url =
-        "https://raw.githubusercontent.com/tuono-labs/tuono".to_string();
+        "https://raw.githubusercontent.com/tuono-labs/tuono/".to_string();
 
     if env::var("ENVIRONMENT").unwrap() == "test" {
-        let mock_url = env::var("BASE_URI").unwrap() + "/";
+        let mock_url = env::var("MOCK_URI").unwrap() + "/";
         
         github_tuono_tags_url = mock_url.clone();
         github_tuono_tag_commit_trees_url = mock_url.clone();

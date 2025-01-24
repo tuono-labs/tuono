@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use tempfile::{tempdir, TempDir};
+use wiremock::MockServer;
 
 #[derive(Debug)]
 pub struct TempTuonoProject {
@@ -58,4 +59,14 @@ impl Drop for TempTuonoProject {
         env::set_current_dir(self.original_dir.to_owned())
             .expect("Failed to restore the original directory.");
     }
+}
+
+pub async fn set_up_mock_server() -> MockServer {
+    let mock_server = MockServer::start().await;
+
+    // Set the base URI for the mock server
+    std::env::set_var("ENVIRONMENT", "test");
+    std::env::set_var("MOCK_URI", mock_server.uri());
+
+    return mock_server;
 }
