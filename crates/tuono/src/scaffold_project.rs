@@ -155,11 +155,11 @@ pub fn create_new_project(
 }
 
 fn generate_raw_content_url(
-    select_main_branch_template: Option<bool>,
+    select_head: Option<bool>,
     cli_version: &str,
     path: &String,
 ) -> String {
-    let tag = if select_main_branch_template.unwrap_or(false) {
+    let tag = if select_head.unwrap_or(false) {
         "main"
     } else {
         &format!("v{cli_version}")
@@ -169,11 +169,11 @@ fn generate_raw_content_url(
 }
 
 fn generate_tree_url(
-    select_main_branch_template: Option<bool>,
+    select_head: Option<bool>,
     client: &Client,
     cli_version: &str,
 ) -> String {
-    if select_main_branch_template.unwrap_or(false) {
+    if select_head.unwrap_or(false) {
         format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL)
     } else {
         // This string does not include the "v" version prefix
