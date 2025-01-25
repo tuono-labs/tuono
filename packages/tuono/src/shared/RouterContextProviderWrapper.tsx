@@ -15,11 +15,9 @@ interface RouterContextProviderWrapperProps {
  *
  * @see https://github.com/tuono-labs/tuono/issues/410
  */
-export function RouterContextProviderWrapper(
-  props: RouterContextProviderWrapperProps,
-): JSX.Element {
-  const { router } = props
-
+export function RouterContextProviderWrapper({
+  router,
+}: RouterContextProviderWrapperProps): JSX.Element {
   const serverPayload = useTuonoContextServerPayload()
 
   return (

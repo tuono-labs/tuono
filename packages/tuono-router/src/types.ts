@@ -6,7 +6,7 @@ export interface Segment {
 }
 
 /**
- * Provided from the the rust server and use in ssr env
+ * Provided by the rust server and used in the ssr env
  * @see tuono {@link ServerPayloadLocation}
  */
 export interface ServerInitialLocation {

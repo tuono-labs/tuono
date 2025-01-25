@@ -22,11 +22,10 @@ interface TuonoContextProviderProps {
  *
  * @see https://github.com/tuono-labs/tuono/issues/410
  */
-export function TuonoContextProvider(
-  props: TuonoContextProviderProps,
-): JSX.Element {
-  const { serverPayload, children } = props
-
+export function TuonoContextProvider({
+  serverPayload,
+  children,
+}: TuonoContextProviderProps): JSX.Element {
   const contextValue: TuonoContextValue = useMemo(() => {
     // At least one of these two should be defined
     const _serverPayload = (

@@ -1,5 +1,5 @@
 /**
- * Provided from the the rust server and use in ssr env
+ * Provided by the rust server and used in the ssr env
  * @see tuono-router {@link ServerInitialLocation}
  */
 export interface ServerPayloadLocation {
