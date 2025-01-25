@@ -7,12 +7,8 @@
   max-width: 220px;
   height: 100vh;
 
-  &[data-with-tabs] {
-    padding-top: 0;
-    top: calc(var(--mantine-spacing-xl) + 60px);
-  }
-
-  @media (max-width: 60em) {
+  /* var(--mantine-breakpoint-md) = 62em */
+  @media (max-width: 62em) {
     display: none;
   }
 }

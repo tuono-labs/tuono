@@ -7,7 +7,7 @@ import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
 export function TableOfContents(): JSX.Element | null {
-  const [active, setActive] = useState<number | null>(null)
+  const [activeHeadingIndex, setActiveHeadingIndex] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
   const observerRef = useRef<IntersectionObserver | null>(null)
@@ -29,7 +29,7 @@ export function TableOfContents(): JSX.Element | null {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
 
         if (visibleEntries.length > 0) {
-          setActive(
+          setActiveHeadingIndex(
             _headings.findIndex((h) => h.id === visibleEntries[0].target.id),
           )
         }
@@ -63,7 +63,7 @@ export function TableOfContents(): JSX.Element | null {
     }
   }, [router.pathname])
 
-  const handleClick = (
+  const handleHeadingClick = (
     event: MouseEvent<HTMLAnchorElement>,
     id: string,
   ): void => {
@@ -99,10 +99,10 @@ export function TableOfContents(): JSX.Element | null {
                 w="fit-content"
                 py={4}
                 className={classes.link}
-                mod={{ active: active === index + 1 }}
+                mod={{ active: activeHeadingIndex === index + 1 }}
                 href={`#${heading.id}`}
                 onClick={(e) => {
-                  handleClick(e, heading.id)
+                  handleHeadingClick(e, heading.id)
                 }}
                 __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
               >
