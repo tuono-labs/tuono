@@ -10,7 +10,6 @@ export interface ServerPayloadLocation {
 
 /**
  * @see crates/tuono_lib/src/payload.rs
- * @warning keep in sync with the same interface inside tuono-router until router is not specialized
  */
 export interface ServerPayload<TData = unknown> {
   mode: 'Prod' | 'Dev'
