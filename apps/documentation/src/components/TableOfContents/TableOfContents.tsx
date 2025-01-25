@@ -6,9 +6,9 @@ import { Box, Text } from '@mantine/core'
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
-interface TableOfContentsProps {}
+interface TableOfContentsProps { }
 
-export function TableOfContents({}: TableOfContentsProps): JSX.Element | null {
+export function TableOfContents({ }: TableOfContentsProps): JSX.Element | null {
   const [active, setActive] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
@@ -86,9 +86,9 @@ export function TableOfContents({}: TableOfContentsProps): JSX.Element | null {
     <Box component="nav" className={classes.wrapper}>
       <div className={classes.inner}>
         <div>
-          <div className={classes.header}>
-            <Text className={classes.title}>On this page</Text>
-          </div>
+          <Text className={classes.title} mb={8}>
+            On this page
+          </Text>
           <div className={classes.items}>
             {headings.slice(1).map((heading, index) => (
               <Text

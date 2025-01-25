@@ -123,7 +123,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           >
             <Navbar toggle={toggle} />
             <Sidebar close={toggle} />
-            <AppShell.Main>
+            <AppShell.Main pt={0} px="auto">
               <MdxWrapper>{children}</MdxWrapper>
             </AppShell.Main>
           </AppShell>

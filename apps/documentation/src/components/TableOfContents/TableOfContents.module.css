@@ -18,16 +18,9 @@
 }
 
 .inner {
-  padding-bottom: var(--mantine-spacing-xl);
-  padding-left: var(--mantine-spacing-md);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  @mixin rtl {
-    padding-left: 0;
-    padding-right: var(--mantine-spacing-md);
-  }
 }
 
 .link {
@@ -81,14 +74,6 @@
       color: var(--mantine-color-violet-1);
     }
   }
-}
-
-.header {
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: var(--mantine-spacing-md);
 }
 
 .title {
