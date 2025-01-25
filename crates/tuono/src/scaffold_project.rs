@@ -1,5 +1,6 @@
 use clap::crate_version;
 use reqwest::blocking;
+use reqwest::blocking::Client;
 use serde::Deserialize;
 use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
@@ -61,7 +62,11 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn create_new_project(folder_name: Option<String>, template: Option<String>) {
+pub fn create_new_project(
+    folder_name: Option<String>,
+    template: Option<String>,
+    select_head: Option<bool>,
+) {
     let folder = folder_name.unwrap_or(".".to_string());
 
     // In case of missing select the tuono example
@@ -74,23 +79,10 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
-    let res_tag: GithubTagResponse = client
-        .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
-        .send()
-        .and_then(|response| response.json::<GithubTagResponse>())
-        .unwrap_or_else(|_| {
-            exit_with_error(&format!(
-                "Error: Failed to call or parse the tag github API for v{cli_version}"
-            ))
-        });
-
-    let sha_tagged_commit = res_tag.object.sha;
+    let tree_url: String = generate_tree_url(select_head, &client, cli_version);
 
     let res_tree = client
-        .get(format!(
-            "{}{}?recursive=1",
-            GITHUB_TUONO_TAG_COMMIT_TREES_URL, sha_tagged_commit
-        ))
+        .get(tree_url)
         .send()
         .unwrap_or_else(|_| {
             exit_with_error(&format!(
@@ -134,8 +126,10 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
+            let url = generate_raw_content_url(select_head, cli_version, path);
+
             let file_content = client
-                .get(format!("{GITHUB_RAW_CONTENT_URL}/v{cli_version}/{path}"))
+                .get(url)
                 .send()
                 .map_err(|_| exit_with_error("Failed to call the folder github API"))
                 .and_then(|response| {
@@ -158,6 +152,36 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
     outro(folder);
+}
+
+fn generate_raw_content_url(select_head: Option<bool>, cli_version: &str, path: &String) -> String {
+    let tag = if select_head.unwrap_or(false) {
+        "main"
+    } else {
+        &format!("v{cli_version}")
+    };
+    format!("{}/{}/{}", GITHUB_RAW_CONTENT_URL, tag, path)
+}
+
+fn generate_tree_url(select_head: Option<bool>, client: &Client, cli_version: &str) -> String {
+    if select_head.unwrap_or(false) {
+        format!("{}main?recursive=1", GITHUB_TUONO_TAG_COMMIT_TREES_URL)
+    } else {
+        // This string does not include the "v" version prefix
+        let res_tag = client
+            .get(format!("{}v{}", GITHUB_TUONO_TAGS_URL, cli_version))
+            .send()
+            .unwrap_or_else(|_| {
+                exit_with_error("Failed to call the tag github API for v{cli_version}")
+            })
+            .json::<GithubTagResponse>()
+            .unwrap_or_else(|_| exit_with_error("Failed to parse the tag response"));
+
+        format!(
+            "{}{}?recursive=1",
+            GITHUB_TUONO_TAG_COMMIT_TREES_URL, res_tag.object.sha
+        )
+    }
 }
 
 fn create_directories(
@@ -232,4 +256,38 @@ fn outro(folder_name: String) {
 
     println!("\nRun the local environment:");
     println!("tuono dev");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn generate_valid_content_url_from_head() {
+        let expected = format!(
+            "{}/{}/{}",
+            GITHUB_RAW_CONTENT_URL, "main", "examples/tuono-app"
+        );
+        let generated = generate_raw_content_url(
+            Some(true),
+            crate_version!(),
+            &String::from("examples/tuono-app"),
+        );
+        assert_eq!(expected, generated)
+    }
+
+    #[test]
+    fn generate_valid_content_url_from_cli_version() {
+        let expected = format!(
+            "{}/{}/{}",
+            GITHUB_RAW_CONTENT_URL,
+            &format!("v{}", crate_version!()),
+            "examples/tuono-app"
+        );
+        let generated = generate_raw_content_url(
+            Some(false),
+            crate_version!(),
+            &String::from("examples/tuono-app"),
+        );
+        assert_eq!(expected, generated)
+    }
 }

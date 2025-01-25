@@ -33,6 +33,9 @@ enum Actions {
         /// examples
         #[arg(short, long)]
         template: Option<String>,
+        /// Load the latest commit available on the main branch
+        #[arg(long)]
+        head: Option<bool>,
     },
 }
 
@@ -142,8 +145,9 @@ pub fn app() -> std::io::Result<()> {
         Actions::New {
             folder_name,
             template,
+            head,
         } => {
-            scaffold_project::create_new_project(folder_name, template);
+            scaffold_project::create_new_project(folder_name, template, head);
         }
     }
 
