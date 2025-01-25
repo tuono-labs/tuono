@@ -2,6 +2,7 @@ import type { JSX, ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import type { ServerPayload } from '../types'
+import { SERVER_PAYLOAD_VARIABLE_NAME } from '../constants'
 
 const isServerSide = typeof window === 'undefined'
 
@@ -29,7 +30,7 @@ export function TuonoContextProvider({
   const contextValue: TuonoContextValue = useMemo(() => {
     // At least one of these two should be defined
     const _serverPayload = (
-      isServerSide ? serverPayload : window.__TUONO_SERVER_PAYLOAD__
+      isServerSide ? serverPayload : window[SERVER_PAYLOAD_VARIABLE_NAME]
     ) as ServerPayload
 
     return {
