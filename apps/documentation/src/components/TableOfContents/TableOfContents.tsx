@@ -7,7 +7,9 @@ import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
 export function TableOfContents(): JSX.Element | null {
-  const [activeHeadingIndex, setActiveHeadingIndex] = useState<number | null>(null)
+  const [activeHeadingIndex, setActiveHeadingIndex] = useState<number | null>(
+    null,
+  )
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
   const observerRef = useRef<IntersectionObserver | null>(null)
