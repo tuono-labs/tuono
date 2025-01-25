@@ -6,9 +6,7 @@ import { Box, Text } from '@mantine/core'
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
-interface TableOfContentsProps {}
-
-export function TableOfContents({}: TableOfContentsProps): JSX.Element | null {
+export function TableOfContents(): JSX.Element | null {
   const [active, setActive] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
