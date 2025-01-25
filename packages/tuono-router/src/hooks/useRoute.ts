@@ -22,9 +22,9 @@ export function sanitizePathname(pathname: string): string {
  *
  * File: crates/tuono_lib/src/payload.rs
  *
- * Optimizations should occour on both
+ * Optimizations should occur on both
  */
-export default function useRoute(pathname?: string): Route | undefined {
+export function useRoute(pathname?: string): Route | undefined {
   const {
     router: { routesById },
   } = useRouterContext()
