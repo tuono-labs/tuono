@@ -1,12 +1,10 @@
 import type { JSX, ReactNode } from 'react'
-import { Container, Box } from '@mantine/core'
+import { Box, Container } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 
 import EditPage from '../EditPage'
 import MdxProvider from '../MdxProvider'
-
-import classes from './MdxWrapper.module.css'
 
 interface MdxWrapperProps {
   children: ReactNode
@@ -14,13 +12,8 @@ interface MdxWrapperProps {
 
 export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
-    <Container size={1000} className={classes.wrapper}>
-      <Box
-        id="mdx-root"
-        component="article"
-        p={24}
-        className={classes.container}
-      >
+    <Container size={1000} display="flex">
+      <Box id="mdx-root" component="article" p={14} mt="xl">
         <MdxProvider>{children}</MdxProvider>
         <EditPage />
       </Box>

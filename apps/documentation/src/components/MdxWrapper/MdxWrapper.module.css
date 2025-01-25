@@ -1,7 +1,0 @@
-.wrapper {
-  display: flex;
-}
-
-.container {
-  margin-top: var(--mantine-spacing-xl);
-}
