@@ -6,9 +6,9 @@ import { Box, Text } from '@mantine/core'
 import { getHeadings, type Heading } from './getHeadings'
 import classes from './TableOfContents.module.css'
 
-interface TableOfContentsProps { }
+interface TableOfContentsProps {}
 
-export function TableOfContents({ }: TableOfContentsProps): JSX.Element | null {
+export function TableOfContents({}: TableOfContentsProps): JSX.Element | null {
   const [active, setActive] = useState<number | null>(null)
   const [headings, setHeadings] = useState<Array<Heading>>([])
   const headingsRef = useRef<Array<HTMLElement>>([])
@@ -72,8 +72,10 @@ export function TableOfContents({ }: TableOfContentsProps): JSX.Element | null {
     event.preventDefault()
     const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      history.pushState(null, '', `#${id}`)
+      element.scrollIntoView({
+        behavior: 'instant',
+        block: 'start',
+      })
     }
   }
 

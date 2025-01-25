@@ -12,14 +12,14 @@ interface MdxWrapperProps {
 
 export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
   return (
-    <Container size={1000} w="100%" display="flex" p={0} style={{ gap: 12 }}>
-      <Box id="mdx-root" component="article" mt="xl" px={12} py={36}>
+    <Container size={1000} w="100%" display="flex" style={{ gap: 12 }}>
+      <Box id="mdx-root" component="article" mt="xl" px={16} py={36}>
         <MdxProvider>{children}</MdxProvider>
         <EditPage />
       </Box>
-      <div>
+      <Box>
         <TableOfContents />
-      </div>
+      </Box>
     </Container>
   )
 }
