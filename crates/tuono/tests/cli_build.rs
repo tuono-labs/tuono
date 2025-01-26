@@ -174,3 +174,29 @@ fn it_fails_without_installed_build_script() {
         .failure()
         .stderr("[CLI] Failed to read tuono.config.ts\n");
 }
+
+#[test]
+#[serial]
+fn dev_fails_with_no_config() {
+    let _temp_tuono_project = TempTuonoProject::new_with_no_config();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("dev")
+        .assert()
+        .failure()
+        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+}
+
+#[test]
+#[serial]
+fn build_fails_with_no_config() {
+    let _temp_tuono_project = TempTuonoProject::new_with_no_config();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("dev")
+        .assert()
+        .failure()
+        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+}
