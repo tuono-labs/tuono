@@ -1,3 +1,4 @@
+use std::io::Error;
 use fs_extra::dir::{copy, CopyOptions};
 use std::path::PathBuf;
 use std::thread::sleep;
@@ -54,11 +55,22 @@ fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
     Ok(app)
 }
 
+fn check_for_tuono_config() -> Result<(), Error> {
+    if !PathBuf::from("tuono.config.ts").exists() {
+        return Err(Error::new(
+            std::io::ErrorKind::NotFound,
+            "Cannot find tuono.config.ts - is this a tuono project?"
+        ));
+    }
+    Ok(())
+}
+
 pub fn app() -> std::io::Result<()> {
     let args = Args::parse();
 
     match args.action {
         Actions::Dev => {
+            check_for_tuono_config()?;
             let mut app = init_tuono_folder(Mode::Dev)?;
 
             app.build_tuono_config()
@@ -69,6 +81,7 @@ pub fn app() -> std::io::Result<()> {
             watch::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
+            check_for_tuono_config()?;
             let mut app = init_tuono_folder(Mode::Prod)?;
 
             if no_js_emit {
