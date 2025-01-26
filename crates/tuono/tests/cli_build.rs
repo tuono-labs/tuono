@@ -108,10 +108,7 @@ fn it_successfully_create_catch_all_routes() {
 
     temp_tuono_project.add_file("./src/routes/[...all_routes].rs");
 
-    temp_tuono_project.add_file_with_content(
-        "./src/routes/api/[...all_apis].rs",
-        POST_API_FILE,
-    );
+    temp_tuono_project.add_file_with_content("./src/routes/api/[...all_apis].rs", POST_API_FILE);
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
