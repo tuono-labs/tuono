@@ -1,5 +1,5 @@
-use std::io::Error;
 use fs_extra::dir::{copy, CopyOptions};
+use std::io::Error;
 use std::path::PathBuf;
 use std::thread::sleep;
 use std::time::Duration;
@@ -59,7 +59,7 @@ fn check_for_tuono_config() -> Result<(), Error> {
     if !PathBuf::from("tuono.config.ts").exists() {
         return Err(Error::new(
             std::io::ErrorKind::NotFound,
-            "Cannot find tuono.config.ts - is this a tuono project?"
+            "Cannot find tuono.config.ts - is this a tuono project?",
         ));
     }
     Ok(())
