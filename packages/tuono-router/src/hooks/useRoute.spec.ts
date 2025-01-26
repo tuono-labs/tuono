@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
-import useRoute from './useRoute'
+import { useRoute } from './useRoute'
 
 describe('useRoute', () => {
   afterEach(cleanup)
