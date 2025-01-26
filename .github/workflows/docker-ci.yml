@@ -31,7 +31,7 @@ jobs:
             echo "Error: Container 'tuono-source-container' is not running."
             exit 1
           fi
-          
+
       - name: Check commands inside container
         run: |
           docker exec tuono-source-container pnpm --version || { echo "Error: pnpm is not available."; exit 1; }
