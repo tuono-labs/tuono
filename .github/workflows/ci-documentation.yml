@@ -39,6 +39,12 @@ jobs:
       - name: Install tuono
         run: cargo install tuono@0.17.3
 
+      - name: Version
+        working-directory: ./apps/documentation
+        run: |
+          tuono --version
+          pnpm ls tuono
+
       - name: Build project
         working-directory: ./apps/documentation
         run: tuono build --static
