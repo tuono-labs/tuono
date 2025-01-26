@@ -1,10 +1,13 @@
 use fs_extra::dir::create_all;
+use serde_json::Value;
+use tokio::task::futures;
+use wiremock::matchers::QueryParamExactMatcher;
 use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use tempfile::{tempdir, TempDir};
-use wiremock::MockServer;
+use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
 
 #[derive(Debug)]
 pub struct TempTuonoProject {
@@ -61,12 +64,48 @@ impl Drop for TempTuonoProject {
     }
 }
 
-pub async fn set_up_mock_server() -> MockServer {
-    let mock_server = MockServer::start().await;
-
-    // Set the base URI for the mock server
-    std::env::set_var("ENVIRONMENT", "test");
-    std::env::set_var("MOCK_URI", mock_server.uri());
-
-    return mock_server;
+pub struct MockServerWrapper {
+    server: MockServer
 }
+
+pub enum ResponseBody {
+    Json(Value),
+    String(String),
+}
+
+impl MockServerWrapper {
+    pub async fn new() -> Self {
+        MockServerWrapper { server: MockServer::start().await }
+    }
+
+    pub async fn register_mock(
+        &self,
+        method: &str,
+        path: &str,
+        params: Option<QueryParamExactMatcher>,
+        status: u16,
+        response_body: ResponseBody,
+    ) {
+        env::set_var("GITHUB_HOST", self.server.uri());
+        env::set_var("GITHUB_RAW_CONTEXT_URL", self.server.uri());
+
+        let mut mock = Mock::given(matchers::method(method))
+            .and(matchers::path(path));
+
+        if let Some(params) = params {
+            mock = mock.and(params);
+        }
+
+        let response_template = match response_body {
+            ResponseBody::Json(body) => ResponseTemplate::new(status).set_body_json(body),
+            ResponseBody::String(body) => ResponseTemplate::new(status).set_body_string(body),
+        };
+
+
+        mock.respond_with(response_template)
+        .mount(&self.server)
+        .await;
+        }
+
+}
+

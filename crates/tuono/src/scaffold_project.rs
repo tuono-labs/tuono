@@ -6,8 +6,6 @@ use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 
-use crate::externalUrl::ExternalUrl;
-
 #[derive(Deserialize, Debug)]
 pub enum GithubFileType {
     #[serde(rename = "blob")]
@@ -56,10 +54,12 @@ fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
     Ok(())
 }
 
+
 pub fn create_new_project(folder_name: Option<String>, template: Option<String>) {
     let folder = folder_name.unwrap_or(".".to_string());
-    let url = ExternalUrl::new();
-
+    let github_raw_url = dotenvy::var("GITHUB_RAW_CONTEXT_URL").expect("GITHUB_RAW_CONTEXT_URL not set");
+    let base_url = dotenvy::var("GITHUB_HOST").expect("GITHUB_HOST not set");
+    
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
     let client = blocking::Client::builder()
@@ -69,9 +69,7 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
 
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
-
-    let res_tag: GithubTagResponse = client
-        .get(format!("{}v{}", url.github_tuono_tags_url, cli_version))
+        let res_tag: GithubTagResponse = client.get(format!("{}/repos/tuono-labs/tuono/git/ref/tags/v{}", base_url, cli_version))
         .send()
         .and_then(|response| response.json::<GithubTagResponse>())
         .unwrap_or_else(|_| {
@@ -84,8 +82,8 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
 
     let res_tree = client
         .get(format!(
-            "{}{}?recursive=1",
-            url.github_tuono_tag_commit_trees_url, sha_tagged_commit
+            "{}/repos/tuono-labs/tuono/git/trees/{}?recursive=1",
+            base_url, sha_tagged_commit
         ))
         .send()
         .unwrap_or_else(|_| {
@@ -130,9 +128,8 @@ pub fn create_new_project(folder_name: Option<String>, template: Option<String>)
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let content: String = url.github_raw_content_url.clone();
             let file_content = client
-                .get(format!("{content}v{cli_version}/{path}"))
+                .get(format!("{github_raw_url}/tuono-labs/tuono/v{cli_version}/{path}"))
                 .send()
                 .map_err(|_| exit_with_error("Failed to call the folder github API"))
                 .and_then(|response| {
