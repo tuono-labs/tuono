@@ -1,0 +1,15 @@
+.inner {
+  display: inline !important;
+  font-size: var(--mantine-font-size-sm) !important;
+  font-weight: 600 !important;
+}
+
+.iconWrapper {
+  display: inline-block;
+  transform: translateY(3px);
+}
+
+.iconWrapper svg {
+  display: block;
+  margin-left: 4px;
+}
