@@ -72,8 +72,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       tuono:
-        specifier: npm:tuono@0.17.4
-        version: 0.17.4(@types/node@22.10.7)(lightningcss@1.29.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.31.0)(sugarss@4.0.1(postcss@8.5.1))
+        specifier: npm:tuono@0.17.5
+        version: 0.17.5(@types/node@22.10.7)(lightningcss@1.29.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.31.0)(sugarss@4.0.1(postcss@8.5.1))
     devDependencies:
       '@mdx-js/rollup':
         specifier: 3.1.0
@@ -3240,16 +3240,16 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  tuono-fs-router-vite-plugin@0.17.4:
-    resolution: {integrity: sha512-q5cvE79Onftv+jUrxQX0HKCs9gkfE2cvJE+G+V92zRMCM3qujX0h7w98ZIQclD4JeOkkMOgjH4gscSTHzU6NCw==}
+  tuono-fs-router-vite-plugin@0.17.5:
+    resolution: {integrity: sha512-tY7j/DIEa5aOuQli7pUNkZJUYeNrMMzOQnt8nJ0E1uhqToPgqjSRfzKmGd+ZoYdQ7FqhQB+Bz9OCbS9OmPiHLA==}
 
-  tuono-router@0.17.4:
-    resolution: {integrity: sha512-0Ut/e6cYPoa2p7SIOZWtagdyzjxi8zGdyW397N0iqhX8jsRQ2/pYTRtgw1iFvPKn1iUvY5/6zw0nFFzptHzehw==}
+  tuono-router@0.17.5:
+    resolution: {integrity: sha512-tpPiHd+tjkdv9fZcMFfDKPcU8VgI3ehMo3qYEMCF6+2PLQ6PYVTAExFVEYe7+XYE4Sq9rkpITdusMuhzTTSGAg==}
     peerDependencies:
       react: '>=19.0.0'
 
-  tuono@0.17.4:
-    resolution: {integrity: sha512-NYif2JYHEFjCbWQG0YrySeVAj1nDumwbGnN0tz5Ec/StO2JP72yeX4vnUgovlPwmjDxrVUEmL8B7h9C08NJnwA==}
+  tuono@0.17.5:
+    resolution: {integrity: sha512-TWsqxll9y/xEONvmhvh2bW7jCLmYMQ6/uToLRUdxAzVTyKd5YC99iD0cjOG1qClgOyohzuJo4T/qm/Ebgg9TGQ==}
     hasBin: true
     peerDependencies:
       react: '>=19.0.0'
@@ -7124,7 +7124,7 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tuono-fs-router-vite-plugin@0.17.4(@types/node@22.10.7)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)):
+  tuono-fs-router-vite-plugin@0.17.5(@types/node@22.10.7)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)):
     dependencies:
       '@babel/core': 7.26.0
       '@babel/types': 7.26.3
@@ -7141,14 +7141,14 @@ snapshots:
       - supports-color
       - terser
 
-  tuono-router@0.17.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  tuono-router@0.17.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       react: 19.0.0
       react-intersection-observer: 9.14.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     transitivePeerDependencies:
       - react-dom
 
-  tuono@0.17.4(@types/node@22.10.7)(lightningcss@1.29.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.31.0)(sugarss@4.0.1(postcss@8.5.1)):
+  tuono@0.17.5(@types/node@22.10.7)(lightningcss@1.29.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.31.0)(sugarss@4.0.1(postcss@8.5.1)):
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
@@ -7158,8 +7158,8 @@ snapshots:
       fast-text-encoding: 1.0.6
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
-      tuono-fs-router-vite-plugin: 0.17.4(@types/node@22.10.7)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
-      tuono-router: 0.17.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      tuono-fs-router-vite-plugin: 0.17.5(@types/node@22.10.7)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      tuono-router: 0.17.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       vite: 5.4.12(@types/node@22.10.7)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
       web-streams-polyfill: 4.0.0
     transitivePeerDependencies:
