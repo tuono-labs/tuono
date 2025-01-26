@@ -1,13 +1,34 @@
 use fs_extra::dir::create_all;
-use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
+use std::{env, fs};
 use tempfile::{tempdir, TempDir};
-use tuono_lib::axum::http::StatusCode;
 use tuono_lib::axum::routing::get;
-use tuono_lib::Request;
 use tuono_lib::{axum::Router, Mode, Server};
+
+use crate::utils::health_check::get__tuono_internal_api as health_check;
+use crate::utils::route::tuono__internal__api as route_api;
+use crate::utils::route::tuono__internal__route as route;
+
+fn add_file_with_content<'a>(path: &'a str, content: &'a str) {
+    let path = PathBuf::from(path);
+    create_all(
+        path.parent().expect("File path does not have any parent"),
+        false,
+    )
+    .expect(
+        format!(
+            "Failed to create parent file directories: {}",
+            path.display()
+        )
+        .as_str(),
+    );
+
+    let mut file = File::create(path).expect("Failed to create the file");
+    file.write_all(content.as_bytes())
+        .expect("Failed to write into the file");
+}
 
 #[derive(Debug)]
 pub struct MockTuonoServer {
@@ -19,23 +40,13 @@ pub struct MockTuonoServer {
     temp_dir: TempDir,
 }
 
-fn add_file_with_content<'a>(path: &'a str, content: &'a str) {
-    let path = PathBuf::from(path);
-    create_all(
-        path.parent().expect("File path does not have any parent"),
-        false,
-    )
-    .expect("Failed to create parent file directories");
-
-    let mut file = File::create(path).expect("Failed to create the file");
-    file.write_all(content.as_bytes())
-        .expect("Failed to write into the file");
-}
-
 impl MockTuonoServer {
     pub async fn spawn() -> Self {
         let original_dir = env::current_dir().expect("Failed to read current_dir");
         let temp_dir = tempdir().expect("Failed to create temp_dir");
+
+        let react_prod_build = fs::read_to_string("./tests/assets/fake_react_build.js")
+            .expect("Failed to read fake_react_build.js");
 
         env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
 
@@ -44,12 +55,18 @@ impl MockTuonoServer {
             r#"{"server": {"host": "localhost", "port": 0}}"#,
         );
 
+        add_file_with_content("./out/server/prod-server.js", react_prod_build.as_str());
+
         add_file_with_content(
             "./out/client/.vite/manifest.json",
-            r#"{"index.tsx": { "file": "assets/index.js", "name": "index", "src": "index.tsx", "isEntry": true,"dynamicImports": [],"css": []}}"#,
+            r#"{"client-main.tsx": { "file": "assets/index.js", "name": "index", "src": "index.tsx", "isEntry": true,"dynamicImports": [],"css": []}}"#,
         );
 
-        let router = Router::new().route("/health_check", get(get__tuono_internal_api));
+        let router = Router::new()
+            .route("/", get(route))
+            .route("/health_check", get(health_check))
+            .route("/not-found", get(route))
+            .route("/route-api", get(route_api));
 
         let server = Server::init(router, Mode::Prod).await;
 
@@ -71,13 +88,9 @@ impl MockTuonoServer {
 
 impl Drop for MockTuonoServer {
     fn drop(&mut self) {
+        println!("Dropping MockTuonoServer");
         // Set back the current dir in the previous state
         env::set_current_dir(self.original_dir.to_owned())
             .expect("Failed to restore the original directory.");
     }
-}
-
-#[tuono_lib::api(GET)]
-async fn index(_req: Request) -> StatusCode {
-    StatusCode::OK
 }

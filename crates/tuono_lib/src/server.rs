@@ -4,8 +4,11 @@ use crate::mode::{Mode, GLOBAL_MODE};
 use axum::routing::{get, Router};
 use colored::Colorize;
 use ssr_rs::Ssr;
+use std::sync::Once;
 use tower_http::services::ServeDir;
 use tuono_internal::config::Config;
+
+static INIT: Once = Once::new();
 
 use crate::{
     catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
