@@ -19,7 +19,7 @@ export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
         mt="xl"
         px={16}
         py={36}
-        style={{ maxWidth: '100%' }}
+        style={{ maxWidth: '100%', wordWrap: 'break-word' }}
       >
         <MdxProvider>{children}</MdxProvider>
         <EditPage />
