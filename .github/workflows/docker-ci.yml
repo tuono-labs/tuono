@@ -1,14 +1,18 @@
 name: Docker CI
 
+# If we need support more OS refer to
+# https://github.com/tuono-labs/tuono/pull/332#issuecomment-2614439692
+
 on:
   push:
     branches:
-      - 'chore-add-image-build-test-to-github-actions'
+      - 'main'
 
 jobs:
   build_and_test:
     name: Build and Test Docker Image on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -24,7 +28,7 @@ jobs:
         run: |
           docker compose -f docker/compose.yml up --build -d
 
-      - name: Check if container is running
+      - name: Check if the container is running
         run: |
           docker ps --filter "name=tuono-source-container" --format "table {{.Names}}\t{{.Status}}"
           if ! docker ps --filter "name=tuono-source-container" --format "{{.Status}}" | grep -q "Up"; then
@@ -37,13 +41,13 @@ jobs:
           docker exec tuono-source-container pnpm --version || { echo "Error: pnpm is not available."; exit 1; }
           docker exec tuono-source-container tuono --version || { echo "Error: tuono is not available."; exit 1; }
 
-      - name: run cargo test
+      - name: Run cargo test
         run: docker exec tuono-source-container cargo test
 
       - name: Install node dependencies in each tuono's sub-projets
         run: docker exec tuono-source-container bash -c 'for dir in /tuono/packages/*; do [ -d "$dir" ] && (cd "$dir" && yes | pnpm install --frozen-lockfile); done'
 
-      - name: run pnpm test
+      - name: Run pnpm test
         run: docker exec tuono-source-container pnpm test
 
       - name: Tear Down Docker Compose
