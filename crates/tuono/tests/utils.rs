@@ -1,6 +1,5 @@
 use fs_extra::dir::create_all;
 use serde_json::Value;
-use tokio::task::futures;
 use wiremock::matchers::QueryParamExactMatcher;
 use std::env;
 use std::fs::File;
@@ -8,6 +7,8 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use tempfile::{tempdir, TempDir};
 use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
+use serde_json::json;
+use wiremock::matchers::query_param;
 
 #[derive(Debug)]
 pub struct TempTuonoProject {
@@ -108,4 +109,65 @@ impl MockServerWrapper {
         }
 
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
+    #[tokio::test]
+    async fn test_mockserverwrapper_register_mock_with_json_response() {
+        let mock_server = MockServerWrapper::new().await;
+
+        let response_body = ResponseBody::Json(json!({"key": "value"}));
+        mock_server
+            .register_mock("GET", "/test", None, 200, response_body)
+            .await;
+
+        let response = reqwest::get(&format!("{}/test", mock_server.server.uri()))
+            .await
+            .expect("Failed to send request");
+
+        assert_eq!(response.status(), 200);
+        let body: Value = response.json().await.expect("Failed to parse JSON");
+        assert_eq!(body, json!({"key": "value"}));
+    }
+
+    #[tokio::test]
+    async fn test_mockserverwrapper_register_mock_with_string_response() {
+        let mock_server = MockServerWrapper::new().await;
+
+        let response_body = ResponseBody::String("Hello, world!".to_string());
+        mock_server
+            .register_mock("GET", "/hello", None, 200, response_body)
+            .await;
+
+        let response = reqwest::get(&format!("{}/hello", mock_server.server.uri()))
+            .await
+            .expect("Failed to send request");
+
+        assert_eq!(response.status(), 200);
+        let body = response.text().await.expect("Failed to read response body");
+        assert_eq!(body, "Hello, world!");
+    }
+
+    #[tokio::test]
+    async fn test_mockserverwrapper_register_mock_with_query_params() {
+        let mock_server = MockServerWrapper::new().await;
+
+        let response_body = ResponseBody::String("Query matched".to_string());
+        let query_matcher = query_param("key", "value");
+       
+        mock_server
+            .register_mock("GET", "/query", Some(query_matcher), 200, response_body)
+            .await;
+
+        let response = reqwest::get(&format!("{}/query?key=value", mock_server.server.uri()))
+
+            .await
+            .expect("Failed to send request");
+
+        assert_eq!(response.status(), 200);
+        
+        let body = response.text().await.expect("Failed to read response body");
+        assert_eq!(body, "Query matched");
+    }
+}

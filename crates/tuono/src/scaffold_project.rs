@@ -7,7 +7,7 @@ use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 
 #[derive(Deserialize, Debug)]
-pub enum GithubFileType {
+enum GithubFileType {
     #[serde(rename = "blob")]
     Blob,
     #[serde(rename = "tree")]
@@ -15,7 +15,7 @@ pub enum GithubFileType {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct GithubTagObject {
+struct GithubTagObject {
     sha: String,
 }
 
@@ -25,7 +25,7 @@ struct GithubTagResponse {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct GithubTreeResponse<T> {
+struct GithubTreeResponse<T> {
     tree: Vec<T>,
 }
 
@@ -35,7 +35,7 @@ fn exit_with_error(message: &str) -> ! {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct GithubFile {
+struct GithubFile {
     path: String,
     #[serde(rename(deserialize = "type"))]
     element_type: GithubFileType,
