@@ -6,6 +6,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import type { Route } from '../route'
 
 import { RouteMatch } from './RouteMatch'
+
 import '@testing-library/jest-dom'
 
 interface Props {
@@ -41,8 +42,8 @@ describe('Test RouteMatch component', () => {
   })
 
   test('It should correctly render nested routes', () => {
-    vi.mock('../hooks/useServerSideProps.tsx', () => ({
-      useServerSideProps: (): { data: unknown; isLoading: boolean } => {
+    vi.mock('../hooks/useServerPayloadData.ts', () => ({
+      useServerPayloadData: (): { data: unknown; isLoading: boolean } => {
         return {
           data: undefined,
           isLoading: false,
@@ -50,7 +51,7 @@ describe('Test RouteMatch component', () => {
       },
     }))
 
-    render(<RouteMatch route={route} serverSideProps={{}} />)
+    render(<RouteMatch route={route} serverInitialData={{}} />)
     expect(screen.getByTestId('root')).toHaveTextContent(
       'root route parent route current route',
     )

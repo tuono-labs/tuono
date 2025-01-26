@@ -1,28 +1,28 @@
-import type { ComponentType as ReactComponentType, ReactNode } from 'react'
+import type { ReactNode, ComponentType } from 'react'
 
 export interface Segment {
   type: 'pathname' | 'param' | 'wildcard'
   value: string
 }
 
-export interface ServerRouterInfo {
+/**
+ * Provided by the rust server and used in the ssr env
+ * @see tuono {@link ServerPayloadLocation}
+ */
+export interface ServerInitialLocation {
   href: string
   pathname: string
   searchStr: string
 }
 
-export interface ServerProps<TProps = unknown> {
-  router: ServerRouterInfo
-  props: TProps
-}
-
 export interface RouteProps<TData = unknown> {
   data: TData
+
   isLoading: boolean
 
   children?: ReactNode
 }
 
-export type RouteComponent = ReactComponentType<RouteProps> & {
+export type RouteComponent = ComponentType<RouteProps> & {
   preload: () => void
 }

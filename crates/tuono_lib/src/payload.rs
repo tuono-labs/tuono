@@ -1,8 +1,10 @@
+use crate::config::GLOBAL_CONFIG;
 use crate::manifest::MANIFEST;
 use crate::mode::{Mode, GLOBAL_MODE};
 use erased_serde::Serialize;
 use regex::Regex;
 use serde::Serialize as SerdeSerialize;
+use tuono_internal::config::ServerConfig;
 
 use crate::request::{Location, Request};
 
@@ -14,23 +16,38 @@ fn has_dynamic_path(route: &str) -> bool {
 #[derive(SerdeSerialize)]
 /// This is the payload sent to the client for hydration
 pub struct Payload<'a> {
-    router: Location,
-    props: &'a dyn Serialize,
+    location: Location,
+    data: &'a dyn Serialize,
     mode: Mode,
     #[serde(rename(serialize = "jsBundles"))]
     js_bundles: Option<Vec<&'a String>>,
     #[serde(rename(serialize = "cssBundles"))]
     css_bundles: Option<Vec<&'a String>>,
+    #[serde(rename(serialize = "devServerConfig"))]
+    dev_server_config: Option<&'a ServerConfig>,
 }
 
 impl<'a> Payload<'a> {
-    pub fn new(req: &'a Request, props: &'a dyn Serialize) -> Payload<'a> {
+    pub fn new(req: &'a Request, data: &'a dyn Serialize) -> Payload<'a> {
+        let config = GLOBAL_CONFIG
+            .get()
+            .expect("Failed to load the current config");
+
+        let mode = *GLOBAL_MODE.get().expect("Failed to load the current mode");
+
+        let dev_server_config = if mode == Mode::Dev {
+            Some(&config.server)
+        } else {
+            None
+        };
+
         Payload {
-            router: req.location(),
-            props,
-            mode: *GLOBAL_MODE.get().expect("Failed to load the current mode"),
+            location: req.location(),
+            data,
+            mode,
             js_bundles: None,
             css_bundles: None,
+            dev_server_config,
         }
     }
 
@@ -62,7 +79,7 @@ impl<'a> Payload<'a> {
         let mut js_bundles_sources = vec![&main_bundle.file];
         let mut css_bundles_sources = main_bundle.css.iter().collect::<Vec<&String>>();
 
-        let pathname = &self.router.pathname();
+        let pathname = &self.location.pathname();
 
         let bundle_data = manifest.get(*pathname);
 
@@ -216,11 +233,12 @@ mod tests {
         let location = Location::from(uri);
 
         Payload {
-            router: location,
-            props: &None::<Option<()>>,
+            location,
+            data: &None::<Option<()>>,
             mode,
             js_bundles: None,
             css_bundles: None,
+            dev_server_config: None,
         }
     }
 

@@ -1,13 +1,15 @@
 [workspace]
 resolver = "2"
 members = [
-		"crates/tuono",
-		"crates/tuono_lib",
-		"crates/tuono_lib_macros",
+  "crates/tuono", 
+  "crates/tuono_internal", 
+  "crates/tuono_lib", 
+  "crates/tuono_lib_macros"
 ]
 exclude = [
-		"apps/documentation",
-		"examples/with-mdx",
-		"examples/tuono-app",
-		"examples/tuono-tutorial"
+  "apps/documentation",
+  "examples/with-mdx",
+  "examples/tuono-app",
+  "examples/tuono-tutorial",
+  "examples/with-tailwind",
 ]

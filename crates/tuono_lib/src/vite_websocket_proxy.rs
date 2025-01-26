@@ -1,3 +1,4 @@
+use crate::config::GLOBAL_CONFIG;
 use axum::extract::ws::{self, WebSocket, WebSocketUpgrade};
 use axum::response::IntoResponse;
 use futures_util::{SinkExt, StreamExt};
@@ -6,7 +7,6 @@ use tokio_tungstenite::tungstenite::{Error, Message};
 use tungstenite::client::IntoClientRequest;
 use tungstenite::ClientRequestBuilder;
 
-const VITE_WS: &str = "ws://localhost:3001/vite-server/";
 const VITE_WS_PROTOCOL: &str = "vite-hmr";
 
 /// This is the entry point to proxy the vite's WebSocket.
@@ -28,7 +28,17 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
         return;
     }
 
-    let vite_ws_request = ClientRequestBuilder::new(VITE_WS.parse().unwrap())
+    let config = GLOBAL_CONFIG
+        .get()
+        .expect("Failed to get the internal config");
+
+    let vite_ws = format!(
+        "ws://{}:{}/vite-server/",
+        config.server.host,
+        config.server.port + 1
+    );
+
+    let vite_ws_request = ClientRequestBuilder::new(vite_ws.parse().unwrap())
         .with_sub_protocol(VITE_WS_PROTOCOL)
         .into_client_request()
         .expect("Failed to create vite WS request");

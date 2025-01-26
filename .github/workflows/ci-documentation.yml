@@ -4,20 +4,20 @@ on:
   push:
     branches:
       - 'main'
+    # match
+    # - all files inside `apps/documentation` and `.github`
+    # - all files in the root expect `Cargo.toml`
     paths:
-      # ⬇ Keep paths in sync with `typescript.yml`
       - '.github/**'
       - '*'
       - '!Cargo.toml'
-      # ⬆ Keep paths in sync with `typescript.yml`
       - 'apps/documentation/**'
   pull_request:
+    # same as `on.push.paths`
     paths:
-      # ⬇ Keep paths in sync with `typescript.yml`
       - '.github/**'
       - '*'
       - '!Cargo.toml'
-      # ⬆ Keep paths in sync with `typescript.yml`
       - 'apps/documentation/**'
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install tuono
-        run: cargo install tuono@0.16.9
+        run: cargo install tuono@0.17.3
 
       - name: Build project
         working-directory: ./apps/documentation

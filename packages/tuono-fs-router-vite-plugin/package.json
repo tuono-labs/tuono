@@ -1,6 +1,6 @@
 {
   "name": "tuono-fs-router-vite-plugin",
-  "version": "0.17.0",
+  "version": "0.17.5",
   "description": "Plugin for the tuono's file system router. Tuono is the react/rust fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
@@ -47,7 +47,7 @@
     "@babel/core": "^7.24.4",
     "@babel/types": "^7.24.0",
     "prettier": "^3.2.4",
-    "vite": "^5.2.11"
+    "vite": "^5.2.12"
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",

@@ -1,6 +1,6 @@
 {
   "name": "tuono",
-  "version": "0.17.0",
+  "version": "0.17.5",
   "description": "Superfast React fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
@@ -99,18 +99,17 @@
     "@vitejs/plugin-react-swc": "^3.7.0",
     "fast-text-encoding": "^1.0.6",
     "tuono-fs-router-vite-plugin": "workspace:*",
-    "tuono-lazy-fn-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
-    "vite": "^5.2.11",
+    "vite": "^5.2.12",
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
     "@types/babel__core": "7.20.5",
     "@types/babel__traverse": "7.20.6",
-    "@types/node": "22.10.3",
-    "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.2",
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "vitest": "2.1.8"

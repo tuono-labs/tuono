@@ -41,39 +41,24 @@ import { MessageChannelPolyfill } from './polyfills/MessageChannel'
 import type { ReadableStream } from 'node:stream/web'
 
 import { renderToReadableStream } from 'react-dom/server'
-import { RouterProvider, createRouter } from 'tuono-router'
+import { createRouter } from 'tuono-router'
 import type { createRoute } from 'tuono-router'
 
-import { DevResources } from './components/DevResources'
-import { ProdResources } from './components/ProdResources'
-import type { Mode } from './types'
+import { TuonoEntryPoint } from '../shared/TuonoEntryPoint'
+import type { ServerPayload } from '../types'
+
 import { streamToString } from './utils'
 
 type RouteTree = ReturnType<typeof createRoute>
 
 export function serverSideRendering(routeTree: RouteTree) {
   return async function render(payload: string | undefined): Promise<string> {
-    const serverProps = (payload ? JSON.parse(payload) : {}) as Record<
-      string,
-      unknown
-    >
+    const serverPayload = (payload ? JSON.parse(payload) : {}) as ServerPayload
 
-    const mode = serverProps.mode as Mode
-    const jsBundles = serverProps.jsBundles as Array<string>
-    const cssBundles = serverProps.cssBundles as Array<string>
     const router = createRouter({ routeTree }) // Render the app
 
     const stream = await renderToReadableStream(
-      <>
-        <RouterProvider router={router} serverProps={serverProps as never} />
-
-        {mode === 'Dev' && <DevResources />}
-        {mode === 'Prod' && (
-          <ProdResources cssBundles={cssBundles} jsBundles={jsBundles} />
-        )}
-
-        <script>{`window.__TUONO_SSR_PROPS__=${payload as string}`}</script>
-      </>,
+      <TuonoEntryPoint router={router} serverPayload={serverPayload} />,
     )
 
     await stream.allReady

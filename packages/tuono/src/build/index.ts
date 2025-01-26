@@ -3,13 +3,12 @@ import { build, createServer, mergeConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import inject from '@rollup/plugin-inject'
 import { TuonoFsRouterPlugin } from 'tuono-fs-router-vite-plugin'
-import { TuonoLazyFnPlugin } from 'tuono-lazy-fn-vite-plugin'
 
 import type { TuonoConfig } from '../config'
 
-import { loadConfig, blockingAsync } from './utils'
+import { blockingAsync } from './utils'
+import { createJsonConfig, loadConfig } from './config'
 
-const VITE_PORT = 3001
 const VITE_SSR_PLUGINS: Array<Plugin> = [
   {
     enforce: 'post',
@@ -67,7 +66,6 @@ function createBaseViteConfigFromTuonoConfig(
       react({ include: pluginFilesInclude }),
 
       TuonoFsRouterPlugin(),
-      TuonoLazyFnPlugin({ include: pluginFilesInclude }),
     ],
   }
 
@@ -112,6 +110,7 @@ const developmentSSRBundle = (): void => {
 const developmentCSRWatch = (): void => {
   blockingAsync(async () => {
     const config = await loadConfig()
+
     const server = await createServer(
       mergeConfig<InlineConfig, InlineConfig>(
         createBaseViteConfigFromTuonoConfig(config),
@@ -120,7 +119,8 @@ const developmentCSRWatch = (): void => {
           base: '/vite-server/',
 
           server: {
-            port: VITE_PORT,
+            host: config.server.host,
+            port: config.server.port + 1,
             strictPort: true,
           },
           build: {
@@ -186,7 +186,7 @@ const buildProd = (): void => {
 }
 
 const buildConfig = (): void => {
-  blockingAsync(async () => {
+  blockingAsync(async (): Promise<void> => {
     await build({
       root: '.tuono',
       logLevel: 'silent',
@@ -204,6 +204,9 @@ const buildConfig = (): void => {
         },
       },
     })
+
+    const config = await loadConfig()
+    await createJsonConfig(config)
   })
 }
 
