@@ -1,14 +1,14 @@
 use fs_extra::dir::create_all;
+use serde_json::json;
 use serde_json::Value;
-use wiremock::matchers::QueryParamExactMatcher;
 use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use tempfile::{tempdir, TempDir};
-use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
-use serde_json::json;
 use wiremock::matchers::query_param;
+use wiremock::matchers::QueryParamExactMatcher;
+use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
 
 #[derive(Debug)]
 pub struct TempTuonoProject {
@@ -66,7 +66,7 @@ impl Drop for TempTuonoProject {
 }
 
 pub struct MockServerWrapper {
-    server: MockServer
+    server: MockServer,
 }
 
 pub enum ResponseBody {
@@ -76,7 +76,9 @@ pub enum ResponseBody {
 
 impl MockServerWrapper {
     pub async fn new() -> Self {
-        MockServerWrapper { server: MockServer::start().await }
+        MockServerWrapper {
+            server: MockServer::start().await,
+        }
     }
 
     pub async fn register_mock(
@@ -87,11 +89,10 @@ impl MockServerWrapper {
         status: u16,
         response_body: ResponseBody,
     ) {
-        env::set_var("GITHUB_HOST", self.server.uri());
-        env::set_var("GITHUB_RAW_CONTEXT_URL", self.server.uri());
+        env::set_var("GITHUB_API_BASE_UR", self.server.uri());
+        env::set_var("GITHUB_RAW_CONTENT_BASE_URL", self.server.uri());
 
-        let mut mock = Mock::given(matchers::method(method))
-            .and(matchers::path(path));
+        let mut mock = Mock::given(matchers::method(method)).and(matchers::path(path));
 
         if let Some(params) = params {
             mock = mock.and(params);
@@ -102,12 +103,10 @@ impl MockServerWrapper {
             ResponseBody::String(body) => ResponseTemplate::new(status).set_body_string(body),
         };
 
-
         mock.respond_with(response_template)
-        .mount(&self.server)
-        .await;
-        }
-
+            .mount(&self.server)
+            .await;
+    }
 }
 #[cfg(test)]
 mod tests {
@@ -155,18 +154,17 @@ mod tests {
 
         let response_body = ResponseBody::String("Query matched".to_string());
         let query_matcher = query_param("key", "value");
-       
+
         mock_server
             .register_mock("GET", "/query", Some(query_matcher), 200, response_body)
             .await;
 
         let response = reqwest::get(&format!("{}/query?key=value", mock_server.server.uri()))
-
             .await
             .expect("Failed to send request");
 
         assert_eq!(response.status(), 200);
-        
+
         let body = response.text().await.expect("Failed to read response body");
         assert_eq!(body, "Query matched");
     }

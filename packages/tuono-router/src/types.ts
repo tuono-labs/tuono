@@ -5,26 +5,19 @@ export interface Segment {
   value: string
 }
 
-export interface ServerRouterInfo {
+/**
+ * Provided by the rust server and used in the ssr env
+ * @see tuono {@link ServerPayloadLocation}
+ */
+export interface ServerInitialLocation {
   href: string
   pathname: string
   searchStr: string
 }
 
-export interface ServerProps<TProps = unknown> {
-  router: ServerRouterInfo
-  props: TProps
-  jsBundles: Array<string>
-  cssBundles: Array<string>
-  mode: 'Dev' | 'Prod'
-  devServerConfig: {
-    port: number
-    host: string
-  }
-}
-
 export interface RouteProps<TData = unknown> {
   data: TData
+
   isLoading: boolean
 
   children?: ReactNode

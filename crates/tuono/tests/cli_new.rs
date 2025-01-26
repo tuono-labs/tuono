@@ -68,7 +68,7 @@ async fn test_scaffold_project() {
     )
     .await;
 
-    MockServerWrapper::register_mock(     
+    MockServerWrapper::register_mock(
         &mock_server,
     "GET",
     &format!("tuono-labs/tuono/v{cli_version}/examples/tuono-app/Cargo.toml"),
@@ -104,7 +104,12 @@ async fn test_scaffold_project() {
         main_rs_content,
         "fn main() { println!(\"Hello, world!\"); }"
     );
-    assert_eq!(cargo_toml_content, "[package] name = \"tuono-tutorial\" version = \"0.0.1\" edition = \"2021\" [[bin]] name = \"tuono\" path = \".tuono/main.rs\" [dependencies] tuono_lib = \"0.17.4\" serde = { version = \"1.0.202\", features = [\"derive\"] } reqwest = \"0.12.9\"");
+    let expected_cargo_toml_content = format!(
+        "[package] name = \"tuono-tutorial\" version = \"0.0.1\" edition = \"2021\" [[bin]] name = \"tuono\" path = \".tuono/main.rs\" [dependencies] tuono_lib = \"{}\" serde = {{ version = \"1.0.202\", features = [\"derive\"] }} reqwest = \"0.12.9\"",
+        cli_version
+    );
+
+    assert_eq!(cargo_toml_content, expected_cargo_toml_content);
 }
 
 #[tokio::test]
@@ -181,7 +186,10 @@ async fn test_scaffold_project_with_missing_files() {
         .join("src")
         .join("main.rs");
 
-    let cargo_toml_path = temp_project.path().join("my-missing-files-project").join("Cargo.toml");
+    let cargo_toml_path = temp_project
+        .path()
+        .join("my-missing-files-project")
+        .join("Cargo.toml");
 
     let mut cmd = Command::cargo_bin("tuono").unwrap();
 
@@ -193,4 +201,3 @@ async fn test_scaffold_project_with_missing_files() {
     assert!(!main_rs_path.exists());
     assert!(!cargo_toml_path.exists());
 }
-

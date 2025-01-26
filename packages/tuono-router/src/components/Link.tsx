@@ -2,7 +2,7 @@ import type * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 
 import { useRouter } from '../hooks/useRouter'
-import useRoute from '../hooks/useRoute'
+import { useRoute } from '../hooks/useRoute'
 
 interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   /**

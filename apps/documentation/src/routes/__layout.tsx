@@ -6,14 +6,12 @@ import {
   createTheme,
   MantineProvider,
   AppShell,
-  Container,
   mantineHtmlProps,
   type CSSVariablesResolver,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import EditPage from '@/components/EditPage'
-import MdxProvider from '@/components/MdxProvider'
+import MdxWrapper from '@/components/MdxWrapper'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 
@@ -38,8 +36,8 @@ const theme = createTheme({
   },
   fontSizes: {
     // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    xs: '16px',
-    sm: '16px',
+    xs: '14px',
+    sm: '14px',
   },
   colors: {
     dark: [
@@ -125,11 +123,8 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
           >
             <Navbar toggle={toggle} />
             <Sidebar close={toggle} />
-            <AppShell.Main>
-              <Container id="mdx-root" component="article" size="md" p={20}>
-                <MdxProvider>{children}</MdxProvider>
-                <EditPage />
-              </Container>
+            <AppShell.Main pt={0} px="auto">
+              <MdxWrapper>{children}</MdxWrapper>
             </AppShell.Main>
           </AppShell>
         </MantineProvider>

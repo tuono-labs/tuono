@@ -6,7 +6,8 @@ import eslintPluginReact from 'eslint-plugin-react'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 
-export default tseslint.config(
+/** @type import('typescript-eslint').ConfigArray */
+const tuonoEslintConfig = tseslint.config(
   {
     ignores: [
       // #region shared
@@ -45,7 +46,6 @@ export default tseslint.config(
 
   // @ts-expect-error flat is optional but always defined on runtime
   eslintPluginReact.configs.flat.recommended,
-  // @ts-expect-error flat is optional but always defined on runtime
   eslintPluginReact.configs.flat['jsx-runtime'],
 
   {
@@ -173,3 +173,5 @@ export default tseslint.config(
     },
   },
 )
+
+export default tuonoEslintConfig
