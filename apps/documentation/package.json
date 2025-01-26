@@ -11,9 +11,9 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@mantine/code-highlight": "7.16.0",
-    "@mantine/core": "7.16.0",
-    "@mantine/hooks": "7.16.0",
+    "@mantine/code-highlight": "7.16.1",
+    "@mantine/core": "7.16.1",
+    "@mantine/hooks": "7.16.1",
     "@mdx-js/react": "3.1.0",
     "@tabler/icons-react": "3.28.1",
     "clsx": "2.1.1",
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@mdx-js/rollup": "3.1.0",
-    "@types/react": "19.0.6",
+    "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
     "postcss": "8.5.1",
     "postcss-preset-mantine": "1.17.0",

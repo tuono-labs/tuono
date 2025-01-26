@@ -1,9 +1,11 @@
+use crate::config::GLOBAL_CONFIG;
 use crate::manifest::load_manifest;
 use crate::mode::{Mode, GLOBAL_MODE};
 use axum::routing::{get, Router};
 use colored::Colorize;
 use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
+use tuono_internal::config::Config;
 
 use crate::{
     catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
@@ -23,6 +25,9 @@ impl Server {
         Ssr::create_platform();
 
         GLOBAL_MODE.set(mode).unwrap();
+        GLOBAL_CONFIG
+            .set(Config::get().expect("[SERVER] Failed to load config"))
+            .unwrap();
 
         if mode == Mode::Prod {
             load_manifest()
@@ -32,10 +37,19 @@ impl Server {
     }
 
     pub async fn start(&self) {
-        let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+        let config = GLOBAL_CONFIG
+            .get()
+            .expect("Failed to get the internal config");
+
+        let server_http_address = format!("{}:{}", config.server.host, config.server.port);
+        let listener = tokio::net::TcpListener::bind(&server_http_address)
+            .await
+            .unwrap();
+
+        let server_url = format!("http://{}", &server_http_address);
 
         if self.mode == Mode::Dev {
-            println!("  Ready at: {}\n", "http://localhost:3000".blue().bold());
+            println!("  Ready at: {}\n", &server_url.blue().bold());
             let router = self
                 .router
                 .to_owned()
@@ -51,10 +65,7 @@ impl Server {
                 .await
                 .expect("Failed to serve development server");
         } else {
-            println!(
-                "  Production server at: {}\n",
-                "http://localhost:3000".blue().bold()
-            );
+            println!("  Production server at: {}\n", &server_url.blue().bold());
             let router = self
                 .router
                 .to_owned()

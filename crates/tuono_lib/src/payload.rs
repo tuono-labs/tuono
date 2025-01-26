@@ -1,8 +1,10 @@
+use crate::config::GLOBAL_CONFIG;
 use crate::manifest::MANIFEST;
 use crate::mode::{Mode, GLOBAL_MODE};
 use erased_serde::Serialize;
 use regex::Regex;
 use serde::Serialize as SerdeSerialize;
+use tuono_internal::config::ServerConfig;
 
 use crate::request::{Location, Request};
 
@@ -21,16 +23,31 @@ pub struct Payload<'a> {
     js_bundles: Option<Vec<&'a String>>,
     #[serde(rename(serialize = "cssBundles"))]
     css_bundles: Option<Vec<&'a String>>,
+    #[serde(rename(serialize = "devServerConfig"))]
+    dev_server_config: Option<&'a ServerConfig>,
 }
 
 impl<'a> Payload<'a> {
     pub fn new(req: &'a Request, props: &'a dyn Serialize) -> Payload<'a> {
+        let config = GLOBAL_CONFIG
+            .get()
+            .expect("Failed to load the current config");
+
+        let mode = *GLOBAL_MODE.get().expect("Failed to load the current mode");
+
+        let dev_server_config = if mode == Mode::Dev {
+            Some(&config.server)
+        } else {
+            None
+        };
+
         Payload {
             router: req.location(),
             props,
-            mode: *GLOBAL_MODE.get().expect("Failed to load the current mode"),
+            mode,
             js_bundles: None,
             css_bundles: None,
+            dev_server_config,
         }
     }
 
@@ -221,6 +238,7 @@ mod tests {
             mode,
             js_bundles: None,
             css_bundles: None,
+            dev_server_config: None,
         }
     }
 
