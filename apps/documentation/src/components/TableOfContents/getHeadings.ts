@@ -8,14 +8,27 @@ export interface Heading {
   getNode: () => HTMLHeadingElement
 }
 
+function getCleanedText(element: HTMLElement): string {
+  const clone = element.cloneNode(true) as HTMLElement
+
+  clone.querySelectorAll('code, pre').forEach((codeBlock) => {
+    const textNode = document.createTextNode(codeBlock.textContent || '')
+    codeBlock.replaceWith(textNode)
+  })
+
+  return clone.textContent?.trim() || ''
+}
+
 function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
   const result: Array<Heading> = []
 
   for (const heading of headings) {
-    if (heading.id) {
+    const depth = parseInt(heading.getAttribute('data-order') || '1', 10)
+
+    if (depth <= 3 && heading.id) {
       result.push({
-        depth: parseInt(heading.getAttribute('data-order') || '1', 10),
-        content: heading.getAttribute('data-heading') || '',
+        depth,
+        content: getCleanedText(heading),
         id: heading.id,
         getNode: () =>
           document.getElementById(heading.id) as HTMLHeadingElement,
@@ -28,7 +41,6 @@ function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
 
 export function getHeadings(): Array<Heading> {
   const root = document.getElementById('mdx-root')
-  console.log(root)
 
   if (!root) {
     return []
