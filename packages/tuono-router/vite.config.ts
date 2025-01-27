@@ -8,8 +8,7 @@ const config = defineConfig({
   plugins: [react()],
   test: {
     name: 'tuono-router',
-    watch: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
   },
 })
