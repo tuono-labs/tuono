@@ -46,7 +46,15 @@ struct Args {
     action: Actions,
 }
 
+fn check_for_tuono_config() {
+    if !PathBuf::from("tuono.config.ts").exists() {
+        eprintln!("Cannot find tuono.config.ts - is this a tuono project?");
+        std::process::exit(1);
+    }
+}
+
 fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
+    check_for_tuono_config();
     check_tuono_folder()?;
     let app = bundle_axum_source(mode)?;
     create_client_entry_files()?;
