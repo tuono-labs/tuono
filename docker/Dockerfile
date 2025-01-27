@@ -16,7 +16,7 @@ COPY .nvmrc /tmp/.nvmrc
 
 ## Download the Node.js standelone binary archive && extract it && clean files
 
-RUN ["/bin/sh", "-c", "NODE_VERSION=$(cat /tmp/.nvmrc) && \
+RUN ["/bin/sh", "-c", "NODE_VERSION=$(cat /tmp/.nvmrc | tr -d '\r') && \
     wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz && \
     tar xf node-v${NODE_VERSION}-linux-x64.tar.xz --strip-components 1 && \
     rm node-v${NODE_VERSION}-linux-x64.tar.xz /tmp/.nvmrc"]

@@ -20,11 +20,11 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remark-gfm": "4.0.0",
-    "tuono": "npm:tuono@0.17.3"
+    "tuono": "npm:tuono@0.17.5"
   },
   "devDependencies": {
     "@mdx-js/rollup": "3.1.0",
-    "@types/react": "19.0.7",
+    "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "postcss": "8.5.1",
     "postcss-preset-mantine": "1.17.0",

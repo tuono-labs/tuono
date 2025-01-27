@@ -21,9 +21,25 @@ const CONFIG_PATH = path.join(
 function removeViteProperties(
   config: InternalTuonoConfig,
 ): Omit<InternalTuonoConfig, 'vite'> {
-  const newConfig = structuredClone(config)
-  delete newConfig['vite']
-  return newConfig
+  /**
+   * Using {@link structuredClone} cause the following errors based on runtime env:
+   * ```text
+   * node
+   * DOMException [DataCloneError]: configureServer(s){a.push(s)} could not be cloned.
+   *
+   * vitest
+   * DataCloneError: (id) => id === runtimePublicPath ? id : void 0 could not be cloned.
+   * ```
+   * when vite plugins are passed inside to the config.
+   *
+   * Since the purpose of this function is to remove the vite object
+   * we are going to use destructing rather than {@link structuredClone} and `delete`
+   *
+   * @see https://github.com/tuono-labs/tuono/issues/414
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { vite, ...configRest } = config
+  return structuredClone(configRest)
 }
 
 /**

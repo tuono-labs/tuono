@@ -7,11 +7,6 @@ import { useRouterContext } from '../components/RouterContext'
 
 const isServer = typeof document === 'undefined'
 
-interface UseServerSidePropsReturn<TData> {
-  data: TData
-  isLoading: boolean
-}
-
 interface TuonoApi {
   data?: unknown
   info: {
@@ -25,17 +20,22 @@ const fetchClientSideData = async (): Promise<TuonoApi> => {
   return data
 }
 
+interface UseServerPayloadDataResult<TData> {
+  data: TData
+  isLoading: boolean
+}
+
 /*
  * Use the props provided by the SSR and dehydrate the
  * props for client side usage.
  *
  * In case is a client fetch the remote data API
  */
-export function useServerSideProps<T>(
+export function useServerPayloadData<TServerPayloadData>(
   route: Route,
-  // User defined props
-  serverSideProps: T,
-): UseServerSidePropsReturn<T> {
+  // User defined data
+  serverInitialData: TServerPayloadData,
+): UseServerPayloadDataResult<TServerPayloadData> {
   const isFirstRendering = useRef<boolean>(true)
   const { location, updateLocation } = useRouterContext()
   const [isLoading, setIsLoading] = useState<boolean>(
@@ -47,8 +47,8 @@ export function useServerSideProps<T>(
       !isFirstRendering.current,
   )
 
-  const [data, setData] = useState<T | undefined>(
-    (serverSideProps ?? window.__TUONO_SSR_PROPS__?.props) as T,
+  const [data, setData] = useState<TServerPayloadData | undefined>(
+    serverInitialData,
   )
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export function useServerSideProps<T>(
             updateLocation(parsedLocation)
             return
           }
-          setData(response.data as T)
+          setData(response.data as TServerPayloadData)
         } catch (error) {
           throw Error('Failed loading Server Side Data', { cause: error })
         } finally {
@@ -95,5 +95,5 @@ export function useServerSideProps<T>(
     }
   }, [location.pathname, route.options.hasHandler, updateLocation])
 
-  return { isLoading, data: data as T }
+  return { isLoading, data: data as TServerPayloadData }
 }

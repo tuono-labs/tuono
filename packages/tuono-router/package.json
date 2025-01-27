@@ -1,6 +1,6 @@
 {
   "name": "tuono-router",
-  "version": "0.17.4",
+  "version": "0.17.5",
   "description": "React routing component for the framework tuono. Tuono is the react/rust fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
@@ -53,9 +53,9 @@
     "@tanstack/config": "0.7.13",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.1.0",
-    "@types/react": "19.0.7",
+    "@types/react": "19.0.8",
     "@vitejs/plugin-react-swc": "3.7.2",
-    "jsdom": "25.0.1",
+    "happy-dom": "16.7.3",
     "react": "19.0.0",
     "vite": "5.4.12",
     "vitest": "2.1.8"

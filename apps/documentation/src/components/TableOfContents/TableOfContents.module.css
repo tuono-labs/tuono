@@ -1,47 +1,33 @@
-/*
- * Component inspired by: https://github.com/mantinedev/mantine/tree/master/apps/mantine.dev/src/components/TableOfContents
- */
 .wrapper {
-  padding-left: var(--mantine-spacing-md);
   position: sticky;
   top: var(--mantine-spacing-xl);
-  right: 0;
   padding-top: 55px;
-  flex: 0 0 calc(var(--docs-table-of-contents-width) - 20px);
-  width: 200px;
+  flex: 0 0 calc(250px - 20px);
+  min-width: 220px;
+  max-width: 220px;
+  height: 100vh;
 
-  @mixin rtl {
-    padding-left: 0;
-    padding-right: var(--mantine-spacing-md);
-    right: auto;
-    left: 0;
-  }
-
-  &[data-with-tabs] {
-    padding-top: 0;
-    top: calc(var(--mantine-spacing-xl) + 60px);
+  /* var(--mantine-breakpoint-md) = 62em */
+  @media (max-width: 62em) {
+    display: none;
   }
 }
 
 .inner {
-  padding-bottom: var(--mantine-spacing-xl);
-  padding-left: var(--mantine-spacing-md);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  @mixin rtl {
-    padding-left: 0;
-    padding-right: var(--mantine-spacing-md);
-  }
 }
 
 .link {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   display: block;
   border-left: 1px solid transparent;
   padding: 8px var(--mantine-spacing-md);
   margin-left: -1px;
-  padding-left: calc(var(--toc-link-offset) * var(--mantine-spacing-lg));
+  padding-left: calc(1 * var(--mantine-spacing-lg));
   border-top-right-radius: var(--mantine-radius-sm);
   border-bottom-right-radius: var(--mantine-radius-sm);
 
@@ -58,10 +44,19 @@
     border-right: 1px solid transparent;
     margin-left: 0;
     margin-right: -1px;
-    border-top-left-radius: var(--mantine-radius-sm);
-    border-bottom-left-radius: var(--mantine-radius-sm);
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: var(--mantine-radius-sm) 0 0 var(--mantine-radius-sm);
+  }
+
+  &:hover {
+    border-color: var(--mantine-color-violet-1);
+
+    @mixin light {
+      color: var(--mantine-color-black);
+    }
+
+    @mixin dark {
+      color: var(--mantine-color-violet-1);
+    }
   }
 
   &[data-active] {
@@ -69,20 +64,12 @@
 
     @mixin light {
       color: var(--mantine-color-violet-8);
-      background-color: var(--mantine-color-violet-0);
     }
 
     @mixin dark {
       color: var(--mantine-color-violet-1);
-      background-color: #534a6d;
     }
   }
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--mantine-spacing-md);
 }
 
 .title {
