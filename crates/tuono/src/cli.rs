@@ -54,6 +54,7 @@ fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
     Ok(app)
 }
 
+#[dotenvy::load(path = ".env", required = false, override_ = true)]
 pub fn app() -> std::io::Result<()> {
     let args = Args::parse();
 
