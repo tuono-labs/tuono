@@ -108,10 +108,7 @@ fn it_successfully_create_catch_all_routes() {
 
     temp_tuono_project.add_file("./src/routes/[...all_routes].rs");
 
-    temp_tuono_project.add_file_with_content(
-        "./src/routes/api/[...all_apis].rs",
-        &format!("{POST_API_FILE}"),
-    );
+    temp_tuono_project.add_file_with_content("./src/routes/api/[...all_apis].rs", POST_API_FILE);
 
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
     test_tuono_build
@@ -176,4 +173,30 @@ fn it_fails_without_installed_build_script() {
         .assert()
         .failure()
         .stderr("[CLI] Failed to read tuono.config.ts\n");
+}
+
+#[test]
+#[serial]
+fn dev_fails_with_no_config() {
+    let _temp_tuono_project = TempTuonoProject::new_with_no_config();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("dev")
+        .assert()
+        .failure()
+        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+}
+
+#[test]
+#[serial]
+fn build_fails_with_no_config() {
+    let _temp_tuono_project = TempTuonoProject::new_with_no_config();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("dev")
+        .assert()
+        .failure()
+        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
 }

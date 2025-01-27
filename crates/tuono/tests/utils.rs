@@ -18,6 +18,14 @@ pub struct TempTuonoProject {
 
 impl TempTuonoProject {
     pub fn new() -> Self {
+        let project = TempTuonoProject::new_with_no_config();
+
+        project.add_file("./tuono.config.ts");
+
+        project
+    }
+
+    pub fn new_with_no_config() -> Self {
         let original_dir = env::current_dir().expect("Failed to read current_dir");
         let temp_dir = tempdir().expect("Failed to create temp_dir");
 
@@ -33,7 +41,7 @@ impl TempTuonoProject {
         self.temp_dir.path()
     }
 
-    pub fn add_file<'a>(&self, path: &'a str) -> File {
+    pub fn add_file(&self, path: &str) -> File {
         let path = PathBuf::from(path);
         create_all(
             path.parent().expect("Route path does not have any parent"),
@@ -60,7 +68,7 @@ impl TempTuonoProject {
 impl Drop for TempTuonoProject {
     fn drop(&mut self) {
         // Set back the current dir in the previous state
-        env::set_current_dir(self.original_dir.to_owned())
+        env::set_current_dir(&self.original_dir)
             .expect("Failed to restore the original directory.");
     }
 }
