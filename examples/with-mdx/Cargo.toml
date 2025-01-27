@@ -8,6 +8,6 @@ name = "tuono"
 path = ".tuono/main.rs"
 
 [dependencies]
-tuono_lib = { path = "../../crates/tuono_lib/"}
+tuono = { package = "tuono_lib", path = "../../crates/tuono_lib/" }
 serde = { version = "1.0.202", features = ["derive"] }
 

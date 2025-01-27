@@ -1,7 +1,7 @@
 // src/routes/pokemons/[pokemon].rs
 use reqwest::{Client, StatusCode};
 use serde::{Deserialize, Serialize};
-use tuono_lib::{Props, Request, Response};
+use tuono::{Props, Request, Response};
 
 const POKEMON_API: &str = "https://pokeapi.co/api/v2/pokemon";
 
@@ -13,7 +13,7 @@ struct Pokemon {
     height: u16,
 }
 
-#[tuono_lib::handler]
+#[tuono::handler]
 async fn get_pokemon(req: Request, fetch: Client) -> Response {
     // The param `pokemon` is defined in the route filename [pokemon].rs
     let pokemon = req.params.get("pokemon").unwrap();
