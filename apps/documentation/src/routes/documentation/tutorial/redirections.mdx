@@ -25,9 +25,9 @@ First, let's create a new route by just creating a new file `/pokemons/GOAT.rs` 
 
 ```rs
 // src/routes/pokemons/GOAT.rs
-use tuono_lib::{Request, Response};
+use tuono::{Request, Response};
 
-#[tuono_lib::handler]
+#[tuono::handler]
 async fn redirect_to_goat(_req: Request) -> Response {
     // Of course the GOAT is mewtwo - feel free to select your favourite 😉
     Response::Redirect("/pokemons/mewtwo".to_string())

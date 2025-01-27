@@ -45,7 +45,7 @@ Now the `ApplicationState` is available on all the handlers as following:
 ```rs
 // src/routes/index.rs
 
-#[tuono_lib::handler]
+#[tuono::handler]
 // The first argument always is the Request
 // The ApplicationState arguments are optional. You can use just the ones you need
 // to use in the handler (with no specific order).

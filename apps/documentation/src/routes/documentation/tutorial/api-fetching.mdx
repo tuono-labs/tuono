@@ -29,7 +29,7 @@ Clear the `index.rs` file and paste:
 // src/routes/index.rs
 use serde::{Deserialize, Serialize};
 use reqwest::Client;
-use tuono_lib::{Props, Request, Response};
+use tuono::{Props, Request, Response};
 
 const ALL_POKEMON: &str = "https://pokeapi.co/api/v2/pokemon?limit=151";
 
@@ -44,7 +44,7 @@ struct Pokemon {
     url: String,
 }
 
-#[tuono_lib::handler]
+#[tuono::handler]
 async fn get_all_pokemons(_req: Request, fetch: Client) -> Response {
     return match fetch.get(ALL_POKEMON).send().await {
         Ok(res) => {
@@ -93,7 +93,7 @@ name = "tuono"
 path = ".tuono/main.rs"
 
 [dependencies]
-tuono_lib = "0.14.0" # the version might be different
+tuono = { package = "tuono_lib", version = "0.17.5" } # the version might be different
 serde = { version = "1.0.202", features = ["derive"] }
 ++ reqwest = "0.12.9" # the version might be different
 ```
