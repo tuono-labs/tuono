@@ -1,5 +1,4 @@
 use clap::crate_version;
-use reqwest::blocking;
 use reqwest::blocking::Client;
 use serde::Deserialize;
 use std::env;
@@ -49,7 +48,7 @@ struct GithubFile {
     element_type: GithubFileType,
 }
 
-fn create_file(path: PathBuf, content: String) -> std::io::Result<()> {
+fn create_file(path: PathBuf, content: String) -> io::Result<()> {
     let mut file = File::create(&path).unwrap_or_else(|err| {
         exit_with_error(&format!(
             "Failed to create file {}: {}",
@@ -71,7 +70,7 @@ pub fn create_new_project(
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
-    let client = blocking::Client::builder()
+    let client = Client::builder()
         .user_agent("")
         .build()
         .unwrap_or_else(|_| exit_with_error("Error: Failed to build request client"));
@@ -197,7 +196,7 @@ fn create_directories(
             let path = PathBuf::from(&path.replace(&format!("examples/{template}/"), ""));
 
             let dir_path = folder_path.join(&path);
-            create_dir(&dir_path).unwrap();
+            create_dir(&dir_path)?;
         }
     }
     Ok(())
@@ -229,7 +228,7 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     let cargo_toml = fs::read_to_string(&cargo_toml_path)
         .unwrap_or_else(|err| exit_with_error(&format!("Failed to read Cargo.toml: {}", err)));
     let cargo_toml =
-        cargo_toml.replace("{ path = \"../../crates/tuono_lib/\"}", &format!("\"{v}\""));
+        cargo_toml.replace("{ package = \"tuono_lib\", path = \"../../crates/tuono_lib/\"}", &format!("\"{v}\""));
 
     let mut file = OpenOptions::new()
         .write(true)

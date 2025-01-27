@@ -35,7 +35,7 @@ pub const AXUM_ENTRY_POINT: &str = r##"
 // File automatically generated
 // Do not manually change it
 
-use tuono_lib::{tokio, Mode, Server, axum::Router};
+use tuono::{tokio, Mode, Server, axum::Router};
 // AXUM_GET_ROUTE_HANDLER
 
 const MODE: Mode = /*MODE*/;
@@ -179,7 +179,7 @@ fn generate_axum_source(app: &App, mode: Mode) -> String {
 
     for method in used_http_methods.into_iter() {
         let method = method.to_string().to_lowercase();
-        import_http_handler.push_str(&format!("use tuono_lib::axum::routing::{method};\n"))
+        import_http_handler.push_str(&format!("use tuono::axum::routing::{method};\n"))
     }
 
     src.replace("// AXUM_GET_ROUTE_HANDLER", &import_http_handler)
@@ -228,7 +228,7 @@ mod tests {
         let source_builder = App::new();
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-        assert!(!dev_bundle.contains("use tuono_lib::axum::routing::get;"));
+        assert!(!dev_bundle.contains("use tuono::axum::routing::get;"));
     }
 
     #[test]
@@ -243,6 +243,6 @@ mod tests {
             .insert(String::from("index.rs"), route);
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-        assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
+        assert!(dev_bundle.contains("use tuono::axum::routing::get;"));
     }
 }

@@ -74,7 +74,7 @@ const NO_HTML_EXTENSIONS: [&str; 1] = ["xml"];
 // TODO: Refine this function to catch
 // if the methods are commented.
 fn read_http_methods_from_file(path: &String) -> Vec<Method> {
-    let regex = Regex::new(r"tuono_lib::api\((.*?)\)]").expect("Failed to create API regex");
+    let regex = Regex::new(r"tuono::api\((.*?)\)]").expect("Failed to create API regex");
 
     let file = fs_extra::file::read_to_string(path).expect("Failed to read API file");
 
@@ -84,7 +84,7 @@ fn read_http_methods_from_file(path: &String) -> Vec<Method> {
             let http_method = proc_macro
                 .as_str()
                 // Extract just the element surrounded by the phrantesist.
-                .replace("tuono_lib::api(", "")
+                .replace("tuono::api(", "")
                 .replace(")]", "");
             Method::from_str(http_method.as_str()).unwrap_or(Method::GET)
         })

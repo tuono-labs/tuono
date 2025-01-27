@@ -4,8 +4,8 @@ use serial_test::serial;
 use std::fs;
 use utils::TempTuonoProject;
 
-const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
-const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
+const POST_API_FILE: &str = r"#[tuono::api(POST)]";
+const GET_API_FILE: &str = r"#[tuono::api(GET)]";
 
 #[cfg(target_os = "windows")]
 const BUILD_TUONO_CONFIG: &str = ".\\node_modules\\.bin\\tuono-build-config.cmd";
