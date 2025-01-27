@@ -13,15 +13,7 @@ pub struct TempTuonoProject {
 
 impl TempTuonoProject {
     pub fn new() -> Self {
-        let original_dir = env::current_dir().expect("Failed to read current_dir");
-        let temp_dir = tempdir().expect("Failed to create temp_dir");
-
-        env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
-
-        let project = TempTuonoProject {
-            original_dir,
-            temp_dir,
-        };
+        let project = TempTuonoProject::new_with_no_config();
 
         project.add_file("./tuono.config.ts");
 
