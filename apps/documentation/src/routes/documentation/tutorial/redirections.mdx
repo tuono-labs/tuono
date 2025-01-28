@@ -39,13 +39,13 @@ Now let's create the button in the home page to actually point to it!
 ```diff
 // src/routes/index.tsx
 
-<ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
-+      <PokemonLink pokemon={{ name: 'GOAT' }} id={0} />
-+
+      <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
+++      <PokemonLink pokemon={{ name: 'GOAT' }} id={0} />
+++
         {data.results.map((pokemon, i) => (
           <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
         ))}
-</ul>
+      </ul>
 ```
 
 Now at [http://localhost:3000/](http:/localhost:3000/) You will find a new link at the beginning of the list.
