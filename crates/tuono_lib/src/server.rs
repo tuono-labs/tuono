@@ -15,41 +15,44 @@ use crate::{
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
 
+pub fn tuono_internal_init_v8_platform() {
+    Ssr::create_platform();
+}
+
+#[derive(Debug)]
 pub struct Server {
     router: Router,
     mode: Mode,
+    pub listener: tokio::net::TcpListener,
+    pub address: String,
 }
 
 impl Server {
-    pub fn init(router: Router, mode: Mode) -> Server {
-        Ssr::create_platform();
+    pub async fn init(router: Router, mode: Mode) -> Server {
+        let config = Config::get().expect("[SERVER] Failed to load config");
 
-        GLOBAL_MODE.set(mode).unwrap();
-        GLOBAL_CONFIG
-            .set(Config::get().expect("[SERVER] Failed to load config"))
-            .unwrap();
+        let _ = GLOBAL_MODE.set(mode);
+        let _ = GLOBAL_CONFIG.set(config.clone());
 
         if mode == Mode::Prod {
             load_manifest()
         }
 
-        Server { router, mode }
+        let server_http_address = format!("{}:{}", config.server.host, config.server.port);
+
+        Server {
+            router,
+            mode,
+            address: server_http_address.clone(),
+            listener: tokio::net::TcpListener::bind(&server_http_address)
+                .await
+                .expect("[SERVER] Failed to bind to address"),
+        }
     }
 
-    pub async fn start(&self) {
-        let config = GLOBAL_CONFIG
-            .get()
-            .expect("Failed to get the internal config");
-
-        let server_http_address = format!("{}:{}", config.server.host, config.server.port);
-        let listener = tokio::net::TcpListener::bind(&server_http_address)
-            .await
-            .unwrap();
-
-        let server_url = format!("http://{}", &server_http_address);
-
+    pub async fn start(self) {
         if self.mode == Mode::Dev {
-            println!("  Ready at: {}\n", &server_url.blue().bold());
+            println!("  Ready at: {}\n", self.address.blue().bold());
             let router = self
                 .router
                 .to_owned()
@@ -61,11 +64,11 @@ impl Server {
                         .fallback(get(catch_all).layer(LoggerLayer::new())),
                 );
 
-            axum::serve(listener, router)
+            axum::serve(self.listener, router)
                 .await
                 .expect("Failed to serve development server");
         } else {
-            println!("  Production server at: {}\n", &server_url.blue().bold());
+            println!("  Production server at: {}\n", self.address.blue().bold());
             let router = self
                 .router
                 .to_owned()
@@ -75,7 +78,7 @@ impl Server {
                         .fallback(get(catch_all).layer(LoggerLayer::new())),
                 );
 
-            axum::serve(listener, router)
+            axum::serve(self.listener, router)
                 .await
                 .expect("Failed to serve production server");
         }

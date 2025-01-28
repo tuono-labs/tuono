@@ -35,7 +35,7 @@ pub const AXUM_ENTRY_POINT: &str = r##"
 // File automatically generated
 // Do not manually change it
 
-use tuono_lib::{tokio, Mode, Server, axum::Router};
+use tuono_lib::{tokio, Mode, Server, axum::Router, tuono_internal_init_v8_platform};
 // AXUM_GET_ROUTE_HANDLER
 
 const MODE: Mode = /*MODE*/;
@@ -46,6 +46,7 @@ const MODE: Mode = /*MODE*/;
 
 #[tokio::main]
 async fn main() {
+    tuono_internal_init_v8_platform();
     println!("\n  ⚡ Tuono v/*VERSION*/");
 
     //MAIN_FILE_DEFINITION//
@@ -54,7 +55,7 @@ async fn main() {
         // ROUTE_BUILDER
         //MAIN_FILE_USAGE//;
 
-    Server::init(router, MODE).start().await
+    Server::init(router, MODE).await.start().await
 }
 "##;
 
