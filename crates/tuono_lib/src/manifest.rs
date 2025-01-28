@@ -29,7 +29,7 @@ pub fn load_manifest() {
     let file = File::open(PathBuf::from(VITE_MANIFEST_PATH)).unwrap();
     let reader = BufReader::new(file);
     let manifest = serde_json::from_reader(reader).unwrap();
-    MANIFEST.set(remap_manifest_keys(manifest)).unwrap();
+    let _ = MANIFEST.set(remap_manifest_keys(manifest));
 }
 
 fn remap_manifest_keys(manifest: HashMap<String, BundleInfo>) -> HashMap<String, BundleInfo> {

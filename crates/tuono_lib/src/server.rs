@@ -15,6 +15,10 @@ use crate::{
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
 
+pub fn tuono_internal_init_v8_platform() {
+    Ssr::create_platform();
+}
+
 #[derive(Debug)]
 pub struct Server {
     router: Router,
@@ -25,12 +29,10 @@ pub struct Server {
 
 impl Server {
     pub async fn init(router: Router, mode: Mode) -> Server {
-        Ssr::create_platform();
-
         let config = Config::get().expect("[SERVER] Failed to load config");
 
-        GLOBAL_MODE.set(mode).unwrap();
-        GLOBAL_CONFIG.set(config.clone()).unwrap();
+        let _ = GLOBAL_MODE.set(mode);
+        let _ = GLOBAL_CONFIG.set(config.clone());
 
         if mode == Mode::Prod {
             load_manifest()
@@ -44,7 +46,7 @@ impl Server {
             address: server_http_address.clone(),
             listener: tokio::net::TcpListener::bind(&server_http_address)
                 .await
-                .unwrap(),
+                .expect("[SERVER] Failed to bind to address"),
         }
     }
 

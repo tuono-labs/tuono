@@ -5,11 +5,21 @@ use std::path::PathBuf;
 use std::{env, fs};
 use tempfile::{tempdir, TempDir};
 use tuono_lib::axum::routing::get;
-use tuono_lib::{axum::Router, Mode, Server};
+use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
 use crate::utils::health_check::get__tuono_internal_api as health_check;
 use crate::utils::route::tuono__internal__api as route_api;
 use crate::utils::route::tuono__internal__route as route;
+
+use std::sync::Once;
+
+static INIT: Once = Once::new();
+
+fn init_v8() {
+    INIT.call_once(|| {
+        tuono_internal_init_v8_platform();
+    })
+}
 
 fn add_file_with_content<'a>(path: &'a str, content: &'a str) {
     let path = PathBuf::from(path);
@@ -42,6 +52,7 @@ pub struct MockTuonoServer {
 
 impl MockTuonoServer {
     pub async fn spawn() -> Self {
+        init_v8();
         let original_dir = env::current_dir().expect("Failed to read current_dir");
         let temp_dir = tempdir().expect("Failed to create temp_dir");
 
@@ -51,7 +62,7 @@ impl MockTuonoServer {
         env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
 
         add_file_with_content(
-            ".tuono/config/config.json",
+            "./.tuono/config/config.json",
             r#"{"server": {"host": "localhost", "port": 0}}"#,
         );
 
