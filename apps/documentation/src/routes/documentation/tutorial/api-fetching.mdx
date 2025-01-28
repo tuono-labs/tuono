@@ -167,9 +167,9 @@ export default function IndexPage({
         </div>
       </div>
       <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
-        {data.results.map((pokemon) => {
-          return pokemon.name
-        })}
+        {data.results.map((pokemon, i) => (
+          <li key={`${pokemon.name}-${i}`}>{pokemon.name}</li>
+        ))}
       </ul>
     </>
   )
