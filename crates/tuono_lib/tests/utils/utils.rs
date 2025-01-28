@@ -8,8 +8,8 @@ use tuono_lib::axum::routing::get;
 use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
 use crate::utils::health_check::get__tuono_internal_api as health_check;
+use crate::utils::route as html_route;
 use crate::utils::route::tuono__internal__api as route_api;
-use crate::utils::route::tuono__internal__route as route;
 
 use std::sync::Once;
 
@@ -74,9 +74,9 @@ impl MockTuonoServer {
         );
 
         let router = Router::new()
-            .route("/", get(route))
+            .route("/", get(html_route::tuono__internal__route))
+            .route("/tuono/data", get(html_route::tuono__internal__api))
             .route("/health_check", get(health_check))
-            .route("/not-found", get(route))
             .route("/route-api", get(route_api));
 
         let server = Server::init(router, Mode::Prod).await;
@@ -99,7 +99,6 @@ impl MockTuonoServer {
 
 impl Drop for MockTuonoServer {
     fn drop(&mut self) {
-        println!("Dropping MockTuonoServer");
         // Set back the current dir in the previous state
         env::set_current_dir(self.original_dir.to_owned())
             .expect("Failed to restore the original directory.");
