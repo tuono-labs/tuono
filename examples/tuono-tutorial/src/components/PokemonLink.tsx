@@ -1,29 +1,23 @@
 import type { JSX } from 'react'
 import { Link } from 'tuono'
 
+import { PokemonImage } from './PokemonImage'
+
 import styles from './PokemonLink.module.css'
 
-interface Pokemon {
+interface PokemonLinkProps {
+  id: number
   name: string
 }
 
 export default function PokemonLink({
-  pokemon,
   id,
-}: {
-  pokemon: Pokemon
-  id: number
-}): JSX.Element {
+  name,
+}: PokemonLinkProps): JSX.Element {
   return (
-    <Link
-      className={styles.link}
-      href={`/pokemons/${pokemon.name}`}
-      id={pokemon.name}
-    >
-      {pokemon.name}
-      <img
-        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-      />
+    <Link href={`/pokemons/${name}`} className={styles.link} id={id.toString()}>
+      {name}
+      <PokemonImage id={id} size="sm" />
     </Link>
   )
 }

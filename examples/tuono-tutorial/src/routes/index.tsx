@@ -2,14 +2,10 @@
 import type { JSX } from 'react'
 import type { TuonoProps } from 'tuono'
 
-import PokemonLink from '@/components/PokemonLink'
-
-interface Pokemon {
-  name: string
-}
+import PokemonLink from '../components/PokemonLink'
 
 interface IndexProps {
-  results: Array<Pokemon>
+  results: Array<{ name: string; url: string }>
 }
 
 export default function IndexPage({
@@ -47,10 +43,10 @@ export default function IndexPage({
         </div>
       </div>
       <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
-        <PokemonLink pokemon={{ name: 'GOAT' }} id={0} />
+        <PokemonLink name="GOAT" id={0} />
 
         {data.results.map((pokemon, i) => (
-          <PokemonLink key={i} pokemon={pokemon} id={i + 1} />
+          <PokemonLink key={pokemon.name} name={pokemon.name} id={i + 1} />
         ))}
       </ul>
     </>

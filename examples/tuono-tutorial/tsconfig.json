@@ -1,27 +1,30 @@
 {
   "compilerOptions": {
+    // Language and Environment
     "target": "ES2020",
-    "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
+    "useDefineForClassFields": true,
 
-    /* Linting */
+    // Modules
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+
+    // Emit
+    "noEmit": true,
+
+    // Interop Constraints
+    "isolatedModules": true,
+
+    // Typechecking
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+
+    // Completeness
+    "skipLibCheck": true
   },
   "include": ["src", "tuono.config.ts"]
 }
