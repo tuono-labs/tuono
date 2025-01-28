@@ -1,23 +1,38 @@
+// src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
 import type { TuonoProps } from 'tuono'
+import { Link } from 'tuono'
 
-import PokemonView from '@/components/PokemonView'
+import PokemonView from '../../components/PokemonView'
 
 interface Pokemon {
+  id: number
   name: string
-  id: string
   weight: number
   height: number
 }
 
 export default function PokemonPage({
+  isLoading,
   data,
 }: TuonoProps<Pokemon>): JSX.Element {
   return (
-    <>
-      <title>{`Pokemon: ${data?.name ?? ''}`}</title>
+    <div>
+      <Link href="/">Back</Link>
 
-      <PokemonView pokemon={data} />
-    </>
+      {isLoading && (
+        <>
+          <title>Pokemon: loading...</title>
+          <div>Loading...</div>
+        </>
+      )}
+
+      {data?.id && (
+        <>
+          <title>{`Pokemon: ${data.name}`}</title>
+          <PokemonView pokemon={data} />
+        </>
+      )}
+    </div>
   )
 }
