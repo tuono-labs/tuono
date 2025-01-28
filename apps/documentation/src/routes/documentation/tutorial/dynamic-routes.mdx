@@ -63,80 +63,92 @@ async fn get_pokemon(req: Request, fetch: Client) -> Response {
 Then let’s work on the frontend. Paste into the `[pokemon].tsx` file the following code:
 
 ```tsx
+// src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
-import { TuonoProps } from 'tuono'
+import type { TuonoProps } from 'tuono'
+import { Link } from 'tuono'
+
 import PokemonView from '../../components/PokemonView'
 
-export default function Pokemon({ data }: TuonoProps): JSX.Element {
-  return <PokemonView pokemon={data} />
-}
-```
-
-The browser should complain that the component `PokemonView` does not exist. Let’s create it then!
-
-```tsx
-// components/PokemonView.tsx
-import { Link } from 'tuono'
-import styles from './PokemonView.module.css'
-
 interface Pokemon {
+  id: number
   name: string
-  id: string
   weight: number
   height: number
 }
 
-export default function PokemonView({
-  pokemon,
-}: {
-  pokemon?: Pokemon
-}): JSX.Element {
+export default function PokemonPage({
+  isLoading,
+  data,
+}: TuonoProps<Pokemon>): JSX.Element {
   return (
     <div>
-      <Link className={styles['back-btn']} href="/">
-        Back
-      </Link>
-      {pokemon?.name && (
-        <div className={styles.pokemon}>
-          <div>
-            <h1 className={styles.name}>{pokemon.name}</h1>
-            <dl className={styles.spec}>
-              <dt className={styles.label}>Weight:</dt>
-              <dd>{pokemon.weight}lbs</dd>
-            </dl>
-            <dl className={styles.spec}>
-              <dt className={styles.label}>Height:</dt>
-              <dd>{pokemon.height}ft</dd>
-            </dl>
-          </div>
-          <img
-            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
-          />
-        </div>
+      <Link href="/">Back</Link>
+
+      {isLoading && (
+        <>
+          <div>Loading...</div>
+        </>
+      )}
+
+      {data?.id && (
+        <>
+          <PokemonView pokemon={data} />
+        </>
       )}
     </div>
   )
 }
 ```
 
-<br />
+The browser should complain that the component `PokemonView` does not exist. Let’s create it then!
+
+```tsx
+// src/components/PokemonView.tsx
+import type { JSX } from 'react'
+
+import styles from './PokemonView.module.css'
+
+interface Pokemon {
+  id: number
+  name: string
+  weight: number
+  height: number
+}
+
+interface PokemonViewProps {
+  pokemon: Pokemon
+}
+
+export default function PokemonView({
+  pokemon,
+}: PokemonViewProps): JSX.Element {
+  return (
+    <div className={styles.pokemon}>
+      <div>
+        <h1 className={styles.name}>{pokemon.name}</h1>
+        <dl className={styles.spec}>
+          <dt className={styles.label}>Weight: </dt>
+          <dd>{pokemon.weight}lbs</dd>
+        </dl>
+        <dl className={styles.spec}>
+          <dt className={styles.label}>Height: </dt>
+          <dd>{pokemon.height}ft</dd>
+        </dl>
+      </div>
+      <img
+        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
+        alt=""
+      />
+    </div>
+  )
+}
+```
+
+To have the proper style consider adding a new css module file:
 
 ```css
-/* components/PokemonView.module.css */
-.back-btn {
-  background-color: white;
-  border-radius: 10px;
-  padding: 7px 15px;
-  color: black;
-  text-decoration: none;
-  border: solid #f0f0f0 1px;
-  font-size: 20px;
-}
-
-.back-btn:hover {
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
+/* src/components/PokemonView.module.css */
 .pokemon {
   display: flex;
   justify-content: space-between;

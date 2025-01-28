@@ -1,9 +1,16 @@
+// src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
 import type { TuonoProps } from 'tuono'
 import { Link } from 'tuono'
 
-import { Pokemon } from '../../models/Pokemon'
 import PokemonView from '../../components/PokemonView'
+
+interface Pokemon {
+  id: number
+  name: string
+  weight: number
+  height: number
+}
 
 export default function PokemonPage({
   isLoading,

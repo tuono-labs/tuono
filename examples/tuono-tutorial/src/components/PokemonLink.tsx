@@ -1,3 +1,4 @@
+// src/components/PokemonLink.tsx
 import type { JSX } from 'react'
 import { Link } from 'tuono'
 

@@ -28,22 +28,21 @@ Create the following file `src/components/PokemonLink.tsx` and fill the content 
 import type { JSX } from 'react'
 import { Link } from 'tuono'
 
-interface Pokemon {
+interface PokemonLinkProps {
+  id: number
   name: string
 }
 
 export default function PokemonLink({
-  pokemon,
   id,
-}: {
-  pokemon: Pokemon
-  id: number
-}): JSX.Element {
+  name,
+}: PokemonLinkProps): JSX.Element {
   return (
-    <Link href={`/pokemons/${pokemon.name}`}>
-      {pokemon.name}
+    <Link href={`/pokemons/${name}`} className={styles.link} id={id.toString()}>
+      {name}
       <img
         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
+        alt=""
       />
     </Link>
   )
@@ -58,13 +57,12 @@ Now that the link is done, let’s import it into the `index.tsx` file
 ++  import PokemonLink from '../components/PokemonLink'
 
 // ...
-	<ul style={{ flexWrap: "wrap", display: "flex", gap: 10 }}>
---      {pokemons.map((pokemon) => {
---        return pokemon.name;
-++      {pokemons.map((pokemon, i) => {
-++        return <PokemonLink pokemon={pokemon} id={i + 1} key={i} />;
-      })}
-	</ul>
+	    <ul style={{ flexWrap: "wrap", display: "flex", gap: 10 }}>
+        {pokemons.map((pokemon, i) => (
+-         <li key={i + 1}>{pokemon.name}</li>
++         <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
+        })}
+	    </ul>
 // ...
 ```
 
@@ -111,26 +109,29 @@ Then import the styles into the `PokemonLink` component as following:
 ```diff
 // src/components/PokemonLink.tsx
 import type { JSX } from 'react'
-import { Link } from "tuono"
-import type { Pokemon } from "./../types/pokemon"
+import { Link } from 'tuono'
+
 ++ import styles from './PokemonLink.module.css'
 
+interface PokemonLinkProps {
+  id: number
+  name: string
+}
+
 export default function PokemonLink({
-  pokemon,
   id,
-}: {
-  pokemon: Pokemon;
-  id: number;
-}): JSX.Element {
+  name,
+}: PokemonLinkProps): JSX.Element {
   return (
---    <Link href={`/pokemons/${pokemon.name}`}>
-++    <Link className={styles.link} href={`/pokemons/${pokemon.name}`}>
-      {pokemon.name}
+--  <Link href={`/pokemons/${name}`} id={id.toString()}>
+++  <Link href={`/pokemons/${name}`} className={styles.link} id={id.toString()}>
+      {name}
       <img
         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
+        alt=""
       />
     </Link>
-  );
+  )
 }
 ```
 

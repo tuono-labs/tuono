@@ -40,10 +40,11 @@ Now let's create the button in the home page to actually point to it!
 // src/routes/index.tsx
 
 <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
-++      <PokemonLink pokemon={{ name: 'GOAT' }} id={0} />
-        {data.results.map((pokemon, i) => {
-          return <PokemonLink pokemon={pokemon} id={i + 1} key={i} />
-        })}
++      <PokemonLink pokemon={{ name: 'GOAT' }} id={0} />
++
+        {data.results.map((pokemon, i) => (
+          <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
+        ))}
 </ul>
 ```
 

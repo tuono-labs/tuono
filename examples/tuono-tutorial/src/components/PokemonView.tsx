@@ -1,14 +1,22 @@
+// src/components/PokemonView.tsx
 import type { JSX } from 'react'
-
-import { Pokemon } from '../models/Pokemon'
 
 import styles from './PokemonView.module.css'
 
+interface Pokemon {
+  id: number
+  name: string
+  weight: number
+  height: number
+}
+
+interface PokemonViewProps {
+  pokemon: Pokemon
+}
+
 export default function PokemonView({
   pokemon,
-}: {
-  pokemon: Pokemon
-}): JSX.Element {
+}: PokemonViewProps): JSX.Element {
   return (
     <div className={styles.pokemon}>
       <div>
