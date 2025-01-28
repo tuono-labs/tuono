@@ -57,12 +57,12 @@ Now that the link is done, let’s import it into the `index.tsx` file
 ++  import PokemonLink from '../components/PokemonLink'
 
 // ...
-	    <ul style={{ flexWrap: "wrap", display: "flex", gap: 10 }}>
+      <ul style={{ flexWrap: "wrap", display: "flex", gap: 10 }}>
         {pokemons.map((pokemon, i) => (
 --        <li key={i + 1}>{pokemon.name}</li>
 ++        <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
         })}
-	    </ul>
+      </ul>
 // ...
 ```
 
