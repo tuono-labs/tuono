@@ -63,7 +63,7 @@ impl MockTuonoServer {
 
         add_file_with_content(
             "./.tuono/config/config.json",
-            r#"{"server": {"host": "0.0.0.0", "port": 0}}"#,
+            r#"{"server": {"host": "127.0.0.1", "port": 0}}"#,
         );
 
         add_file_with_content("./out/server/prod-server.js", react_prod_build.as_str());
