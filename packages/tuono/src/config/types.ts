@@ -1,5 +1,8 @@
 import type { AliasOptions, DepOptimizationOptions, PluginOption } from 'vite'
 
+/**
+ * @see http://tuono.dev/documentation/configuration
+ */
 export interface TuonoConfig {
   server?: {
     host?: string
