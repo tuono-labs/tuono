@@ -2,8 +2,6 @@ import type { JSX } from 'react'
 
 import { Pokemon } from '../models/Pokemon'
 
-import { PokemonImage } from './PokemonImage'
-
 import styles from './PokemonView.module.css'
 
 export default function PokemonView({
@@ -16,15 +14,18 @@ export default function PokemonView({
       <div>
         <h1 className={styles.name}>{pokemon.name}</h1>
         <dl className={styles.spec}>
-          <dt className={styles.label}>Weight:</dt>
+          <dt className={styles.label}>Weight: </dt>
           <dd>{pokemon.weight}lbs</dd>
         </dl>
         <dl className={styles.spec}>
-          <dt className={styles.label}>Height:</dt>
+          <dt className={styles.label}>Height: </dt>
           <dd>{pokemon.height}ft</dd>
         </dl>
       </div>
-      <PokemonImage id={pokemon.id} size="md" />
+      <img
+        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
+        alt=""
+      />
     </div>
   )
 }
