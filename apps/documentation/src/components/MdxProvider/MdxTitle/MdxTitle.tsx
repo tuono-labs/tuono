@@ -29,7 +29,7 @@ function getIdFrom(children: ReactNode): string {
     ? children.map(getTextContent).join('')
     : getTextContent(children)
 
-    return textContent
+  return textContent
     .normalize('NFKD') // separate accented characters into their base form and diacritical marks
     .replace(/[\u0300-\u036f]/g, '') // remove all the accents
     .trim()
