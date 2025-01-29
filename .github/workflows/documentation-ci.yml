@@ -20,6 +20,10 @@ on:
       - '!Cargo.toml'
       - 'apps/documentation/**'
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     name: Check build
@@ -37,7 +41,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install tuono
-        run: cargo install tuono@0.17.5
+        run: cargo install tuono@0.17.6
 
       - name: Build project
         working-directory: ./apps/documentation

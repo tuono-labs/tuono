@@ -24,10 +24,22 @@ you can check the [official documentation](https://docs.github.com/en/pull-reque
 
 ---
 
-- If you are fixing an issue, bear in mind to link the issue itself in the PR description.
-- If you are adding a new feature, describe the intended use case that the feature fulfills.
+- Please do:
 
-> Bug fixes and new features should include tests.
+  - Fill the template in full
+
+    - If you are fixing an issue, bear in mind to link the issue itself in the PR description.
+    - If you are adding a new feature, describe the intended use case that the feature fulfills.
+
+  - Ensure your code is valid by running the test on you local machine.
+    Refer to ["Validate your changes" section](/documentation/contributing/local-development)
+
+- Please **don't**:
+
+  - Do not use force push after marking the PR ready for review.
+
+    **Reasoning:** GitHub cannot track changes across force pushes,
+    which slows down our ability to perform incremental reviews.
 
 ## Title
 
@@ -75,6 +87,18 @@ E.g.: `fix(crates/tuono): remove cargo warnings`
 
 A succinct title for the PR.
 (The title max length is set to 100 characters)
+
+## Addressing review feedback
+
+Once we've reviewed your PR, we’ll provide feedback on any changes that need attention.
+If you feel a suggested change isn’t correct, feel free to discuss it with us in the comments.
+
+Please [post your comments](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-comments-to-a-pull-request)
+as line comments when possible so they can be threaded.
+
+After addressing all feedback, whether through code changes or by starting a follow-up discussion,
+please [re-request a review](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews#re-requesting-a-review)
+from each maintainer whose feedback you've addressed.
 
 import NavigationButtons from '../../../components/NavigationButtons'
 

@@ -97,7 +97,7 @@ impl MockServerWrapper {
         status: u16,
         response_body: ResponseBody,
     ) {
-        env::set_var("GITHUB_API_BASE_UR", self.server.uri());
+        env::set_var("GITHUB_API_BASE_URL", self.server.uri());
         env::set_var("GITHUB_RAW_CONTENT_BASE_URL", self.server.uri());
 
         let mut mock = Mock::given(matchers::method(method)).and(matchers::path(path));

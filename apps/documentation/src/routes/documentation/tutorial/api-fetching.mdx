@@ -25,7 +25,7 @@ To start, let’s fetch all of them from the root page. Since we want to render 
 
 Clear the `index.rs` file and paste:
 
-```rust
+```rs
 // src/routes/index.rs
 use serde::{Deserialize, Serialize};
 use reqwest::Client;
@@ -76,8 +76,8 @@ You can load them in the `ApplicationState` of your app inside the `./src/app.rs
 
 To install it just run in your terminal:
 
-```bash
-$ cargo add reqwest
+```sh
+cargo add reqwest
 ```
 
 A new entry has just been added to your `Cargo.toml` file.
@@ -132,28 +132,30 @@ Now the Pokémon are correctly fetched and hydrated on the client side, so we ca
 import type { JSX } from 'react'
 import type { TuonoProps } from 'tuono'
 
-interface Pokemon {
-  name: string
-}
-
 interface IndexProps {
-  results: Pokemon[]
+  results: Array<{ name: string; url: string }>
 }
 
 export default function IndexPage({
   data,
 }: TuonoProps<IndexProps>): JSX.Element | null {
-  if (!data?.results) {
-    return null
-  }
+  if (!data?.results) return null
 
   return (
     <>
       <header className="header">
-        <a href="https://crates.io/crates/tuono" target="_blank">
+        <a
+          href="https://crates.io/crates/tuono"
+          target="_blank"
+          rel="noreferrer"
+        >
           Crates
         </a>
-        <a href="https://www.npmjs.com/package/tuono" target="_blank">
+        <a
+          href="https://www.npmjs.com/package/tuono"
+          target="_blank"
+          rel="noreferrer"
+        >
           Npm
         </a>
       </header>
@@ -167,9 +169,9 @@ export default function IndexPage({
         </div>
       </div>
       <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
-        {data.results.map((pokemon) => {
-          return pokemon.name
-        })}
+        {data.results.map((pokemon, i) => (
+          <li key={i + 1}>{pokemon.name}</li>
+        ))}
       </ul>
     </>
   )

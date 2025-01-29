@@ -28,32 +28,36 @@ tags](https://react.dev/reference/react-dom/components/title). Let's update the 
 ```diff
 // src/routes/index.tsx
 import type { JSX } from 'react'
-import type { TuonoProps } from "tuono";
+import type { TuonoProps } from 'tuono'
 
-interface Pokemon {
-  name: string
-}
+import PokemonLink from '../components/PokemonLink'
 
 interface IndexProps {
-  results: Pokemon[]
+  results: Array<{ name: string; url: string }>
 }
 
 export default function IndexPage({
   data,
-}: TuonoProps<IndexProps>): JSX.Element {
-  if (!data?.results) {
-    return <></>;
-  }
+}: TuonoProps<IndexProps>): JSX.Element | null {
+  if (!data?.results) return null
 
   return (
     <>
 ++    <title>Tuono tutorial</title>
 
       <header className="header">
-        <a href="https://crates.io/crates/tuono" target="_blank">
+        <a
+          href="https://crates.io/crates/tuono"
+          target="_blank"
+          rel="noreferrer"
+        >
           Crates
         </a>
-        <a href="https://www.npmjs.com/package/tuono" target="_blank">
+        <a
+          href="https://www.npmjs.com/package/tuono"
+          target="_blank"
+          rel="noreferrer"
+        >
           Npm
         </a>
       </header>
@@ -66,13 +70,15 @@ export default function IndexPage({
           <img src="react.svg" className="react" />
         </div>
       </div>
-      <ul style={{ flexWrap: "wrap", display: "flex", gap: 10 }}>
-        {data.results.map((pokemon) => {
-          return pokemon.name;
-        })}
+      <ul style={{ flexWrap: 'wrap', display: 'flex', gap: 10 }}>
+        <PokemonLink name="GOAT" id={0} />
+
+        {data.results.map((pokemon, i) => (
+          <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
+        ))}
       </ul>
     </>
-  );
+  )
 }
 ```
 
@@ -81,18 +87,43 @@ export default function IndexPage({
 ```diff
 // src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
-import { TuonoProps } from "tuono";
-import PokemonView from "../../components/PokemonView";
+import type { TuonoProps } from 'tuono'
+import { Link } from 'tuono'
 
-export default function Pokemon({ data }: TuonoProps): JSX.Element {
---  return <PokemonView pokemon={data} />;
-++  return (
-++        <>
-++            <title>Pokemon: ${data?.name}</title>
-++            <PokemonView pokemon={data} />
-++        </>
-++    )
+import PokemonView from '../../components/PokemonView'
+
+interface Pokemon {
+  id: number
+  name: string
+  weight: number
+  height: number
 }
+
+export default function PokemonPage({
+  isLoading,
+  data,
+}: TuonoProps<Pokemon>): JSX.Element {
+  return (
+    <div>
+      <Link href="/">Back</Link>
+
+      {isLoading && (
+        <>
+++        <title>Pokemon: loading...</title>
+          <div>Loading...</div>
+        </>
+      )}
+
+      {data?.id && (
+        <>
+++        <title>{`Pokemon: ${data.name}`}</title>
+          <PokemonView pokemon={data} />
+        </>
+      )}
+    </div>
+  )
+}
+
 ```
 
 import NavigationButtons from '../../../components/NavigationButtons'

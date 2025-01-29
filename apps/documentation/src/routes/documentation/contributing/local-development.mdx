@@ -158,6 +158,54 @@ docker exec -it tuono-source-container /bin/bash
 > On the documentation remember that `tuono` `npm` package is installed from the registry and
 > it is not linked to the repository.
 
+## Validate your changes
+
+The following checks are all run on pull requests automatically.
+
+You can also perform them locally.
+
+## Formatting
+
+For the typescript part you can run:
+
+```sh
+pnpm run format:check && pnpm run -w repo:root:format:check
+```
+
+For the rust codebase run:
+
+```sh
+cargo fmt
+```
+
+### Linting
+
+For the typescript part you can run:
+
+```sh
+pnpm run lint
+```
+
+For the rust codebase run:
+
+```sh
+cargo clippy -- -D warnings
+```
+
+### Tests
+
+For the typescript part you can run:
+
+```sh
+pnpm run test
+```
+
+For the rust codebase run:
+
+```sh
+cargo test
+```
+
 import NavigationButtons from '../../../components/NavigationButtons'
 
 <NavigationButtons

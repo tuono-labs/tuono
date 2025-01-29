@@ -36,7 +36,7 @@ export default function Hero(): JSX.Element {
                 size="lg"
                 style={{ border: 'solid 1px var(--mantine-color-violet-1)' }}
                 color="gray"
-                leftSection="$ cargo install tuono"
+                leftSection="cargo install tuono"
                 rightSection={
                   copied ? (
                     <IconCheck style={{ width: rem(20) }} />

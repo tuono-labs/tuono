@@ -63,7 +63,7 @@ pub fn create_new_project(
     let folder = folder_name.unwrap_or(".".to_string());
     let github_raw_url =
         dotenvy::var("GITHUB_RAW_CONTENT_BASE_URL").expect("GITHUB_RAW_CONTENT_BASE_URL not set");
-    let base_url = dotenvy::var("GITHUB_API_BASE_UR").expect("GITHUB_API_BASE_UR not set");
+    let base_url = dotenvy::var("GITHUB_API_BASE_URL").expect("GITHUB_API_BASE_URL not set");
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
