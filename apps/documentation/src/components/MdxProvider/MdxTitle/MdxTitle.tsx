@@ -29,15 +29,18 @@ function getIdFrom(children: ReactNode): string {
     ? children.map(getTextContent).join('')
     : getTextContent(children)
 
-  return textContent
-    .normalize('NFKD') // separate accented characters into their base form and diacritical marks
-    .replace(/[\u0300-\u036f]/g, '') // remove all the accents
-    .trim()
-    .toLowerCase()
-    .replace(/\./g, '-') // some titles (configuration) contain keypath, so replace dots with hyphens
-    .replace(/[^a-z0-9 -]/g, '') // remove non-alphanumeric characters
-    .replace(/\s+/g, '-') // replace spaces with hyphens
-    .replace(/-+/g, '-') // remove consecutive hyphens
+  return (
+    textContent
+      // normalize cause tuono build --static to hang
+      // .normalize('NFKD')// separate accented characters into their base form and diacritical marks
+      .replace(/[\u0300-\u036f]/g, '') // remove all the accents
+      .trim()
+      .toLowerCase()
+      .replace(/\./g, '-') // some titles (configuration) contain keypath, so replace dots with hyphens
+      .replace(/[^a-z0-9 -]/g, '') // remove non-alphanumeric characters
+      .replace(/\s+/g, '-') // replace spaces with hyphens
+      .replace(/-+/g, '-') // remove consecutive hyphens
+  )
 }
 
 export const h = (order: 1 | 2 | 3 | 4 | 5 | 6): ElementType<TitleProps> => {
