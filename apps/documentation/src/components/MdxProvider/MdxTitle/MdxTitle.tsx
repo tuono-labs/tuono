@@ -1,19 +1,22 @@
-import type { ElementType, JSX, ReactNode } from 'react'
+import type { ElementType, JSX, ReactNode } from 'react';
+import { useState } from 'react'
 import { Title, type TitleProps } from '@mantine/core'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
+  const [headingId] = useState(getIdFrom(props.children))
+
   return (
     <Title
-      data-heading={idGen(props.children)}
+      data-heading={headingId}
       data-order={props.order}
       style={{ scrollMargin: 70 }}
       {...props}
-      id={idGen(props.children)}
+      id={headingId}
     />
   )
 }
 
-function idGen(children: ReactNode): string {
+function getIdFrom(children: ReactNode): string {
   const getTextContent = (node: ReactNode): string => {
     if (typeof node === 'string') return node
     if (typeof node === 'object' && node !== null && 'props' in node) {
@@ -23,12 +26,10 @@ function idGen(children: ReactNode): string {
     return ''
   }
 
-  if (Array.isArray(children)) {
-    const result = children.map(getTextContent).join('')
-    return result.toLowerCase().replace(/\s+/g, '-')
-  }
+  const textContent = Array.isArray(children)
+    ? children.map(getTextContent).join('')
+    : getTextContent(children)
 
-  const textContent = getTextContent(children)
   return textContent.toLowerCase().replace(/\s+/g, '-')
 }
 
@@ -37,5 +38,6 @@ export const h = (order: 1 | 2 | 3 | 4 | 5 | 6): ElementType<TitleProps> => {
     return <MdxTitle order={order} {...props} />
   }
   render.displayName = 'H'
+
   return render
 }
