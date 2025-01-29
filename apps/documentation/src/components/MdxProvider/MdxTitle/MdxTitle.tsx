@@ -1,17 +1,53 @@
-import type { ElementType, JSX, ReactNode } from 'react'
-import { Title, type TitleProps } from '@mantine/core'
+import {
+  useCallback,
+  type ElementType,
+  type JSX,
+  type MouseEvent,
+  type ReactNode,
+} from 'react'
+import { Title, Anchor, type TitleProps } from '@mantine/core'
+import { IconLink } from '@tabler/icons-react'
+import { useHover } from '@mantine/hooks'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
   const headingId = getIdFrom(props.children)
+  const { hovered, ref } = useHover()
+
+  const onLinkClick = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>): void => {
+      e.preventDefault()
+      if (ref.current) {
+        ref.current.scrollIntoView({
+          behavior: 'instant',
+          block: 'start',
+        })
+      }
+    },
+    [ref],
+  )
 
   return (
     <Title
+      ref={ref}
       data-heading={headingId}
       data-order={props.order}
-      style={{ scrollMargin: 70, marginTop: props.order === 1 ? 0 : 20 }}
+      style={{
+        scrollMargin: 70,
+        marginTop: props.order === 1 ? 0 : 20,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+      }}
       {...props}
       id={headingId}
-    />
+    >
+      {props.children}
+      {hovered && props.order !== 1 && (
+        <Anchor onClick={onLinkClick} h={20}>
+          <IconLink width={20} height={20} />
+        </Anchor>
+      )}
+    </Title>
   )
 }
 
