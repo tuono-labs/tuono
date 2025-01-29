@@ -1,4 +1,4 @@
-import type { ElementType, JSX, ReactNode } from 'react';
+import type { ElementType, JSX, ReactNode } from 'react'
 import { useState } from 'react'
 import { Title, type TitleProps } from '@mantine/core'
 
