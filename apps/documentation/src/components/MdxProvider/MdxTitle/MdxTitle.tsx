@@ -1,9 +1,8 @@
 import type { ElementType, JSX, ReactNode } from 'react'
-import { useState } from 'react'
 import { Title, type TitleProps } from '@mantine/core'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
-  const [headingId] = useState(getIdFrom(props.children))
+  const headingId = getIdFrom(props.children)
 
   return (
     <Title
@@ -30,7 +29,7 @@ function getIdFrom(children: ReactNode): string {
     ? children.map(getTextContent).join('')
     : getTextContent(children)
 
-  return textContent.toLowerCase().replace(/\s+/g, '-')
+  return textContent.toLowerCase().replace(/[\s\W_]+/g, '-')
 }
 
 export const h = (order: 1 | 2 | 3 | 4 | 5 | 6): ElementType<TitleProps> => {
