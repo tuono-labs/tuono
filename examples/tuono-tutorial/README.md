@@ -4,6 +4,6 @@ This project is the outcome of the [tuono tutorial](https://tuono.dev/documentat
 
 If you want to directly install it you can run:
 
-```bash
-$ tuono new my-project -t tuono-tutorial
+```sh
+tuono new -t tuono-tutorial
 ```

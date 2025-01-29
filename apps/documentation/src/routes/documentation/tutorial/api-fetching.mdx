@@ -25,7 +25,7 @@ To start, let’s fetch all of them from the root page. Since we want to render 
 
 Clear the `index.rs` file and paste:
 
-```rust
+```rs
 // src/routes/index.rs
 use serde::{Deserialize, Serialize};
 use reqwest::Client;
@@ -76,8 +76,8 @@ You can load them in the `ApplicationState` of your app inside the `./src/app.rs
 
 To install it just run in your terminal:
 
-```bash
-$ cargo add reqwest
+```sh
+cargo add reqwest
 ```
 
 A new entry has just been added to your `Cargo.toml` file.

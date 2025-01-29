@@ -2,8 +2,8 @@
 
 This is the starter tuono project. To download it run in your terminal:
 
-```shell
-$ tuono new [NAME]
+```sh
+tuono new my-first-tuono-app
 ```
 
 

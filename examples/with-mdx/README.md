@@ -1,9 +1,7 @@
-# Tuono starter
+# Tuono with MDX starter
 
 This is the starter tuono project. To download it run in your terminal:
 
-```shell
-$ tuono new [NAME]
+```sh
+tuono new tuono-with-mdx --template with-mdx
 ```
-
-
