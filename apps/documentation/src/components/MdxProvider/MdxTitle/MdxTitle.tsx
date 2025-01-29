@@ -11,7 +11,7 @@ import { useHover } from '@mantine/hooks'
 
 export default function MdxTitle(props: TitleProps): JSX.Element {
   const headingId = getIdFrom(props.children)
-  const { hovered, ref } = useHover()
+  const { hovered, ref } = useHover<HTMLHeadingElement>()
 
   const onLinkClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>): void => {
