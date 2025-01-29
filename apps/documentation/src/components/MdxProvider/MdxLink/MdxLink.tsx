@@ -3,31 +3,26 @@ import { Anchor } from '@mantine/core'
 import { Link } from 'tuono'
 import { IconExternalLink } from '@tabler/icons-react'
 
-import classes from './MdxLink.module.css'
-
 interface MdxLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode
 }
 
 export default function MdxLink(props: MdxLinkProps): JSX.Element {
-  if (
-    props.href?.startsWith('http') ||
-    props.href?.startsWith('https') ||
-    props.href?.startsWith('mailto')
-  ) {
+  if (props.href?.startsWith('http') || props.href?.startsWith('mailto')) {
     return (
       <Anchor
         component="a"
         {...props}
         target="_blank"
         variant="transparent"
-        className={classes.inner}
+        display="inline"
+        style={{ fontWeight: 600 }}
         mt={-2}
         p={0}
       >
         {props.children}
-        <div className={classes.iconWrapper}>
-          <IconExternalLink size="16px" />
+        <div style={{ display: 'inline-block', transform: 'translateY(3px)' }}>
+          <IconExternalLink size="16px" style={{ marginLeft: '4px' }} />
         </div>
       </Anchor>
     )
@@ -36,9 +31,10 @@ export default function MdxLink(props: MdxLinkProps): JSX.Element {
     <Anchor
       component={Link}
       {...props}
-      className={classes.inner}
       target="_blank"
       variant="transparent"
+      display="inline"
+      style={{ fontWeight: 600 }}
       mt={-2}
       p={0}
     />
