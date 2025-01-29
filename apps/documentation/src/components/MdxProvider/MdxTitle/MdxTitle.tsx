@@ -8,7 +8,7 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
     <Title
       data-heading={headingId}
       data-order={props.order}
-      style={{ scrollMargin: 70 }}
+      style={{ scrollMargin: 70, marginTop: props.order === 1 ? 0 : 20 }}
       {...props}
       id={headingId}
     />
