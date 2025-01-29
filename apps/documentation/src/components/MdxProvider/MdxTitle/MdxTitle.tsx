@@ -32,6 +32,7 @@ function getIdFrom(children: ReactNode): string {
   return (
     textContent
       // normalize cause tuono build --static to hang
+      // @see https://github.com/tuono-labs/tuono/issues/468
       // .normalize('NFKD')// separate accented characters into their base form and diacritical marks
       .replace(/[\u0300-\u036f]/g, '') // remove all the accents
       .trim()
