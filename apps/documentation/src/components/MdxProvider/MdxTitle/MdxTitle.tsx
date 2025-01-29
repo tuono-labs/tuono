@@ -4,7 +4,7 @@ import { Title, type TitleProps } from '@mantine/core'
 export default function MdxTitle(props: TitleProps): JSX.Element {
   return (
     <Title
-      data-heading={props.children}
+      data-heading={idGen(props.children)}
       data-order={props.order}
       style={{ scrollMargin: 70 }}
       {...props}
@@ -14,28 +14,22 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
 }
 
 function idGen(children: ReactNode): string {
-  if (Array.isArray(children)) {
-    const result = children
-      .map((child) => {
-        if (typeof child === 'string') {
-          return child
-        }
-        if (typeof child === 'object' && child !== null && 'props' in child) {
-          const childWithProps = child as { props?: { children?: ReactNode } }
-          return typeof childWithProps.props?.children === 'string'
-            ? childWithProps.props.children
-            : ''
-        }
-        return ''
-      })
-      .join('')
+  const getTextContent = (node: ReactNode): string => {
+    if (typeof node === 'string') return node
+    if (typeof node === 'object' && node !== null && 'props' in node) {
+      const child = node as { props?: { children?: ReactNode } }
+      return getTextContent(child.props?.children)
+    }
+    return ''
+  }
 
+  if (Array.isArray(children)) {
+    const result = children.map(getTextContent).join('')
     return result.toLowerCase().replace(/\s+/g, '-')
   }
 
-  return typeof children === 'string'
-    ? children.toLowerCase().replace(/\s+/g, '-')
-    : ''
+  const textContent = getTextContent(children)
+  return textContent.toLowerCase().replace(/\s+/g, '-')
 }
 
 export const h = (order: 1 | 2 | 3 | 4 | 5 | 6): ElementType<TitleProps> => {
