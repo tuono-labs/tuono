@@ -1,11 +1,7 @@
-import {
-  useCallback,
-  type ElementType,
-  type JSX,
-  type MouseEvent,
-  type ReactNode,
-} from 'react'
-import { Title, Anchor, type TitleProps } from '@mantine/core'
+import type { ElementType, JSX, MouseEventHandler, ReactNode } from 'react'
+import { useCallback } from 'react'
+import { Title, Anchor, Box } from '@mantine/core'
+import type { TitleProps } from '@mantine/core'
 import { IconLink } from '@tabler/icons-react'
 import { useHover } from '@mantine/hooks'
 
@@ -13,10 +9,15 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
   const headingId = getIdFrom(props.children)
   const { hovered, ref } = useHover<HTMLHeadingElement>()
 
-  const onLinkClick = useCallback(
-    (e: MouseEvent<HTMLAnchorElement>): void => {
+  const onLinkClick: MouseEventHandler<HTMLAnchorElement> = useCallback(
+    (e) => {
       e.preventDefault()
       if (ref.current) {
+        history.pushState(
+          null,
+          '',
+          `#${(ref.current.firstChild as HTMLHeadingElement).id} `,
+        )
         ref.current.scrollIntoView({
           behavior: 'instant',
           block: 'start',
@@ -27,27 +28,42 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
   )
 
   return (
-    <Title
+    <Box
       ref={ref}
       data-heading={headingId}
       data-order={props.order}
       style={{
-        scrollMargin: 70,
+        scrollMargin: 80,
         marginTop: props.order === 1 ? 0 : 20,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
       }}
       {...props}
       id={headingId}
     >
-      {props.children}
-      {hovered && props.order !== 1 && (
-        <Anchor onClick={onLinkClick} h={20}>
-          <IconLink width={20} height={20} />
-        </Anchor>
-      )}
-    </Title>
+      <Title
+        data-heading={props.children}
+        data-order={props.order}
+        display="inline"
+        style={{
+          scrollMargin: 80,
+          marginTop: props.order === 1 ? 0 : 20,
+        }}
+        id={idGen(props.children)}
+        {...props}
+      >
+        {props.children}
+        {hovered && props.order !== 1 && (
+          <Anchor
+            onClick={onLinkClick}
+            display="inline-flex"
+            ml={8}
+            mb={2}
+            style={{ alignItems: 'center', verticalAlign: 'middle' }}
+          >
+            <IconLink width={20} height={20} />
+          </Anchor>
+        )}
+      </Title>
+    </Box>
   )
 }
 
