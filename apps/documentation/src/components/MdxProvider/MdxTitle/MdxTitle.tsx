@@ -30,24 +30,22 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
   return (
     <Box
       ref={ref}
-      data-heading={headingId}
       data-order={props.order}
       style={{
         scrollMargin: 80,
         marginTop: props.order === 1 ? 0 : 20,
       }}
       {...props}
-      id={headingId}
     >
       <Title
-        data-heading={props.children}
+        data-heading={headingId}
+        id={headingId}
         data-order={props.order}
         display="inline"
         style={{
           scrollMargin: 80,
           marginTop: props.order === 1 ? 0 : 20,
         }}
-        id={idGen(props.children)}
         {...props}
       >
         {props.children}
