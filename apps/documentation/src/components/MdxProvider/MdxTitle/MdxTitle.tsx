@@ -5,11 +5,15 @@ import type { TitleProps } from '@mantine/core'
 import { IconLink } from '@tabler/icons-react'
 import { useHover } from '@mantine/hooks'
 
-export default function MdxTitle(props: TitleProps): JSX.Element {
-  const headingId = getIdFrom(props.children)
+export default function MdxTitle({
+  children,
+  order,
+  ...rest
+}: TitleProps): JSX.Element {
+  const headingId = getIdFrom(children)
   const { hovered, ref } = useHover<HTMLHeadingElement>()
 
-  const onLinkClick: MouseEventHandler<HTMLAnchorElement> = useCallback(
+  const handleAnchorClick: MouseEventHandler<HTMLAnchorElement> = useCallback(
     (e) => {
       e.preventDefault()
       if (ref.current) {
@@ -30,28 +34,28 @@ export default function MdxTitle(props: TitleProps): JSX.Element {
   return (
     <Box
       ref={ref}
-      data-order={props.order}
+      data-order={order}
       style={{
         scrollMargin: 80,
-        marginTop: props.order === 1 ? 0 : 20,
+        marginTop: order === 1 ? 0 : 20,
       }}
-      {...props}
+      {...rest}
     >
       <Title
         data-heading={headingId}
         id={headingId}
-        data-order={props.order}
+        data-order={order}
         display="inline"
         style={{
           scrollMargin: 80,
-          marginTop: props.order === 1 ? 0 : 20,
+          marginTop: order === 1 ? 0 : 20,
         }}
-        {...props}
+        {...rest}
       >
-        {props.children}
-        {hovered && props.order !== 1 && (
+        {children}
+        {hovered && order !== 1 && (
           <Anchor
-            onClick={onLinkClick}
+            onClick={handleAnchorClick}
             display="inline-flex"
             ml={8}
             mb={2}
