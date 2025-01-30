@@ -1,17 +1,71 @@
-import type { ElementType, JSX, ReactNode } from 'react'
-import { Title, type TitleProps } from '@mantine/core'
+import type { ElementType, JSX, MouseEventHandler, ReactNode } from 'react'
+import { useCallback } from 'react'
+import { Title, Anchor, Box } from '@mantine/core'
+import type { TitleProps } from '@mantine/core'
+import { IconLink } from '@tabler/icons-react'
+import { useHover } from '@mantine/hooks'
 
-export default function MdxTitle(props: TitleProps): JSX.Element {
-  const headingId = getIdFrom(props.children)
+export default function MdxTitle({
+  children,
+  order,
+  ...rest
+}: TitleProps): JSX.Element {
+  const headingId = getIdFrom(children)
+  const { hovered, ref } = useHover<HTMLHeadingElement>()
+
+  const handleAnchorClick: MouseEventHandler<HTMLAnchorElement> = useCallback(
+    (e) => {
+      e.preventDefault()
+      if (ref.current) {
+        history.pushState(
+          null,
+          '',
+          `#${(ref.current.firstChild as HTMLHeadingElement).id} `,
+        )
+        ref.current.scrollIntoView({
+          behavior: 'instant',
+          block: 'start',
+        })
+      }
+    },
+    [ref],
+  )
 
   return (
-    <Title
-      data-heading={headingId}
-      data-order={props.order}
-      style={{ scrollMargin: 70 }}
-      {...props}
-      id={headingId}
-    />
+    <Box
+      ref={ref}
+      data-order={order}
+      style={{
+        scrollMargin: 80,
+        marginTop: order === 1 ? 0 : 20,
+      }}
+      {...rest}
+    >
+      <Title
+        data-heading={headingId}
+        id={headingId}
+        data-order={order}
+        display="inline"
+        style={{
+          scrollMargin: 80,
+          marginTop: order === 1 ? 0 : 20,
+        }}
+        {...rest}
+      >
+        {children}
+        {hovered && order !== 1 && (
+          <Anchor
+            onClick={handleAnchorClick}
+            display="inline-flex"
+            ml={8}
+            mb={2}
+            style={{ alignItems: 'center', verticalAlign: 'middle' }}
+          >
+            <IconLink width={20} height={20} />
+          </Anchor>
+        )}
+      </Title>
+    </Box>
   )
 }
 

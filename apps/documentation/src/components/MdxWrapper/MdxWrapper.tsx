@@ -24,7 +24,6 @@ export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
         id="mdx-root"
         component="article"
         mt="xl"
-        px={16}
         py={36}
         className={classes.wrapper}
       >

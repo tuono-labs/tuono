@@ -11,6 +11,8 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 # Configuration
 
+## Overview
+
 Tuono can be configured using the `tuono.config.ts` file,
 which allows you to customize various aspects of the build process and development environment.
 
@@ -34,7 +36,7 @@ Tuono leverages Vite, a modern and fast build tool and development server for we
 
 As a result, **some** Vite configuration properties can be set in the `tuono.config.ts` file under the `vite` property.
 
-### vite.alias
+### `vite.alias`
 
 Useful for configuring custom source alias paths during imports
 
@@ -43,13 +45,13 @@ Useful for configuring custom source alias paths during imports
   - `Array<{ find: string | RegExp, replacement: string, customResolver?: ResolverFunction | ResolverObject }>`
 - [Vite documentation: resolve.alias](https://vite.dev/config/shared-options#resolve-alias)
 
-### vite.optimizeDeps
+### `vite.optimizeDeps`
 
 Vite's dependency optimizer used only during dev
 
 - [Vite documentation: Dep Optimization Options](https://vite.dev/config/dep-optimization-options)
 
-### vite.plugins
+### `vite.plugins`
 
 Useful for extending vite's functionality
 
@@ -60,7 +62,7 @@ Useful for extending vite's functionality
 
 The following options configure the server.
 
-## server.host
+### server.host
 
 - Type: `string`
 - Default: `'localhost'`
@@ -68,7 +70,7 @@ The following options configure the server.
 The hostname or IP address of the server.
 It can be a domain name (e.g., `"example.com"`) or an IP address (e.g., `"127.0.0.1"`)
 
-## server.port
+### `server.port`
 
 - Type: `number`
 - Default: `3000`
