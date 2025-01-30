@@ -46,6 +46,7 @@ export default function MdxTitle({
         id={headingId}
         data-order={order}
         display="inline"
+        order={order}
         style={{
           scrollMargin: 80,
           marginTop: order === 1 ? 0 : 20,
