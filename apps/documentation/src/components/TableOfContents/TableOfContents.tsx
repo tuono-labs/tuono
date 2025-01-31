@@ -72,6 +72,8 @@ export function TableOfContents(): JSX.Element | null {
     event.preventDefault()
     const element = document.getElementById(id)
     if (element) {
+      history.pushState(null, '', `#${element.id} `)
+
       element.scrollIntoView({
         behavior: 'instant',
         block: 'start',
