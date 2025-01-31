@@ -1,0 +1,168 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - API routes"
+  canonical="https://tuono.dev/documentation/routing/api-routes"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'API Routes' }]} />
+
+# API Routes
+
+Just like with [NextJS API routes ](https://nextjs.org/docs/pages/building-your-application/routing/api-routes). Tuono API routes provide a solution to build a public API.
+
+Any file inside the folder `src/routes/api` is mapped to the base url as `/api/*` and will be treated as an API endpoint instead of a page. They are server-side only bundles and won't increase your client-side bundle size.
+
+## HTTP Methods
+
+Tuono provides the following macros to define HTTP Request Methods
+
+```rs
+#[tuono_lib::api(GET)]
+#[tuono_lib::api(POST)]
+#[tuono_lib::api(PUT)]
+#[tuono_lib::api(PATCH)]
+#[tuono_lib::api(DELETE)]
+```
+
+API endpoints can only be accessed at the file level. This means that when making calls to the API, you need to use the name of the file as a parameter or identifier, rather than being able to access specific parts or contents within the file directly.
+
+Create the following file under `src/routes/api/health-check.rs`
+
+```rust
+// 👉 src/routes/api/health-check.rs
+use tuono_lib::axum::http::StatusCode;
+use tuono_lib::Request;
+
+#[tuono_lib::api(GET)]
+pub async fn health_check(_req: Request) -> StatusCode {
+    StatusCode::OK
+}
+```
+- Run `tuono dev` and you can access the API endpoint `health-check` using a browser / curl command
+```bash
+# call api using curl command
+curl -X GET http://localhost:3000/api/health-check 
+# returns a 200 OK response status
+```
+- NOTE: the `src/routes/` needs to be ommitted when calling the API
+- NOTE: Ensure you name your file appropriately as the filename translates to the endpoint
+
+
+## Sending a JSON response
+
+When sending a response back to the client you can send a JSON response, this must be a serializable object. In a real world application you might want to let the client know the status of the request depending on the result of the requested endpoint.
+
+Just like with Server side rendering, in order to serve JSON response, you define a struct.
+
+The following example sends a JSON response with the status code 200 (OK) and the result of the async operation. It's contained in a try catch block to handle any errors that may occur, with the appropriate status code and error message caught and sent back to the client:
+
+```rust
+// 👉 src/routes/api/get-app-response.rs
+use serde::{Deserialize, Serialize};
+use tuono_lib::{
+    axum::{        
+        response::{IntoResponse, Response},
+        Json,
+    },
+    Request,
+};
+
+#[tuono_lib::api(GET)]
+pub async fn get_app_response(_req: Request) -> impl IntoResponse {
+    
+    // need to be defined within api handler
+    #[derive(Serialize, Deserialize)]
+    struct MyResponse {
+        pub status: String,
+        pub message: String,
+    }
+
+    // need to be defined within api handler
+    fn result<T: IntoResponse>(t: T) -> Response {
+        t.into_response()
+    }
+
+    // ... business logic
+    let my_response: MyResponse = MyResponse {
+        status: "success".to_string(),
+        message: "Hello, world!".to_string(),
+    };
+
+    let app_response = Json(my_response);
+
+    result(app_response)
+}
+```
+- Run `tuono dev` and you can access the API endpoint `get-app-response` using a browser / curl command
+```bash
+# call api using curl command
+curl -X GET http://localhost:3000/api/get-app-response
+# returns a 200 OK response status with json payload
+# {"status":"success","message":"Hello, world!"}
+```
+- NOTE: Any struct or trait implementations, must be defined within the api handler.
+
+## Request with JSON payload
+
+We are constantly working to better our API endpoint with seamless body parser. 
+
+As of the current version of Tuono, you can parse the JSON payload by passing it as part of the headers.
+
+The following example shows an api endpoint, which accepts a POST request method, with JSON
+payload and returns a JSON response
+
+```rs
+// 👉 src/routes/api/post-create-todo.rs
+use serde::{Deserialize, Serialize};
+use tuono_lib::{
+    axum::{
+        http::StatusCode,
+        response::{IntoResponse, Response},
+        Json,
+    },
+    Request,
+};
+
+#[tuono_lib::api(POST)]
+pub async fn create_todo(req: Request) -> impl IntoResponse {
+
+    #[derive(Serialize, Deserialize)]
+    struct Todo {
+        pub title: String,
+    }
+
+    fn result<T: IntoResponse>(t: T) -> Response {
+        t.into_response()
+    }
+
+    let Some(req_header) = req.headers.get("Payload") else {
+        return result(StatusCode::BAD_REQUEST);
+    };
+
+    let Ok(req_header) = req_header.to_str() else {
+        return result(StatusCode::BAD_REQUEST);
+    };
+
+    let Ok(req) = serde_json::from_str::<Todo>(req_header) else {
+        return result(StatusCode::BAD_REQUEST);
+    };
+
+    result(Json(req))
+}
+```
+
+- Run `tuono dev` and you can do a POST to the API endpoint `post-create-todo` using Postman / curl command
+
+```bash
+# call api using curl command
+```bash
+curl  -X POST \
+  'http://localhost:3000/api/post-create-todo' \
+  --header 'Accept: */*' \  
+  --header 'Payload: {"title": "Rust essential book"}' # current way of passing payload
+  # returns a 200 OK response status with json payload
+  # { "title": "Rust essential book" }
+```

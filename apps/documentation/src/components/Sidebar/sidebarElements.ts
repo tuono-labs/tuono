@@ -108,6 +108,11 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
+        label: 'API Routes',
+        href: '/documentation/routing/api-routes',      
+      },
+      {
+        type: 'element',
         label: 'Defining routes',
         href: '/documentation/routing/defining-routes',
       },
