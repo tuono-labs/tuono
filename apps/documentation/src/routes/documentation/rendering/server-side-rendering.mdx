@@ -13,22 +13,29 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 ## Overview
 
-If a page uses **Server-side Rendering**, the page HTML is generated on **each request**.
+Server side rendering (SSR) allows each page to render the HTML on the server
+side by preloading the data needed for the render itself. SSR runs on each HTTP request.
 
-> By default, every page is automatically server side rendered.
+SSR is usually needed for:
+
+- SEO
+- Faster client side rendering
+- Reduced JS bundle required for the initial load
+
+## SSR on a route
 
 To enable SSR on a page you just need to create the same file with the rust extension:
 
 - `src/routes/about.tsx`
 - `src/routes/about.rs`
 
-and then create a #[tuono_lib::handler] in the rust file, 
+and then create a `#[tuono_lib::handler]` in the rust file,
 which will be the function called on each request before rendering the HTML.
 
 ## Example
 
-For example, suppose your page needs to pre-render frequently updated data
-(read from a local file). 
+Suppose your page needs to pre-render frequently updated data
+(read from a local file).
 You can write a handler which reads a JSON file and passes it to the route like below:
 
 ```rs
