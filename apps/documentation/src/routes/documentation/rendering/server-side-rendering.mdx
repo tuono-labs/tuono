@@ -22,8 +22,8 @@ To enable SSR on a page you just need to create the same file with the rust exte
 - `src/routes/about.tsx`
 - `src/routes/about.rs`
 
-and then create an `#[tuono_lib::handler]` in the rust file that will be the
-function actually called on each request before rendering the HTML.
+and then create a #[tuono_lib::handler] in the rust file, 
+which will be the function called on each request before rendering the HTML.
 
 ## Example
 
