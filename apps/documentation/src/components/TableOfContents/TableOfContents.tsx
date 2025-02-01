@@ -108,7 +108,7 @@ export function TableOfContents(): JSX.Element | null {
                   handleHeadingClick(e, heading.id)
                 }}
                 style={{
-                  paddingLeft: `calc(${heading.depth - 1} * var(--mantine-spacing-md))`,
+                  paddingLeft: `calc(${heading.order - 1} * var(--mantine-spacing-md))`,
                 }}
               >
                 {heading.content}
