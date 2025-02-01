@@ -109,10 +109,10 @@ export const sidebarElements: Array<SidebarElement> = [
       {
         type: 'element',
         label: 'API Routes',
-        href: '/documentation/routing/api-routes',      
+        href: '/documentation/routing/api-routes',
       },
       {
-        type: 'element',        
+        type: 'element',
         label: 'Pages and layout',
         href: '/documentation/routing/defining-routes',
       },

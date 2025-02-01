@@ -41,15 +41,17 @@ pub async fn health_check(_req: Request) -> StatusCode {
     StatusCode::OK
 }
 ```
+
 - Run `tuono dev` and you can access the API endpoint `health-check` using a browser / curl command
+
 ```bash
 # call api using curl command
-curl -X GET http://localhost:3000/api/health-check 
+curl -X GET http://localhost:3000/api/health-check
 # returns a 200 OK response status
 ```
+
 - NOTE: the `src/routes/` needs to be ommitted when calling the API
 - NOTE: Ensure you name your file appropriately as the filename translates to the endpoint
-
 
 ## Sending a JSON response
 
@@ -63,7 +65,7 @@ The following example sends a JSON response with the status code 200 (OK) and th
 // 👉 src/routes/api/get-app-response.rs
 use serde::{Deserialize, Serialize};
 use tuono_lib::{
-    axum::{        
+    axum::{
         response::{IntoResponse, Response},
         Json,
     },
@@ -72,7 +74,7 @@ use tuono_lib::{
 
 #[tuono_lib::api(GET)]
 pub async fn get_app_response(_req: Request) -> impl IntoResponse {
-    
+
     // need to be defined within api handler
     #[derive(Serialize, Deserialize)]
     struct MyResponse {
@@ -96,18 +98,21 @@ pub async fn get_app_response(_req: Request) -> impl IntoResponse {
     result(app_response)
 }
 ```
+
 - Run `tuono dev` and you can access the API endpoint `get-app-response` using a browser / curl command
+
 ```bash
 # call api using curl command
 curl -X GET http://localhost:3000/api/get-app-response
 # returns a 200 OK response status with json payload
 # {"status":"success","message":"Hello, world!"}
 ```
+
 - NOTE: Any struct or trait implementations, must be defined within the api handler.
 
 ## Request with JSON payload
 
-We are constantly working to better our API endpoint with seamless body parser. 
+We are constantly working to better our API endpoint with seamless body parser.
 
 As of the current version of Tuono, you can parse the JSON payload by passing it as part of the headers.
 
@@ -156,13 +161,13 @@ pub async fn create_todo(req: Request) -> impl IntoResponse {
 
 - Run `tuono dev` and you can do a POST to the API endpoint `post-create-todo` using Postman / curl command
 
-```bash
+````bash
 # call api using curl command
 ```bash
 curl  -X POST \
   'http://localhost:3000/api/post-create-todo' \
-  --header 'Accept: */*' \  
+  --header 'Accept: */*' \
   --header 'Payload: {"title": "Rust essential book"}' # current way of passing payload
   # returns a 200 OK response status with json payload
   # { "title": "Rust essential book" }
-```
+````
