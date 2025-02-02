@@ -35,11 +35,6 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'Installation',
         href: '/documentation/installation',
       },
-      {
-        type: 'element',
-        label: 'How is tuono different?',
-        href: '/documentation/how-is-tuono-different',
-      },
     ],
   },
   {
