@@ -51,7 +51,6 @@
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
-    "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.1.0",
     "@types/react": "19.0.8",
     "@vitejs/plugin-react-swc": "3.7.2",
