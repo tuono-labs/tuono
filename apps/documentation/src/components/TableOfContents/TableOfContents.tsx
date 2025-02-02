@@ -99,7 +99,6 @@ export function TableOfContents(): JSX.Element | null {
                 key={heading.id}
                 component="a"
                 fz="sm"
-                px={8}
                 w="fit-content"
                 py={4}
                 className={classes.link}
@@ -108,7 +107,9 @@ export function TableOfContents(): JSX.Element | null {
                 onClick={(e) => {
                   handleHeadingClick(e, heading.id)
                 }}
-                __vars={{ '--toc-link-offset': `${heading.depth - 1}` }}
+                style={{
+                  paddingLeft: `calc(${heading.order - 1} * var(--mantine-spacing-md))`,
+                }}
               >
                 {heading.content}
               </Text>

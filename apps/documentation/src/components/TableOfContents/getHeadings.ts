@@ -2,7 +2,7 @@
  * Component inspired by: https://github.com/mantinedev/mantine/tree/master/apps/mantine.dev/src/components/TableOfContents
  */
 export interface Heading {
-  depth: number
+  order: number
   content: string
   id: string
   getNode: () => HTMLHeadingElement
@@ -23,11 +23,11 @@ function getHeadingsData(headings: Array<HTMLHeadingElement>): Array<Heading> {
   const result: Array<Heading> = []
 
   for (const heading of headings) {
-    const depth = parseInt(heading.getAttribute('data-order') || '1', 10)
+    const order = parseInt(heading.getAttribute('data-order') || '1', 10)
 
-    if (depth <= 3 && heading.id) {
+    if (order <= 3 && heading.id) {
       result.push({
-        depth,
+        order,
         content: getCleanedText(heading),
         id: heading.id,
         getNode: () =>
