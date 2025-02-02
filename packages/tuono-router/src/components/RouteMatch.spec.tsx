@@ -10,9 +10,9 @@ import { RouteMatch } from './RouteMatch'
 
 function createRouteComponent(
   routeType: string,
-  cose: (props: RouteProps) => JSX.Element,
+  RouteComponentFn: (props: RouteProps) => JSX.Element,
 ): RouteComponent {
-  const RootComponent = cose as RouteComponent
+  const RootComponent = RouteComponentFn as RouteComponent
   RootComponent.preload = vi.fn()
   RootComponent.displayName = routeType
   return RootComponent
