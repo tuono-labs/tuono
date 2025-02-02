@@ -81,8 +81,8 @@ export function TableOfContents(): JSX.Element | null {
     targetHeading.scrollIntoView({ behavior: 'instant', block: 'start' })
   }
 
-  // Avoid to show it in case of a TODO page
-  if (headings.length === 1) {
+  // Table of contents will not be displayed if the page has one or fewer headings.
+  if (headings.length <= 1) {
     return null
   }
 
