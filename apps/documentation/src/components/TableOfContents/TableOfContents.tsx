@@ -1,9 +1,11 @@
-import type { JSX, MouseEvent } from 'react'
+import type { JSX, MouseEventHandler } from 'react'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'tuono'
 import { Box, Text } from '@mantine/core'
 
-import { getHeadings, type Heading } from './getHeadings'
+import { getHeadings } from './getHeadings'
+import type { Heading } from './getHeadings'
+
 import classes from './TableOfContents.module.css'
 
 export function TableOfContents(): JSX.Element | null {
@@ -65,20 +67,18 @@ export function TableOfContents(): JSX.Element | null {
     }
   }, [router.pathname])
 
-  const handleHeadingClick = (
-    event: MouseEvent<HTMLAnchorElement>,
-    id: string,
+  const handleHeadingClick: MouseEventHandler<HTMLAnchorElement> = (
+    event,
   ): void => {
     event.preventDefault()
-    const element = document.getElementById(id)
-    if (element) {
-      history.pushState(null, '', `#${element.id} `)
+    const target = event.target as HTMLAnchorElement
+    const href = target.getAttribute('href') as string
+    const targetHeading = document.querySelector(href)
 
-      element.scrollIntoView({
-        behavior: 'instant',
-        block: 'start',
-      })
-    }
+    if (!targetHeading) return
+
+    history.pushState(null, '', href)
+    targetHeading.scrollIntoView({ behavior: 'instant', block: 'start' })
   }
 
   // Avoid to show it in case of a TODO page
@@ -104,9 +104,7 @@ export function TableOfContents(): JSX.Element | null {
                 className={classes.link}
                 mod={{ active: activeHeadingIndex === index + 1 }}
                 href={`#${heading.id}`}
-                onClick={(e) => {
-                  handleHeadingClick(e, heading.id)
-                }}
+                onClick={handleHeadingClick}
                 style={{
                   paddingLeft: `calc(${heading.order - 1} * var(--mantine-spacing-md))`,
                 }}
