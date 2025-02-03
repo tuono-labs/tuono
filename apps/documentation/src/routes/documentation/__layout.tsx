@@ -14,7 +14,7 @@ export default function DocumentationLayout({
     <>
       {children}
 
-      <Divider />
+      <Divider mt={20} mb={10} />
 
       <EditPage />
     </>
