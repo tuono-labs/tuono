@@ -17,12 +17,13 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 # SEO and meta tags
 
+## Adding the page title
+
 The website now works and the HTTP errors are meaningful, but we should also take care to be meaningful
 for the web crawlers. The best way to do it is to enrich the meta tags like the `<title>` and the
 `<description>`.
 
-To do so `tuono` fully supports [React19
-tags](https://react.dev/reference/react-dom/components/title). Let's update the `/` and the
+To do so `tuono` fully supports the [React19 components](https://react.dev/reference/react-dom/components/title). Let's update the `/` and the
 `/pokemons/[pokemon]` routes with this.
 
 ```diff

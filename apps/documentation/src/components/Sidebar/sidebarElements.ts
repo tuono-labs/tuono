@@ -35,11 +35,6 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'Installation',
         href: '/documentation/installation',
       },
-      {
-        type: 'element',
-        label: 'How is tuono different?',
-        href: '/documentation/how-is-tuono-different',
-      },
     ],
   },
   {
@@ -108,7 +103,7 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Defining routes',
+        label: 'Pages and layout',
         href: '/documentation/routing/defining-routes',
       },
       {
@@ -120,26 +115,6 @@ export const sidebarElements: Array<SidebarElement> = [
         type: 'element',
         label: 'Link and navigation',
         href: '/documentation/routing/link-and-navigation',
-      },
-      {
-        type: 'element',
-        label: 'Pages',
-        href: '/documentation/routing/pages',
-      },
-      {
-        type: 'element',
-        label: 'Loading state',
-        href: '/documentation/routing/loading-state',
-      },
-      {
-        type: 'element',
-        label: 'Layouts',
-        href: '/documentation/routing/layouts',
-      },
-      {
-        type: 'element',
-        label: 'Redirecting',
-        href: '/documentation/routing/redirecting',
       },
     ],
   },

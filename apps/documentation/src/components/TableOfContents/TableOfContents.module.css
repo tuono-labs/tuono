@@ -13,12 +13,6 @@
   }
 }
 
-.inner {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
 .link {
   white-space: normal;
   word-wrap: break-word;
@@ -27,7 +21,6 @@
   border-left: 1px solid transparent;
   padding: 8px var(--mantine-spacing-md);
   margin-left: -1px;
-  padding-left: calc(1 * var(--mantine-spacing-lg));
   border-top-right-radius: var(--mantine-radius-sm);
   border-bottom-right-radius: var(--mantine-radius-sm);
 
@@ -70,6 +63,12 @@
       color: var(--mantine-color-violet-1);
     }
   }
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .title {

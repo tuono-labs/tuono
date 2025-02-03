@@ -9,6 +9,57 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 <Breadcrumbs breadcrumbs={[{ label: 'Rendering' }]} />
 
-# SSR
+# Server side rendering
 
-TODO
+## Overview
+
+Server side rendering (SSR) allows each page to render the HTML on the server
+side by preloading the data needed for the render itself. SSR runs on each HTTP request.
+
+SSR is usually needed for:
+
+- SEO
+- Faster client side rendering
+- Reduced JS bundle required for the initial load
+
+## SSR on a route
+
+To enable SSR on a page you just need to create the same file with the rust extension:
+
+- `src/routes/about.tsx`
+- `src/routes/about.rs`
+
+and then create a `#[tuono_lib::handler]` in the rust file,
+which will be the function called on each request before rendering the HTML.
+
+## Example
+
+Suppose your page needs to pre-render frequently updated data
+(read from a local file).
+You can write a handler which reads a JSON file and passes it to the route like below:
+
+```rs
+// src/routes/about.rs
+use tuono_lib::{Request, Response, Props};
+use std::fs;
+
+#[tuono_lib::handler]
+async fn my_custom_ssr_page(req: Request) -> Response {
+  let data = fs::read_to_string("my_data.json").expect("Failed to read json file");
+
+  Response::Props(Props::new(data))
+}
+```
+
+Then you will be able to read the loaded data on the route in the route's `data` props:
+
+```tsx
+// src/routes/about.tsx
+import type { TuonoProps } from 'tuono'
+
+export default function AbouteRoute({ data }: TuonoProps) {
+  // ...
+}
+```
+
+> `TuonoProps<T>` takes a generic argument to statically type `data`.
