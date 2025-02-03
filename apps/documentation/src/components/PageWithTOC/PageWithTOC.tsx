@@ -3,16 +3,13 @@ import { Box, Container } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 
-import EditPage from '../EditPage'
-import MdxProvider from '../MdxProvider'
+import classes from './PageWithTOC.module.css'
 
-import classes from './MdxWrapper.module.css'
-
-interface MdxWrapperProps {
+interface PageWithTOCProps {
   children: ReactNode
 }
 
-export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
+export function PageWithTOC({ children }: PageWithTOCProps): JSX.Element {
   return (
     <Container
       size={1000}
@@ -27,12 +24,10 @@ export function MdxWrapper({ children }: MdxWrapperProps): JSX.Element {
         py={36}
         className={classes.wrapper}
       >
-        <MdxProvider>{children}</MdxProvider>
-        <EditPage />
+        {children}
       </Box>
-      <Box>
-        <TableOfContents />
-      </Box>
+
+      <TableOfContents />
     </Container>
   )
 }

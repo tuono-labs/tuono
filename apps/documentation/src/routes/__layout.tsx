@@ -11,9 +11,10 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import MdxWrapper from '@/components/MdxWrapper'
+import PageWithTOC from '@/components/PageWithTOC'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
+import MdxProvider from '@/components/MdxProvider'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
@@ -124,7 +125,9 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
             <Navbar toggle={toggle} />
             <Sidebar close={toggle} />
             <AppShell.Main pt={0} px="auto">
-              <MdxWrapper>{children}</MdxWrapper>
+              <MdxProvider>
+                <PageWithTOC>{children}</PageWithTOC>
+              </MdxProvider>
             </AppShell.Main>
           </AppShell>
         </MantineProvider>

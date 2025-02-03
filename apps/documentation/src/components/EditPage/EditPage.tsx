@@ -8,15 +8,16 @@ const GITHUB_URL =
 
 export default function EditPage(): JSX.Element {
   const { pathname } = useRouter()
+
   return (
     <Button
       p={0}
-      mt={60}
+      mt={30}
       component="a"
       variant="transparent"
       leftSection={<IconEdit />}
       target="_blank"
-      href={GITHUB_URL.concat(pathname).concat('.mdx')}
+      href={`${GITHUB_URL}${pathname}.mdx`}
     >
       Edit page
     </Button>
