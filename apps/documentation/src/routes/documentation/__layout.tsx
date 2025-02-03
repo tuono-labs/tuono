@@ -1,4 +1,5 @@
 import type { JSX, ReactNode } from 'react'
+import { Divider } from '@mantine/core'
 
 import EditPage from '@/components/EditPage'
 
@@ -12,7 +13,9 @@ export default function DocumentationLayout({
   return (
     <>
       {children}
-      <hr />
+
+      <Divider />
+
       <EditPage />
     </>
   )
