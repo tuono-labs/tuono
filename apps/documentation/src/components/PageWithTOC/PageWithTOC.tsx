@@ -1,9 +1,9 @@
 import type { JSX, ReactNode } from 'react'
 import { Box, Container } from '@mantine/core'
 
-import classes from './PageWithTOC.module.css'
-
 import TableOfContents from '@/components/TableOfContents'
+
+import classes from './PageWithTOC.module.css'
 
 interface PageWithTOCProps {
   children: ReactNode
