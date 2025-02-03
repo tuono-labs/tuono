@@ -1,10 +1,10 @@
+use miette::{IntoDiagnostic, Result};
 use std::path::Path;
 use std::sync::Arc;
-use watchexec_supervisor::command::{Command, Program};
-
-use miette::{IntoDiagnostic, Result};
+use tokio::sync::mpsc;
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
+use watchexec_supervisor::command::{Command, Program};
 use watchexec_supervisor::job::{start_job, Job};
 
 use crate::mode::Mode;
@@ -19,7 +19,6 @@ const DEV_SSR_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-ssr.cmd";
 const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
 #[cfg(not(target_os = "windows"))]
 const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
-
 fn watch_react_src() -> Job {
     if !Path::new(DEV_SSR_BIN_SRC).exists() {
         eprintln!("Failed to find script to run dev watch. Please run `npm install`");
@@ -63,6 +62,8 @@ fn build_react_ssr_src() -> Job {
 
 #[tokio::main]
 pub async fn watch() -> Result<()> {
+    let (sender, mut receiver_shutdown) = mpsc::channel(1);
+
     watch_react_src().start().await;
 
     let run_server = build_rust_src();
@@ -76,6 +77,8 @@ pub async fn watch() -> Result<()> {
     build_ssr_bundle.to_wait().await;
 
     let wx = Watchexec::new(move |mut action| {
+        let sender = sender.clone(); 
+
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
 
@@ -105,9 +108,17 @@ pub async fn watch() -> Result<()> {
             build_ssr_bundle.start();
         }
 
-        // if Ctrl-C is received, quit
-        if action.signals().any(|sig| sig == Signal::Interrupt) {
-            action.quit();
+        if action.signals().any(|sig| sig == Signal::Interrupt)
+        {
+            let build_ssr_bundle = build_ssr_bundle.clone();
+            let run_server = run_server.clone();
+            tokio::spawn(async move {
+                let _ = sender.send(()).await;
+                build_ssr_bundle.stop().await; 
+                run_server.stop().await;
+
+            });
+            action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(9999));
         }
 
         action
@@ -115,7 +126,17 @@ pub async fn watch() -> Result<()> {
 
     // watch the current directory
     wx.config.pathset(["./src"]);
+    
+    tokio::select! {
+        _ = wx.main() => {
+            println!("Main Recived.");
+            let _ = wx.main().await.into_diagnostic();
 
-    let _ = wx.main().await.into_diagnostic()?;
+        },
+        _ = receiver_shutdown.recv() => {
+            println!("Tuono gracefully shutting down...");
+        },
+    }
+
     Ok(())
 }

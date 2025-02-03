@@ -31,6 +31,7 @@ serde_json = "1.0"
 fs_extra = "1.3.0"
 http = "1.1.0"
 tuono_internal = {path = "../tuono_internal", version = "0.17.6"}
+tokio-util = "0.7.13"
 
 [dev-dependencies]
 tempfile = "3.14.0"
