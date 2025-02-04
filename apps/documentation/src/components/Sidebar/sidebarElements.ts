@@ -209,6 +209,18 @@ export const sidebarElements: Array<SidebarElement> = [
   },
   {
     type: 'element',
+    label: 'Server utilities',
+    href: '#focus',
+    children: [
+      {
+        type: 'element',
+        label: 'Response',
+        href: '/documentation/server-utilities/response',
+      },
+    ],
+  },
+  {
+    type: 'element',
     label: 'CLI',
     href: '/documentation/cli',
   },
