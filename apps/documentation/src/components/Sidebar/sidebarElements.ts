@@ -176,6 +176,11 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
+        label: 'Lazy Loading',
+        href: '/documentation/core-concepts/lazy-loading',
+      },
+      {
+        type: 'element',
         label: 'Multithreading',
         href: '/documentation/core-concepts/multithreading',
       },

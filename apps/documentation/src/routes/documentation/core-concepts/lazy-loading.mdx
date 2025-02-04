@@ -1,0 +1,51 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Lazy Loading"
+  canonical="https://tuono.dev/documentation/core-concepts/lazy-loading"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'Lazy Loading' }]} />
+
+# Lazy Loading
+
+Lazy loading allows you to reduce the amount of JavaScript needed for the initial page render by deferring the loading of some components and libraries until they are needed.
+
+Tuono provides a utility function to offer support for this pattern.
+
+## `dynamic`
+
+The `dynamic` function uses `Suspense` and `React.lazy` to enable lazy loading of components with a fallback. You can use this to prevent layout shifts whilst your component is loading.
+
+### Usage
+
+```typescript jsx
+import { dynamic } from 'tuono'
+
+const LazyComponent = dynamic(() => import('./MyComponent'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+})
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome</h1>
+      <LazyComponent />
+    </div>
+  )
+}
+```
+
+### Options
+
+The dynamic function accepts an options object:
+
+| Name           | Type                                                               | Default value | Description                                                                    |
+| -------------- | ------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------ |
+| `importFn`     | `Promise<React.ComponentType<T> \| ComponentModule<T>>` (Required) | -             | Function to import your component                                              |
+| `opts`         | `DynamicOptions`                                                   | -             | Optional config object for additional control.                                 |
+| `opts.ssr`     | `boolean`                                                          | `true`        | Whether to enable server-side rendering for the component.                     |
+| `opts.loading` | `React.ComponentType<unknown>`                                     | `null`        | A fallback component to show while the lazy-loaded component is being fetched. |
