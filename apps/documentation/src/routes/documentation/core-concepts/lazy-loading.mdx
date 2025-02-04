@@ -41,11 +41,11 @@ function App() {
 
 ### Options
 
-The dynamic function accepts an options object:
+The dynamic function accepts an import function and an options object:
 
 | Name           | Type                                                               | Default value | Description                                                                    |
 | -------------- | ------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------ |
-| `importFn`     | `Promise<React.ComponentType<T> \| ComponentModule<T>>` (Required) | -             | Function to import your component                                              |
+| `importFn`     | `Promise<React.ComponentType<T> \| ComponentModule<T>>` (Required) | -             | Function to import your component.                                             |
 | `opts`         | `DynamicOptions`                                                   | -             | Optional config object for additional control.                                 |
 | `opts.ssr`     | `boolean`                                                          | `true`        | Whether to enable server-side rendering for the component.                     |
 | `opts.loading` | `React.ComponentType<unknown>`                                     | `null`        | A fallback component to show while the lazy-loaded component is being fetched. |
