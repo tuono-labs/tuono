@@ -44,10 +44,10 @@ async fn my_route_handler(req: Request) -> Reponse {
 
 ### `Response::Props`
 
-Allows the handler to pass data to the React route, 
+Allows the handler to pass data to the React route,
 which will be available in the `data` prop of the corresponding route.
 
-The `Response::Props` variant takes a `Props` struct as its first argument, 
+The `Response::Props` variant takes a `Props` struct as its first argument,
 which represents the data.
 
 ```rs
@@ -73,7 +73,7 @@ async fn my_route_handler(req: Request) -> Reponse {
 
 ### `Response::Redirect`
 
-Allows the server to redirect the current request to a given path. 
+Allows the server to redirect the current request to a given path.
 For example:
 
 ```rs
@@ -90,10 +90,10 @@ async fn my_route_handler(req: Request) -> Reponse {
 
 ### `Response::Custom`
 
-This variant allows the route handler to skip server-side rendering in ReactJS 
+This variant allows the route handler to skip server-side rendering in ReactJS
 and return the passed values instead.
 
-For example, to generate the app's sitemaps and return an `.xml` file, 
+For example, to generate the app's sitemaps and return an `.xml` file,
 we could write the following handler:
 
 ```rs
