@@ -33,7 +33,7 @@ To build a project statically just run:
 tuono build —-static
 ```
 
-This command builds all the JS/CSS assets and will also pre-render all the pages into separate index.html files.
+This command builds all the JS and CSS assets, and also pre-renders each page into its own separate `index.html` file.
 
 You can still use `#[tuono_lib::hanlder]` to load remote data but they will be
 just loaded at build time.
