@@ -1,0 +1,85 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Request"
+  canonical="https://tuono.dev/documentation/server-utilities/request"
+  description="Read the HTTP request with the Request struct"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'Request' }]} />
+
+# Request
+
+## Overview
+
+The `Request` struct represents the HTTP request and is available as first
+argument on every server side handler (both route and api).
+
+```rs
+use tuono_lib::{Request, Response};
+
+#[tuono_lib::handler]
+async fn my_route_handler(req: Request) -> Response {
+  // ...
+}
+```
+
+> The `Request` argument is not optional hence it always has to be defined.
+
+The struct has the following three public fields:
+
+```rs
+pub struct Request {
+  pub uri: Uri,
+  pub headers: HeaderMap,
+  pub params: HashMap<String, String>,
+}
+```
+
+> The `Request` struct already holds all the data needed for managing a request.
+> We will implement soon a set of method for easing the interaction with the
+> request body, cookies, etc.
+
+### `uri`
+
+The `uri` param represents the current request URI. It is a [http
+crate URI](https://docs.rs/http/latest/http/uri/struct.Uri.html) so all its
+methods are available.
+
+### `headers`
+
+All the headers passed with the request are available in this included Headers, Cookies
+and Body. It is a [http crate
+HeaderMap](https://docs.rs/http/1.2.0/http/header/struct.HeaderMap.html) so all
+its methods are availabe.
+
+### `params`
+
+Within the `params` [HashMap](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html)
+you can find the parameters passed in the dynamic paths.
+
+For example if we want to read the `userId` param in the following project
+structure:
+
+```text
+├── src
+│   └── routes
+│       └── [userId]/index.rs
+```
+
+We just have to read the `userId` key in the `params` HashMap.
+
+```rs
+// src/routes/[userId]/index.rs
+use tuono_lib::{Request, Response};
+
+#[tuono_lib::handler]
+async fn my_route_handler(req: Request) -> Response {
+  let user_id = req.params.get("userId").unwrap();
+  // ...
+}
+```
+
+The same syntax applies also for catch-all dynamic path (i.e. `[...userId]`).

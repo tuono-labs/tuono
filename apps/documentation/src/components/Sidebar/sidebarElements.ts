@@ -217,6 +217,11 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'Response',
         href: '/documentation/server-utilities/response',
       },
+      {
+        type: 'element',
+        label: 'Request',
+        href: '/documentation/server-utilities/request',
+      },
     ],
   },
   {
