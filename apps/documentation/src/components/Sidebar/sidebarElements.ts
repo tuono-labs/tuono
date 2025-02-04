@@ -130,13 +130,13 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Server side rendering',
+        label: 'Server side rendering (SSR)',
         href: '/documentation/rendering/server-side-rendering',
       },
       {
         type: 'element',
-        label: 'Static site rendering',
-        href: '/documentation/rendering/static-site-rendering',
+        label: 'Static site generation (SSG)',
+        href: '/documentation/rendering/static-site-generation',
       },
     ],
   },

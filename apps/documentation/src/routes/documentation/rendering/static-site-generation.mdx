@@ -1,0 +1,39 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Static site Generation"
+  canonical="https://tuono.dev/documentation/rendering/static-site-generation"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'SSG' }]} />
+
+# Static Site Generation
+
+## Overview
+
+> 🚧 This feature is experimental and still misses few case scenarios. It will be stabilized soon.
+
+Tuono is a progressive framework which means that fills all the development needs from a basic
+app with no server capabilities to a full server side rendered app with dynamic data.
+
+If a page uses Static Generation, the page HTML is generated at build time.
+This HTML will then be reused on each request and it can be cached by a CDN.
+
+In Tuono, you can statically generate pages with or without data.
+
+> For the current development stage the whole app has to opt for SSG or SSR. Mixed rendering strategies are not available yet.
+
+## Usage
+
+To build a project statically just run:
+
+```sh
+tuono build —-static
+```
+
+This command builds all the JS/CSS assets and will also pre-render all the pages into separate index.html files.
+
+You can still use `#[tuono_lib::hanlder]` to load remote data but they will be
+just loaded at build time.
