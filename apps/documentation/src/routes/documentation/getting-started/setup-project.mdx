@@ -1,0 +1,73 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Setup project"
+  canonical="https://tuono.dev/documentation/setup-project"
+  description="Follow these steps to quickly create your first Tuono project"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'Setup project' }]} />
+
+# Setup project
+
+## Create project folder
+
+Tuono supports creating a new project from scratch using the `tuono new` CLI command.
+
+```sh
+tuono new my-first-tuono-app
+```
+
+> 💡 You can optionally pass the --template (or -t) flag to directly start from a [template](https://github.com/tuono-labs/tuono/tree/main/examples)
+
+Once the `tuono new` command finishes, move into the newly created folder.
+
+```sh
+cd my-first-tuono-app
+```
+
+## Install dependencies
+
+Now you can install the required dependencies.
+
+```sh
+npm install
+```
+
+> 💡 You can use another NodeJS package manager like `yarn` or `pnpm`
+
+## Run dev server
+
+Now you can run the dev server for the first time from using:
+
+```sh
+tuono dev
+```
+
+> ⏰ The first time, the process takes a bit longer to start because it needs to compile all of Rust's dependencies.
+> Subsequent executions will be much quicker!
+
+Once it's ready, a message will be displayed in the terminal.
+
+You can now open [http://localhost:3000/](http://localhost:3000) on the browser.
+
+## Build and test production build
+
+To build the project using production mode, simply run:
+
+```sh
+tuono build
+```
+
+The above command has created the final assets in the `out` directory.
+
+To run the production server, run:
+
+```sh
+cargo run --release
+```
+
+Again, you can access the website in production mode
+by going to [http://localhost:3000/](http://localhost:3000) in your browser.

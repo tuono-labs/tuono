@@ -12,7 +12,6 @@ export default function EditPage(): JSX.Element {
   return (
     <Button
       p={0}
-      mt={30}
       component="a"
       variant="transparent"
       leftSection={<IconEdit />}

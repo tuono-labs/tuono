@@ -33,7 +33,12 @@ export const sidebarElements: Array<SidebarElement> = [
       {
         type: 'element',
         label: 'Installation',
-        href: '/documentation/installation',
+        href: '/documentation/getting-started/installation',
+      },
+      {
+        type: 'element',
+        label: 'Setup project',
+        href: '/documentation/getting-started/setup-project',
       },
     ],
   },
