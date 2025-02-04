@@ -44,8 +44,8 @@ async fn my_route_handler(req: Request) -> Reponse {
 
 ### `Response::Props`
 
-Allows the handler to pass any data down to the React route. The data will be
-available within the `data` prop of the relative route.
+Allows the handler to pass data to the React route, 
+which will be available in the `data` prop of the corresponding route.
 
 The `Response::Props` variant take a `Props` struct as first argument that
 represents the data.
