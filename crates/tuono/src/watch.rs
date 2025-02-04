@@ -77,7 +77,7 @@ pub async fn watch() -> Result<()> {
     build_ssr_bundle.to_wait().await;
 
     let wx = Watchexec::new(move |mut action| {
-        let sender = sender.clone(); 
+        let sender = sender.clone();
 
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
@@ -108,15 +108,13 @@ pub async fn watch() -> Result<()> {
             build_ssr_bundle.start();
         }
 
-        if action.signals().any(|sig| sig == Signal::Interrupt)
-        {
+        if action.signals().any(|sig| sig == Signal::Interrupt) {
             let build_ssr_bundle = build_ssr_bundle.clone();
             let run_server = run_server.clone();
             tokio::spawn(async move {
                 let _ = sender.send(()).await;
-                build_ssr_bundle.stop().await; 
+                build_ssr_bundle.stop().await;
                 run_server.stop().await;
-
             });
             action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(9999));
         }
@@ -126,7 +124,7 @@ pub async fn watch() -> Result<()> {
 
     // watch the current directory
     wx.config.pathset(["./src"]);
-    
+
     tokio::select! {
         _ = wx.main() => {
             println!("Main Recived.");

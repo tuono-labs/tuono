@@ -75,7 +75,6 @@ pub fn app() -> std::io::Result<()> {
             app.check_server_availability(Mode::Dev);
 
             watch::watch().unwrap();
-
         }
         Actions::Build { ssg, no_js_emit } => {
             let mut app = init_tuono_folder(Mode::Prod)?;
