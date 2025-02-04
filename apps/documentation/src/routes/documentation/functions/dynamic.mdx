@@ -1,25 +1,21 @@
 import MetaTags from '@/components/MetaTags'
 
 <MetaTags
-  title="Tuono - Lazy Loading"
-  canonical="https://tuono.dev/documentation/core-concepts/lazy-loading"
+  title="Tuono - Dynamic"
+  canonical="https://tuono.dev/documentation/functions/dynamic"
 />
 
 import Breadcrumbs from '@/components/Breadcrumbs'
 
-<Breadcrumbs breadcrumbs={[{ label: 'Lazy Loading' }]} />
+<Breadcrumbs breadcrumbs={[{ label: 'Dynamic' }]} />
 
-# Lazy Loading
+# Dynamic
 
 Lazy loading allows you to reduce the amount of JavaScript needed for the initial page render by deferring the loading of some components and libraries until they are needed. This works best when deferring something that _isn't initially visible_, for example a component below the fold, or a component in a modal.
 
-Tuono provides a utility function to offer support for this pattern.
+Tuono provides a utility function to offer support for this pattern through the `dynamic` function, which uses `Suspense` and `React.lazy` to enable lazy loading of components with support for a fallback.
 
-## `dynamic`
-
-The `dynamic` function uses `Suspense` and `React.lazy` to enable lazy loading of components with a fallback.
-
-### Usage
+## Usage
 
 Here is an example using all the exposed options as referenced below.
 
@@ -45,7 +41,7 @@ As you can see, we pass the component import as a function, as well as our optio
 
 It is good practice to ensure that your fallback component is of the same dimensions as your actual component - this prevents layout shift, and that ugly resizing of modals as their content is loaded.
 
-### Options
+## Options
 
 The dynamic function accepts an import function and an options object:
 

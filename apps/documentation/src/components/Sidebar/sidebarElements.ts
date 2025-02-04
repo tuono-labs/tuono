@@ -169,23 +169,6 @@ export const sidebarElements: Array<SidebarElement> = [
       },
     ],
   },
-  {
-    type: 'element',
-    label: 'Core concepts',
-    href: '#focus',
-    children: [
-      {
-        type: 'element',
-        label: 'Lazy Loading',
-        href: '/documentation/core-concepts/lazy-loading',
-      },
-      {
-        type: 'element',
-        label: 'Multithreading',
-        href: '/documentation/core-concepts/multithreading',
-      },
-    ],
-  },
   { type: 'divider' },
   { type: 'title', label: 'API reference' },
   {
@@ -202,13 +185,18 @@ export const sidebarElements: Array<SidebarElement> = [
   },
   {
     type: 'element',
-    label: 'Hooks',
+    label: 'Functions',
     href: '#focus',
     children: [
       {
         type: 'element',
+        label: 'Dynamic',
+        href: '/documentation/functions/dynamic',
+      },
+      {
+        type: 'element',
         label: 'useRouter',
-        href: '/documentation/hooks/use-router',
+        href: '/documentation/functions/use-router',
       },
     ],
   },
