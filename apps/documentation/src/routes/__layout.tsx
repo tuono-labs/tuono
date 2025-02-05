@@ -27,13 +27,14 @@ const theme = createTheme({
   primaryColor: 'violet',
   primaryShade: { light: 6, dark: 9 },
   fontFamily: 'Inter',
+  fontFamilyMonospace: 'Menlo',
   respectReducedMotion: true,
   radius: {
-    xs: '8px',
+    xs: '4px',
+    sm: '4px',
     lg: '8px',
     xl: '8px',
     md: '8px',
-    sm: '8px',
   },
   fontSizes: {
     // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -69,19 +70,28 @@ const theme = createTheme({
   },
 })
 
-const resolver: CSSVariablesResolver = (th) => ({
-  variables: {},
-  light: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayLight as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverLight as string,
-  },
-  dark: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayDark as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverDark as string,
-  },
-})
+const resolver: CSSVariablesResolver = (th) => {
+  const {
+    sidebarGrayLight,
+    sidebarTextHoverLight,
+    sidebarGrayDark,
+    sidebarTextHoverDark,
+  } = th.other as Record<string, string>
+
+  return {
+    variables: {},
+    light: {
+      '--mantine-color-sidebar-gray': sidebarGrayLight,
+      '--mantine-color-sidebar-text-hover': sidebarTextHoverLight,
+      '--mantine-color-quote-border': th.colors.violet[1],
+    },
+    dark: {
+      '--mantine-color-sidebar-gray': sidebarGrayDark,
+      '--mantine-color-sidebar-text-hover': sidebarTextHoverDark,
+      '--mantine-color-quote-border': 'none',
+    },
+  }
+}
 
 export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   const [opened, { toggle }] = useDisclosure()

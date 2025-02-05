@@ -16,6 +16,7 @@ export default function MdxPre({ children }: PreProps): JSX.Element {
       code={children.props.children || ''}
       style={{ borderRadius: 8, fontWeight: 100 }}
       language={children.props.className?.replace('language-', '')}
+      my={16}
     />
   )
 }

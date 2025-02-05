@@ -8,6 +8,8 @@ import MdxCode from './MdxCode'
 import { h } from './MdxTitle'
 import MdxBold from './MdxBold'
 import MdxTable from './MdxTable'
+import MdxUl from './MdxUl'
+import MdxParagraph from './MdxParagraph'
 
 interface MdxProviderProps {
   children: ReactNode
@@ -36,6 +38,8 @@ export default function MdxProvider({
         tr: MdxTable.Tr,
         th: MdxTable.Th,
         td: MdxTable.Td,
+        p: MdxParagraph,
+        ul: MdxUl,
       }}
     >
       {children}
