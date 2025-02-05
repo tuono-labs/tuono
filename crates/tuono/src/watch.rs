@@ -1,7 +1,7 @@
 use miette::{IntoDiagnostic, Result};
-use tokio::signal;
 use std::path::Path;
 use std::sync::Arc;
+use tokio::signal;
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
 use watchexec_supervisor::command::{Command, Program};
@@ -122,7 +122,6 @@ pub async fn watch() -> Result<()> {
             eprintln!("Tuono gracefully shutting down...")
         },
     }
-
 
     Ok(())
 }
