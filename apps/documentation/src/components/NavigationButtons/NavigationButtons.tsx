@@ -36,13 +36,12 @@ const NavigationBtn = ({
 }: NavigationBtnProps): JSX.Element => {
   const heading = type === 'next' ? 'Next' : 'Previous'
   const textAlign = type === 'next' ? 'left' : 'right'
-  const variant = type === 'next' ? 'filled' : 'outline'
 
   return (
     <Button
       component={Link}
       fullWidth
-      variant={variant}
+      variant="outline"
       href={href}
       justify="space-between"
       h="auto"
