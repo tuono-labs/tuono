@@ -12,7 +12,7 @@ export default function MdxText(
       className={styles.text}
       inherit
       size="md"
-      my={14}
+      my={20}
       fw={300}
     />
   )

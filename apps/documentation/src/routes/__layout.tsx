@@ -30,11 +30,11 @@ const theme = createTheme({
   fontFamilyMonospace: 'Menlo',
   respectReducedMotion: true,
   radius: {
-    xs: '8px',
+    xs: '4px',
+    sm: '4px',
     lg: '8px',
     xl: '8px',
     md: '8px',
-    sm: '8px',
   },
   fontSizes: {
     // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
