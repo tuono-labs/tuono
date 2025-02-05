@@ -70,21 +70,28 @@ const theme = createTheme({
   },
 })
 
-const resolver: CSSVariablesResolver = (th) => ({
-  variables: {},
-  light: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayLight as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverLight as string,
-    '--mantine-color-quote-border': th.colors.violet[1],
-  },
-  dark: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayDark as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverDark as string,
-    '--mantine-color-quote-border': 'none',
-  },
-})
+const resolver: CSSVariablesResolver = (th) => {
+  const {
+    sidebarGrayLight,
+    sidebarTextHoverLight,
+    sidebarGrayDark,
+    sidebarTextHoverDark,
+  } = th.other as Record<string, string>
+
+  return {
+    variables: {},
+    light: {
+      '--mantine-color-sidebar-gray': sidebarGrayLight,
+      '--mantine-color-sidebar-text-hover': sidebarTextHoverLight,
+      '--mantine-color-quote-border': th.colors.violet[1],
+    },
+    dark: {
+      '--mantine-color-sidebar-gray': sidebarGrayDark,
+      '--mantine-color-sidebar-text-hover': sidebarTextHoverDark,
+      '--mantine-color-quote-border': 'none',
+    },
+  }
+}
 
 export default function RootRoute({ children }: RootRouteProps): JSX.Element {
   const [opened, { toggle }] = useDisclosure()
