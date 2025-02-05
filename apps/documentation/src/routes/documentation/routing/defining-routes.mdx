@@ -62,14 +62,26 @@ This file won't generate any route.
 
 ### Layout component for all routes
 
-A file created in this location will wrap all project route.
+The file created in this location will wrap all the routes.
 
 ```tsx
 // src/routes/__layout.tsx
+import { TuonoScripts } from 'tuono'
+
 export default function RootLayout({ children }) {
-  return <main>{children}</main>
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <TuonoScripts />
+      </body>
+    </html>
+  )
 }
 ```
+
+This component is **not** optional and must include the `<html>` and `body` HTML tags and the
+`<TuonoScripts />` component.
 
 ### Layout component for specific routes
 
