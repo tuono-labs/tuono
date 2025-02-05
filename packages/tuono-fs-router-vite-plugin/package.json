@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@tanstack/config": "0.7.13",
-    "@types/babel__core": "^7.20.5",
+    "@types/babel__core": "7.20.5",
     "vitest": "2.1.9"
   }
 }
