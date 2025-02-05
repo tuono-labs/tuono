@@ -39,6 +39,7 @@ export default function MdxTitle({
         scrollMargin: 80,
         marginTop: order === 1 ? 0 : 20,
       }}
+      mb={24}
       {...rest}
     >
       <Title
@@ -51,6 +52,7 @@ export default function MdxTitle({
           scrollMargin: 80,
           marginTop: order === 1 ? 0 : 20,
         }}
+        mb={24}
         {...rest}
       >
         {children}

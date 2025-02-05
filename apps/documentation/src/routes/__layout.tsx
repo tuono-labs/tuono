@@ -27,6 +27,7 @@ const theme = createTheme({
   primaryColor: 'violet',
   primaryShade: { light: 6, dark: 9 },
   fontFamily: 'Inter',
+  fontFamilyMonospace: 'Menlo',
   respectReducedMotion: true,
   radius: {
     xs: '8px',
