@@ -190,13 +190,13 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'dynamic',
-        href: '/documentation/functions/dynamic',
+        label: 'useRouter',
+        href: '/documentation/functions/use-router',
       },
       {
         type: 'element',
-        label: 'useRouter',
-        href: '/documentation/functions/use-router',
+        label: 'dynamic',
+        href: '/documentation/functions/dynamic',
       },
     ],
   },
