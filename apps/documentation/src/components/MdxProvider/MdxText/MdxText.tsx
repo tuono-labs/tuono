@@ -1,5 +1,6 @@
-import type { JSX } from 'react'
+import type { JSX, HTMLAttributes } from 'react'
 import { Text } from '@mantine/core'
+
 import styles from './MdxText.module.css'
 
 export default function MdxText(

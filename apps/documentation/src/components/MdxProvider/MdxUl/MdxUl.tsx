@@ -1,5 +1,6 @@
 import type { HTMLAttributes, JSX } from 'react'
 import { List } from '@mantine/core'
+
 import styles from './MdxUl.module.css'
 
 export default function MdxUl(
