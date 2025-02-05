@@ -1,0 +1,27 @@
+name: Task
+description: Generic stuff to do in the project
+title: '[Task]: '
+type: Task
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what you want to do.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution
+      description: What you plan to do in this task.
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context information.
+    validations:
+      required: false
