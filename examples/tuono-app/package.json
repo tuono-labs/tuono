@@ -8,8 +8,8 @@
     "tuono": "link:../../packages/tuono"
   },
   "devDependencies": {
-    "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.2",
-    "typescript": "5.6.3"
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.6.3"
   }
 }
