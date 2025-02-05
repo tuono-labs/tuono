@@ -114,7 +114,7 @@ pub async fn watch() -> Result<()> {
     // watch the current directory
     wx.config.pathset(["./src"]);
 
-    let _ = wx.main().await.into_diagnostic();
+    let _ = wx.main().await.into_diagnostic()?;
 
     Ok(())
 }
