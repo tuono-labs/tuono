@@ -190,7 +190,7 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Dynamic',
+        label: 'dynamic',
         href: '/documentation/functions/dynamic',
       },
       {

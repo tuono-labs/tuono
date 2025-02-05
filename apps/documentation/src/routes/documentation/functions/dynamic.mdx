@@ -1,19 +1,22 @@
 import MetaTags from '@/components/MetaTags'
 
 <MetaTags
-  title="Tuono - Dynamic"
+  title="Tuono - dynamic"
   canonical="https://tuono.dev/documentation/functions/dynamic"
+  description="Lazy load components using the 'dynamic' function"
 />
 
 import Breadcrumbs from '@/components/Breadcrumbs'
 
-<Breadcrumbs breadcrumbs={[{ label: 'Dynamic' }]} />
+<Breadcrumbs breadcrumbs={[{ label: 'dynamic' }]} />
 
-# Dynamic
+# dynamic
 
-Lazy loading allows you to reduce the amount of JavaScript needed for the initial page render by deferring the loading of some components and libraries until they are needed. This works best when deferring something that _isn't initially visible_, for example a component below the fold, or a component in a modal.
+Tuono supports lazy loading through the `dynamic` function, which uses `Suspense` and `React.lazy` to load components lazily with fallback support.
 
-Tuono provides a utility function to offer support for this pattern through the `dynamic` function, which uses `Suspense` and `React.lazy` to enable lazy loading of components with support for a fallback.
+Lazy loading helps reduce the amount of JavaScript required for the initial page render by deferring the loading of components and libraries until they are needed.
+
+It's most effective when deferring content that isn't initially visible, like a component below the fold or one in a modal.
 
 ## Usage
 
@@ -37,13 +40,11 @@ function App() {
 }
 ```
 
-As you can see, we pass the component import as a function, as well as our options object. Note that the first argument must be a function that returns a promise (e.g., `() => import('./MyComponent')`), rather than calling `import('./MyComponent')` directly, which would execute immediately instead of lazily loading.
+> ⚠️ Note that the first argument must be a function that returns a promise (e.g., `() => import('./MyComponent')`), not a direct call to `import('./MyComponent')`, which would execute immediately instead of lazily loading.
 
-It is good practice to ensure that your fallback component is of the same dimensions as your actual component - this prevents layout shift, and that ugly resizing of modals as their content is loaded.
+> 💡 It’s good practice to ensure that your fallback component matches the dimensions of the actual component. This helps prevent layout shifts and the ugly resizing of modals as their content loads.
 
 ## Options
-
-The dynamic function accepts an import function and an options object:
 
 | Name           | Type                                                                     | Default value | Description                                                                    |
 | -------------- | ------------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------ |
