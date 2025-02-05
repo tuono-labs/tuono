@@ -76,11 +76,13 @@ const resolver: CSSVariablesResolver = (th) => ({
     '--mantine-color-sidebar-gray': th.other.sidebarGrayLight as string,
     '--mantine-color-sidebar-text-hover': th.other
       .sidebarTextHoverLight as string,
+    '--mantine-color-quote-border': th.colors.violet[1] as string,
   },
   dark: {
     '--mantine-color-sidebar-gray': th.other.sidebarGrayDark as string,
     '--mantine-color-sidebar-text-hover': th.other
       .sidebarTextHoverDark as string,
+    '--mantine-color-quote-border': 'none',
   },
 })
 

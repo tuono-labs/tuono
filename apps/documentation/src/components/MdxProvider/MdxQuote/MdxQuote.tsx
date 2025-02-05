@@ -6,12 +6,12 @@ export default function MdxQuote(
 ): JSX.Element {
   return (
     <Blockquote
-      color="violet"
       py={1}
       px={20}
       my={16}
       iconSize={28}
       {...props}
+      bd="solid 1px var(--mantine-color-quote-border)"
       style={{ borderRadius: 8 }}
     />
   )
