@@ -12,10 +12,8 @@ export default function PostHogProvider({
 }: PostHogProviderProps): JSX.Element {
   useEffect(() => {
     if (import.meta.env.VITE_ENABLE_POSTHOG === 'true') {
-      posthog?.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY || '', {
-        api_host:
-          import.meta.env.VITE_PUBLIC_POSTHOG_HOST ||
-          'https://eu.i.posthog.com',
+      posthog?.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
+        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
         persistence: 'memory', // Cookieless tracking
         loaded: (ph) => {
           if (import.meta.env.VITE_ENV === 'development') ph.debug()

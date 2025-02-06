@@ -2,14 +2,14 @@ import { useEffect } from 'react'
 import { usePostHog } from 'posthog-js/react'
 import { useRouter } from 'tuono'
 
-export default function PostHogPageView() {
+export default function PostHogPageView(): null {
   const { pathname } = useRouter()
   const posthog = usePostHog()
 
   // Track pageviews
   useEffect(() => {
     if (pathname && posthog) {
-      let url = window.origin + pathname
+      const url = window.origin + pathname
 
       posthog.capture('$pageview', { $current_url: url })
     }
