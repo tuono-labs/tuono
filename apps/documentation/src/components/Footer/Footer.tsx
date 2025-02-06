@@ -10,6 +10,7 @@ import {
   Text,
   Anchor,
 } from '@mantine/core'
+import type { MantineSize } from '@mantine/core'
 
 interface LinkData {
   title: string
@@ -19,6 +20,7 @@ interface LinkData {
 interface FooterLinkListProps {
   title: string
   links: Array<LinkData>
+  hiddenFrom?: MantineSize
 }
 
 const aboutLinks: Array<LinkData> = [
@@ -33,6 +35,10 @@ const communityLinks: Array<LinkData> = [
   { title: 'Chat on Discord', url: 'https://discord.com/invite/khQzPa654B' },
   { title: 'Follow on X', url: 'https://twitter.com/valerioageno' },
   { title: 'Follow on GitHub', url: 'https://github.com/tuono-labs' },
+]
+
+const legalLinks: Array<LinkData> = [
+  { title: 'Privacy Policy', url: '/policies/privacy' },
 ]
 
 function FooterLink({ link }: { link: LinkData }): JSX.Element {
@@ -53,9 +59,13 @@ function FooterLink({ link }: { link: LinkData }): JSX.Element {
   )
 }
 
-function FooterLinkList({ title, links }: FooterLinkListProps): JSX.Element {
+function FooterLinkList({
+  title,
+  links,
+  hiddenFrom,
+}: FooterLinkListProps): JSX.Element {
   return (
-    <Box>
+    <Box hiddenFrom={hiddenFrom}>
       <Title order={5} mb={8}>
         {title}
       </Title>
@@ -81,7 +91,19 @@ function FooterTitle(): JSX.Element {
   )
 }
 
+function TocPlaceholder(): JSX.Element {
+  return (
+    <Box
+      w={220}
+      miw={220}
+      data-id="table-of-content-placeholder"
+      visibleFrom="lg"
+    />
+  )
+}
+
 function FooterOutro(): JSX.Element {
+  const fontSize = 14
   return (
     <Container
       size={1000}
@@ -89,21 +111,32 @@ function FooterOutro(): JSX.Element {
       display="flex"
       style={{ gap: 12, justifyContent: 'space-between' }}
     >
-      <Box>
-        <Text fz={14}>
+      <Box w="100%">
+        <Text fz={fontSize}>
           Built by{' '}
-          <Anchor fz={14} href="https://github.com/Valerioageno">
+          <Anchor fz={fontSize} href="https://github.com/Valerioageno">
             Valerio Ageno
           </Anchor>{' '}
           and{' '}
           <Anchor
-            fz={14}
+            fz={fontSize}
             href="https://github.com/tuono-labs/tuono/graphs/contributors"
           >
             these awesome people
           </Anchor>
         </Text>
       </Box>
+      <Anchor
+        fz={fontSize}
+        w={150}
+        component={Link}
+        href="/policies/privacy"
+        ta="right"
+        visibleFrom="xs"
+      >
+        Privacy Policy
+      </Anchor>
+      <TocPlaceholder />
     </Container>
   )
 }
@@ -132,14 +165,14 @@ export default function Footer(): JSX.Element {
             >
               <FooterLinkList title="About" links={aboutLinks} />
               <FooterLinkList title="Community" links={communityLinks} />
+              <FooterLinkList
+                title="Legal"
+                links={legalLinks}
+                hiddenFrom="xs"
+              />
             </Flex>
           </Flex>
-          <Box
-            w={220}
-            miw={220}
-            id="table-of-content-placeholder"
-            visibleFrom="lg"
-          />
+          <TocPlaceholder />
         </Container>
         <Divider mb={8} mt={28} />
         <FooterOutro />
