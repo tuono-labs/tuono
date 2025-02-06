@@ -18,6 +18,7 @@ import MdxProvider from '@/components/MdxProvider'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
+import Footer from '@/components/Footer'
 
 interface RootRouteProps {
   children: ReactNode
@@ -81,11 +82,13 @@ const resolver: CSSVariablesResolver = (th) => {
   return {
     variables: {},
     light: {
+      '--mantine-color-footer-bg': th.colors.gray[1],
       '--mantine-color-sidebar-gray': sidebarGrayLight,
       '--mantine-color-sidebar-text-hover': sidebarTextHoverLight,
       '--mantine-color-quote-border': th.colors.violet[1],
     },
     dark: {
+      '--mantine-color-footer-bg': th.colors.dark[6],
       '--mantine-color-sidebar-gray': sidebarGrayDark,
       '--mantine-color-sidebar-text-hover': sidebarTextHoverDark,
       '--mantine-color-quote-border': th.colors.violet[9],
@@ -139,6 +142,7 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
                 <PageWithTOC>{children}</PageWithTOC>
               </MdxProvider>
             </AppShell.Main>
+            <Footer />
           </AppShell>
         </MantineProvider>
         <TuonoScripts />
