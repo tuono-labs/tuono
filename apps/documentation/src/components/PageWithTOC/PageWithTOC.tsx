@@ -1,6 +1,7 @@
 import type { JSX, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Box, Container } from '@mantine/core'
+import { useViewportSize } from '@mantine/hooks'
 
 import TableOfContents from '@/components/TableOfContents'
 
@@ -11,6 +12,7 @@ interface PageWithTOCProps {
 }
 
 export function PageWithTOC({ children }: PageWithTOCProps): JSX.Element {
+  const { width } = useViewportSize()
   const [footerHeight, setFooterHeight] = useState<number>(0)
   const mainRef = useRef<HTMLDivElement>(null)
   const height = `calc(100% - ${footerHeight}px)`
@@ -21,7 +23,11 @@ export function PageWithTOC({ children }: PageWithTOCProps): JSX.Element {
     if (footer) {
       setFooterHeight(footer.clientHeight)
     }
-  }, [setFooterHeight])
+  }, [
+    setFooterHeight,
+    // Reload on window width resize
+    width,
+  ])
 
   return (
     <>
