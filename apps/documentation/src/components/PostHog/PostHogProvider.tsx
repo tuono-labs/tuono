@@ -15,6 +15,7 @@ export default function PostHogProvider({
       posthogJs.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
         api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
         persistence: 'memory', // Cookieless tracking
+        disable_persistence: true, // Disable persistence
         loaded: (ph) => {
           if (import.meta.env.VITE_ENV === 'development') ph.debug()
         },
