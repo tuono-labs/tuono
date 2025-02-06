@@ -7,8 +7,47 @@ import MetaTags from '@/components/MetaTags'
 
 import Breadcrumbs from '@/components/Breadcrumbs'
 
-<Breadcrumbs breadcrumbs={[{ label: 'Styles' }]} />
+<Breadcrumbs breadcrumbs={[{ label: 'CSS Modules' }]} />
 
 # CSS Modules
 
-TODO
+## Overview
+
+A CSS Module is a CSS file in which all class names and animation names are scoped locally by default.
+This helps avoid name collisions by ensuring that styles are only applied to the component where they are defined.
+
+For more information, you can refer to the official [CSS Modules repository](https://github.com/css-modules/css-modules).
+
+## Example
+
+Any CSS file ending with `.module.css` is considered a CSS modules file.
+
+Given the following file:
+
+```css
+/* ExampleComponent.module.css */
+.awesome {
+  color: #000;
+}
+
+.awesome-things {
+  background: #fff;
+}
+```
+
+Importing such file will return the corresponding module object:
+
+```tsx
+/* ExampleComponent.tsx */
+import { JSX } from 'react'
+
+import styles from './example.module.css'
+
+export function ExampleComponent(): JSX.Element {
+  return (
+    <div className={styles.awesome}>
+      <div className={styles['awesome-things']}>ExampleComponent</div>
+    </div>
+  )
+}
+```
