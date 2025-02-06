@@ -14,8 +14,8 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 ## Overview
 
-The `Request` struct represents the HTTP request and is available as first
-argument on every server side handler (both route and api).
+The `Request` struct represents the HTTP request.
+It is passed as the first argument to every server side handler (for both route and API).
 
 ```rs
 use tuono_lib::{Request, Response};
@@ -26,7 +26,7 @@ async fn my_route_handler(req: Request) -> Response {
 }
 ```
 
-> The `Request` argument is not optional hence it always has to be defined.
+> The `Request` argument is required and must always be defined.
 
 The struct has the following three public fields:
 
@@ -38,30 +38,28 @@ pub struct Request {
 }
 ```
 
-> The `Request` struct already holds all the data needed for managing a request.
-> We will implement soon a set of method for easing the interaction with the
-> request body, cookies, etc.
+> The `Request` struct contains all the data needed to manage a request.
+> We will soon implement a set of methods to simplify interaction with
+> the request body, cookies, and more.
 
 ### `uri`
 
-The `uri` param represents the current request URI. It is a [http
-crate URI](https://docs.rs/http/latest/http/uri/struct.Uri.html) so all its
-methods are available.
+The `uri` param represents the current request URI. 
+It is a [http crate URI](https://docs.rs/http/latest/http/uri/struct.Uri.html) 
+so all its methods are available.
 
 ### `headers`
 
-All the headers passed with the request are available in this included Headers, Cookies
-and Body. It is a [http crate
-HeaderMap](https://docs.rs/http/1.2.0/http/header/struct.HeaderMap.html) so all
-its methods are available.
+All the headers passed with the request are available in this included Headers, Cookies and Body. 
+It is a [http crate HeaderMap](https://docs.rs/http/1.2.0/http/header/struct.HeaderMap.html) 
+so all its methods are available.
 
 ### `params`
 
 Within the `params` [HashMap](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html)
 you can find the parameters passed in the dynamic paths.
 
-For example if we want to read the `userId` param in the following project
-structure:
+For example, if we want to read the `userId` parameter in the following project structure:
 
 ```text
 ├── src
