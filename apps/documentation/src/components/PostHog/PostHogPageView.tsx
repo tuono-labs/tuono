@@ -8,6 +8,7 @@ export default function PostHogPageView(): null {
 
   // Track pageviews
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pathname && posthog) {
       const url = window.origin + pathname
 
