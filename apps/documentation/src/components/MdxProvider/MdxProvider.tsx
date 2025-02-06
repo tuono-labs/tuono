@@ -1,5 +1,6 @@
 import type { JSX, ReactNode } from 'react'
 import { MDXProvider } from '@mdx-js/react'
+import { Divider } from '@mantine/core'
 
 import MdxLink from './MdxLink'
 import MdxPre from './MdxPre'
@@ -40,6 +41,7 @@ export default function MdxProvider({
         td: MdxTable.Td,
         p: MdxParagraph,
         ul: MdxUl,
+        hr: Divider,
       }}
     >
       {children}

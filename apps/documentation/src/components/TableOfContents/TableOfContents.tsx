@@ -1,7 +1,7 @@
 import type { JSX, MouseEventHandler } from 'react'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'tuono'
-import { Box, Text } from '@mantine/core'
+import { Box, ScrollArea, Text } from '@mantine/core'
 
 import { getHeadings } from './getHeadings'
 import type { Heading } from './getHeadings'
@@ -88,33 +88,35 @@ export function TableOfContents(): JSX.Element | null {
 
   return (
     <Box component="nav" className={classes.wrapper}>
-      <div className={classes.inner}>
-        <div>
-          <Text className={classes.title} mb={8}>
-            On this page
-          </Text>
-          <div className={classes.items}>
-            {headings.slice(1).map((heading, index) => (
-              <Text
-                key={heading.id}
-                component="a"
-                fz="sm"
-                w="fit-content"
-                py={4}
-                className={classes.link}
-                mod={{ active: activeHeadingIndex === index + 1 }}
-                href={`#${heading.id}`}
-                onClick={handleHeadingClick}
-                style={{
-                  paddingLeft: `calc(${heading.order - 1} * var(--mantine-spacing-md))`,
-                }}
-              >
-                {heading.content}
-              </Text>
-            ))}
+      <ScrollArea style={{ height: 'calc(100% - 60px)' }}>
+        <div className={classes.inner}>
+          <div>
+            <Text className={classes.title} mb={8}>
+              On this page
+            </Text>
+            <div className={classes.items}>
+              {headings.slice(1).map((heading, index) => (
+                <Text
+                  key={heading.id}
+                  component="a"
+                  fz="sm"
+                  w="fit-content"
+                  py={4}
+                  className={classes.link}
+                  mod={{ active: activeHeadingIndex === index + 1 }}
+                  href={`#${heading.id}`}
+                  onClick={handleHeadingClick}
+                  style={{
+                    paddingLeft: `calc(${heading.order - 1} * var(--mantine-spacing-md))`,
+                  }}
+                >
+                  {heading.content}
+                </Text>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </ScrollArea>
     </Box>
   )
 }
