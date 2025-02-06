@@ -7,9 +7,12 @@ import {
   MantineProvider,
   AppShell,
   mantineHtmlProps,
-  type CSSVariablesResolver,
 } from '@mantine/core'
+
+import type { CSSVariablesResolver } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import PostHogProvider from '@/components/PostHogProvider'
+import { dynamic } from 'tuono'
 
 import PageWithTOC from '@/components/PageWithTOC'
 import Navbar from '@/components/Navbar'
@@ -19,6 +22,13 @@ import MdxProvider from '@/components/MdxProvider'
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
 import Footer from '@/components/Footer'
+
+const PostHogPageView = dynamic(
+  () => import('@/components/PostHogProvider/PostHogPageView'),
+  {
+    ssr: false,
+  },
+)
 
 interface RootRouteProps {
   children: ReactNode
@@ -126,24 +136,27 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
       </head>
       <body>
         <MantineProvider theme={theme} cssVariablesResolver={resolver}>
-          <AppShell
-            layout="alt"
-            header={{ height: 60 }}
-            navbar={{
-              width: 300,
-              breakpoint: 'sm',
-              collapsed: { mobile: !opened },
-            }}
-          >
-            <Navbar toggle={toggle} />
-            <Sidebar close={toggle} />
-            <AppShell.Main pt={0} px="auto">
-              <MdxProvider>
-                <PageWithTOC>{children}</PageWithTOC>
-              </MdxProvider>
-            </AppShell.Main>
-            <Footer />
-          </AppShell>
+          <PostHogProvider>
+            <PostHogPageView />
+            <AppShell
+              layout="alt"
+              header={{ height: 60 }}
+              navbar={{
+                width: 300,
+                breakpoint: 'sm',
+                collapsed: { mobile: !opened },
+              }}
+            >
+              <Navbar toggle={toggle} />
+              <Sidebar close={toggle} />
+              <AppShell.Main pt={0} px="auto">
+                <MdxProvider>
+                  <PageWithTOC>{children}</PageWithTOC>
+                </MdxProvider>
+              </AppShell.Main>
+              <Footer />
+            </AppShell>
+          </PostHogProvider>
         </MantineProvider>
         <TuonoScripts />
       </body>
