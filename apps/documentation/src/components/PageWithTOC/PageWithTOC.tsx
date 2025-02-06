@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from 'react'
-import { Box, Container } from '@mantine/core'
+import { Box, Container, ScrollArea } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 
