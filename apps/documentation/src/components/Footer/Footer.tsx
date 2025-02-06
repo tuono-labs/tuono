@@ -7,6 +7,7 @@ import {
   Title,
   Divider,
   Flex,
+  Text,
   Anchor,
 } from '@mantine/core'
 
@@ -68,27 +69,64 @@ function FooterLinkList({ title, links }: FooterLinkListProps): JSX.Element {
 function FooterTitle(): JSX.Element {
   const size = 44
   return (
-    <Flex gap={12} align="center" h={size} mb={24}>
-      <img src="/logo.svg" alt="Tuono" width={size} height={size} />
-      <Title order={2} fz={size}>
-        Tuono
-      </Title>
-    </Flex>
+    <Box mb={24}>
+      <Flex gap={12} align="center" h={size} mb={8}>
+        <img src="/logo.svg" alt="Tuono" width={size} height={size} />
+        <Title order={2} fz={size}>
+          Tuono
+        </Title>
+      </Flex>
+      <Text fz={12}>Simply the fastest full-stack web framework ⚡</Text>
+    </Box>
+  )
+}
+
+function FooterOutro(): JSX.Element {
+  return (
+    <Container
+      size={1000}
+      w="100%"
+      display="flex"
+      style={{ gap: 12, justifyContent: 'space-between' }}
+    >
+      <Box>
+        <Text fz={14}>
+          Built by{' '}
+          <Anchor fz={14} href="https://github.com/Valerioageno">
+            Valerio Ageno
+          </Anchor>{' '}
+          and{' '}
+          <Anchor
+            fz={14}
+            href="https://github.com/tuono-labs/tuono/graphs/contributors"
+          >
+            these awesome people
+          </Anchor>
+        </Text>
+      </Box>
+    </Container>
   )
 }
 
 export default function Footer(): JSX.Element {
   return (
     <AppShell.Footer id="app-footer" withBorder={false} zIndex={0} p={0}>
-      <Box m={0} pt={36} pb={8} w="100%" bg="var(--mantine-color-footer-bg)">
-        <Container size="1000">
+      <Box m={0} pt={52} pb={8} w="100%" bg="var(--mantine-color-footer-bg)">
+        <Container
+          size={1000}
+          w="100%"
+          display="flex"
+          style={{ gap: 12, justifyContent: 'space-between' }}
+          mb={24}
+        >
           <Flex
             justify="space-between"
+            w="100%"
             direction={{ base: 'column', xs: 'row' }}
           >
             <FooterTitle />
             <Flex
-              gap={{ base: 12, xs: 20 }}
+              gap={{ base: 12, md: 32 }}
               justify="space-between"
               direction={{ base: 'column', xs: 'row' }}
             >
@@ -96,11 +134,15 @@ export default function Footer(): JSX.Element {
               <FooterLinkList title="Community" links={communityLinks} />
             </Flex>
           </Flex>
-          <Divider mb={8} mt={16} />
-          <Box>
-            <span>© 2025 Tuono</span>
-          </Box>
+          <Box
+            w={220}
+            miw={220}
+            id="table-of-content-placeholder"
+            visibleFrom="lg"
+          />
         </Container>
+        <Divider mb={8} mt={28} />
+        <FooterOutro />
       </Box>
     </AppShell.Footer>
   )

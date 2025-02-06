@@ -88,7 +88,7 @@ const resolver: CSSVariablesResolver = (th) => {
       '--mantine-color-quote-border': th.colors.violet[1],
     },
     dark: {
-      '--mantine-color-footer-bg': th.colors.dark[8],
+      '--mantine-color-footer-bg': th.colors.dark[6],
       '--mantine-color-sidebar-gray': sidebarGrayDark,
       '--mantine-color-sidebar-text-hover': sidebarTextHoverDark,
       '--mantine-color-quote-border': th.colors.violet[9],
