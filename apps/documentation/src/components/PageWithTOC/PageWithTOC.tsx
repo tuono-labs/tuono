@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { Box, Container, Space } from '@mantine/core'
+import { Box, Container } from '@mantine/core'
 
 import TableOfContents from '@/components/TableOfContents'
 

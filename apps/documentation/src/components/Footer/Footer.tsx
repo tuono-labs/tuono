@@ -11,7 +11,17 @@ import {
   Anchor,
 } from '@mantine/core'
 
-const aboutLinks: Array<Link> = [
+interface LinkData {
+  title: string
+  url: string
+}
+
+interface FooterLinkListProps {
+  title: string
+  links: Array<LinkData>
+}
+
+const aboutLinks: Array<LinkData> = [
   { title: 'Contribute', url: '/documentation/contributing' },
   {
     title: 'GitHub releases',
@@ -19,24 +29,14 @@ const aboutLinks: Array<Link> = [
   },
 ]
 
-const communityLinks: Array<Link> = [
+const communityLinks: Array<LinkData> = [
   { title: 'Chat on Discord', url: 'https://discord.com/invite/khQzPa654B' },
   { title: 'Follow on X', url: 'https://twitter.com/valerioageno' },
   { title: 'Follow on GitHub', url: 'https://github.com/tuono-labs' },
 ]
 
-interface Link {
-  title: string
-  url: string
-}
-
-interface FooterLinkListProps {
-  title: string
-  links: Array<Link>
-}
-
-function FooterLink({ link }: { link: Link }): JSX.Element {
-  const component = link.url.startsWith('http') ? 'a' : Link
+function FooterLink({ link }: { link: LinkData }): JSX.Element {
+  const component = link.url.startsWith('http') ? undefined : Link
   const target = link.url.startsWith('http') ? '_blank' : undefined
   return (
     <Box>
@@ -60,7 +60,7 @@ function FooterLinkList({ title, links }: FooterLinkListProps): JSX.Element {
         {title}
       </Title>
       {links.map((link) => (
-        <FooterLink link={link} />
+        <FooterLink link={link} key={link.url} />
       ))}
     </Box>
   )
