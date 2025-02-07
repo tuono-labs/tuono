@@ -3,7 +3,7 @@ use time::OffsetDateTime;
 use tuono_lib::axum::http::{header, HeaderMap, StatusCode};
 use tuono_lib::{Request, Response};
 
-const FILES_TO_EXCLUDE: [&str; 2] = ["sitemap.xml", "__layout"];
+const FILES_TO_EXCLUDE: [&str; 3] = ["sitemap.xml", "__layout", "404"];
 
 const SITEMAP: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
