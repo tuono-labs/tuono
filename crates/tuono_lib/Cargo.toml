@@ -17,7 +17,7 @@ include = [
 
 
 [dependencies]
-ssr_rs = "0.8.0"
+ssr_rs = "0.8.1"
 axum = {version = "0.7.5", features = ["json", "ws"]}
 axum-extra = {version = "0.9.6", features = ["cookie"]}
 tokio = { version = "1.37.0", features = ["full"] }
