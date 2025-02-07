@@ -75,6 +75,7 @@ export const normalizeConfig = (config: TuonoConfig): InternalTuonoConfig => {
     },
     vite: {
       alias: normalizeViteAlias(config.vite?.alias),
+      css: config.vite?.css,
       optimizeDeps: config.vite?.optimizeDeps,
       plugins: config.vite?.plugins ?? [],
     },
