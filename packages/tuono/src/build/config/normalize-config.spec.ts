@@ -7,7 +7,6 @@ import type { TuonoConfig } from '../../config'
 import { normalizeConfig } from './normalize-config'
 
 const PROCESS_CWD_MOCK = 'PROCESS_CWD_MOCK'
-
 vi.spyOn(process, 'cwd').mockReturnValue(PROCESS_CWD_MOCK)
 
 describe('normalizeConfig', () => {
@@ -16,7 +15,12 @@ describe('normalizeConfig', () => {
 
     expect(normalizeConfig(config)).toStrictEqual({
       server: { host: 'localhost', port: 3000 },
-      vite: { alias: undefined, optimizeDeps: undefined, plugins: [] },
+      vite: {
+        alias: undefined,
+        css: undefined,
+        optimizeDeps: undefined,
+        plugins: [],
+      },
     })
   })
 
@@ -24,7 +28,12 @@ describe('normalizeConfig', () => {
     // @ts-expect-error testing invalid config
     expect(normalizeConfig({ invalid: true })).toStrictEqual({
       server: { host: 'localhost', port: 3000 },
-      vite: { alias: undefined, optimizeDeps: undefined, plugins: [] },
+      vite: {
+        alias: undefined,
+        css: undefined,
+        optimizeDeps: undefined,
+        plugins: [],
+      },
     })
   })
 
@@ -114,19 +123,39 @@ describe('normalizeConfig', () => {
         expect.objectContaining({
           vite: expect.objectContaining({
             alias: [
-              {
-                find: '1',
-                replacement: '@tabler/icons-react-fun',
-              },
-              {
-                find: '2',
-                replacement: path.join(PROCESS_CWD_MOCK, 'src'),
-              },
-              {
-                find: '3',
-                replacement: 'file://pluto',
-              },
+              { find: '1', replacement: '@tabler/icons-react-fun' },
+              { find: '2', replacement: path.join(PROCESS_CWD_MOCK, 'src') },
+              { find: '3', replacement: 'file://pluto' },
             ],
+          }) as unknown,
+        }),
+      )
+    })
+  })
+
+  describe('vite - css config', () => {
+    it('should have css undefined if not provided', () => {
+      const config: TuonoConfig = {
+        vite: { alias: { '@': './src' } },
+      }
+
+      expect(normalizeConfig(config).vite?.css).toBeUndefined()
+    })
+
+    it('should preserve the css configuration as provided by the user', () => {
+      const cssConfig = {
+        preprocessorOptions: {
+          scss: { additionalData: '$color: red;' },
+        }
+      }
+      const config: TuonoConfig = {
+        vite: { css: cssConfig },
+      }
+
+      expect(normalizeConfig(config)).toStrictEqual(
+        expect.objectContaining({
+          vite: expect.objectContaining({
+            css: cssConfig,
           }) as unknown,
         }),
       )
