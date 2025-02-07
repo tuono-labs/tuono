@@ -13,28 +13,27 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 ## Overview
 
-API routes provide a solution to build a public API with Tuono.
+API routes offer a solution for building a public API using Tuono.
 
-Any file inside the folder `src/routes/api` is mapped to `/api/*`
-path and will be treated as an API endpoint instead of a React route.
+Any file inside the `src/routes/api` folder is mapped to the `/api/*` path 
+and will be treated as an API endpoint, rather than a React route.
 
-Tuono server is internally managed by
-[axum](https://docs.rs/axum/latest/axum/); the API system allows creating APIs
-following most of the axum syntax. Tuono re-exports axum `tuono_lib::axum::*` to
-be seamlessly used within any Tuono app.
+Tuono server is internally managed by [axum](https://docs.rs/axum/latest/axum/). 
+The API system allows you to create APIs using most of the axum syntax.
+Tuono re-exports axum `tuono_lib::axum::*` to be seamlessly used within any Tuono app.
 
 The major differences are:
 
-- The function to be matched with Tuono file system routing needs to have the
-  `tuono_lib::api(method)` macro attribute on top of it
-- The first function argument alway is `tuono_lib::Request`
+- The function to be matched with Tuono's file system routing must have the
+  `tuono_lib::api(method)` macro attribute on top of it.
+- The first argument of the function is always a `tuono_lib::Request`.
 
-Tuono API supports [dynamic routes](/documentation/routing/dynamic-routes).
+Tuono also supports [dynamic routes](/documentation/routing/dynamic-routes) for APIs.
 
 ## Example
 
-If you create `src/routes/api/books.rs` with the following file content any HTTP
-GET request to `/api/books` will return the list of queried books as JSON.
+If you create `src/routes/api/books.rs` with the following content, 
+any HTTP GET request to `/api/books` will return a list of the queried books as JSON.
 
 ```rs
 use tuono_lib::Request;
@@ -50,9 +49,9 @@ async fn book_list(req: Request) -> Json<Value> {
 }
 ```
 
-> Unlike React routes API must not return `tuono_lib::Response`
+> Unlike React routes, API must not return `tuono_lib::Response`
 
-The same file can contain more HTTP methods
+The same file can contain multiple HTTP methods.
 
 ```rs
 #[tuono_lib::api(GET)]
