@@ -121,6 +121,11 @@ export const sidebarElements: Array<SidebarElement> = [
         label: 'Link and navigation',
         href: '/documentation/routing/link-and-navigation',
       },
+      {
+        type: 'element',
+        label: 'API routes',
+        href: '/documentation/routing/api-routes',
+      },
     ],
   },
   {
