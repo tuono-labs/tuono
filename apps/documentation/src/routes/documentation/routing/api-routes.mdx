@@ -15,10 +15,10 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 API routes offer a solution for building a public API using Tuono.
 
-Any file inside the `src/routes/api` folder is mapped to the `/api/*` path 
+Any file inside the `src/routes/api` folder is mapped to the `/api/*` path
 and will be treated as an API endpoint, rather than a React route.
 
-Tuono server is internally managed by [axum](https://docs.rs/axum/latest/axum/). 
+Tuono server is internally managed by [axum](https://docs.rs/axum/latest/axum/).
 The API system allows you to create APIs using most of the axum syntax.
 Tuono re-exports axum `tuono_lib::axum::*` to be seamlessly used within any Tuono app.
 
@@ -32,7 +32,7 @@ Tuono also supports [dynamic routes](/documentation/routing/dynamic-routes) for 
 
 ## Example
 
-If you create `src/routes/api/books.rs` with the following content, 
+If you create `src/routes/api/books.rs` with the following content,
 any HTTP GET request to `/api/books` will return a list of the queried books as JSON.
 
 ```rs
