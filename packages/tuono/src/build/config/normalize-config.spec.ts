@@ -146,7 +146,7 @@ describe('normalizeConfig', () => {
       const cssConfig = {
         preprocessorOptions: {
           scss: { additionalData: '$color: red;' },
-        }
+        },
       }
       const config: TuonoConfig = {
         vite: { css: cssConfig },
