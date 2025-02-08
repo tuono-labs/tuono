@@ -100,7 +100,7 @@
     "fast-text-encoding": "^1.0.6",
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
-    "vite": "^5.2.12",
+    "vite": "^5.4.14",
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
