@@ -7,6 +7,7 @@ import type { TuonoConfig } from '../../config'
 import { normalizeConfig } from './normalize-config'
 
 const PROCESS_CWD_MOCK = 'PROCESS_CWD_MOCK'
+
 vi.spyOn(process, 'cwd').mockReturnValue(PROCESS_CWD_MOCK)
 
 describe('normalizeConfig', () => {
@@ -135,11 +136,9 @@ describe('normalizeConfig', () => {
 
   describe('vite - css config', () => {
     it('should have css undefined if not provided', () => {
-      const config: TuonoConfig = {
-        vite: { alias: { '@': './src' } },
-      }
+      const config: TuonoConfig = {}
 
-      expect(normalizeConfig(config).vite?.css).toBeUndefined()
+      expect(normalizeConfig(config).vite).toHaveProperty('css', undefined)
     })
 
     it('should preserve the css configuration as provided by the user', () => {
