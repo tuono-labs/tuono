@@ -1,0 +1,63 @@
+name: E2E CI
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  e2e:
+    name: Build Tuono, create a new app and test it
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install NodeJS Dependencies
+        uses: ./.github/actions/install-node-dependencies
+
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      - name: Run Playwright E2E tests
+        run: npx playwright test --config=./e2e/playwright.config.ts
+
+  ci_ok:
+    name: E2E CI OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs: [e2e]
+    env:
+      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
+      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
+    steps:
+      - name: Check for failure or cancelled jobs result
+        shell: bash
+        run: |
+          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
+          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
+            exit 0
+          else
+            exit 1
+          fi
