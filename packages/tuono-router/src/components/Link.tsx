@@ -18,6 +18,18 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   scroll?: boolean
 }
 
+function isModifiedEvent(event: React.MouseEvent): boolean {
+  const eventTarget = event.currentTarget as HTMLAnchorElement | SVGAElement
+  const target = eventTarget.getAttribute('target')
+  return (
+    (target && target !== '_self') ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey // triggers resource download
+  )
+}
+
 export default function Link(
   componentProps: TuonoLinkProps,
 ): React.JSX.Element {
@@ -42,13 +54,13 @@ export default function Link(
   const handleTransition: React.MouseEventHandler<HTMLAnchorElement> = (
     event,
   ) => {
-    event.preventDefault()
-    onClick?.(event)
-
-    if (href?.startsWith('#')) {
-      window.location.hash = href
+    if (href?.startsWith('#') || isModifiedEvent(event)) {
+      // If the user is pressing a modifier key, we fall back to default behaviour of `a` tag
       return
     }
+
+    event.preventDefault()
+    onClick?.(event)
 
     router.push(href || '', { scroll })
   }
