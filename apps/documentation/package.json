@@ -11,9 +11,9 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@mantine/code-highlight": "7.16.1",
-    "@mantine/core": "7.16.1",
-    "@mantine/hooks": "7.16.1",
+    "@mantine/code-highlight": "7.16.3",
+    "@mantine/core": "7.16.3",
+    "@mantine/hooks": "7.16.3",
     "@mdx-js/react": "3.1.0",
     "@tabler/icons-react": "3.28.1",
     "clsx": "2.1.1",
