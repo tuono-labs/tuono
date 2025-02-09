@@ -54,13 +54,14 @@ export default function Link(
   const handleTransition: React.MouseEventHandler<HTMLAnchorElement> = (
     event,
   ) => {
+    onClick?.(event)
+
     if (href?.startsWith('#') || isModifiedEvent(event)) {
       // If the user is pressing a modifier key, we fall back to default behaviour of `a` tag
       return
     }
 
     event.preventDefault()
-    onClick?.(event)
 
     router.push(href || '', { scroll })
   }

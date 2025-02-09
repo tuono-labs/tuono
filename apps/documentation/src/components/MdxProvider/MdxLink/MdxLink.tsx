@@ -34,7 +34,6 @@ export default function MdxLink(props: MdxLinkProps): JSX.Element {
     <Anchor
       component={Link}
       {...props}
-      target="_blank"
       variant="transparent"
       display="inline"
       style={{ fontWeight: 400 }}
