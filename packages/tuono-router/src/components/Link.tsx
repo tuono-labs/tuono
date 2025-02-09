@@ -56,8 +56,12 @@ export default function Link(
   ) => {
     onClick?.(event)
 
-    if (href?.startsWith('#') || isModifiedEvent(event)) {
-      // If the user is pressing a modifier key, we fall back to default behaviour of `a` tag
+    if (
+      href?.startsWith('#') ||
+      // If the user is pressing a modifier key or using the target attribute,
+      // we fall back to default behaviour of `a` tag
+      isModifiedEvent(event)
+    ) {
       return
     }
 
