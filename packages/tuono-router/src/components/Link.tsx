@@ -19,10 +19,9 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 function isEventModifierKeyActiveAndTargetDifferentFromSelf(
-  event: React.MouseEvent,
+  event: React.MouseEvent<HTMLAnchorElement>,
 ): boolean {
-  const eventTarget = event.currentTarget as HTMLAnchorElement | SVGAElement
-  const target = eventTarget.getAttribute('target')
+  const target = event.currentTarget.getAttribute('target')
   return (
     (target && target !== '_self') ||
     event.metaKey ||
