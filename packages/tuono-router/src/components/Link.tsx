@@ -18,6 +18,19 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   scroll?: boolean
 }
 
+function isEventModifierKeyActiveAndTargetDifferentFromSelf(
+  event: React.MouseEvent<HTMLAnchorElement>,
+): boolean {
+  const target = event.currentTarget.getAttribute('target')
+  return (
+    (target && target !== '_self') ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey // triggers resource download
+  )
+}
+
 export default function Link(
   componentProps: TuonoLinkProps,
 ): React.JSX.Element {
@@ -42,13 +55,18 @@ export default function Link(
   const handleTransition: React.MouseEventHandler<HTMLAnchorElement> = (
     event,
   ) => {
-    event.preventDefault()
     onClick?.(event)
 
-    if (href?.startsWith('#')) {
-      window.location.hash = href
+    if (
+      href?.startsWith('#') ||
+      // If the user is pressing a modifier key or using the target attribute,
+      // we fall back to default behaviour of `a` tag
+      isEventModifierKeyActiveAndTargetDifferentFromSelf(event)
+    ) {
       return
     }
+
+    event.preventDefault()
 
     router.push(href || '', { scroll })
   }
