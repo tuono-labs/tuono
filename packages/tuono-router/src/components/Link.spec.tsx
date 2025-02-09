@@ -44,16 +44,16 @@ describe('Link Component', () => {
   })
 
   it('calls router.push on normal click', () => {
-    const { getByRole } = render(<Link href="/test">Test Link</Link>)
-    const link = getByRole('link')
+    render(<Link href="/test">Test Link</Link>)
+    const link = screen.getByRole('link')
 
     fireEvent.click(link)
     expect(pushMock).toHaveBeenCalledWith('/test', { scroll: true })
   })
 
   it('does not navigate if href starts with "#"', () => {
-    const { getByRole } = render(<Link href="#section">Anchor Link</Link>)
-    const link = getByRole('link')
+    render(<Link href="#section">Anchor Link</Link>)
+    const link = screen.getByRole('link')
 
     fireEvent.click(link)
     expect(pushMock).not.toHaveBeenCalled()
@@ -82,8 +82,8 @@ describe('Link Component', () => {
   })
 
   it('does not call router.push when clicked with a modifier key', () => {
-    const { getByRole } = render(<Link href="/test">Test Link</Link>)
-    const link = getByRole('link')
+    render(<Link href="/test">Test Link</Link>)
+    const link = screen.getByRole('link')
 
     fireEvent.click(link, { ctrlKey: true })
     fireEvent.click(link, { metaKey: true })
@@ -95,12 +95,12 @@ describe('Link Component', () => {
 
   it('calls onClick handler when clicked', () => {
     const onClickMock = vi.fn()
-    const { getByRole } = render(
+    render(
       <Link href="/test" onClick={onClickMock}>
         Test Link
       </Link>,
     )
-    const link = getByRole('link')
+    const link = screen.getByRole('link')
 
     fireEvent.click(link)
 
@@ -110,12 +110,12 @@ describe('Link Component', () => {
 
   it('calls onClick but does not navigate when clicked with a modifier key', () => {
     const onClickMock = vi.fn()
-    const { getByRole } = render(
+    render(
       <Link href="/test" onClick={onClickMock}>
         Test Link
       </Link>,
     )
-    const link = getByRole('link')
+    const link = screen.getByRole('link')
 
     fireEvent.click(link, { ctrlKey: true })
     fireEvent.click(link, { metaKey: true })
