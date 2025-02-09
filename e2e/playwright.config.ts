@@ -1,13 +1,10 @@
 import * as path from 'path'
 
-import { fileURLToPath } from 'url'
-
 import { defineConfig } from '@playwright/test'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = import.meta.dirname
 
-const tuonoDir = path.join(__dirname, '../', 'target', 'release', 'tuono')
+const tuonoDir = path.join(__dirname, '../', 'target', 'debug', 'tuono')
 const setupScript = path.join(__dirname, 'e2e-test-setup.js')
 
 export default defineConfig({

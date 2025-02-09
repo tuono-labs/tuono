@@ -1,20 +1,18 @@
 import { execSync } from 'child_process'
 import * as path from 'path'
-import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = import.meta.dirname
 
 const appDir = path.join(__dirname, 'test-app')
 
-execSync('cargo build --release', { stdio: 'inherit' })
+execSync('cargo build --config opt-level=0', { stdio: 'inherit' })
 
 const isWindows = process.platform === 'win32'
 const tuonoBuildDir = path.join(
   __dirname,
   '..',
   'target',
-  'release',
+  'debug',
   isWindows ? 'tuono.exe' : 'tuono',
 )
 

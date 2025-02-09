@@ -37,10 +37,10 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
 
       - name: Install Playwright Browsers
-        run: npx playwright install
+        run: pnpm exec playwright install
 
       - name: Run Playwright E2E tests
-        run: npx playwright test --config=./e2e/playwright.config.ts
+        run: pnpm test:e2e
 
   ci_ok:
     name: E2E CI OK
