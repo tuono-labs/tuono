@@ -18,7 +18,9 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   scroll?: boolean
 }
 
-function isModifiedEvent(event: React.MouseEvent): boolean {
+function isEventModifierKeyActiveAndTargetDifferentFromSelf(
+  event: React.MouseEvent,
+): boolean {
   const eventTarget = event.currentTarget as HTMLAnchorElement | SVGAElement
   const target = eventTarget.getAttribute('target')
   return (
@@ -60,7 +62,7 @@ export default function Link(
       href?.startsWith('#') ||
       // If the user is pressing a modifier key or using the target attribute,
       // we fall back to default behaviour of `a` tag
-      isModifiedEvent(event)
+      isEventModifierKeyActiveAndTargetDifferentFromSelf(event)
     ) {
       return
     }
