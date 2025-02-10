@@ -5,6 +5,7 @@ import { defineConfig } from '@playwright/test'
 const __dirname = import.meta.dirname
 
 const tuonoDir = path.join(__dirname, '../', 'target', 'debug', 'tuono')
+const appDir = path.join(__dirname, 'fixtures', 'base')
 const setupScript = path.join(__dirname, 'e2e-test-setup.js')
 
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   webServer: {
-    command: `node ${setupScript} && cd test-app && ${tuonoDir} dev`,
+    command: `node ${setupScript} && cd ${appDir} && ${tuonoDir} dev`,
     port: 3000,
     timeout: 420 * 1000,
     stdout: 'pipe',

@@ -12,5 +12,5 @@ exclude = [
   "examples/tuono-app",
   "examples/tuono-tutorial",
   "examples/with-tailwind",
-  "e2e/test-app",
+  "e2e/fixtures/base",
 ]

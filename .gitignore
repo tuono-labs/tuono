@@ -35,4 +35,5 @@ vite.config.ts.timestamp*
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-/e2e/test-app/
+/e2e/fixtures/base/node_modules/
+

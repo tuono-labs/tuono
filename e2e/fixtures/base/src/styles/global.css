@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  background: #fbfbfb;
+}
+
+main {
+  max-width: 673px;
+  margin: 20px auto;
+}
+
+.header {
+  display: flex;
+  gap: 20px;
+}
+
+.header a {
+  color: black;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 2;
+}
+
+.title-wrap {
+  height: 200px;
+}
+
+.title {
+  position: absolute;
+  font-size: 200px;
+  line-height: 200px;
+  z-index: 0;
+  letter-spacing: -2px;
+  margin-left: -8px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.title span {
+  opacity: 0;
+}
+
+.button {
+  width: 140px;
+  height: 30px;
+  border: solid 3px black;
+  border-radius: 10px;
+  color: black;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.button:hover {
+  color: white;
+  background: black;
+}
+
+.logo {
+  margin-left: 240px;
+  position: relative;
+  top: 25px;
+}
+
+.logo img {
+  position: absolute;
+}
+
+.rust {
+  animation: rotate 6s ease-in-out infinite;
+}
+
+.react {
+  top: 33px;
+  left: 28px;
+  animation: rotate 6s linear infinite reverse;
+}
+
+.subtitle {
+  font-size: 30px;
+  line-height: 30px;
+  letter-spacing: -1px;
+}
+
+.subtitle-wrap {
+  display: flex;
+  justify-content: space-between;
+}
