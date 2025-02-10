@@ -20,7 +20,7 @@
     "posthog-js": "^1.215.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "remark-gfm": "4.0.0",
+    "remark-gfm": "4.0.1",
     "tuono": "npm:tuono@0.17.7"
   },
   "devDependencies": {
