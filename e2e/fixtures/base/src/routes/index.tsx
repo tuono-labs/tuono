@@ -15,15 +15,7 @@ export default function IndexPage({
 
   return (
     <>
-      <div className="title-wrap">
-        <h1 className="title">
-          TU<span>O</span>NO
-        </h1>
-        <div className="logo">
-          <img src="rust.svg" className="rust" />
-          <img src="react.svg" className="react" />
-        </div>
-      </div>
+      <h1>TUONO</h1>
 
       <Link href={"/second-route"}>Routing link</Link>)
     </>
