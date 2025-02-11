@@ -1,7 +1,6 @@
 use miette::{IntoDiagnostic, Result};
 use std::path::Path;
 use std::sync::Arc;
-use tokio::signal;
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
 use watchexec_supervisor::command::{Command, Program};
@@ -105,7 +104,10 @@ pub async fn watch() -> Result<()> {
         }
 
         if action.signals().any(|sig| sig == Signal::Interrupt) {
+            run_server.delete();
+            build_ssr_bundle.delete();
             action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(9999));
+            eprintln!("Tuono gracefully shutting down...");
         }
 
         action
@@ -114,14 +116,7 @@ pub async fn watch() -> Result<()> {
     // watch the current directory
     wx.config.pathset(["./src"]);
 
-    tokio::select! {
-        _ = wx.main() => {
-            let _ = wx.main().await.into_diagnostic()?;
-        },
-        _ = signal::ctrl_c() => {
-            eprintln!("Tuono gracefully shutting down...")
-        },
-    }
+    let _ = wx.main().await.into_diagnostic()?;
 
     Ok(())
 }
