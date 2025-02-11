@@ -27,19 +27,6 @@ main {
   margin: 20px auto;
 }
 
-.header {
-  display: flex;
-  gap: 20px;
-}
-
-.header a {
-  color: black;
-  font-size: 18px;
-  font-weight: 600;
-  text-decoration: none;
-  z-index: 2;
-}
-
 .title-wrap {
   height: 200px;
 }
@@ -57,24 +44,6 @@ main {
 
 .title span {
   opacity: 0;
-}
-
-.button {
-  width: 140px;
-  height: 30px;
-  border: solid 3px black;
-  border-radius: 10px;
-  color: black;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.2s;
-}
-
-.button:hover {
-  color: white;
-  background: black;
 }
 
 .logo {
@@ -95,15 +64,4 @@ main {
   top: 33px;
   left: 28px;
   animation: rotate 6s linear infinite reverse;
-}
-
-.subtitle {
-  font-size: 30px;
-  line-height: 30px;
-  letter-spacing: -1px;
-}
-
-.subtitle-wrap {
-  display: flex;
-  justify-content: space-between;
 }

@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   e2e:
-    name: Build Tuono, create a new app and test it
+    name: E2E Test ({{ matrix.os }})
 
     strategy:
       fail-fast: true
@@ -33,8 +33,6 @@ jobs:
 
       - name: Setup rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install

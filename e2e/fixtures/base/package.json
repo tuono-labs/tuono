@@ -1,11 +1,11 @@
 {
-  "name": "tuono-app",
+  "name": "base-fixture-app",
   "description": "Basic tuono application",
   "version": "0.0.1",
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tuono": "0.17.7"
+    "tuono": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.2",
