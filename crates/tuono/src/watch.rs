@@ -8,6 +8,8 @@ use watchexec_supervisor::job::{start_job, Job};
 
 use crate::mode::Mode;
 use crate::source_builder::bundle_axum_source;
+use console::Term;
+use spinners::{Spinner, Spinners};
 
 #[cfg(target_os = "windows")]
 const DEV_WATCH_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-watch.cmd";
@@ -33,11 +35,22 @@ fn watch_react_src() -> Job {
     .0
 }
 
-fn build_rust_src() -> Job {
+fn run_rust_dev_server() -> Job {
     start_job(Arc::new(Command {
         program: Program::Exec {
             prog: "cargo".into(),
             args: vec!["run".to_string(), "-q".to_string()],
+        },
+        options: Default::default(),
+    }))
+    .0
+}
+
+fn build_rust_src() -> Job {
+    start_job(Arc::new(Command {
+        program: Program::Exec {
+            prog: "cargo".into(),
+            args: vec!["build".to_string(), "-q".to_string()],
         },
         options: Default::default(),
     }))
@@ -61,17 +74,28 @@ fn build_react_ssr_src() -> Job {
 
 #[tokio::main]
 pub async fn watch() -> Result<()> {
+    let term = Term::stdout();
+    let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
+
     watch_react_src().start().await;
 
-    let run_server = build_rust_src();
+    let rust_server = run_rust_dev_server();
+    let build_rust_src = build_rust_src();
 
     let build_ssr_bundle = build_react_ssr_src();
 
     build_ssr_bundle.start().await;
+    build_rust_src.start().await;
 
-    run_server.start().await;
-
+    // Wait vite and rust builds
     build_ssr_bundle.to_wait().await;
+    build_rust_src.to_wait().await;
+
+    rust_server.start().await;
+
+    // Remove the spinner
+    sp.stop();
+    term.clear_line().unwrap();
 
     let wx = Watchexec::new(move |mut action| {
         let mut should_reload_ssr_bundle = false;
@@ -93,9 +117,9 @@ pub async fn watch() -> Result<()> {
 
         if should_reload_rust_server {
             println!("  Reloading...");
-            run_server.stop();
+            rust_server.stop();
             bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
-            run_server.start();
+            rust_server.start();
         }
 
         if should_reload_ssr_bundle {

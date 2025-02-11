@@ -1,4 +1,9 @@
-import type { AliasOptions, DepOptimizationOptions, PluginOption } from 'vite'
+import type {
+  AliasOptions,
+  DepOptimizationOptions,
+  PluginOption,
+  CSSOptions,
+} from 'vite'
 
 /**
  * @see http://tuono.dev/documentation/configuration
@@ -10,6 +15,7 @@ export interface TuonoConfig {
   }
   vite?: {
     alias?: AliasOptions
+    css?: CSSOptions
     optimizeDeps?: DepOptimizationOptions
     plugins?: Array<PluginOption>
   }

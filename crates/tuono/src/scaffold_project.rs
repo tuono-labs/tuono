@@ -228,8 +228,10 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     let cargo_toml_path = folder_path.join(PathBuf::from("Cargo.toml"));
     let cargo_toml = fs::read_to_string(&cargo_toml_path)
         .unwrap_or_else(|err| exit_with_error(&format!("Failed to read Cargo.toml: {}", err)));
-    let cargo_toml =
-        cargo_toml.replace("{ path = \"../../crates/tuono_lib/\"}", &format!("\"{v}\""));
+    let cargo_toml = cargo_toml.replace(
+        "{ path = \"../../crates/tuono_lib/\" }",
+        &format!("\"{v}\""),
+    );
 
     let mut file = OpenOptions::new()
         .write(true)

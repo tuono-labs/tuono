@@ -27,10 +27,17 @@ tuono new tuono-with-tailwind --template with-tailwind
 1. Install Tailwind CSS via your Node.js preferred package manager.
 
    ```sh
-   npm install tailwindcss@next @tailwindcss/vite@next
+   npm install tailwindcss
    ```
 
-2. Add the Tailwind CSS vite plugin to `tuono.config.ts`, as seen in the example below:
+2. Install also the `@tailwindcss/vite` vite plugin as `devDependency`
+
+   ```sh
+   npm install -D @tailwindcss/vite
+
+   ```
+
+3. Add the Tailwind CSS vite plugin to `tuono.config.ts`, as seen in the example below:
 
    ```ts
    import type { TuonoConfig } from 'tuono/config'
@@ -45,7 +52,7 @@ tuono new tuono-with-tailwind --template with-tailwind
    export default config
    ```
 
-3. Add the Tailwind CSS directives to `src/styles/global.css`.
+4. Add the Tailwind CSS directives to `src/styles/global.css`.
 
    ```css
    @import 'tailwindcss';

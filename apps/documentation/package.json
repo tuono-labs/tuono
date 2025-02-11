@@ -17,10 +17,11 @@
     "@mdx-js/react": "3.1.0",
     "@tabler/icons-react": "3.28.1",
     "clsx": "2.1.1",
+    "posthog-js": "^1.215.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remark-gfm": "4.0.0",
-    "tuono": "npm:tuono@0.17.6"
+    "tuono": "npm:tuono@0.17.7"
   },
   "devDependencies": {
     "@mdx-js/rollup": "3.1.0",

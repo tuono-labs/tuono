@@ -15,17 +15,16 @@ export default function MdxLink(props: MdxLinkProps): JSX.Element {
         target="_blank"
         variant="transparent"
         display="inline"
-        style={{ fontWeight: 600 }}
-        mt={-2}
+        style={{ fontWeight: 400 }}
         p={0}
       >
         {props.children}
         <IconExternalLink
           size="16px"
           style={{
-            marginLeft: '4px',
+            marginLeft: '2px',
             display: 'inline-block',
-            transform: 'translateY(2px)',
+            transform: 'translateY(3px)',
           }}
         />
       </Anchor>
@@ -35,11 +34,9 @@ export default function MdxLink(props: MdxLinkProps): JSX.Element {
     <Anchor
       component={Link}
       {...props}
-      target="_blank"
       variant="transparent"
       display="inline"
-      style={{ fontWeight: 600 }}
-      mt={-2}
+      style={{ fontWeight: 400 }}
       p={0}
     />
   )

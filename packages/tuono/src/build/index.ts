@@ -50,6 +50,8 @@ function createBaseViteConfigFromTuonoConfig(
       alias: tuonoConfig.vite?.alias ?? {},
     },
 
+    css: tuonoConfig.vite?.css,
+
     optimizeDeps: tuonoConfig.vite?.optimizeDeps,
 
     plugins: [
