@@ -16,8 +16,7 @@ export default function IndexPage({
   return (
     <>
       <h1>TUONO</h1>
-
-      <Link href={"/second-route"}>Routing link</Link>)
+      <Link href={'/second-route'}>Routing link</Link>)
     </>
   )
 }
