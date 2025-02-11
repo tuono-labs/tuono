@@ -1,7 +1,11 @@
 {
-  "name": "base-fixture-app",
+  "name": "fixture-base",
+  "type": "module",
   "description": "Basic tuono application",
   "version": "0.0.1",
+  "scripts": {
+    "test:e2e": "pnpm exec playwright test"
+  },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

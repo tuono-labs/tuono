@@ -1,5 +1,6 @@
 import type { JSX } from 'react'
 import type { TuonoProps } from 'tuono'
+import { Link } from 'tuono'
 
 interface IndexProps {
   subtitle: string
@@ -13,14 +14,18 @@ export default function IndexPage({
   }
 
   return (
-    <div className="title-wrap">
-      <h1 className="title">
-        TU<span>O</span>NO
-      </h1>
-      <div className="logo">
-        <img src="rust.svg" className="rust" />
-        <img src="react.svg" className="react" />
+    <>
+      <div className="title-wrap">
+        <h1 className="title">
+          TU<span>O</span>NO
+        </h1>
+        <div className="logo">
+          <img src="rust.svg" className="rust" />
+          <img src="react.svg" className="react" />
+        </div>
       </div>
-    </div>
+
+      <Link href={"/second-route"}>Routing link</Link>)
+    </>
   )
 }

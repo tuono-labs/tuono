@@ -19,7 +19,7 @@
     "repo:root:format:check": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --check",
     "repo:root:format": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --write",
     "check-all": "turbo build lint format:check types --filter=!./examples",
-    "test:e2e": "pnpm exec playwright test --config=./e2e/playwright.config.ts"
+    "test:e2e": "pnpm --filter='fixture-*' run test:e2e"
   },
   "author": "Valerio Ageno",
   "license": "MIT",
