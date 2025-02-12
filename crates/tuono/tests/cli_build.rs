@@ -206,10 +206,13 @@ fn build_fails_with_no_config() {
 fn it_does_not_init_new_git_repo_with_git_false() {
     let temp_tuono_project = TempTuonoProject::new();
 
+    fs::remove_dir_all(temp_tuono_project.path()).ok();
+    std::env::set_current_dir(temp_tuono_project.path()).unwrap();
+    
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
     test_tuono_new
         .arg("new")
-        .arg(temp_tuono_project.path())
+        .arg(".")
         .arg("--git=false")
         .assert()
         .success();
@@ -223,10 +226,13 @@ fn it_does_not_init_new_git_repo_with_git_false() {
 fn it_creates_project_without_git_if_not_installed() {
     let temp_tuono_project = TempTuonoProject::new();
 
+    fs::remove_dir_all(temp_tuono_project.path()).ok();
+    std::env::set_current_dir(temp_tuono_project.path()).unwrap();
+
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
     test_tuono_new
         .arg("new")
-        .arg(temp_tuono_project.path())
+        .arg(".")
         .env("PATH", "") // Simulate git not being installed
         .assert()
         .success();
@@ -239,10 +245,13 @@ fn it_creates_project_without_git_if_not_installed() {
 fn it_errors_if_git_not_installed_and_flag_set() {
     let temp_tuono_project = TempTuonoProject::new();
 
+    fs::remove_dir_all(temp_tuono_project.path()).ok();
+    std::env::set_current_dir(temp_tuono_project.path()).unwrap();
+
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
     test_tuono_new
         .arg("new")
-        .arg(temp_tuono_project.path())
+        .arg(".")
         .arg("--git=true")
         .env("PATH", "") // Simulate git not being installed
         .assert()
