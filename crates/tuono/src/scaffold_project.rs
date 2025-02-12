@@ -6,6 +6,7 @@ use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 const GITHUB_TUONO_TAGS_URL: &str = "https://api.github.com/repos/tuono-labs/tuono/git/ref/tags/";
 
@@ -66,8 +67,17 @@ pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
     select_head: Option<bool>,
+    git: Option<bool>
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
+
+    // Check if git is installed the user *asks* to use git, else continue anyway
+    if git.is_some() == true && is_git_installed() {
+        exit_with_error("You specified you wanted to use git, however it is not installed.")
+    }
+
+    // Use git by default
+    let git = git.unwrap_or(true) && is_git_installed();
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
@@ -151,6 +161,11 @@ pub fn create_new_project(
 
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
+
+    if git {
+        init_new_git_repo(&folder_path).expect("Failed to initialise a new git repo");
+    }
+
     outro(folder);
 }
 
@@ -245,6 +260,25 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
+fn is_git_installed() -> bool {
+    let output = Command::new("git").arg("--version").output();
+
+    output.is_ok()
+}
+
+fn init_new_git_repo(folder_path: &Path) -> Result<(), ()> {
+    let output = Command::new("git")
+        .arg("init")
+        .arg(folder_path)
+        .output();
+
+    match output {
+        Ok(output) if output.status.success() => Ok(()),
+        Ok(output) => Err(()),
+        Err(e) => Err(())
+    }
+}
+
 fn outro(folder_name: String) {
     println!("Success! 🎉");
 
@@ -291,5 +325,23 @@ mod tests {
             &String::from("examples/tuono-app"),
         );
         assert_eq!(expected, generated)
+    }
+
+    #[test]
+    fn test_init_new_git_repo() {
+        use std::fs;
+        use tempfile::tempdir;
+
+        let temp_dir = tempdir().expect("Failed to create temp dir");
+        let temp_path = temp_dir.path();
+
+        assert_eq!(fs::read_dir(temp_path).unwrap().count(), 0);
+
+        let result = init_new_git_repo(temp_path);
+
+        // Check if the function executed successfully
+        assert!(result.is_ok(), "Git repo initialization failed");
+        // Check if the `.git` directory was created
+        assert!(temp_path.join(".git").exists(), "Git repository was not initialized");
     }
 }

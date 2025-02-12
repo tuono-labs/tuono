@@ -36,6 +36,9 @@ enum Actions {
         /// Load the latest commit available on the main branch
         #[arg(long)]
         head: Option<bool>,
+        /// Initialise a new git repo in the directory
+        #[arg(short, long)]
+        git: Option<bool>
     },
 }
 
@@ -154,8 +157,9 @@ pub fn app() -> std::io::Result<()> {
             folder_name,
             template,
             head,
+            git
         } => {
-            scaffold_project::create_new_project(folder_name, template, head);
+            scaffold_project::create_new_project(folder_name, template, head, git);
         }
     }
 
