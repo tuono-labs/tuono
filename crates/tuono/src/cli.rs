@@ -36,7 +36,7 @@ enum Actions {
         /// Load the latest commit available on the main branch
         #[arg(long)]
         head: Option<bool>,
-        /// Initialise a new git repo in the directory
+        /// Initialize a new Git repository in the specified directory
         #[arg(short, long)]
         git: Option<bool>,
     },

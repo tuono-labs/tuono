@@ -71,9 +71,9 @@ pub fn create_new_project(
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
 
-    // Check if git is installed the user *asks* to use git, else continue anyway
+    // Check if Git is installed when the user requests to use it; otherwise, continue
     if git.unwrap_or(false) && !is_git_installed() {
-        exit_with_error("You specified you wanted to use git, however it is not installed.")
+        exit_with_error("You requested to use Git, but it is not installed.")
     }
 
     // Use git by default
@@ -342,9 +342,9 @@ mod tests {
 
         let result = init_new_git_repo(temp_path);
 
-        // Check if the function executed successfully
+        // Confirm that the initialize function has been executed successfully
         assert!(result.is_ok(), "Git repo initialization failed");
-        // Check if the `.git` directory was created
+        // Ensure that the `.git` directory has been created
         assert!(
             temp_path.join(".git").exists(),
             "Git repository was not initialized"
