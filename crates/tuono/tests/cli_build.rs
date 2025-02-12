@@ -200,3 +200,52 @@ fn build_fails_with_no_config() {
         .failure()
         .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
 }
+
+#[test]
+#[serial]
+fn it_does_not_init_new_git_repo_with_git_false() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
+    test_tuono_new
+        .arg("new")
+        .arg(temp_tuono_project.path())
+        .arg("--git=false")
+        .assert()
+        .success();
+
+    // Ensure the `.git` directory does not exist
+    assert!(!temp_tuono_project.path().join(".git").exists());
+}
+
+#[test]
+#[serial]
+fn it_creates_project_without_git_if_not_installed() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
+    test_tuono_new
+        .arg("new")
+        .arg(temp_tuono_project.path())
+        .env("PATH", "") // Simulate git not being installed
+        .assert()
+        .success();
+
+    assert!(!temp_tuono_project.path().join(".git").exists());
+}
+
+#[test]
+#[serial]
+fn it_errors_if_git_not_installed_and_flag_set() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
+    test_tuono_new
+        .arg("new")
+        .arg(temp_tuono_project.path())
+        .arg("--git=true")
+        .env("PATH", "") // Simulate git not being installed
+        .assert()
+        .failure()
+        .stderr("Error: Git is required but not installed.\n");
+}
