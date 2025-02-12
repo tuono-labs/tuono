@@ -163,15 +163,6 @@ const tuonoEslintConfig = tseslint.config(
       // #endregion misc
     },
   },
-
-  {
-    files: ['apps/documentation/**'],
-    settings: {
-      'import/resolver': {
-        typescript: 'apps/documentation/tsconfig.json',
-      },
-    },
-  },
 )
 
 export default tuonoEslintConfig

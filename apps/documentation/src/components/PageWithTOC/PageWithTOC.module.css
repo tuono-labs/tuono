@@ -1,9 +1,0 @@
-.wrapper {
-  width: calc(100% - 220px);
-  word-wrap: break-word;
-
-  /* var(--mantine-breakpoint-md) = 62em */
-  @media (max-width: 62em) {
-    width: 100%;
-  }
-}
