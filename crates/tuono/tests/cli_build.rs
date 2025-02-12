@@ -267,5 +267,5 @@ fn it_errors_if_git_not_installed_and_flag_set() {
         .env("PATH", "") // Simulate git not being installed
         .assert()
         .failure()
-        .stderr("You specified you wanted to use git, however it is not installed.\n");
+        .stderr("You requested to use Git, but it is not installed.\n");
 }
