@@ -72,7 +72,7 @@ pub fn create_new_project(
     let folder = folder_name.unwrap_or(".".to_string());
 
     // Check if git is installed the user *asks* to use git, else continue anyway
-    if git.is_some() == true && is_git_installed() {
+    if git.unwrap_or(false) && is_git_installed() {
         exit_with_error("You specified you wanted to use git, however it is not installed.")
     }
 
@@ -266,16 +266,22 @@ fn is_git_installed() -> bool {
     output.is_ok()
 }
 
-fn init_new_git_repo(folder_path: &Path) -> Result<(), ()> {
+fn init_new_git_repo(folder_path: &Path) -> Result<(), io::Error> {
     let output = Command::new("git")
         .arg("init")
         .arg(folder_path)
-        .output();
+        .output()?;
 
-    match output {
-        Ok(output) if output.status.success() => Ok(()),
-        Ok(output) => Err(()),
-        Err(e) => Err(())
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!(
+                "Git init failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ),
+        ))
     }
 }
 
