@@ -209,11 +209,7 @@ fn it_inits_new_git_repo_by_default_with_git_installed() {
     std::env::set_current_dir(temp_tuono_project.path()).unwrap();
 
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
-    test_tuono_new
-        .arg("new")
-        .arg(".")
-        .assert()
-        .success();
+    test_tuono_new.arg("new").arg(".").assert().success();
 
     // Ensure the `.git` directory exists
     assert!(temp_tuono_project.path().join(".git").exists());
