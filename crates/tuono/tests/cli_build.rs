@@ -207,7 +207,15 @@ fn it_does_not_init_new_git_repo_with_git_false() {
     let temp_tuono_project = TempTuonoProject::new();
 
     fs::remove_dir_all(temp_tuono_project.path()).ok();
+    println!("Attempting to change directory to: {:?}", temp_tuono_project.path());
+
+    if !temp_tuono_project.path().exists() {
+        panic!("Error: Directory does not exist!");
+    }
+
     std::env::set_current_dir(temp_tuono_project.path()).unwrap();
+    println!("Successfully changed directory.");
+
 
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
     test_tuono_new
