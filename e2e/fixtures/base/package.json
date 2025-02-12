@@ -1,0 +1,19 @@
+{
+  "name": "fixture-base",
+  "type": "module",
+  "description": "Basic tuono application",
+  "version": "0.0.1",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tuono": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.6.3"
+  }
+}

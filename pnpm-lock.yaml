@@ -11,6 +11,9 @@ importers:
       '@eslint/js':
         specifier: 9.20.0
         version: 9.20.0
+      '@playwright/test':
+        specifier: ^1.50.1
+        version: 1.50.1
       '@types/node':
         specifier: 22.13.1
         version: 22.13.1
@@ -97,6 +100,28 @@ importers:
         specifier: 7.0.1
         version: 7.0.1(postcss@8.5.1)
 
+  e2e/fixtures/base:
+    dependencies:
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+      tuono:
+        specifier: workspace:*
+        version: link:../../../packages/tuono
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.0.8
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.0.3(@types/react@19.0.8)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.7.3
+
   examples/tuono-app:
     dependencies:
       react:
@@ -173,7 +198,7 @@ importers:
     dependencies:
       '@tailwindcss/vite':
         specifier: ^4.0.0-beta.9
-        version: 4.0.0-beta.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 4.0.0-beta.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -213,7 +238,7 @@ importers:
         version: 5.0.5(rollup@4.31.0)
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       fast-text-encoding:
         specifier: ^1.0.6
         version: 1.0.6
@@ -228,14 +253,14 @@ importers:
         version: 8.2.5
       vite:
         specifier: ^5.4.14
-        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
       web-streams-polyfill:
         specifier: ^4.0.0
         version: 4.0.0
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       '@types/babel__core':
         specifier: 7.20.5
         version: 7.20.5
@@ -259,7 +284,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       vitest:
         specifier: 2.1.9
-        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
   packages/tuono-fs-router-vite-plugin:
     dependencies:
@@ -274,17 +299,17 @@ importers:
         version: 3.5.0
       vite:
         specifier: ^5.4.14
-        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       '@types/babel__core':
         specifier: 7.20.5
         version: 7.20.5
       vitest:
         specifier: 2.1.9
-        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
   packages/tuono-router:
     dependencies:
@@ -294,7 +319,7 @@ importers:
     devDependencies:
       '@tanstack/config':
         specifier: 0.7.13
-        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       '@testing-library/react':
         specifier: 16.2.0
         version: 16.2.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -303,7 +328,7 @@ importers:
         version: 19.0.8
       '@vitejs/plugin-react-swc':
         specifier: 3.7.2
-        version: 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       happy-dom:
         specifier: 16.8.1
         version: 16.8.1
@@ -312,10 +337,10 @@ importers:
         version: 19.0.0
       vite:
         specifier: 5.4.14
-        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
       vitest:
         specifier: 2.1.9
-        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+        version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
 packages:
 
@@ -717,6 +742,11 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@playwright/test@1.50.1':
+    resolution: {integrity: sha512-Jii3aBg+CEDpgnuDxEp/h7BimHcUTDlpEtce89xEumlJ5ef2hqepZ+PWp1DDpYC/VO9fmWVI1IlEaoI5fK9FXQ==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@rollup/plugin-inject@5.0.5':
     resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
@@ -1826,6 +1856,11 @@ packages:
     resolution: {integrity: sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==}
     engines: {node: '>=6 <7 || >=8'}
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -2659,6 +2694,16 @@ packages:
   picomatch@4.0.2:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
+
+  playwright-core@1.50.1:
+    resolution: {integrity: sha512-ra9fsNWayuYumt+NiM069M6OkcRb1FZSK8bgi66AtpFoWkg2+y0bJSNmkFrWhMbEBbVKC/EruAHH3g0zmtwGmQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.50.1:
+    resolution: {integrity: sha512-G8rwsOQJ63XG6BbKj2w5rHeavFjy5zynBA9zsJMMtBoe/Uf757oG12NXz6e6OirF7RCrTVAKFXbLmn1RbL7Qaw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
@@ -3918,6 +3963,10 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
+  '@playwright/test@1.50.1':
+    dependencies:
+      playwright: 1.50.1
+
   '@rollup/plugin-inject@5.0.5(rollup@4.31.0)':
     dependencies:
       '@rollup/pluginutils': 5.1.3(rollup@4.31.0)
@@ -4137,15 +4186,15 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.0.0-beta.9
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.0-beta.9
 
-  '@tailwindcss/vite@4.0.0-beta.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))':
+  '@tailwindcss/vite@4.0.0-beta.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))':
     dependencies:
       '@tailwindcss/node': 4.0.0-beta.9
       '@tailwindcss/oxide': 4.0.0-beta.9
       lightningcss: 1.29.1
       tailwindcss: 4.0.0-beta.9
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
-  '@tanstack/config@0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))':
+  '@tanstack/config@0.7.13(@types/node@22.13.1)(esbuild@0.21.5)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))':
     dependencies:
       '@commitlint/parse': 19.5.0
       commander: 12.1.0
@@ -4159,9 +4208,9 @@ snapshots:
       semver: 7.6.3
       simple-git: 3.27.0
       v8flags: 4.0.1
-      vite-plugin-dts: 3.9.1(@types/node@22.13.1)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
-      vite-plugin-externalize-deps: 0.8.0(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
-      vite-tsconfig-paths: 4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+      vite-plugin-dts: 3.9.1(@types/node@22.13.1)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
+      vite-plugin-externalize-deps: 0.8.0(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
+      vite-tsconfig-paths: 4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -4345,10 +4394,10 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-react-swc@3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))':
+  '@vitejs/plugin-react-swc@3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))':
     dependencies:
       '@swc/core': 1.9.3
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -4359,13 +4408,13 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))':
+  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))':
     dependencies:
       '@vitest/spy': 2.1.9
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
   '@vitest/pretty-format@2.1.9':
     dependencies:
@@ -4946,7 +4995,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.24.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.20.0(jiti@2.4.2)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.24.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.20.0(jiti@2.4.2)))(eslint@9.20.0(jiti@2.4.2)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -4968,7 +5017,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.20.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.24.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@9.20.0(jiti@2.4.2))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.24.0(eslint@9.20.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@9.20.0(jiti@2.4.2)))(eslint@9.20.0(jiti@2.4.2))
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -5207,6 +5256,9 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 4.0.0
       universalify: 0.1.2
+
+  fsevents@2.3.2:
+    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -6301,6 +6353,14 @@ snapshots:
 
   picomatch@4.0.2: {}
 
+  playwright-core@1.50.1: {}
+
+  playwright@1.50.1:
+    dependencies:
+      playwright-core: 1.50.1
+    optionalDependencies:
+      fsevents: 2.3.2
+
   possible-typed-array-names@1.0.0: {}
 
   postcss-js@4.0.1(postcss@8.5.1):
@@ -6838,7 +6898,7 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/types': 7.26.3
       prettier: 3.5.0
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -6863,13 +6923,13 @@ snapshots:
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@rollup/plugin-inject': 5.0.5(rollup@4.31.0)
-      '@vitejs/plugin-react-swc': 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+      '@vitejs/plugin-react-swc': 3.7.2(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       fast-text-encoding: 1.0.6
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       tuono-fs-router-vite-plugin: 0.17.7(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
       tuono-router: 0.17.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
       web-streams-polyfill: 4.0.0
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -7076,13 +7136,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@2.1.9(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)):
+  vite-node@2.1.9(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1):
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 1.1.2
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7094,7 +7154,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@3.9.1(@types/node@22.13.1)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))):
+  vite-plugin-dts@3.9.1(@types/node@22.13.1)(rollup@4.31.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@22.13.1)
       '@rollup/pluginutils': 5.1.3(rollup@4.31.0)
@@ -7105,28 +7165,28 @@ snapshots:
       typescript: 5.7.3
       vue-tsc: 1.8.27(typescript@5.7.3)
     optionalDependencies:
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-externalize-deps@0.8.0(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))):
+  vite-plugin-externalize-deps@0.8.0(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)):
     dependencies:
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
 
-  vite-tsconfig-paths@4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))):
+  vite-tsconfig-paths@4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.3)
     optionalDependencies:
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)):
+  vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.1
@@ -7137,10 +7197,10 @@ snapshots:
       lightningcss: 1.29.1
       sugarss: 4.0.1(postcss@8.5.1)
 
-  vitest@2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)):
+  vitest@2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1)))
+      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9
@@ -7156,8 +7216,8 @@ snapshots:
       tinyexec: 0.3.2
       tinypool: 1.0.2
       tinyrainbow: 1.2.0
-      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
-      vite-node: 2.1.9(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
+      vite: 5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
+      vite-node: 2.1.9(@types/node@22.13.1)(lightningcss@1.29.1)(sugarss@4.0.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.13.1

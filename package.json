@@ -18,7 +18,8 @@
     "docs:types": "turbo types --filter=documentation",
     "repo:root:format:check": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --check",
     "repo:root:format": "prettier . !./apps/** !./assets/** !./crates !./examples !./packages/** --write",
-    "check-all": "turbo build lint format:check types --filter=!./examples"
+    "check-all": "turbo build lint format:check types --filter=!./examples",
+    "test:e2e": "pnpm --filter='fixture-*' run test:e2e"
   },
   "author": "Valerio Ageno",
   "license": "MIT",
@@ -26,6 +27,7 @@
     "@eslint/js": "9.20.0",
     "@types/node": "22.13.1",
     "eslint": "9.20.0",
+    "@playwright/test": "^1.50.1",
     "eslint-import-resolver-typescript": "3.7.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-react": "7.37.4",
