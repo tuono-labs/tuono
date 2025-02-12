@@ -38,7 +38,7 @@ enum Actions {
         head: Option<bool>,
         /// Initialise a new git repo in the directory
         #[arg(short, long)]
-        git: Option<bool>
+        git: Option<bool>,
     },
 }
 
@@ -157,7 +157,7 @@ pub fn app() -> std::io::Result<()> {
             folder_name,
             template,
             head,
-            git
+            git,
         } => {
             scaffold_project::create_new_project(folder_name, template, head, git);
         }

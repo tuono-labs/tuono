@@ -67,7 +67,7 @@ pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
     select_head: Option<bool>,
-    git: Option<bool>
+    git: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
 
@@ -267,10 +267,7 @@ fn is_git_installed() -> bool {
 }
 
 fn init_new_git_repo(folder_path: &Path) -> Result<(), io::Error> {
-    let output = Command::new("git")
-        .arg("init")
-        .arg(folder_path)
-        .output()?;
+    let output = Command::new("git").arg("init").arg(folder_path).output()?;
 
     if output.status.success() {
         Ok(())
@@ -348,6 +345,9 @@ mod tests {
         // Check if the function executed successfully
         assert!(result.is_ok(), "Git repo initialization failed");
         // Check if the `.git` directory was created
-        assert!(temp_path.join(".git").exists(), "Git repository was not initialized");
+        assert!(
+            temp_path.join(".git").exists(),
+            "Git repository was not initialized"
+        );
     }
 }
