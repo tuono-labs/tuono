@@ -72,7 +72,7 @@ pub fn create_new_project(
     let folder = folder_name.unwrap_or(".".to_string());
 
     // Check if git is installed the user *asks* to use git, else continue anyway
-    if git.unwrap_or(false) && is_git_installed() {
+    if git.unwrap_or(false) && !is_git_installed() {
         exit_with_error("You specified you wanted to use git, however it is not installed.")
     }
 

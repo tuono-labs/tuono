@@ -208,7 +208,7 @@ fn it_does_not_init_new_git_repo_with_git_false() {
 
     fs::remove_dir_all(temp_tuono_project.path()).ok();
     std::env::set_current_dir(temp_tuono_project.path()).unwrap();
-    
+
     let mut test_tuono_new = Command::cargo_bin("tuono").unwrap();
     test_tuono_new
         .arg("new")
@@ -256,5 +256,5 @@ fn it_errors_if_git_not_installed_and_flag_set() {
         .env("PATH", "") // Simulate git not being installed
         .assert()
         .failure()
-        .stderr("Error: Git is required but not installed.\n");
+        .stderr("You specified you wanted to use git, however it is not installed.\n");
 }
