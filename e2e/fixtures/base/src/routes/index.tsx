@@ -7,6 +7,7 @@ interface IndexProps {
 }
 
 export default function IndexPage({
+  data,
   isLoading,
 }: TuonoProps<IndexProps>): JSX.Element {
   if (isLoading) {
@@ -16,6 +17,7 @@ export default function IndexPage({
   return (
     <>
       <h1>TUONO</h1>
+      <h2>{data?.subtitle}</h2>
       <Link href={'/second-route'}>Routing link</Link>)
     </>
   )

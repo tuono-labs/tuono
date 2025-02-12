@@ -3,7 +3,9 @@ import { test, expect } from '@playwright/test'
 test('it renders index page', async ({ page }) => {
   await page.goto('/')
   const header = await page.textContent('h1')
+  const subtitle = await page.textContent('h2')
   expect(header).toContain('TUONO')
+  expect(subtitle).toContain('Subtitle received from the server')
 })
 
 test('it renders second route', async ({ page }) => {
