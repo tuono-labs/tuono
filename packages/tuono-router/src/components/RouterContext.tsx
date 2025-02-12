@@ -31,8 +31,9 @@ function getInitialLocation(
       hash: '',
       href: serverPayloadLocation.href || '',
       searchStr: serverPayloadLocation.searchStr || '',
-      // TODO: Polyfill URLSearchParams
-      search: {},
+      search: Object.fromEntries(
+        new URLSearchParams(serverPayloadLocation.searchStr),
+      ),
     }
   }
 
