@@ -1,1 +1,0 @@
-# Stadalone apps folder

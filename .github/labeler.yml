@@ -15,10 +15,6 @@ typescript:
             'tsconfig.json',
           ]
 
-documentation:
-  - changed-files:
-      - any-glob-to-any-file: ['apps/documentation/**']
-
 'CI/CD':
   - changed-files:
       - any-glob-to-any-file: ['.github/**']
