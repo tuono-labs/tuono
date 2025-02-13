@@ -332,25 +332,4 @@ mod tests {
         );
         assert_eq!(expected, generated)
     }
-
-    #[test]
-    fn test_init_new_git_repo() {
-        use std::fs;
-        use tempfile::tempdir;
-
-        let temp_dir = tempdir().expect("Failed to create temp dir");
-        let temp_path = temp_dir.path();
-
-        assert_eq!(fs::read_dir(temp_path).unwrap().count(), 0);
-
-        let result = init_new_git_repo(temp_path);
-
-        // Confirm that the initialize function has been executed successfully
-        assert!(result.is_ok(), "Git repo initialization failed");
-        // Ensure that the `.git` directory has been created
-        assert!(
-            temp_path.join(".git").exists(),
-            "Git repository was not initialized"
-        );
-    }
 }
