@@ -67,17 +67,17 @@ pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
     select_head: Option<bool>,
-    git: Option<bool>,
+    git_init: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
 
     // Check if Git is installed when the user requests to use it; otherwise, continue
-    if git.unwrap_or(false) && !is_git_installed() {
+    if git_init.unwrap_or(false) && !is_git_installed() {
         exit_with_error("You requested to use Git, but it is not installed.")
     }
 
     // Use git by default
-    let git = git.unwrap_or(true) && is_git_installed();
+    let git = git_init.unwrap_or(true) && is_git_installed();
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());

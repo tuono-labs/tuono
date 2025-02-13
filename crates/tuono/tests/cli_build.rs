@@ -226,7 +226,7 @@ fn it_does_not_init_new_git_repo_with_git_false() {
     test_tuono_new
         .arg("new")
         .arg(".")
-        .arg("--git=false")
+        .arg("--git-init=false")
         .assert()
         .success();
 
@@ -263,7 +263,7 @@ fn it_errors_if_git_not_installed_and_flag_set() {
     test_tuono_new
         .arg("new")
         .arg(".")
-        .arg("--git=true")
+        .arg("--git-init=true")
         .env("PATH", "") // Simulate git not being installed
         .assert()
         .failure()
