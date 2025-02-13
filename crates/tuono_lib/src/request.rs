@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use axum::http::{HeaderMap, Uri};
@@ -50,5 +50,35 @@ impl Request {
 
     pub fn location(&self) -> Location {
         Location::from(self.uri.to_owned())
+    }
+
+    pub fn body<'de, T: Deserialize<'de>>(&'de self) -> Result<T, BodyParseError> {
+        if let Some(body) = self.headers.get("body") {
+            if let Ok(body) = body.to_str() {
+                let body = serde_json::from_str::<T>(body)?;
+                Ok(body)
+            } else {
+                Err(BodyParseError::Io(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Failed to read body",
+                )))
+            }
+        } else {
+            Err(BodyParseError::Io(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No body found",
+            )))
+        }
+    }
+}
+
+pub enum BodyParseError {
+    Io(std::io::Error),
+    Serde(serde_json::Error),
+}
+
+impl From<serde_json::Error> for BodyParseError {
+    fn from(err: serde_json::Error) -> BodyParseError {
+        BodyParseError::Serde(err)
     }
 }
