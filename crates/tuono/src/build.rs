@@ -78,6 +78,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
         // Close server
         let _ = rust_server.kill();
 
-        app_build_static_spinner.stop_with_message("\u{2705}Static site generation completed".into());
+        app_build_static_spinner
+            .stop_with_message("\u{2705}Static site generation completed".into());
     }
 }
