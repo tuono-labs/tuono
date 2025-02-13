@@ -163,7 +163,8 @@ pub fn create_new_project(
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
 
     if git {
-        init_new_git_repo(&folder_path).expect("Failed to initialise a new git repo");
+        init_new_git_repo(&folder_path)
+            .unwrap_or_else(|_| exit_with_error("Failed to initialise a new git repo"));
     }
 
     outro(folder);
