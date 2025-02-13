@@ -1,7 +1,5 @@
-use console::Term;
 use fs_extra::dir::{copy, CopyOptions};
 use spinners::{Spinner, Spinners};
-use std::io;
 use std::path::PathBuf;
 use std::thread::sleep;
 use std::time::Duration;
@@ -9,32 +7,33 @@ use std::time::Duration;
 use crate::app::App;
 use crate::mode::Mode;
 
-#[tokio::main]
-pub async fn build(mut app: App, ssg: bool, no_js_emit: bool) -> Result<(), io::Error> {
+pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
+    let mut app_build_spinner = Spinner::new(Spinners::Dots, "Building app...".into());
+
     if no_js_emit {
         println!("Rust build successfully finished");
-        return Ok(());
+        return;
     }
 
     if ssg && app.has_dynamic_routes() {
         // TODO: allow dynamic routes static generation
         println!("Cannot statically build dynamic routes");
-        return Ok(());
+        return;
     }
 
     app.build_tuono_config()
         .expect("Failed to build tuono.config.ts");
 
-    // start showing the spinner
-    let term = Term::stdout();
-    let mut sp = Spinner::new(Spinners::Dots, "Building app...".into());
-
     app.check_server_availability(Mode::Prod);
 
     app.build_react_prod();
 
+    // Remove the spinner
+    app_build_spinner.stop_with_message("\u{2705}Build completed".into());
+
     if ssg {
-        println!("SSG: generation started");
+        let mut app_build_static_spinner =
+            Spinner::new(Spinners::Dots, "Static site generation".into());
 
         let static_dir = PathBuf::from("out/static");
 
@@ -78,12 +77,7 @@ pub async fn build(mut app: App, ssg: bool, no_js_emit: bool) -> Result<(), io::
 
         // Close server
         let _ = rust_server.kill();
+
+        app_build_static_spinner.stop_with_message("\u{2705}Static site generation completed".into());
     }
-
-    // Remove the spinner
-    sp.stop();
-    term.clear_line().unwrap();
-
-    println!("Build successfully finished");
-    Ok(())
 }

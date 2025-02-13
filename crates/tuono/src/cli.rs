@@ -77,7 +77,7 @@ pub fn app() -> std::io::Result<()> {
         Actions::Build { ssg, no_js_emit } => {
             let app = init_tuono_folder(Mode::Prod)?;
 
-            let _ = build::build(app, ssg, no_js_emit);
+            build::build(app, ssg, no_js_emit);
         }
         Actions::New {
             folder_name,
