@@ -251,6 +251,9 @@ importers:
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
+      vite-config:
+        specifier: workspace:*
+        version: link:../../devtools/vite-config
       vitest:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.13.1)(happy-dom@16.8.1)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.1))
