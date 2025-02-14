@@ -8,8 +8,6 @@ use crate::app::App;
 use crate::mode::Mode;
 
 pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
-    let mut app_build_spinner = Spinner::new(Spinners::Dots, "Building app...".into());
-
     if no_js_emit {
         println!("Rust build successfully finished");
         return;
@@ -23,6 +21,8 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
 
     app.build_tuono_config()
         .expect("Failed to build tuono.config.ts");
+
+    let mut app_build_spinner = Spinner::new(Spinners::Dots, "Building app...".into());
 
     app.check_server_availability(Mode::Prod);
 
