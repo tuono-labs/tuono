@@ -56,22 +56,21 @@ impl Request {
         if let Some(body) = self.headers.get("body") {
             if let Ok(body) = body.to_str() {
                 let body = serde_json::from_str::<T>(body)?;
-                Ok(body)
-            } else {
-                Err(BodyParseError::Io(std::io::Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    "Failed to read body",
-                )))
+                return Ok(body);
             }
-        } else {
-            Err(BodyParseError::Io(std::io::Error::new(
+            return Err(BodyParseError::Io(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
-                "No body found",
-            )))
+                "Failed to read body",
+            )));
         }
+        Err(BodyParseError::Io(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No body found",
+        )))
     }
 }
 
+#[derive(Debug)]
 pub enum BodyParseError {
     Io(std::io::Error),
     Serde(serde_json::Error),
@@ -80,5 +79,66 @@ pub enum BodyParseError {
 impl From<serde_json::Error> for BodyParseError {
     fn from(err: serde_json::Error) -> BodyParseError {
         BodyParseError::Serde(err)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[derive(Debug, Deserialize)]
+    struct FakeBody {
+        field1: bool,
+        field2: String,
+    }
+
+    #[test]
+    fn it_correctly_parse_the_body() {
+        let mut request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+        );
+
+        request.headers.insert(
+            "body",
+            r#"{"field1": true, "field2": "hello"}"#.parse().unwrap(),
+        );
+
+        let body: FakeBody = request.body().expect("Failed to parse body");
+
+        assert!(body.field1);
+        assert_eq!(body.field2, "hello".to_string());
+    }
+
+    #[test]
+    fn it_should_trigger_an_error_when_no_body_is_found() {
+        let request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+        );
+
+        let body: Result<FakeBody, BodyParseError> = request.body();
+
+        assert!(body.is_err());
+    }
+
+    #[test]
+    fn it_should_trigger_an_error_when_body_is_invalid() {
+        let mut request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+        );
+
+        request
+            .headers
+            .insert("body", r#"{"field1": true"#.parse().unwrap());
+
+        let body: Result<FakeBody, BodyParseError> = request.body();
+
+        assert!(body.is_err());
     }
 }
