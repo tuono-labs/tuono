@@ -20,8 +20,8 @@
     "declaration": true,
 
     // JavaScript Support
-    "allowJs": true,
-    "checkJs": true,
+    "allowJs": false,
+    "checkJs": false,
 
     // Interop Constraints
     "allowSyntheticDefaultImports": true,
