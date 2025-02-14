@@ -18,8 +18,8 @@ include = [
 
 [dependencies]
 ssr_rs = "0.8.1"
-axum = {version = "0.7.5", features = ["json", "ws"]}
-axum-extra = {version = "0.9.6", features = ["cookie"]}
+axum = {version = "0.8.0", features = ["json", "ws"]}
+axum-extra = {version = "0.10.0", features = ["cookie"]}
 tokio = { version = "1.37.0", features = ["full"] }
 serde = { version = "1.0.202", features = ["derive"] }
 erased-serde = "0.4.5"
