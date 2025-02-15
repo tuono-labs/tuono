@@ -140,8 +140,9 @@ fn it_successfully_create_catch_all_routes() {
         r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
-    assert!(temp_main_rs_content
-        .contains(r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#));
+    assert!(temp_main_rs_content.contains(
+        r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#
+    ));
 }
 
 #[test]
