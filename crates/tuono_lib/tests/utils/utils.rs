@@ -81,7 +81,7 @@ impl MockTuonoServer {
             .local_addr()
             .expect("Failed to extract test server socket");
 
-        let _ = tokio::spawn(server.start());
+        _ = tokio::spawn(server.start());
 
         MockTuonoServer {
             address: socket.ip().to_string(),
