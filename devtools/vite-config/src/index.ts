@@ -1,7 +1,6 @@
 import type { UserConfig } from 'vite'
 import { preserveDirectives } from 'rollup-plugin-preserve-directives'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import UnpluginIsolatedDecl from 'unplugin-isolated-decl/vite'
 
 interface Options {
@@ -33,7 +32,6 @@ export function defineViteConfig(options: Options): UserConfig {
     plugins: [
       externalizeDeps(),
       preserveDirectives(),
-      tsconfigPaths(),
       UnpluginIsolatedDecl({ transformer: 'oxc' }),
       // dts({
       //   outDir: `${outDir}/esm`,

@@ -7,6 +7,7 @@
     "module": "Node16",
 
     // Emit
+    "noEmit": false,
     "declaration": true,
     "outDir": "dist"
   }
