@@ -4,12 +4,7 @@ import { defineConfig, mergeConfig } from 'vitest/config'
 import { defineViteConfig } from 'vite-config'
 import react from '@vitejs/plugin-react-swc'
 
-const config = defineConfig({
-  plugins: [react()],
-})
-
 export default mergeConfig(
-  config,
   defineViteConfig({
     entry: [
       './src/index.ts',
@@ -18,5 +13,8 @@ export default mergeConfig(
       './src/ssr/index.ts',
       './src/hydration/index.tsx',
     ],
+  }),
+  defineConfig({
+    plugins: [react()],
   }),
 )
