@@ -9,7 +9,7 @@ use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
 use crate::utils::health_check::get__tuono_internal_api as health_check;
 use crate::utils::route as html_route;
-use crate::utils::route::tuono__internal__api as route_api;
+use crate::utils::route::tuono_internal_api as route_api;
 
 use std::sync::Once;
 
@@ -74,8 +74,8 @@ impl MockTuonoServer {
         );
 
         let router = Router::new()
-            .route("/", get(html_route::tuono__internal__route))
-            .route("/tuono/data", get(html_route::tuono__internal__api))
+            .route("/", get(html_route::tuono_internal_route))
+            .route("/tuono/data", get(html_route::tuono_internal_api))
             .route("/health_check", get(health_check))
             .route("/route-api", get(route_api));
 
