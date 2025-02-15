@@ -7,5 +7,5 @@ pub struct ApplicationState {
 
 pub fn main() -> ApplicationState {
     let fetch = Client::new();
-    return ApplicationState { fetch };
+    ApplicationState { fetch }
 }

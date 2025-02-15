@@ -15,7 +15,7 @@ async fn api_endpoint_work() {
     let server_url = format!("http://{}:{}", &app.address, &app.port);
 
     let response = client
-        .get(&format!("{server_url}/health_check"))
+        .get(format!("{server_url}/health_check"))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -38,7 +38,7 @@ async fn not_found_route() {
     let server_url = format!("http://{}:{}", &app.address, &app.port);
 
     let response = client
-        .get(&format!("{server_url}/not-found"))
+        .get(format!("{server_url}/not-found"))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -64,7 +64,7 @@ async fn index_html_route() {
     let server_url = format!("http://{}:{}", &app.address, &app.port);
 
     let response = client
-        .get(&format!("{server_url}/"))
+        .get(format!("{server_url}/"))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -91,7 +91,7 @@ async fn api_route_route() {
     let server_url = format!("http://{}:{}", &app.address, &app.port);
 
     let response = client
-        .get(&format!("{server_url}/tuono/data"))
+        .get(format!("{server_url}/tuono/data"))
         .send()
         .await
         .expect("Failed to execute request.");

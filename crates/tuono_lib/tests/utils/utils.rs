@@ -27,13 +27,8 @@ fn add_file_with_content<'a>(path: &'a str, content: &'a str) {
         path.parent().expect("File path does not have any parent"),
         false,
     )
-    .expect(
-        format!(
-            "Failed to create parent file directories: {}",
-            path.display()
-        )
-        .as_str(),
-    );
+    .unwrap_or_else(|_| panic!("Failed to create parent file directories: {}",
+            path.display()));
 
     let mut file = File::create(path).expect("Failed to create the file");
     file.write_all(content.as_bytes())
@@ -100,7 +95,7 @@ impl MockTuonoServer {
 impl Drop for MockTuonoServer {
     fn drop(&mut self) {
         // Set back the current dir in the previous state
-        env::set_current_dir(self.original_dir.to_owned())
+        env::set_current_dir(&self.original_dir)
             .expect("Failed to restore the original directory.");
     }
 }

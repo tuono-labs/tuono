@@ -43,7 +43,7 @@ impl TempTuonoProject {
 impl Drop for TempTuonoProject {
     fn drop(&mut self) {
         // Set back the current dir in the previous state
-        env::set_current_dir(self.original_dir.to_owned())
+        env::set_current_dir(&self.original_dir)
             .expect("Failed to restore the original directory.");
     }
 }
