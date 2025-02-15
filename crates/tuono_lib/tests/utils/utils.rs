@@ -27,8 +27,12 @@ fn add_file_with_content<'a>(path: &'a str, content: &'a str) {
         path.parent().expect("File path does not have any parent"),
         false,
     )
-    .unwrap_or_else(|_| panic!("Failed to create parent file directories: {}",
-            path.display()));
+    .unwrap_or_else(|_| {
+        panic!(
+            "Failed to create parent file directories: {}",
+            path.display()
+        )
+    });
 
     let mut file = File::create(path).expect("Failed to create the file");
     file.write_all(content.as_bytes())
