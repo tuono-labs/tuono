@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
+use tracing::{debug, span, Level};
+use tracing_subscriber::EnvFilter;
 
 use crate::app::App;
 use crate::build;
@@ -61,10 +63,20 @@ fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
 }
 
 pub fn app() -> std::io::Result<()> {
+    tracing_subscriber::fmt()
+        // Not need for the time since the code is synchronous
+        .without_time()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
     let args = Args::parse();
 
     match args.action {
         Actions::Dev => {
+            let span = span!(Level::DEBUG, "DEV");
+
+            let _guard = span.enter();
+
             let mut app = init_tuono_folder(Mode::Dev)?;
 
             app.build_tuono_config()
@@ -75,6 +87,10 @@ pub fn app() -> std::io::Result<()> {
             watch::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
+            let span = span!(Level::DEBUG, "BUILD");
+
+            let _guard = span.enter();
+
             let app = init_tuono_folder(Mode::Prod)?;
 
             build::build(app, ssg, no_js_emit);
@@ -84,6 +100,10 @@ pub fn app() -> std::io::Result<()> {
             template,
             head,
         } => {
+            let span = span!(Level::DEBUG, "NEW");
+
+            let _guard = span.enter();
+
             scaffold_project::create_new_project(folder_name, template, head);
         }
     }
