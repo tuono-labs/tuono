@@ -33,11 +33,6 @@ export function defineViteConfig(options: Options): UserConfig {
       externalizeDeps(),
       preserveDirectives(),
       UnpluginIsolatedDecl({ transformer: 'oxc' }),
-      // dts({
-      //   outDir: `${outDir}/esm`,
-      //   entryRoot: options.srcDir,
-      //   include: options.srcDir,
-      // }),
     ],
   }
 }
