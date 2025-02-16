@@ -5,9 +5,6 @@ import { defineViteConfig } from 'vite-config'
 import react from '@vitejs/plugin-react-swc'
 
 export default mergeConfig(
-  defineViteConfig({
-    entry: './src/index.ts',
-  }),
   defineConfig({
     plugins: [react()],
     test: {
@@ -15,5 +12,8 @@ export default mergeConfig(
       environment: 'happy-dom',
       globals: true,
     },
+  }),
+  defineViteConfig({
+    entry: './src/index.ts',
   }),
 )

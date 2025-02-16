@@ -8,7 +8,11 @@
     "default": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
+    "format:fix": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
+    "types": "tsc --noEmit"
   },
   "devDependencies": {
     "oxc-transform": "0.50.0",

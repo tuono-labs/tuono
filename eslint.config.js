@@ -6,6 +6,9 @@ import eslintPluginReact from 'eslint-plugin-react'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 
+const REACT_FILES_MATCH =
+  'packages/{tuono,tuono-router}/**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'
+
 /** @type import('typescript-eslint').ConfigArray */
 const tuonoEslintConfig = tseslint.config(
   {
@@ -44,12 +47,17 @@ const tuonoEslintConfig = tseslint.config(
   // eslint-disable-next-line import/no-named-as-default-member
   tseslint.configs.strictTypeChecked,
 
-  // @ts-expect-error flat is optional but always defined on runtime
-  eslintPluginReact.configs.flat.recommended,
-  eslintPluginReact.configs.flat['jsx-runtime'],
-
+  // #region react
   {
-    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    files: [REACT_FILES_MATCH],
+    ...eslintPluginReact.configs.flat.recommended,
+  },
+  {
+    files: [REACT_FILES_MATCH],
+    ...eslintPluginReact.configs.flat['jsx-runtime'],
+  },
+  {
+    files: [REACT_FILES_MATCH],
     plugins: {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       'react-hooks': eslintPluginReactHooks,
@@ -59,6 +67,7 @@ const tuonoEslintConfig = tseslint.config(
       'react-hooks/exhaustive-deps': 'error',
     },
   },
+  // #endregion react
 
   {
     languageOptions: {
