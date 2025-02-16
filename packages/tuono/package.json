@@ -66,12 +66,12 @@
     "@babel/plugin-syntax-jsx": "^7.24.1",
     "@babel/plugin-syntax-typescript": "^7.24.1",
     "@rollup/plugin-inject": "^5.0.5",
-    "@vitejs/plugin-react-swc": "^3.7.0",
+    "@vitejs/plugin-react-swc": "^3.8.0",
     "fast-text-encoding": "^1.0.6",
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
     "url-search-params-polyfill": "^8.2.5",
-    "vite": "^5.4.14",
+    "vite": "^6.1.0",
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
@@ -82,8 +82,8 @@
     "@types/react-dom": "19.0.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "vitest": "2.1.9",
-    "vite-config": "workspace:*"
+    "vite-config": "workspace:*",
+    "vitest": "3.0.5"
   },
   "sideEffects": false,
   "keywords": [
