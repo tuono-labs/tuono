@@ -95,7 +95,7 @@ fn create_routes_declaration(routes: &HashMap<String, Route>) -> String {
                 for method in route.api_data.as_ref().unwrap().methods.clone() {
                     let method = method.to_string().to_lowercase();
                     route_declarations.push_str(&format!(
-                        r#".route("{axum_route}", {method}({module_import}::{method}__tuono_internal_api))"#
+                        r#".route("{axum_route}", {method}({module_import}::{method}_tuono_internal_api))"#
                     ));
                 }
             }

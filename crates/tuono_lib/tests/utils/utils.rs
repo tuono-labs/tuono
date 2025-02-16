@@ -7,7 +7,7 @@ use tempfile::{tempdir, TempDir};
 use tuono_lib::axum::routing::get;
 use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
-use crate::utils::health_check::get__tuono_internal_api as health_check;
+use crate::utils::health_check::get_tuono_internal_api as health_check;
 use crate::utils::route as html_route;
 use crate::utils::route::tuono_internal_api as route_api;
 
