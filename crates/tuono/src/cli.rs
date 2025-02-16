@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
-use tracing::{debug, span, Level};
+use tracing::{span, Level};
 use tracing_subscriber::EnvFilter;
 
 use crate::app::App;
@@ -73,7 +73,7 @@ pub fn app() -> std::io::Result<()> {
 
     match args.action {
         Actions::Dev => {
-            let span = span!(Level::DEBUG, "DEV");
+            let span = span!(Level::TRACE, "DEV");
 
             let _guard = span.enter();
 
@@ -87,7 +87,7 @@ pub fn app() -> std::io::Result<()> {
             watch::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
-            let span = span!(Level::DEBUG, "BUILD");
+            let span = span!(Level::TRACE, "BUILD");
 
             let _guard = span.enter();
 
@@ -100,7 +100,7 @@ pub fn app() -> std::io::Result<()> {
             template,
             head,
         } => {
-            let span = span!(Level::DEBUG, "NEW");
+            let span = span!(Level::TRACE, "NEW");
 
             let _guard = span.enter();
 
