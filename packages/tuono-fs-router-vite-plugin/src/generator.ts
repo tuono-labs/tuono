@@ -105,7 +105,9 @@ async function getRouteNodes(
   return { routeNodes, rustHandlersNodes }
 }
 
-export async function routeGenerator(config = defaultConfig): Promise<void> {
+export async function routeGenerator(
+  config: Config = defaultConfig,
+): Promise<void> {
   if (!isFirst) {
     isFirst = true
   } else if (skipMessage) {
