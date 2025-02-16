@@ -8,6 +8,7 @@ typescript:
   - changed-files:
       - any-glob-to-any-file:
           [
+            'devtools/**',
             'packages/**',
             'package.json',
             'pnpm-*.yaml',
@@ -23,6 +24,7 @@ typescript:
   - changed-files:
       - any-glob-to-any-file:
           [
+            'devtools/**',
             '.npmrc',
             '.nvmrc',
             '.prettierrc',
