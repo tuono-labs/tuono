@@ -189,7 +189,7 @@ impl Route {
         if self.axum_info.is_some() {
             trace!("The route is an axum route, saving the JSON file");
 
-            let data_file_path = PathBuf::from(&format!("out/static/__tuono/data{path}"));
+            let data_file_path = PathBuf::from(&format!("out/static/__tuono/data{path}.json"));
 
             let data_parent_dir = match data_file_path.parent() {
                 Some(parent_dir) => parent_dir,
