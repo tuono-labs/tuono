@@ -7,6 +7,8 @@ use tempfile::{tempdir, TempDir};
 use tuono_lib::axum::routing::get;
 use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
+use crate::utils::health_check::get__tuono_internal_api as health_check;
+use crate::utils::route as html_route;
 use crate::utils::route::tuono__internal__api as route_api;
 
 use std::sync::Once;
@@ -74,15 +76,9 @@ impl MockTuonoServer {
         );
 
         let router = Router::new()
-            .route("/", get(crate::utils::route::tuono__internal__route))
-            .route(
-                "/tuono/data",
-                get(crate::utils::route::tuono__internal__api),
-            )
-            .route(
-                "/health_check",
-                get(crate::utils::health_check::get__tuono_internal_api),
-            )
+            .route("/", get(html_route::tuono__internal__route))
+            .route("/tuono/data", get(html_route::tuono__internal__api))
+            .route("/health_check", get(health_check))
             .route("/route-api", get(route_api));
 
         let server = Server::init(router, Mode::Prod).await;
