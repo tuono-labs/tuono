@@ -20,58 +20,28 @@
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "exports": {
     "./build": {
-      "import": {
-        "types": "./dist/esm/build/index.d.ts",
-        "default": "./dist/esm/build/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/build/index.d.ts",
-        "default": "./dist/cjs/build/index.js"
-      }
+      "types": "./dist/esm/build/index.d.ts",
+      "default": "./dist/esm/build/index.js"
     },
     "./config": {
-      "import": {
-        "types": "./dist/esm/config/index.d.ts",
-        "default": "./dist/esm/config/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/config/index.d.ts",
-        "default": "./dist/cjs/config/index.js"
-      }
+      "types": "./dist/esm/config/index.d.ts",
+      "default": "./dist/esm/config/index.js"
     },
     "./ssr": {
-      "import": {
-        "types": "./dist/esm/ssr/index.d.ts",
-        "default": "./dist/esm/ssr/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/ssr/index.d.ts",
-        "default": "./dist/cjs/ssr/index.js"
-      }
+      "types": "./dist/esm/ssr/index.d.ts",
+      "default": "./dist/esm/ssr/index.js"
     },
     "./hydration": {
-      "import": {
-        "types": "./dist/esm/hydration/index.d.ts",
-        "default": "./dist/esm/hydration/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/ssr/index.d.ts",
-        "default": "./dist/cjs/ssr/index.js"
-      }
+      "types": "./dist/esm/hydration/index.d.ts",
+      "default": "./dist/esm/hydration/index.js"
     },
     ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      }
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
   },

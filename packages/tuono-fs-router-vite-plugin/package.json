@@ -23,7 +23,7 @@
   "license": "MIT",
   "type": "module",
   "types": "dist/esm/index.d.ts",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "files": [
     "dist",
