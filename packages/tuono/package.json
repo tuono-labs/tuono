@@ -7,9 +7,9 @@
     "dev": "vite build --watch",
     "build": "vite build",
     "lint": "eslint .",
-    "format": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
-    "format:check": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
-    "types": "tsc --noEmit",
+    "format": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
+    "format:fix": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
+    "typecheck": "tsc --noEmit",
     "test:watch": "vitest",
     "test": "vitest run"
   },
@@ -20,58 +20,28 @@
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "exports": {
     "./build": {
-      "import": {
-        "types": "./dist/esm/build/index.d.ts",
-        "default": "./dist/esm/build/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/build/index.d.ts",
-        "default": "./dist/cjs/build/index.js"
-      }
+      "types": "./dist/esm/build/index.d.ts",
+      "default": "./dist/esm/build/index.js"
     },
     "./config": {
-      "import": {
-        "types": "./dist/esm/config/index.d.ts",
-        "default": "./dist/esm/config/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/config/index.d.ts",
-        "default": "./dist/cjs/config/index.js"
-      }
+      "types": "./dist/esm/config/index.d.ts",
+      "default": "./dist/esm/config/index.js"
     },
     "./ssr": {
-      "import": {
-        "types": "./dist/esm/ssr/index.d.ts",
-        "default": "./dist/esm/ssr/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/ssr/index.d.ts",
-        "default": "./dist/cjs/ssr/index.js"
-      }
+      "types": "./dist/esm/ssr/index.d.ts",
+      "default": "./dist/esm/ssr/index.js"
     },
     "./hydration": {
-      "import": {
-        "types": "./dist/esm/hydration/index.d.ts",
-        "default": "./dist/esm/hydration/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/ssr/index.d.ts",
-        "default": "./dist/cjs/ssr/index.js"
-      }
+      "types": "./dist/esm/hydration/index.d.ts",
+      "default": "./dist/esm/hydration/index.js"
     },
     ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      }
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -105,7 +75,6 @@
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
-    "@tanstack/config": "0.7.13",
     "@types/babel__core": "7.20.5",
     "@types/babel__traverse": "7.20.6",
     "@types/node": "22.13.1",
@@ -113,7 +82,8 @@
     "@types/react-dom": "19.0.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "vitest": "2.1.9"
+    "vitest": "2.1.9",
+    "vite-config": "workspace:*"
   },
   "sideEffects": false,
   "keywords": [

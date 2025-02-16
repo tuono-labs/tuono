@@ -28,7 +28,7 @@ jobs:
         uses: ./.github/actions/install-node-dependencies
 
       - name: Test project
-        run: pnpm repo:root:format:check
+        run: pnpm repo:root:format
 
   ci_ok:
     name: Repo root CI OK

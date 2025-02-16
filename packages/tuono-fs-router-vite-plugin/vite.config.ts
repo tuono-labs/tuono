@@ -1,12 +1,5 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
-import { tanstackBuildConfig } from '@tanstack/config/build'
+import { defineViteConfig } from 'vite-config'
 
-const config = defineConfig({})
-
-export default mergeConfig(
-  config,
-  tanstackBuildConfig({
-    entry: './src/index.ts',
-    srcDir: './src',
-  }),
-)
+export default defineViteConfig({
+  entry: './src/index.ts',
+})
