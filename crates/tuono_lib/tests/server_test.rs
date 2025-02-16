@@ -1,5 +1,5 @@
 mod utils;
-use crate::utils::utils::MockTuonoServer;
+use crate::utils::MockTuonoServer;
 use serial_test::serial;
 
 #[tokio::test]
