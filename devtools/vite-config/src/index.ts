@@ -8,8 +8,7 @@ interface Options {
   entry: string | Array<string>
 }
 
-export function defineViteConfig(options: Options): UserConfig {
-  const { entry } = options
+export function defineViteConfig({ entry }: Options): UserConfig {
   const outDir = 'dist'
 
   return {
