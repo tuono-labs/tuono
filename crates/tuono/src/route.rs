@@ -143,6 +143,10 @@ impl Route {
     }
 
     pub fn save_ssg_file(&self, reqwest: &Client) -> Result<(), String> {
+        if self.is_api() {
+            return Ok(());
+        }
+
         let path = &self.path.replace("index", "");
 
         let url = format!("http://localhost:3000{path}");
@@ -165,13 +169,11 @@ impl Route {
             }
         };
 
-        if !parent_dir.is_dir() {
-            if let Err(_) = create_all(parent_dir, false) {
-                return Err(format!(
-                    "Failed to create the parent directory {:?}",
-                    parent_dir
-                ));
-            }
+        if !parent_dir.is_dir() || create_all(parent_dir, false).is_err() {
+            return Err(format!(
+                "Failed to create the parent directory {:?}",
+                parent_dir
+            ));
         }
 
         trace!("Saving the HTML file: {:?}", file_path);
@@ -181,7 +183,7 @@ impl Route {
             Err(_) => return Err(format!("Failed to create the file: {:?}", file_path)),
         };
 
-        if let Err(_) = io::copy(&mut response, &mut file) {
+        if io::copy(&mut response, &mut file).is_err() {
             return Err(format!("Failed to write the file: {:?}", file_path));
         }
 
@@ -201,13 +203,11 @@ impl Route {
                 }
             };
 
-            if !data_parent_dir.is_dir() {
-                if let Err(_) = create_all(data_parent_dir, false) {
-                    return Err(format!(
-                        "Failed to create the parent directory {:?}",
-                        data_parent_dir
-                    ));
-                }
+            if !data_parent_dir.is_dir() && create_all(data_parent_dir, false).is_err() {
+                return Err(format!(
+                    "Failed to create the parent directory {:?}",
+                    data_parent_dir
+                ));
             }
 
             let base = Url::parse("http://localhost:3000/__tuono/data").unwrap();
@@ -240,8 +240,8 @@ impl Route {
                 }
             };
 
-            if let Err(_) = io::copy(&mut response, &mut data_file) {
-                return Err(format!("Failed to write the JSON file"));
+            if io::copy(&mut response, &mut data_file).is_err() {
+                return Err("Failed to write the JSON file".to_string());
             }
         }
 
