@@ -7,9 +7,9 @@ members = [
   "crates/tuono_lib_macros"
 ]
 exclude = [
-  "apps/documentation",
   "examples/with-mdx",
   "examples/tuono-app",
   "examples/tuono-tutorial",
   "examples/with-tailwind",
+  "e2e/fixtures/base",
 ]

@@ -27,6 +27,7 @@
  * https://docs.rs/ssr_rs/latest/ssr_rs/struct.Ssr.html#method.add_global_fn
  */
 import 'fast-text-encoding'
+import 'url-search-params-polyfill'
 
 /* eslint-disable import/order, import/newline-after-import */
 import { MessageChannelPolyfill } from './polyfills/MessageChannel'

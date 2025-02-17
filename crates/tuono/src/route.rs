@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
+use tracing::trace;
 
 fn has_dynamic_path(route: &str) -> bool {
     let regex = Regex::new(r"\[(.*?)\]").expect("Failed to create the regex");
@@ -141,35 +142,72 @@ impl Route {
         self.axum_info = Some(AxumInfo::new(self))
     }
 
-    pub fn save_ssg_file(&self, reqwest: &Client) {
+    pub fn save_ssg_file(&self, reqwest: &Client) -> Result<(), String> {
+        if self.is_api() {
+            return Ok(());
+        }
+
         let path = &self.path.replace("index", "");
 
-        let mut response = reqwest
-            .get(format!("http://localhost:3000{path}"))
-            .send()
-            .unwrap();
+        let url = format!("http://localhost:3000{path}");
+
+        trace!("Requesting the page: {}", url);
+        let mut response = match reqwest.get(format!("http://localhost:3000{path}")).send() {
+            Ok(response) => response,
+            Err(_) => return Err(format!("Failed to get the response: {}", url)),
+        };
 
         let file_path = self.output_file_path();
 
-        let parent_dir = file_path.parent().unwrap();
+        let parent_dir = match file_path.parent() {
+            Some(parent_dir) => parent_dir,
+            None => {
+                return Err(format!(
+                    "Failed to get the parent directory {:?}",
+                    file_path
+                ))
+            }
+        };
 
-        if !parent_dir.is_dir() {
-            create_all(parent_dir, false).expect("Failed to create parent directories");
+        if !parent_dir.is_dir() || create_all(parent_dir, false).is_err() {
+            return Err(format!(
+                "Failed to create the parent directory {:?}",
+                parent_dir
+            ));
         }
 
-        let mut file = File::create(file_path).expect("Failed to create the HTML file");
+        trace!("Saving the HTML file: {:?}", file_path);
 
-        io::copy(&mut response, &mut file).expect("Failed to write the HTML on the file");
+        let mut file = match File::create(&file_path) {
+            Ok(file) => file,
+            Err(_) => return Err(format!("Failed to create the file: {:?}", file_path)),
+        };
+
+        if io::copy(&mut response, &mut file).is_err() {
+            return Err(format!("Failed to write the file: {:?}", file_path));
+        }
 
         // Saving also the server response
         if self.axum_info.is_some() {
-            let data_file_path = PathBuf::from(&format!("out/static/__tuono/data{path}"));
+            trace!("The route is an axum route, saving the JSON file");
 
-            let data_parent_dir = data_file_path.parent().unwrap();
+            let data_file_path = PathBuf::from(&format!("out/static/__tuono/data{path}.json"));
 
-            if !data_parent_dir.is_dir() {
-                create_all(data_parent_dir, false)
-                    .expect("Failed to create data parent directories");
+            let data_parent_dir = match data_file_path.parent() {
+                Some(parent_dir) => parent_dir,
+                None => {
+                    return Err(format!(
+                        "Failed to get the parent directory {:?}",
+                        data_file_path
+                    ))
+                }
+            };
+
+            if !data_parent_dir.is_dir() && create_all(data_parent_dir, false).is_err() {
+                return Err(format!(
+                    "Failed to create the parent directory {:?}",
+                    data_parent_dir
+                ));
             }
 
             let base = Url::parse("http://localhost:3000/__tuono/data").unwrap();
@@ -182,13 +220,32 @@ impl Route {
                 .join(pathname)
                 .expect("Failed to build the reqwest URL");
 
-            let mut response = reqwest.get(url).send().unwrap();
+            trace!("Requesting the JSON file: {}", url);
 
-            let mut data_file =
-                File::create(data_file_path).expect("Failed to create the JSON file");
+            let mut response = match reqwest.get(url.clone()).send() {
+                Ok(response) => {
+                    trace!("Successfully got the response for: {url}");
+                    response
+                }
+                Err(_) => return Err(format!("Failed to get the response: {url}")),
+            };
 
-            io::copy(&mut response, &mut data_file).expect("Failed to write the JSON on the file");
+            let mut data_file = match File::create(&data_file_path) {
+                Ok(file) => file,
+                Err(_) => {
+                    return Err(format!(
+                        "Failed to create the JSON file: {:?}",
+                        data_file_path
+                    ))
+                }
+            };
+
+            if io::copy(&mut response, &mut data_file).is_err() {
+                return Err("Failed to write the JSON file".to_string());
+            }
         }
+
+        Ok(())
     }
 
     fn output_file_path(&self) -> PathBuf {

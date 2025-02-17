@@ -6,12 +6,14 @@
       "dependsOn": ["^build"]
     },
     "format": {},
-    "format:check": {},
-    "types": {
+    "format:fix": {},
+    "typecheck": {
       "dependsOn": ["^build"],
       "outputLogs": "new-only"
     },
-    "test": {},
+    "test": {
+      "dependsOn": ["^build"]
+    },
     "test:watch": {},
     "build": {
       "outputs": ["dist/**"],
