@@ -8,7 +8,7 @@ use tracing::{error, trace};
 use crate::app::App;
 use crate::mode::Mode;
 
-fn gracefully_exit_with_error(msg: &str) -> ! {
+fn exit_gracefully_with_error(msg: &str) -> ! {
     error!(msg);
     std::process::exit(1);
 }
@@ -26,7 +26,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
     }
 
     app.build_tuono_config()
-        .unwrap_or_else(|_| gracefully_exit_with_error("Failed to build tuono.config.ts"));
+        .unwrap_or_else(|_| exit_gracefully_with_error("Failed to build tuono.config.ts"));
 
     let mut app_build_spinner = Spinner::new(Spinners::Dots, "Building app...".into());
 
@@ -41,16 +41,21 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
         let mut app_build_static_spinner =
             Spinner::new(Spinners::Dots, "Static site generation".into());
 
+        let mut exit_gracefully_with_error = |msg: &str| -> ! {
+            app_build_static_spinner.stop_with_message("\u{274C} Build failed\n".into());
+            exit_gracefully_with_error(msg)
+        };
+
         let static_dir = PathBuf::from("out/static");
 
         if static_dir.is_dir() {
             std::fs::remove_dir_all(&static_dir).unwrap_or_else(|_| {
-                gracefully_exit_with_error("Failed to clear the out/static folder")
+                exit_gracefully_with_error("Failed to clear the out/static folder")
             });
         }
 
         std::fs::create_dir(&static_dir)
-            .unwrap_or_else(|_| gracefully_exit_with_error("Failed to create static output dir"));
+            .unwrap_or_else(|_| exit_gracefully_with_error("Failed to create static output dir"));
 
         copy(
             "./out/client",
@@ -58,7 +63,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
             &CopyOptions::new().overwrite(true).content_only(true),
         )
         .unwrap_or_else(|_| {
-            gracefully_exit_with_error("Failed to clone assets into static output folder")
+            exit_gracefully_with_error("Failed to clone assets into static output folder")
         });
 
         // Start the server
@@ -67,7 +72,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
 
         let mut exit_and_shut_server = |msg: &str| -> ! {
             _ = rust_server.kill();
-            gracefully_exit_with_error(msg)
+            exit_gracefully_with_error(msg)
         };
 
         let reqwest_client = reqwest::blocking::Client::builder()
