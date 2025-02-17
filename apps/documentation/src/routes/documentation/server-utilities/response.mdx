@@ -1,0 +1,113 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - Response"
+  canonical="https://tuono.dev/documentation/server-utilities/response"
+  description="Add server side data to the routes or manage conditional redirect
+  with the Response enum"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'Response' }]} />
+
+# Response
+
+## Overview
+
+The `Response` enum has the following three variants:
+
+```rs
+pub enum Response {
+    Redirect(String),
+    Props(Props),
+    Custom((StatusCode, HeaderMap, String)),
+}
+```
+
+`Response` is the required response type for every route hanlder.
+
+An example of basic route handler is:
+
+```rs
+use tuono_lib::{Request, Response};
+
+#[tuono_lib::handler]
+async fn my_route_handler(req: Request) -> Reponse {
+  // ...
+}
+```
+
+> API handlers `#[tuono_lib::api(method)]` must not return the `Response`
+> enum. The API handler should implement any [allowed axum response
+> type](https://docs.rs/axum/latest/axum/#responses).
+
+### `Response::Props`
+
+Allows the handler to pass data to the React route,
+which will be available in the `data` prop of the corresponding route.
+
+The `Response::Props` variant takes a `Props` struct as its first argument,
+which represents the data.
+
+```rs
+use tuono_lib::{Request, Response, Props};
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
+struct MyData {
+  field1: String,
+  field2: String
+}
+
+#[tuono_lib::handler]
+async fn my_route_handler(req: Request) -> Reponse {
+  let my_data: MyData = remote_data_fetch().await;
+
+  Response::Props(Props::new(my_data))
+}
+```
+
+> The data passed as prop have to implement both `Serialize` and `Deserialize`
+> from the [serde crate](https://serde.rs/).
+
+### `Response::Redirect`
+
+Allows the server to redirect the current request to a given path.
+For example:
+
+```rs
+use tuono_lib::{Request, Response};
+
+#[tuono_lib::handler]
+async fn my_route_handler(req: Request) -> Reponse {
+  if !is_user_authorized() {
+    return Response::Redirect("/login".to_string());
+  }
+  // ...
+}
+```
+
+### `Response::Custom`
+
+This variant allows the route handler to skip server-side rendering in ReactJS
+and return the passed values instead.
+
+For example, to generate the app's sitemaps and return an `.xml` file,
+we could write the following handler:
+
+```rs
+// src/routes/sitemap.xml.rs
+use tuono_lib::{Request, Response};
+use tuono_lib::axum::http::{header, HeaderMap, StatusCode};
+
+#[tuono_lib::handler]
+async fn my_sitemaps_handler(req: Request) -> Reponse {
+  let sitemaps: String = fetch_sitemaps().await;
+
+  let mut headers = HeaderMap::new();
+  headers.insert(header::CONTENT_TYPE, "text/xml".parse().unwrap());
+
+  Response::Custom(StatusCode::Ok, headers, sitemaps)
+}
+```

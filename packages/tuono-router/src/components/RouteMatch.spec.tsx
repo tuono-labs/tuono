@@ -1,60 +1,84 @@
-import type * as React from 'react'
+import type { JSX } from 'react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { cleanup, render, screen } from '@testing-library/react'
 
-import type { Route } from '../route'
+import { Route } from '../route'
+import type { RouteComponent, RouteProps } from '../types'
 
 import { RouteMatch } from './RouteMatch'
 
-import '@testing-library/jest-dom'
-
-interface Props {
-  children: React.ReactNode
+function createRouteComponent(
+  routeType: string,
+  RouteComponentFn: (props: RouteProps) => JSX.Element,
+): RouteComponent {
+  const RootComponent = RouteComponentFn as RouteComponent
+  RootComponent.preload = vi.fn()
+  RootComponent.displayName = routeType
+  return RootComponent
 }
 
-const root = {
+const root = new Route({
   isRoot: true,
-  component: ({ children }: Props) => (
+  component: createRouteComponent('root', ({ children }) => (
     <div data-testid="root">root route {children}</div>
-  ),
-} as unknown as Route
+  )),
+})
 
-const parent = {
-  component: ({ children }: Props) => (
+const parent = new Route({
+  component: createRouteComponent('parent', ({ children }) => (
     <div data-testid="parent">parent route {children}</div>
-  ),
-  options: {
-    getParentRoute: () => root,
-  },
-} as unknown as Route
+  )),
+  getParentRoute: (): Route => root,
+})
 
-const route = {
-  component: () => <p data-testid="route">current route</p>,
-  options: {
-    getParentRoute: () => parent,
+const route = new Route({
+  component: createRouteComponent('route', () => (
+    <p data-testid="route">current route</p>
+  )),
+  getParentRoute: (): Route => parent,
+})
+
+vi.mock('../hooks/useServerPayloadData.ts', () => ({
+  useServerPayloadData: (): { data: unknown; isLoading: boolean } => {
+    return {
+      data: undefined,
+      isLoading: false,
+    }
   },
-} as unknown as Route
+}))
 
 describe('Test RouteMatch component', () => {
-  afterEach(() => {
-    cleanup()
-  })
+  afterEach(cleanup)
 
   test('It should correctly render nested routes', () => {
-    vi.mock('../hooks/useServerPayloadData.ts', () => ({
-      useServerPayloadData: (): { data: unknown; isLoading: boolean } => {
-        return {
-          data: undefined,
-          isLoading: false,
-        }
-      },
-    }))
-
     render(<RouteMatch route={route} serverInitialData={{}} />)
-    expect(screen.getByTestId('root')).toHaveTextContent(
-      'root route parent route current route',
+
+    expect(screen.getByTestId('root')).toMatchInlineSnapshot(
+      `
+      <div
+        data-testid="root"
+      >
+        root route 
+        <div
+          data-testid="parent"
+        >
+          parent route 
+          <p
+            data-testid="route"
+          >
+            current route
+          </p>
+        </div>
+      </div>
+    `,
     )
-    expect(screen.getByTestId('route')).toHaveTextContent('current route')
+    expect(screen.getByTestId('route')).toMatchInlineSnapshot(`
+      <p
+        data-testid="route"
+      >
+        current route
+      </p>
+    `)
   })
 })

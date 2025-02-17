@@ -1,4 +1,4 @@
-name: Deploy documentation website on AWS S3
+name: Documentation Website Deploy on AWS S3
 
 on:
   push:
@@ -26,8 +26,16 @@ jobs:
       - name: Setup rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
+      # ⬇️ Keep in sync with `.github/workflows/ci-documentation.yml`
+      - name: Read tuono version used by the documentation
+        id: get_tuono_version
+        run: |
+          VERSION=$(pnpm ls tuono --filter=documentation | grep "tuono " | sed -E 's/.* ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Install tuono
-        run: cargo install tuono@0.17.6
+        run: cargo install tuono@${{ steps.get_tuono_version.outputs.version }}
+      # ⬆️
 
       - name: Build project
         working-directory: ./apps/documentation

@@ -33,12 +33,12 @@ export const sidebarElements: Array<SidebarElement> = [
       {
         type: 'element',
         label: 'Installation',
-        href: '/documentation/installation',
+        href: '/documentation/getting-started/installation',
       },
       {
         type: 'element',
-        label: 'How is tuono different?',
-        href: '/documentation/how-is-tuono-different',
+        label: 'Setup project',
+        href: '/documentation/getting-started/setup-project',
       },
     ],
   },
@@ -108,7 +108,7 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Defining routes',
+        label: 'Pages and layout',
         href: '/documentation/routing/defining-routes',
       },
       {
@@ -123,23 +123,8 @@ export const sidebarElements: Array<SidebarElement> = [
       },
       {
         type: 'element',
-        label: 'Pages',
-        href: '/documentation/routing/pages',
-      },
-      {
-        type: 'element',
-        label: 'Loading state',
-        href: '/documentation/routing/loading-state',
-      },
-      {
-        type: 'element',
-        label: 'Layouts',
-        href: '/documentation/routing/layouts',
-      },
-      {
-        type: 'element',
-        label: 'Redirecting',
-        href: '/documentation/routing/redirecting',
+        label: 'API routes',
+        href: '/documentation/routing/api-routes',
       },
     ],
   },
@@ -150,13 +135,13 @@ export const sidebarElements: Array<SidebarElement> = [
     children: [
       {
         type: 'element',
-        label: 'Server side rendering',
+        label: 'Server side rendering (SSR)',
         href: '/documentation/rendering/server-side-rendering',
       },
       {
         type: 'element',
-        label: 'Static site rendering',
-        href: '/documentation/rendering/static-site-rendering',
+        label: 'Static site generation (SSG)',
+        href: '/documentation/rendering/static-site-generation',
       },
     ],
   },
@@ -189,18 +174,6 @@ export const sidebarElements: Array<SidebarElement> = [
       },
     ],
   },
-  {
-    type: 'element',
-    label: 'Core concepts',
-    href: '#focus',
-    children: [
-      {
-        type: 'element',
-        label: 'Multithreading',
-        href: '/documentation/core-concepts/multithreading',
-      },
-    ],
-  },
   { type: 'divider' },
   { type: 'title', label: 'API reference' },
   {
@@ -217,13 +190,35 @@ export const sidebarElements: Array<SidebarElement> = [
   },
   {
     type: 'element',
-    label: 'Hooks',
+    label: 'Functions',
     href: '#focus',
     children: [
       {
         type: 'element',
         label: 'useRouter',
-        href: '/documentation/hooks/use-router',
+        href: '/documentation/functions/use-router',
+      },
+      {
+        type: 'element',
+        label: 'dynamic',
+        href: '/documentation/functions/dynamic',
+      },
+    ],
+  },
+  {
+    type: 'element',
+    label: 'Server utilities',
+    href: '#focus',
+    children: [
+      {
+        type: 'element',
+        label: 'Response',
+        href: '/documentation/server-utilities/response',
+      },
+      {
+        type: 'element',
+        label: 'Request',
+        href: '/documentation/server-utilities/request',
       },
     ],
   },

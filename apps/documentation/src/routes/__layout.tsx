@@ -1,90 +1,20 @@
 import type { ReactNode, JSX } from 'react'
 import { TuonoScripts } from 'tuono'
 
-import {
-  ColorSchemeScript,
-  createTheme,
-  MantineProvider,
-  AppShell,
-  mantineHtmlProps,
-  type CSSVariablesResolver,
-} from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core'
 
-import MdxWrapper from '@/components/MdxWrapper'
-import Navbar from '@/components/Navbar'
-import Sidebar from '@/components/Sidebar'
+import { PostHogProvider, PostHogPageView } from '@/components/PostHog'
 
 import '@mantine/core/styles.css'
 import '@mantine/code-highlight/styles.css'
+
+import App from '@/components/App'
 
 interface RootRouteProps {
   children: ReactNode
 }
 
-const theme = createTheme({
-  primaryColor: 'violet',
-  primaryShade: { light: 6, dark: 9 },
-  fontFamily: 'Inter',
-  respectReducedMotion: true,
-  radius: {
-    xs: '8px',
-    lg: '8px',
-    xl: '8px',
-    md: '8px',
-    sm: '8px',
-  },
-  fontSizes: {
-    // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    xs: '14px',
-    sm: '14px',
-  },
-  colors: {
-    dark: [
-      '#d5d7e0',
-      '#acaebf',
-      '#8c8fa3',
-      '#666980',
-      '#4d4f66',
-      '#34354a',
-      '#2b2c3d',
-      '#1d1e30',
-      '#0c0d21',
-      '#01010a',
-    ],
-  },
-  headings: {
-    sizes: {
-      h1: {
-        fontSize: '48px',
-      },
-    },
-  },
-  other: {
-    sidebarGrayLight: '#495057',
-    sidebarGrayDark: '#adb5bd',
-    sidebarTextHoverLight: '#212529',
-    sidebarTextHoverDark: '#f8f9fa',
-  },
-})
-
-const resolver: CSSVariablesResolver = (th) => ({
-  variables: {},
-  light: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayLight as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverLight as string,
-  },
-  dark: {
-    '--mantine-color-sidebar-gray': th.other.sidebarGrayDark as string,
-    '--mantine-color-sidebar-text-hover': th.other
-      .sidebarTextHoverDark as string,
-  },
-})
-
 export default function RootRoute({ children }: RootRouteProps): JSX.Element {
-  const [opened, { toggle }] = useDisclosure()
-
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -111,23 +41,10 @@ export default function RootRoute({ children }: RootRouteProps): JSX.Element {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme} cssVariablesResolver={resolver}>
-          <AppShell
-            layout="alt"
-            header={{ height: 60 }}
-            navbar={{
-              width: 300,
-              breakpoint: 'sm',
-              collapsed: { mobile: !opened },
-            }}
-          >
-            <Navbar toggle={toggle} />
-            <Sidebar close={toggle} />
-            <AppShell.Main pt={0} px="auto">
-              <MdxWrapper>{children}</MdxWrapper>
-            </AppShell.Main>
-          </AppShell>
-        </MantineProvider>
+        <PostHogProvider>
+          <PostHogPageView />
+          <App>{children}</App>
+        </PostHogProvider>
         <TuonoScripts />
       </body>
     </html>

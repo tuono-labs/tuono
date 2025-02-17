@@ -38,21 +38,27 @@ impl Server {
             load_manifest()
         }
 
-        let server_http_address = format!("{}:{}", config.server.host, config.server.port);
+        let server_address = format!("{}:{}", config.server.host, config.server.port);
 
         Server {
             router,
             mode,
-            address: server_http_address.clone(),
-            listener: tokio::net::TcpListener::bind(&server_http_address)
+            address: server_address.clone(),
+            listener: tokio::net::TcpListener::bind(&server_address)
                 .await
                 .expect("[SERVER] Failed to bind to address"),
         }
     }
 
     pub async fn start(self) {
+        /*
+         * Format the server address as a valid URL so that it becomes clickable in the CLI
+         * @see https://github.com/tuono-labs/tuono/issues/460
+         */
+        let server_base_url = format!("http://{}", self.address);
+
         if self.mode == Mode::Dev {
-            println!("  Ready at: {}\n", self.address.blue().bold());
+            println!("  Ready at: {}\n", server_base_url.blue().bold());
             let router = self
                 .router
                 .to_owned()
@@ -68,7 +74,10 @@ impl Server {
                 .await
                 .expect("Failed to serve development server");
         } else {
-            println!("  Production server at: {}\n", self.address.blue().bold());
+            println!(
+                "  Production server at: {}\n",
+                server_base_url.blue().bold()
+            );
             let router = self
                 .router
                 .to_owned()

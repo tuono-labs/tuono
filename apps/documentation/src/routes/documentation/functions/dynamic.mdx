@@ -1,0 +1,56 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - dynamic"
+  canonical="https://tuono.dev/documentation/functions/dynamic"
+  description="Lazy load components using the 'dynamic' function"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'dynamic' }]} />
+
+# dynamic
+
+## Overview
+
+Tuono supports lazy loading through the `dynamic` function, which uses `Suspense` and `React.lazy` to load components lazily with fallback support.
+
+Lazy loading helps reduce the amount of JavaScript required for the initial page render by deferring the loading of components and libraries until they are needed.
+
+It's most effective when deferring content that isn't initially visible, like a component below the fold or one in a modal.
+
+## Usage
+
+Here is an example using all the exposed options as referenced below.
+
+```typescript jsx
+import { dynamic } from 'tuono'
+
+const LazyComponent = dynamic(() => import('./MyComponent'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+})
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome</h1>
+      <LazyComponent />
+    </div>
+  )
+}
+```
+
+> ⚠️ Note that the first argument must be a function that returns a promise (e.g., `() => import('./MyComponent')`), not a direct call to `import('./MyComponent')`, which would execute immediately instead of lazily loading.
+
+> 💡 It’s good practice to ensure that your fallback component matches the dimensions of the actual component. This helps prevent layout shifts and the ugly resizing of modals as their content loads.
+
+## Options
+
+| Name           | Type                                                                     | Default value | Description                                                                    |
+| -------------- | ------------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------ |
+| `importFn`     | `() => Promise<React.ComponentType<T> \| ComponentModule<T>>` (Required) | -             | Function to import your component.                                             |
+| `opts`         | `DynamicOptions`                                                         | -             | Optional config object for additional control.                                 |
+| `opts.ssr`     | `boolean`                                                                | `true`        | Whether to enable server-side rendering for the component.                     |
+| `opts.loading` | `React.ComponentType<unknown>`                                           | `null`        | A fallback component to show while the lazy-loaded component is being fetched. |

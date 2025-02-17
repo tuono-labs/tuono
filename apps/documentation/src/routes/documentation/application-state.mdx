@@ -12,6 +12,8 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 
 # Application state
 
+## Overview
+
 The main reason Tuono is fast is that it loads just the features that are needed for the project.
 
 To define them, you need to fill the `ApplicationState` struct in the `./src/app.rs` file, and
@@ -37,8 +39,8 @@ pub fn main() -> ApplicationState {
 }
 ```
 
-> For the sake of simplicity here we just enable a `String` but you can add Database connections or
-> HTTP clients (take a look [here](/documentation/tutorial/api-fetching) for an example with an HTTP client).
+> For simplicity, we’re using a `String` here, but you can add database connections or HTTP clients.
+> Check out the [API fetching tutorial](/documentation/tutorial/api-fetching) for an example with an HTTP client.
 
 Now the `ApplicationState` is available on all the handlers as following:
 

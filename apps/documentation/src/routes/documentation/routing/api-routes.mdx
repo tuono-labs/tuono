@@ -1,0 +1,66 @@
+import MetaTags from '@/components/MetaTags'
+
+<MetaTags
+  title="Tuono - API routes"
+  canonical="https://tuono.dev/documentation/routing/api-routes"
+/>
+
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+<Breadcrumbs breadcrumbs={[{ label: 'API routes' }]} />
+
+# API routes
+
+## Overview
+
+API routes offer a solution for building a public API using Tuono.
+
+Any file inside the `src/routes/api` folder is mapped to the `/api/*` path
+and will be treated as an API endpoint, rather than a React route.
+
+Tuono server is internally managed by [axum](https://docs.rs/axum/latest/axum/).
+The API system allows you to create APIs using most of the axum syntax.
+Tuono re-exports axum `tuono_lib::axum::*` to be seamlessly used within any Tuono app.
+
+The major differences are:
+
+- The function to be matched with Tuono's file system routing must have the
+  `tuono_lib::api(method)` macro attribute on top of it.
+- The first argument of the function is always a `tuono_lib::Request`.
+
+Tuono also supports [dynamic routes](/documentation/routing/dynamic-routes) for APIs.
+
+## Example
+
+If you create `src/routes/api/books.rs` with the following content,
+any HTTP GET request to `/api/books` will return a list of the queried books as JSON.
+
+```rs
+use tuono_lib::Request;
+use tuono_lib::axum::response::IntoResponse;
+
+use serde_json::{Value, json};
+
+#[tuono_lib::api(GET)]
+async fn book_list(req: Request) -> Json<Value> {
+  let books = get_books_from_db().await;
+
+  Json(json!(books))
+}
+```
+
+> Unlike React routes, API must not return `tuono_lib::Response`
+
+The same file can contain multiple HTTP methods.
+
+```rs
+#[tuono_lib::api(GET)]
+async fn get_book_list(req: Request) -> Json<Value> {
+  //...
+}
+
+#[tuono_lib::api(POST)]
+async fn add_book_to_library(req: Request) -> impl IntoResponse {
+  //...
+}
+```
