@@ -2,8 +2,7 @@ use assert_cmd::Command;
 use clap::crate_version;
 use serial_test::serial;
 use std::fs;
-use wiremock::matchers::{method, path, query_param};
-use wiremock::{Mock, MockServer, ResponseTemplate};
+use wiremock::matchers::query_param;
 mod utils;
 
 use utils::{MockServerWrapper, ResponseBody, TempTuonoProject};
@@ -14,6 +13,9 @@ async fn test_scaffold_project() {
     let mock_server = MockServerWrapper::new().await;
 
     let cli_version: &str = crate_version!();
+
+    eprintln!("version - {}", cli_version);
+
     let sha = "1234567890abcdef";
     MockServerWrapper::register_mock(
         &mock_server,
@@ -112,8 +114,8 @@ async fn test_scaffold_project() {
     assert_eq!(cargo_toml_content, expected_cargo_toml_content);
 }
 
-#[tokio::test]
 #[serial]
+#[tokio::test]
 async fn test_scaffold_project_with_invalid_version() {
     let mock_server = MockServerWrapper::new().await;
 
@@ -140,8 +142,8 @@ async fn test_scaffold_project_with_invalid_version() {
         .failure();
 }
 
-#[tokio::test]
 #[serial]
+#[tokio::test]
 async fn test_scaffold_project_with_missing_files() {
     let mock_server = MockServerWrapper::new().await;
 

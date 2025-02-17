@@ -39,3 +39,6 @@ wiremock = "0.6.2"
 tempfile = "3.14.0"
 assert_cmd = "2.0.16"
 serial_test = "0.10.0"
+
+[features]
+integration_test = []
