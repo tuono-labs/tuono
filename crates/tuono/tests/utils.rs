@@ -97,8 +97,12 @@ impl MockServerWrapper {
         status: u16,
         response_body: ResponseBody,
     ) {
-        env::set_var("GITHUB_API_BASE_URL", self.server.uri());
-        env::set_var("GITHUB_RAW_CONTENT_BASE_URL", self.server.uri());
+        if cfg!(feature = "integration_test") {
+            env::set_var("GITHUB_API_BASE_URL", self.server.uri());
+            env::set_var("GITHUB_RAW_CONTENT_BASE_URL", self.server.uri());
+        } else {
+            panic!("Please run the test command with `cargo test --features integration_test´")
+        }
 
         let mut mock = Mock::given(matchers::method(method)).and(matchers::path(path));
 

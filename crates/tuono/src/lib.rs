@@ -4,6 +4,7 @@
 //! You can find the full documentation at [tuono.dev](https://tuono.dev/)
 
 mod app;
+mod build;
 pub mod cli;
 mod mode;
 mod route;

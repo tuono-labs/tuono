@@ -62,15 +62,16 @@ pub fn create_new_project(
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
     let base_url = if cfg!(feature = "integration_test") {
-        "http://127.0.0.1:8080"
+        env::var("GITHUB_API_BASE_URL").expect("Base URL has to be set for testing purposes ")
     } else {
-        "https://api.github.com"
+        "https://api.github.com".to_string()
     };
 
     let github_raw_url = if cfg!(feature = "integration_test") {
-        "http://127.0.0.1:8080"
+        env::var("GITHUB_RAW_CONTENT_BASE_URL")
+            .expect("Base URL has to be set for testing purposes ")
     } else {
-        "https://raw.githubusercontent.com"
+        "https://raw.githubusercontent.com".to_string()
     };
 
     // In case of missing select the tuono example

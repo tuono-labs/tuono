@@ -36,7 +36,7 @@ fn it_successfully_create_the_index_route() {
     assert!(temp_main_rs_content.contains("mod index;"));
 
     assert!(temp_main_rs_content
-        .contains(r#".route("/", get(index::tuono__internal__route)).route("/__tuono/data/", get(index::tuono__internal__api))"#));
+        .contains(r#".route("/", get(index::tuono_internal_route)).route("/__tuono/data/", get(index::tuono_internal_api))"#));
 }
 
 #[test]
@@ -64,7 +64,7 @@ fn it_successfully_create_an_api_route() {
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", post(api_health_check::post__tuono_internal_api))"#
+        r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
 }
 
@@ -94,11 +94,10 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", post(api_health_check::post__tuono_internal_api))"#
+        r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
-    assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", get(api_health_check::get__tuono_internal_api))"#
-    ));
+    assert!(temp_main_rs_content
+        .contains(r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#));
 }
 
 #[test]
@@ -129,19 +128,20 @@ fn it_successfully_create_catch_all_routes() {
     assert!(temp_main_rs_content.contains("mod dyn_catch_all_all_routes;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post__tuono_internal_api))"#
+        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
+        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
+        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
-    assert!(temp_main_rs_content
-        .contains(r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__api))"#));
+    assert!(temp_main_rs_content.contains(
+        r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#
+    ));
 }
 
 #[test]

@@ -1,0 +1,13 @@
+[package]
+name = "tuono-app"
+version = "0.0.1"
+edition = "2021"
+
+[[bin]]
+name = "tuono"
+path = ".tuono/main.rs"
+
+[dependencies]
+tuono_lib = { path = "../../../crates/tuono_lib" } 
+serde = { version = "1.0.202", features = ["derive"] }
+

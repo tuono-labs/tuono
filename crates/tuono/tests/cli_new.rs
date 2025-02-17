@@ -14,8 +14,6 @@ async fn test_scaffold_project() {
 
     let cli_version: &str = crate_version!();
 
-    eprintln!("version - {}", cli_version);
-
     let sha = "1234567890abcdef";
     MockServerWrapper::register_mock(
         &mock_server,
@@ -107,8 +105,7 @@ async fn test_scaffold_project() {
         "fn main() { println!(\"Hello, world!\"); }"
     );
     let expected_cargo_toml_content = format!(
-        "[package] name = \"tuono-tutorial\" version = \"0.0.1\" edition = \"2021\" [[bin]] name = \"tuono\" path = \".tuono/main.rs\" [dependencies] tuono_lib = \"{}\" serde = {{ version = \"1.0.202\", features = [\"derive\"] }} reqwest = \"0.12.9\"",
-        cli_version
+        "[package] name = \"tuono-tutorial\" version = \"0.0.1\" edition = \"2021\" [[bin]] name = \"tuono\" path = \".tuono/main.rs\" [dependencies] tuono_lib = {} serde = {{ version = \"1.0.202\", features = [\"derive\"] }} reqwest = \"0.12.9\"",  "{ path = \"../../crates/tuono_lib/\"}"
     );
 
     assert_eq!(cargo_toml_content, expected_cargo_toml_content);
