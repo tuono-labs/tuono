@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Check type
         id: type
-        # @warning Keep in sync with apps/documentation/src/routes/documentation/contributing/pull-requests.mdx
+        # @warning Keep in sync with https://github.com/tuono-labs/tuono-documentation/blob/main/src/routes/documentation/contributing/pull-requests.mdx
         run: |
           VALID_COMMIT_TYPES="chore|ci|docs|feat|fix|refactor|test"
           REGEX="^(${VALID_COMMIT_TYPES})(\(.*\))?!?: .*"

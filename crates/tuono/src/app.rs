@@ -12,6 +12,7 @@ use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
 use std::process::Stdio;
+use tracing::error;
 use tuono_internal::config::Config;
 
 use crate::route::Route;
@@ -176,15 +177,18 @@ impl App {
 
     pub fn build_react_prod(&self) {
         if !Path::new(BUILD_JS_SCRIPT).exists() {
-            eprintln!("Failed to find the build script. Please run `npm install`");
+            error!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
-        let output = Command::new(BUILD_JS_SCRIPT)
-            .output()
-            .expect("Failed to build the react source");
+
+        let output = Command::new(BUILD_JS_SCRIPT).output().unwrap_or_else(|_| {
+            error!("Failed to build the react source");
+            std::process::exit(1);
+        });
+
         if !output.status.success() {
-            eprintln!("Failed to build the react source");
-            eprintln!("Error: {}", String::from_utf8_lossy(&output.stderr));
+            error!("Failed to build the react source");
+            error!("Error: {}", String::from_utf8_lossy(&output.stderr));
             std::process::exit(1);
         }
     }
