@@ -130,8 +130,7 @@ pub async fn watch() -> Result<()> {
         if action.signals().any(|sig| sig == Signal::Interrupt) {
             rust_server.delete();
             build_ssr_bundle.delete();
-            action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(9999));
-            eprintln!("Tuono gracefully shutting down...");
+            action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(30));
         }
 
         action
