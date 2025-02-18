@@ -1,5 +1,4 @@
 use miette::{IntoDiagnostic, Result};
-use tokio::{select, signal};
 use std::path::Path;
 use std::sync::Arc;
 use watchexec::Watchexec;
