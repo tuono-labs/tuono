@@ -1,10 +1,9 @@
+use miette::{IntoDiagnostic, Result};
 use std::path::Path;
 use std::sync::Arc;
-use watchexec_supervisor::command::{Command, Program};
-
-use miette::{IntoDiagnostic, Result};
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
+use watchexec_supervisor::command::{Command, Program};
 use watchexec_supervisor::job::{start_job, Job};
 
 use crate::mode::Mode;
@@ -21,7 +20,6 @@ const DEV_SSR_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-ssr.cmd";
 const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
 #[cfg(not(target_os = "windows"))]
 const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
-
 fn watch_react_src() -> Job {
     if !Path::new(DEV_SSR_BIN_SRC).exists() {
         eprintln!("Failed to find script to run dev watch. Please run `npm install`");
@@ -129,9 +127,11 @@ pub async fn watch() -> Result<()> {
             build_ssr_bundle.start();
         }
 
-        // if Ctrl-C is received, quit
         if action.signals().any(|sig| sig == Signal::Interrupt) {
-            action.quit();
+            rust_server.delete();
+            build_ssr_bundle.delete();
+            build_rust_src.delete();
+            action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(30));
         }
 
         action
@@ -141,5 +141,6 @@ pub async fn watch() -> Result<()> {
     wx.config.pathset(["./src"]);
 
     let _ = wx.main().await.into_diagnostic()?;
+
     Ok(())
 }
