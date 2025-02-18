@@ -1,4 +1,5 @@
 use miette::{IntoDiagnostic, Result};
+use tokio::{select, signal};
 use std::path::Path;
 use std::sync::Arc;
 use watchexec::Watchexec;
@@ -130,6 +131,7 @@ pub async fn watch() -> Result<()> {
         if action.signals().any(|sig| sig == Signal::Interrupt) {
             rust_server.delete();
             build_ssr_bundle.delete();
+            build_rust_src.delete();
             action.quit_gracefully(Signal::Interrupt, std::time::Duration::from_secs(30));
         }
 
