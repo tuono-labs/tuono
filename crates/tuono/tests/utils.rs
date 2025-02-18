@@ -51,18 +51,7 @@ impl TempTuonoProject {
         File::create(path).expect("Failed to create the route file")
     }
 
-    pub fn add_file_with_content<'a>(&self, path: &'a str, content: &'a str) {
-        let path = PathBuf::from(path);
-        create_all(
-            path.parent().expect("Route path does not have any parent"),
-            false,
-        )
-        .expect("Failed to create parent route directory");
 
-        let mut file = File::create(path).expect("Failed to create the route file");
-        file.write_all(content.as_bytes())
-            .expect("Failed to write into API file");
-    }
 }
 
 impl Drop for TempTuonoProject {
