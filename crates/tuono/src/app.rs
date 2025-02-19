@@ -208,18 +208,21 @@ impl App {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
+
         let config_build_command = Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output();
 
-        if let Ok(config) = Config::get() {
-            self.config = Some(config);
-        } else {
-            eprintln!("[CLI] Failed to read tuono.config.ts");
-            std::process::exit(1);
-        };
+        match Config::get() {
+            Ok(config) => self.config = Some(config),
+            Err(error) => {
+                eprintln!("[CLI] Failed to read tuono.config.ts with the following error:");
+                eprintln!("{}", error);
+                std::process::exit(1);
+            }
+        }
 
         config_build_command
     }
