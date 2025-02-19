@@ -168,11 +168,19 @@ fn it_fails_without_installed_build_script() {
         .assert()
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    #[cfg(target_os = "windows")]
     test_tuono_build
         .arg("build")
         .assert()
         .failure()
-        .stderr("[CLI] Failed to read tuono.config.ts\n");
+        .stderr("[CLI] Failed to read tuono.config.ts with the following error:\nThe system cannot find the path specified (os error 3)\n");
+
+    #[cfg(not(target_os = "windows"))]
+    test_tuono_build
+        .arg("build")
+        .assert()
+        .failure()
+        .stderr("[CLI] Failed to read tuono.config.ts with the following error:\nNo such file or directory (os error 2)\n");
 }
 
 #[test]
