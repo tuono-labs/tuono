@@ -79,8 +79,6 @@ fn build_react_ssr_src() -> Job {
 pub async fn watch() -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
-
-    //
     
     watch_react_src().start().await;
 
@@ -89,6 +87,8 @@ pub async fn watch() -> Result<()> {
 
     let build_ssr_bundle = build_react_ssr_src();
 
+    load_env_file();
+    
     build_ssr_bundle.start().await;
     build_rust_src.start().await;
 

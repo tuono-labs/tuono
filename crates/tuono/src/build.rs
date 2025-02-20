@@ -1,4 +1,3 @@
-use std::env;
 use fs_extra::dir::{copy, CopyOptions};
 use spinners::{Spinner, Spinners};
 use std::path::PathBuf;
@@ -35,7 +34,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
     app.check_server_availability(Mode::Prod);
 
     load_env_file();
-    
+
     app.build_react_prod();
 
     // Remove the spinner

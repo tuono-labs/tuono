@@ -14,7 +14,7 @@ use std::process::Command;
 use std::process::Stdio;
 use tracing::error;
 use tuono_internal::config::Config;
-
+use crate::env::load_env_file;
 use crate::route::Route;
 
 const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
@@ -54,6 +54,8 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
 
 impl App {
     pub fn new() -> Self {
+        load_env_file();
+        
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
 
         let mut app = App {
@@ -199,6 +201,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
+            .envs(std::env::vars())
             .spawn()
             .expect("Failed to run the rust server")
     }
@@ -212,6 +215,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
+            .envs(std::env::vars())
             .output();
 
         if let Ok(config) = Config::get() {
