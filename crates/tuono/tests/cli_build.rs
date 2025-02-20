@@ -173,7 +173,7 @@ fn it_fails_without_installed_build_script() {
         .arg("build")
         .assert()
         .failure()
-        .stderr("[CLI] Failed to read tuono.config.ts with the following error:\nThe system cannot find the path specified (os error 3)\n");
+        .stderr("[CLI] Failed to read tuono.config.ts with the following error:\nThe system cannot find the path specified. (os error 3)\n");
 
     #[cfg(not(target_os = "windows"))]
     test_tuono_build
