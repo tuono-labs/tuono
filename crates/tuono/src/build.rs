@@ -31,7 +31,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
     let mut app_build_spinner = Spinner::new(Spinners::Dots, "Building app...".into());
 
     app.check_server_availability(Mode::Prod);
-    
+
     app.env_var_manager.refresh_env_files();
 
     app.build_react_prod();

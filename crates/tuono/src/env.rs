@@ -29,7 +29,7 @@ impl EnvVarManager {
             system_env: system_vars,
         }
     }
-    
+
     pub fn refresh_env_files(&self) {
         for env_file in self.env_files.iter() {
             if let Ok(contents) = fs::read_to_string(env_file) {
