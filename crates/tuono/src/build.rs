@@ -6,7 +6,7 @@ use std::time::Duration;
 use tracing::{error, trace};
 
 use crate::app::App;
-use crate::env::load_env_file;
+use crate::env::load_env_files;
 use crate::mode::Mode;
 
 fn exit_gracefully_with_error(msg: &str) -> ! {
@@ -33,7 +33,7 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
 
     app.check_server_availability(Mode::Prod);
 
-    load_env_file();
+    load_env_files(Some(Mode::Prod));
 
     app.build_react_prod();
 

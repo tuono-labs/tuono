@@ -11,7 +11,7 @@ use crate::mode::Mode;
 use crate::source_builder::bundle_axum_source;
 use console::Term;
 use spinners::{Spinner, Spinners};
-use crate::env::load_env_file;
+use crate::env::load_env_files;
 
 #[cfg(target_os = "windows")]
 const DEV_WATCH_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-watch.cmd";
@@ -86,8 +86,6 @@ pub async fn watch() -> Result<()> {
     let build_rust_src = build_rust_src();
 
     let build_ssr_bundle = build_react_ssr_src();
-
-    load_env_file();
     
     build_ssr_bundle.start().await;
     build_rust_src.start().await;
@@ -140,7 +138,7 @@ pub async fn watch() -> Result<()> {
         
         if should_reload_env_file {
             println!("  Reloading environment variables...");
-            load_env_file();
+            load_env_files(Some(Mode::Dev));
         }
 
         // if Ctrl-C is received, quit
@@ -151,9 +149,8 @@ pub async fn watch() -> Result<()> {
         action
     })?;
 
-    // watch the current directory
-    // TODO: This needs to watch env files too
-    wx.config.pathset(["./src"]);
+    // watch the current directory and all types of .env file
+    wx.config.pathset(["./src", ".env*"]);
 
     let _ = wx.main().await.into_diagnostic()?;
     Ok(())

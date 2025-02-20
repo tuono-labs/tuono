@@ -14,7 +14,7 @@ use std::process::Command;
 use std::process::Stdio;
 use tracing::error;
 use tuono_internal::config::Config;
-use crate::env::load_env_file;
+use crate::env::load_env_files;
 use crate::route::Route;
 
 const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
@@ -54,8 +54,8 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
 
 impl App {
     pub fn new() -> Self {
-        load_env_file();
-        
+        load_env_files(None);
+
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
 
         let mut app = App {
