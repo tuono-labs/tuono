@@ -40,7 +40,8 @@ export default function IndexPage({
           className="button"
           type="button"
         >
-          Github
+          {/* TODO: Make TS stop yelling about this */}
+          {import.meta.env.TUONO_PUBLIC_TEST_CLIENT}
         </a>
       </div>
     </>

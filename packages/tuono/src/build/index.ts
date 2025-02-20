@@ -45,6 +45,7 @@ function createBaseViteConfigFromTuonoConfig(
     publicDir: '../public',
     cacheDir: 'cache',
     envDir: '../',
+    envPrefix: 'TUONO_PUBLIC_',
 
     resolve: {
       alias: tuonoConfig.vite?.alias ?? {},
