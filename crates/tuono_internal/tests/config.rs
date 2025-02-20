@@ -20,6 +20,30 @@ fn should_correctly_read_the_config_file() {
 
     let config = config.unwrap();
     assert_eq!(config.server.host, "localhost");
+    assert_eq!(config.server.origin, None);
+    assert_eq!(config.server.port, 3000);
+}
+
+#[test]
+#[serial]
+fn should_correctly_read_the_config_file_with_origin() {
+    let folder = TempTuonoProject::new();
+
+    folder.add_file_with_content(
+        "./.tuono/config/config.json",
+        r#"{ "server": {"host": "localhost", "origin": "https://tuono.localhost", "port": 3000}}"#,
+    );
+
+    let config = Config::get();
+
+    assert!(config.is_ok());
+
+    let config = config.unwrap();
+    assert_eq!(config.server.host, "localhost".to_string());
+    assert_eq!(
+        config.server.origin,
+        Some("https://tuono.localhost".to_string())
+    );
     assert_eq!(config.server.port, 3000);
 }
 

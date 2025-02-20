@@ -8,7 +8,7 @@ import { createJsonConfig } from './create-json-config'
 const writeFileSpy = vitest.spyOn(fs, 'writeFile').mockResolvedValue(void 0)
 
 describe('createJsonConfig', () => {
-  const sampleConfig = { server: { host: 'h', port: 1 } }
+  const sampleConfig = { server: { host: 'h', origin: 'o', port: 1 } }
 
   it('should process config with only server property', async () => {
     await createJsonConfig(sampleConfig)

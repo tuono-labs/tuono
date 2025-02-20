@@ -15,7 +15,11 @@ describe('normalizeConfig', () => {
     const config: TuonoConfig = {}
 
     expect(normalizeConfig(config)).toStrictEqual({
-      server: { host: 'localhost', port: 3000 },
+      server: {
+        host: 'localhost',
+        origin: 'http://localhost:3000',
+        port: 3000,
+      },
       vite: {
         alias: undefined,
         css: undefined,
@@ -28,7 +32,11 @@ describe('normalizeConfig', () => {
   it('should return an empty config if invalid values are provided', () => {
     // @ts-expect-error testing invalid config
     expect(normalizeConfig({ invalid: true })).toStrictEqual({
-      server: { host: 'localhost', port: 3000 },
+      server: {
+        host: 'localhost',
+        origin: 'http://localhost:3000',
+        port: 3000,
+      },
       vite: {
         alias: undefined,
         css: undefined,

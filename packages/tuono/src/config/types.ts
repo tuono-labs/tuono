@@ -11,6 +11,7 @@ import type {
 export interface TuonoConfig {
   server?: {
     host?: string
+    origin?: string
     port?: number
   }
   vite?: {
