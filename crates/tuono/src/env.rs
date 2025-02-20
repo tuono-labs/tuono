@@ -6,38 +6,30 @@ use std::fs;
 #[derive(Clone, Debug)]
 pub struct EnvVarManager {
     env_files: Vec<String>,
-    mode: Option<Mode>,
     system_env: HashSet<String>,
 }
 
 impl EnvVarManager {
-    pub fn new(mode: Option<Mode>) -> Self {
+    pub fn new(mode: Mode) -> Self {
         let mut env_files = vec![String::from(".env"), String::from(".env.local")];
 
-        if let Some(mode) = &mode {
-            let mode_name = match mode {
-                Mode::Dev => "development",
-                Mode::Prod => "production",
-            };
+        let mode_name = match mode {
+            Mode::Dev => "development",
+            Mode::Prod => "production",
+        };
 
-            env_files.push(format!(".env.{}", mode_name));
-            env_files.push(format!(".env.{}.local", mode_name));
-        }
+        env_files.push(format!(".env.{}", mode_name));
+        env_files.push(format!(".env.{}.local", mode_name));
 
         // Collect system environment variable keys into a HashSet for fast lookup.
         let system_vars: HashSet<String> = env::vars().map(|(k, _)| k).collect();
 
         Self {
             env_files,
-            mode,
             system_env: system_vars,
         }
     }
-
-    pub fn set_mode(&mut self, mode: Mode) {
-        self.mode = Some(mode);
-    }
-
+    
     pub fn refresh_env_files(&self) {
         for env_file in self.env_files.iter() {
             if let Ok(contents) = fs::read_to_string(env_file) {
@@ -89,7 +81,7 @@ mod tests {
         env::set_var("TEST_KEY", "system_value");
 
         setup_env_file(".env", "TEST_KEY=file_value");
-        let manager = EnvVarManager::new(None);
+        let manager = EnvVarManager::new(Mode::Dev);
         manager.refresh_env_files();
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "system_value");
@@ -104,7 +96,7 @@ mod tests {
         setup_env_file(".env", "TEST_KEY=base_value");
         setup_env_file(".env.development", "TEST_KEY=development_value");
 
-        let manager = EnvVarManager::new(Some(Mode::Dev));
+        let manager = EnvVarManager::new(Mode::Dev);
         manager.refresh_env_files();
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "development_value");
@@ -119,7 +111,7 @@ mod tests {
         setup_env_file(".env", "TEST_KEY=base_value");
         setup_env_file(".env.local", "TEST_KEY=local_value");
 
-        let manager = EnvVarManager::new(None);
+        let manager = EnvVarManager::new(Mode::Dev);
         manager.refresh_env_files();
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_value");
@@ -135,7 +127,7 @@ mod tests {
         setup_env_file(".env.development", "TEST_KEY=development_value");
         setup_env_file(".env.development.local", "TEST_KEY=local_dev_value");
 
-        let manager = EnvVarManager::new(Some(Mode::Dev));
+        let manager = EnvVarManager::new(Mode::Dev);
         manager.refresh_env_files();
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_dev_value");
@@ -146,31 +138,69 @@ mod tests {
 
     #[test]
     #[serial]
-    fn test_env_var_manager_initialization_no_mode() {
-        let manager = EnvVarManager::new(None);
-        assert!(manager.env_files.contains(&".env".to_string()));
-        assert!(manager.env_files.contains(&".env.local".to_string()));
-        assert_eq!(manager.mode, None);
+    fn test_empty_env_file() {
+        setup_env_file(".env", "");
+
+        let manager = EnvVarManager::new(Mode::Dev);
+        manager.refresh_env_files();
+
+        assert!(env::var("NON_EXISTENT_KEY").is_err());
+
+        cleanup_env_files();
     }
 
     #[test]
     #[serial]
-    fn test_env_var_manager_initialization_with_mode() {
-        let manager = EnvVarManager::new(Some(Mode::Dev));
-        assert!(manager.env_files.contains(&".env".to_string()));
-        assert!(manager.env_files.contains(&".env.local".to_string()));
-        assert!(manager.env_files.contains(&".env.development".to_string()));
-        assert!(manager
-            .env_files
-            .contains(&".env.development.local".to_string()));
-        assert_eq!(manager.mode, Some(Mode::Dev));
+    fn test_malformed_env_entries() {
+        setup_env_file(".env", "INVALID_LINE\nMISSING_EQUALS_SIGN");
+
+        let manager = EnvVarManager::new(Mode::Dev);
+        manager.refresh_env_files();
+
+        assert!(env::var("INVALID_LINE").is_err());
+        assert!(env::var("MISSING_EQUALS_SIGN").is_err());
+
+        cleanup_env_files();
     }
 
     #[test]
     #[serial]
-    fn test_set_mode() {
-        let mut manager = EnvVarManager::new(None);
-        manager.set_mode(Mode::Prod);
-        assert_eq!(manager.mode, Some(Mode::Prod));
+    fn test_quoted_values_parsing() {
+        setup_env_file(".env", r#"TEST_KEY="quoted_value""#);
+
+        let manager = EnvVarManager::new(Mode::Dev);
+        manager.refresh_env_files();
+
+        assert_eq!(env::var("TEST_KEY").unwrap(), "quoted_value");
+
+        env::remove_var("TEST_KEY");
+        cleanup_env_files();
+    }
+
+    #[test]
+    #[serial]
+    fn test_non_existent_env_file() {
+        let manager = EnvVarManager::new(Mode::Dev);
+        manager.refresh_env_files();
+
+        assert!(env::var("NON_EXISTENT_KEY").is_err());
+
+        cleanup_env_files();
+    }
+
+    #[test]
+    #[serial]
+    fn test_multiple_env_vars() {
+        setup_env_file(".env", "KEY1=value1\nKEY2=value2");
+
+        let manager = EnvVarManager::new(Mode::Dev);
+        manager.refresh_env_files();
+
+        assert_eq!(env::var("KEY1").unwrap(), "value1");
+        assert_eq!(env::var("KEY2").unwrap(), "value2");
+
+        env::remove_var("KEY1");
+        env::remove_var("KEY2");
+        cleanup_env_files();
     }
 }

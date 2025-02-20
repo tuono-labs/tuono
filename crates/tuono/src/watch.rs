@@ -82,7 +82,7 @@ pub async fn watch() -> Result<()> {
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
     // Initialize EnvVarManager with Dev mode
-    let env_var_manager = EnvVarManager::new(Some(Mode::Dev));
+    let env_var_manager = EnvVarManager::new(Mode::Dev);
     env_var_manager.refresh_env_files();
 
     watch_react_src().start().await;
