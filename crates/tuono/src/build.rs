@@ -1,3 +1,4 @@
+use std::env;
 use fs_extra::dir::{copy, CopyOptions};
 use spinners::{Spinner, Spinners};
 use std::path::PathBuf;
@@ -6,6 +7,7 @@ use std::time::Duration;
 use tracing::{error, trace};
 
 use crate::app::App;
+use crate::env::load_env_file;
 use crate::mode::Mode;
 
 fn exit_gracefully_with_error(msg: &str) -> ! {
@@ -32,6 +34,11 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
 
     app.check_server_availability(Mode::Prod);
 
+    load_env_file();
+
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
+    println!("Database URL: {}", database_url);
+    
     app.build_react_prod();
 
     // Remove the spinner
