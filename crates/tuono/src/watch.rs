@@ -11,6 +11,7 @@ use crate::mode::Mode;
 use crate::source_builder::bundle_axum_source;
 use console::Term;
 use spinners::{Spinner, Spinners};
+use crate::env::load_env_file;
 
 #[cfg(target_os = "windows")]
 const DEV_WATCH_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-watch.cmd";
@@ -79,6 +80,8 @@ pub async fn watch() -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
+    //
+    
     watch_react_src().start().await;
 
     let rust_server = run_rust_dev_server();
@@ -102,6 +105,7 @@ pub async fn watch() -> Result<()> {
     let wx = Watchexec::new(move |mut action| {
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
+        let mut should_reload_env_file = false;
 
         for event in action.events.iter() {
             for path in event.paths() {
@@ -113,6 +117,11 @@ pub async fn watch() -> Result<()> {
                 // Either tsx, jsx and mdx
                 if file_path.ends_with("sx") || file_path.ends_with("mdx") {
                     should_reload_ssr_bundle = true
+                }
+                
+                // TODO: Maybe this match can be improved.
+                if file_path.starts_with(".env") {
+                    should_reload_env_file = true
                 }
             }
         }
@@ -128,6 +137,11 @@ pub async fn watch() -> Result<()> {
             build_ssr_bundle.stop();
             build_ssr_bundle.start();
         }
+        
+        if should_reload_env_file {
+            println!("  Reloading environment variables...");
+            load_env_file();
+        }
 
         // if Ctrl-C is received, quit
         if action.signals().any(|sig| sig == Signal::Interrupt) {
@@ -138,6 +152,7 @@ pub async fn watch() -> Result<()> {
     })?;
 
     // watch the current directory
+    // TODO: This needs to watch env files too
     wx.config.pathset(["./src"]);
 
     let _ = wx.main().await.into_diagnostic()?;

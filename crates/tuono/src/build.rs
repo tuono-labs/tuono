@@ -35,9 +35,6 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
     app.check_server_availability(Mode::Prod);
 
     load_env_file();
-
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
-    println!("Database URL: {}", database_url);
     
     app.build_react_prod();
 
