@@ -1,4 +1,6 @@
+use crate::env::EnvVarManager;
 use crate::mode::Mode;
+use crate::route::Route;
 use glob::glob;
 use glob::GlobError;
 use http::Method;
@@ -14,8 +16,6 @@ use std::process::Command;
 use std::process::Stdio;
 use tracing::error;
 use tuono_internal::config::Config;
-
-use crate::route::Route;
 
 const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
 const IGNORE_FILES: [&str; 1] = ["__layout"];
@@ -42,6 +42,7 @@ pub struct App {
     pub base_path: PathBuf,
     pub has_app_state: bool,
     pub config: Option<Config>,
+    pub env_var_manager: EnvVarManager,
 }
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
@@ -54,6 +55,8 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
 
 impl App {
     pub fn new() -> Self {
+        let env_var_manager = EnvVarManager::new(Mode::Prod);
+
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
 
         let mut app = App {
@@ -61,6 +64,7 @@ impl App {
             base_path: base_path.clone(),
             has_app_state: has_app_state(base_path).unwrap_or(false),
             config: None,
+            env_var_manager,
         };
 
         app.collect_routes();
@@ -199,6 +203,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
+            .envs(std::env::vars())
             .spawn()
             .expect("Failed to run the rust server")
     }
@@ -212,6 +217,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
+            .envs(std::env::vars())
             .output();
 
         if let Ok(config) = Config::get() {
