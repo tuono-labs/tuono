@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Include tuono types */
+    "types": ["tuono/client"]
   },
   "include": ["src", "tuono.config.ts"]
 }

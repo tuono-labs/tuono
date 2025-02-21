@@ -24,7 +24,10 @@
     "noFallthroughCasesInSwitch": true,
 
     // Completeness
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    /* Include tuono types */
+    "types": ["tuono/client"]
   },
   "include": ["src", "tuono.config.ts"]
 }
