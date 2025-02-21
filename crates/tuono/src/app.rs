@@ -5,8 +5,9 @@ use http::Method;
 use std::collections::hash_set::HashSet;
 use std::collections::{hash_map::Entry, HashMap};
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
-use std::io::BufReader;
+use std::io::{BufReader, Error};
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
@@ -218,8 +219,13 @@ impl App {
         match Config::get() {
             Ok(config) => self.config = Some(config),
             Err(error) => {
-                eprintln!("[CLI] Failed to read tuono.config.ts with the following error:");
-                eprintln!("{}", error);
+                match error.kind() {
+                    io::ErrorKind::NotFound => eprintln!("[CLI] Failed to read config. Please run `npm install` to generate automatically."),
+                    _ => {
+                        eprintln!("[CLI] Failed to read tuono.config.ts with the following error:");
+                        eprintln!("{}", error);
+                    }
+                }
                 std::process::exit(1);
             }
         }
