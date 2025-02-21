@@ -7,7 +7,7 @@ use std::collections::{hash_map::Entry, HashMap};
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use std::io::{BufReader, Error};
+use std::io::BufReader;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
@@ -222,8 +222,8 @@ impl App {
                 match error.kind() {
                     io::ErrorKind::NotFound => eprintln!("[CLI] Failed to read config. Please run `npm install` to generate automatically."),
                     _ => {
-                        eprintln!("[CLI] Failed to read tuono.config.ts with the following error:");
-                        eprintln!("{}", error);
+                        error!("[CLI] Failed to read config with the following error:");
+                        error!("{}", error);
                     }
                 }
                 std::process::exit(1);
