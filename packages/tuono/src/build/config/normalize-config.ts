@@ -71,7 +71,7 @@ export const normalizeConfig = (config: TuonoConfig): InternalTuonoConfig => {
   return {
     server: {
       host: config.server?.host ?? 'localhost',
-      origin: config.server?.origin ?? 'http://localhost:3000',
+      origin: config.server?.origin ?? null,
       port: config.server?.port ?? 3000,
     },
     vite: {

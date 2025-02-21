@@ -25,7 +25,7 @@ export interface ServerPayload<TData = unknown> {
   /** Available only on 'Dev' mode */
   devServerConfig?: {
     port: number
-    origin: string
+    origin: string | null
     host: string
   }
 }
