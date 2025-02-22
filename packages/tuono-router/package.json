@@ -46,11 +46,11 @@
   "devDependencies": {
     "@testing-library/react": "16.2.0",
     "@types/react": "19.0.8",
-    "@vitejs/plugin-react-swc": "3.7.2",
-    "happy-dom": "16.8.1",
+    "@vitejs/plugin-react-swc": "3.8.0",
+    "happy-dom": "17.1.2",
     "react": "19.0.0",
-    "vite": "5.4.14",
+    "vite": "6.1.1",
     "vite-config": "workspace:*",
-    "vitest": "2.1.9"
+    "vitest": "3.0.6"
   }
 }
