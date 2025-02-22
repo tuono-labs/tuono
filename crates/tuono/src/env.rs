@@ -6,7 +6,7 @@ use std::fs;
 #[derive(Clone, Debug)]
 pub struct EnvVarManager {
     env_files: Vec<String>,
-    system_env: HashSet<String>,
+    env_names: HashSet<String>,
 }
 
 impl EnvVarManager {
@@ -21,12 +21,11 @@ impl EnvVarManager {
         env_files.push(format!(".env.{}", mode_name));
         env_files.push(format!(".env.{}.local", mode_name));
 
-        // Collect system environment variable keys into a HashSet for fast lookup.
         let system_vars: HashSet<String> = env::vars().map(|(k, _)| k).collect();
 
         Self {
             env_files,
-            system_env: system_vars,
+            env_names: system_vars,
         }
     }
 
@@ -42,7 +41,7 @@ impl EnvVarManager {
                         let key = key.trim();
                         let value = value.trim();
 
-                        if self.system_env.contains(key) {
+                        if self.env_names.contains(key) {
                             // If the key exists in the system environment, skip setting it.
                             continue;
                         }
