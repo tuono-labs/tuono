@@ -61,18 +61,15 @@ pub fn create_new_project(
     select_head: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
-    let base_url = if cfg!(feature = "integration_test") {
-        env::var("GITHUB_API_BASE_URL").expect("Base URL has to be set for testing purposes ")
-    } else {
-        "https://api.github.com".to_string()
-    };
 
-    let github_raw_url = if cfg!(feature = "integration_test") {
-        env::var("GITHUB_RAW_CONTENT_BASE_URL")
-            .expect("Base URL has to be set for testing purposes ")
-    } else {
-        "https://raw.githubusercontent.com".to_string()
-    };
+    let github_api_base_url =
+        env::var("__INTERNAL_TUONO_TEST").unwrap_or("https://api.github.com".to_string());
+
+    let github_raw_base_url =
+        env::var("__INTERNAL_TUONO_TEST").unwrap_or("http://localhost:3000".to_string());
+
+    dbg!(&github_api_base_url);
+    dbg!(&github_raw_base_url);
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
@@ -84,7 +81,8 @@ pub fn create_new_project(
     // This string does not include the "v" version prefix
     let cli_version: &str = crate_version!();
 
-    let tree_url: String = generate_tree_url(select_head, &client, cli_version, &base_url);
+    let tree_url: String =
+        generate_tree_url(select_head, &client, cli_version, &github_api_base_url);
 
     let res_tree = client
         .get(tree_url)
@@ -131,7 +129,8 @@ pub fn create_new_project(
     } in new_project_files.iter()
     {
         if let GithubFileType::Blob = element_type {
-            let url = generate_raw_content_url(select_head, cli_version, path, &github_raw_url);
+            let url =
+                generate_raw_content_url(select_head, cli_version, path, &github_raw_base_url);
 
             let file_content = client
                 .get(url)
