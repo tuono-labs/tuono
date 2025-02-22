@@ -71,7 +71,7 @@
     "tuono-fs-router-vite-plugin": "workspace:*",
     "tuono-router": "workspace:*",
     "url-search-params-polyfill": "^8.2.5",
-    "vite": "^6.1.0",
+    "vite": "^6.1.1",
     "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
@@ -83,7 +83,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "vite-config": "workspace:*",
-    "vitest": "3.0.5"
+    "vitest": "3.0.6"
   },
   "sideEffects": false,
   "keywords": [
