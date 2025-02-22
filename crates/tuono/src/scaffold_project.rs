@@ -68,9 +68,6 @@ pub fn create_new_project(
     let github_raw_base_url =
         env::var("__INTERNAL_TUONO_TEST").unwrap_or("http://localhost:3000".to_string());
 
-    dbg!(&github_api_base_url);
-    dbg!(&github_raw_base_url);
-
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
     let client = blocking::Client::builder()
