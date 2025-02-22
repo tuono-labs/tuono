@@ -281,12 +281,15 @@ mod tests {
     use super::*;
     #[test]
     fn generate_valid_content_url_from_head() {
-        let expected = format!("{}/{}/{}", "localhost:3000", "main", "examples/tuono-app");
+        let expected = format!(
+            "{}/{}/{}",
+            "http://localhost:3000", "main", "examples/tuono-app"
+        );
         let generated = generate_raw_content_url(
             Some(true),
             crate_version!(),
             &String::from("examples/tuono-app"),
-            "localhost:3000/",
+            "http://localhost:3000/",
         );
         assert_eq!(expected, generated)
     }
@@ -295,7 +298,7 @@ mod tests {
     fn generate_valid_content_url_from_cli_version() {
         let expected = format!(
             "{}/{}/{}",
-            "localhost:3000/",
+            "http://localhost:3000/",
             &format!("tuono-labs/tuono/v{}", crate_version!()),
             "examples/tuono-app"
         );
@@ -303,7 +306,7 @@ mod tests {
             Some(false),
             crate_version!(),
             &String::from("examples/tuono-app"),
-            "localhost:3000/",
+            "http://localhost:3000/",
         );
         assert_eq!(expected, generated)
     }
