@@ -5,6 +5,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "useDefineForClassFields": true,
+    "types": ["tuono/client"],
 
     // Modules
     "module": "ESNext",
@@ -24,10 +25,7 @@
     "noFallthroughCasesInSwitch": true,
 
     // Completeness
-    "skipLibCheck": true,
-
-    /* Include tuono types */
-    "types": ["tuono/client"]
+    "skipLibCheck": true
   },
   "include": ["src", "tuono.config.ts"]
 }

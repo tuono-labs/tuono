@@ -5,6 +5,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["tuono/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -18,10 +19,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    /* Include tuono types */
-    "types": ["tuono/client"]
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "tuono.config.ts"]
 }
