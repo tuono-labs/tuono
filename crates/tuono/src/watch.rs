@@ -83,7 +83,7 @@ pub async fn watch() -> Result<()> {
 
     // Initialize EnvVarManager with Dev mode
     let env_var_manager = EnvVarManager::new(Mode::Dev);
-    env_var_manager.refresh_env_files();
+    env_var_manager.reload_variables();
 
     watch_react_src().start().await;
 
@@ -155,7 +155,7 @@ pub async fn watch() -> Result<()> {
 
         if should_reload_env_file {
             println!("  Reloading environment variables, and restarting rust server...");
-            env_var_manager.refresh_env_files();
+            env_var_manager.reload_variables();
             rust_server.stop();
             bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
             rust_server.start();
