@@ -5,6 +5,7 @@ use http::Method;
 use std::collections::hash_set::HashSet;
 use std::collections::{hash_map::Entry, HashMap};
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
@@ -208,18 +209,26 @@ impl App {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
+
         let config_build_command = Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output();
 
-        if let Ok(config) = Config::get() {
-            self.config = Some(config);
-        } else {
-            eprintln!("[CLI] Failed to read tuono.config.ts");
-            std::process::exit(1);
-        };
+        match Config::get() {
+            Ok(config) => self.config = Some(config),
+            Err(error) => {
+                match error.kind() {
+                    io::ErrorKind::NotFound => eprintln!("Failed to read config. Please run `npm install` to generate automatically."),
+                    _ => {
+                        error!("Failed to read config with the following error:");
+                        error!("{}", error);
+                    }
+                }
+                std::process::exit(1);
+            }
+        }
 
         config_build_command
     }
