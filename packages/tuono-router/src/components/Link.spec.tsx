@@ -4,10 +4,14 @@ import { render, fireEvent, screen } from '@testing-library/react'
 import Link from './Link'
 
 const pushMock = vi.fn()
+const replaceMock = vi.fn()
 const preloadMock = vi.fn()
 
 vi.mock('../hooks/useRouter', () => ({
-  useRouter: (): { push: typeof pushMock } => ({ push: pushMock }),
+  useRouter: (): { push: typeof pushMock; replace: typeof replaceMock } => ({
+    push: pushMock,
+    replace: replaceMock,
+  }),
 }))
 
 vi.mock('../hooks/useRoute', () => ({
@@ -49,6 +53,19 @@ describe('Link Component', () => {
 
     fireEvent.click(link)
     expect(pushMock).toHaveBeenCalledWith('/test', { scroll: true })
+  })
+
+  it('calls router.replace on normal click when replace prop is true', () => {
+    render(
+      <Link href="/test" replace>
+        Test Link
+      </Link>,
+    )
+    const link = screen.getByRole('link')
+
+    fireEvent.click(link)
+    expect(replaceMock).toHaveBeenCalledWith('/test', { scroll: true })
+    expect(pushMock).not.toHaveBeenCalled()
   })
 
   it('does not navigate if href starts with "#"', () => {

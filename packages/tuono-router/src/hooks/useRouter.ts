@@ -2,7 +2,9 @@ import React from 'react'
 
 import { useRouterContext } from '../components/RouterContext'
 
-interface PushOptions {
+type NavigationType = 'pushState' | 'replaceState'
+
+interface NavigateOptions {
   /**
    * If "false" the scroll offset will be kept across page navigation. Default "true"
    */
@@ -13,7 +15,13 @@ interface UseRouterResult {
   /**
    * Redirects to the path passed as argument updating the browser history.
    */
-  push: (path: string, opt?: PushOptions) => void
+  push: (path: string, opt?: NavigateOptions) => void
+
+  /**
+   * Redirects to the path passed as argument replacing the current history
+   * entry.
+   */
+  replace: (path: string, opt?: NavigateOptions) => void
 
   /**
    * This object contains all the query params of the current route
@@ -29,8 +37,8 @@ interface UseRouterResult {
 export const useRouter = (): UseRouterResult => {
   const { location, updateLocation } = useRouterContext()
 
-  const push = React.useCallback(
-    (path: string, opt?: PushOptions): void => {
+  const navigate = React.useCallback(
+    (type: NavigationType, path: string, opt?: NavigateOptions): void => {
       const { scroll = true } = opt || {}
       const url = new URL(path, window.location.origin)
 
@@ -41,7 +49,8 @@ export const useRouter = (): UseRouterResult => {
         searchStr: url.search,
         hash: url.hash,
       })
-      history.pushState(path, '', path)
+
+      history[type](path, '', path)
 
       if (scroll) {
         window.scroll(0, 0)
@@ -50,8 +59,23 @@ export const useRouter = (): UseRouterResult => {
     [updateLocation],
   )
 
+  const push = React.useCallback(
+    (path: string, opt?: NavigateOptions): void => {
+      navigate('pushState', path, opt)
+    },
+    [navigate],
+  )
+
+  const replace = React.useCallback(
+    (path: string, opt?: NavigateOptions): void => {
+      navigate('replaceState', path, opt)
+    },
+    [navigate],
+  )
+
   return {
     push,
+    replace,
     query: location.search,
     pathname: location.pathname,
   }
