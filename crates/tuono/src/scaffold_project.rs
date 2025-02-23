@@ -162,7 +162,7 @@ fn generate_raw_content_url(
     url: &str,
 ) -> String {
     let tag = if select_head.unwrap_or(false) {
-        "main"
+        "/main"
     } else {
         &format!("/tuono-labs/tuono/v{cli_version}")
     };
@@ -289,7 +289,7 @@ mod tests {
             Some(true),
             crate_version!(),
             &String::from("examples/tuono-app"),
-            "http://localhost:3000/",
+            "http://localhost:3000",
         );
         assert_eq!(expected, generated)
     }
@@ -298,7 +298,7 @@ mod tests {
     fn generate_valid_content_url_from_cli_version() {
         let expected = format!(
             "{}/{}/{}",
-            "http://localhost:3000/",
+            "http://localhost:3000",
             &format!("tuono-labs/tuono/v{}", crate_version!()),
             "examples/tuono-app"
         );
@@ -306,7 +306,7 @@ mod tests {
             Some(false),
             crate_version!(),
             &String::from("examples/tuono-app"),
-            "http://localhost:3000/",
+            "http://localhost:3000",
         );
         assert_eq!(expected, generated)
     }
