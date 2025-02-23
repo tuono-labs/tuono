@@ -1,12 +1,13 @@
 use crate::mode::Mode;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
 #[derive(Clone, Debug)]
 pub struct EnvVarManager {
     env_files: Vec<String>,
-    env_names: HashSet<String>,
+    system_env_names: HashSet<String>,
+    env_vars: HashMap<String, String>,
 }
 
 impl EnvVarManager {
@@ -21,16 +22,21 @@ impl EnvVarManager {
         env_files.push(format!(".env.{}", mode_name));
         env_files.push(format!(".env.{}.local", mode_name));
 
-        let system_vars: HashSet<String> = env::vars().map(|(k, _)| k).collect();
+        let system_env_names: HashSet<String> = env::vars().map(|(k, _)| k).collect();
+        let env_vars = HashMap::new();
 
-        Self {
+        let mut manager = Self {
             env_files,
-            env_names: system_vars,
-        }
+            system_env_names,
+            env_vars,
+        };
+
+        manager.reload_variables(); // Load only missing env variables
+        manager
     }
 
-    pub fn reload_variables(&self) {
-        for env_file in self.env_files.iter() {
+    pub fn reload_variables(&mut self) {
+        for env_file in &self.env_files {
             if let Ok(contents) = fs::read_to_string(env_file) {
                 for line in contents.lines() {
                     if let Some((key, mut value)) = line.split_once('=') {
@@ -38,20 +44,22 @@ impl EnvVarManager {
                             value = &value[1..value.len() - 1];
                         }
 
-                        let key = key.trim();
-                        let value = value.trim();
+                        let key = key.trim().to_string();
+                        let value = value.trim().to_string();
 
-                        if self.env_names.contains(key) {
-                            // If the key exists in the system environment, skip setting it.
-                            continue;
+                        if self.system_env_names.contains(&key) {
+                            continue; // Skip if key exists in system env
                         }
 
-                        env::remove_var(key); // Ensure old .env values don't persist
-                        env::set_var(key, value);
+                        self.env_vars.insert(key, value);
                     }
                 }
             }
         }
+    }
+
+    pub fn get_env_vars(&self) -> &HashMap<String, String> {
+        &self.env_vars
     }
 }
 

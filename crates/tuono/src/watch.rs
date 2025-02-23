@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::Path;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use watchexec_supervisor::command::{Command, Program};
 
 use miette::{IntoDiagnostic, Result};
@@ -82,8 +82,10 @@ pub async fn watch() -> Result<()> {
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
     // Initialize EnvVarManager with Dev mode
-    let env_var_manager = EnvVarManager::new(Mode::Dev);
-    env_var_manager.reload_variables();
+    let env_var_manager = Arc::new(RwLock::new(EnvVarManager::new(Mode::Dev)));
+
+    // Clone Arc to move into the closure safely
+    let env_var_manager_clone = Arc::clone(&env_var_manager);
 
     watch_react_src().start().await;
 
@@ -155,7 +157,11 @@ pub async fn watch() -> Result<()> {
 
         if should_reload_env_file {
             println!("  Reloading environment variables, and restarting rust server...");
-            env_var_manager.reload_variables();
+            if let Ok(mut env) = env_var_manager_clone.write() {
+                env.reload_variables();
+            } else {
+                eprintln!("Failed to acquire write lock on env_var_manager");
+            }
             rust_server.stop();
             bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
             rust_server.start();

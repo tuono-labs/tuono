@@ -54,8 +54,8 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
 }
 
 impl App {
-    pub fn new() -> Self {
-        let env_var_manager = EnvVarManager::new(Mode::Prod);
+    pub fn new(mode: Mode) -> Self {
+        let env_var_manager = EnvVarManager::new(mode);
 
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
 
@@ -203,7 +203,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .envs(std::env::vars())
+            .envs(self.env_var_manager.get_env_vars())
             .spawn()
             .expect("Failed to run the rust server")
     }
@@ -217,7 +217,7 @@ impl App {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .envs(std::env::vars())
+            .envs(self.env_var_manager.get_env_vars())
             .output();
 
         if let Ok(config) = Config::get() {
