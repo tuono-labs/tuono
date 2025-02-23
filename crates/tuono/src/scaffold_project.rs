@@ -2,7 +2,7 @@ use clap::crate_version;
 use reqwest::blocking;
 use reqwest::blocking::Client;
 use serde::Deserialize;
-use std::env::{self};
+use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
@@ -65,8 +65,8 @@ pub fn create_new_project(
     let github_api_base_url =
         env::var("__INTERNAL_TUONO_TEST").unwrap_or("https://api.github.com".to_string());
 
-    let github_raw_base_url =
-        env::var("__INTERNAL_TUONO_TEST").unwrap_or("http://localhost:3000".to_string());
+    let github_raw_base_url = env::var("__INTERNAL_TUONO_TEST")
+        .unwrap_or("https://raw.githubusercontent.com".to_string());
 
     // In case of missing select the tuono example
     let template = template.unwrap_or("tuono-app".to_string());
