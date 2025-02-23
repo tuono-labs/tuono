@@ -1,8 +1,9 @@
-mod utils;
 use assert_cmd::Command;
 use serial_test::serial;
 use std::fs;
-use utils::TempTuonoProject;
+
+mod utils;
+use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
@@ -57,8 +58,6 @@ fn it_successfully_create_an_api_route() {
 
     let temp_main_rs_content =
         fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
-
-    dbg!(&temp_main_rs_content);
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
