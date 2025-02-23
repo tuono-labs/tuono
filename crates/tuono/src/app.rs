@@ -54,8 +54,8 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
 }
 
 impl App {
-    pub fn new(mode: Mode) -> Self {
-        let env_var_manager = EnvVarManager::new(mode);
+    pub fn new(mode: &Mode) -> Self {
+        let env_var_manager = EnvVarManager::new(mode.clone());
 
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
 
