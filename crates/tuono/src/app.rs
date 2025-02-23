@@ -220,9 +220,9 @@ impl App {
             Ok(config) => self.config = Some(config),
             Err(error) => {
                 match error.kind() {
-                    io::ErrorKind::NotFound => eprintln!("[CLI] Failed to read config. Please run `npm install` to generate automatically."),
+                    io::ErrorKind::NotFound => eprintln!("Failed to read config. Please run `npm install` to generate automatically."),
                     _ => {
-                        error!("[CLI] Failed to read config with the following error:");
+                        error!("Failed to read config with the following error:");
                         error!("{}", error);
                     }
                 }
