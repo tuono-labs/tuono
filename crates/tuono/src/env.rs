@@ -91,9 +91,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("TEST_KEY").unwrap(), "system_value");
+        assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"system_value".to_string()));
 
-        env::remove_var("TEST_KEY");
         cleanup_env_files();
     }
 
@@ -106,9 +105,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("TEST_KEY").unwrap(), "development_value");
-
-        env::remove_var("TEST_KEY");
+        assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"development_value".to_string()));
+        
         cleanup_env_files();
     }
 
@@ -121,9 +119,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("TEST_KEY").unwrap(), "local_value");
+        assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"local_value".to_string()));
 
-        env::remove_var("TEST_KEY");
         cleanup_env_files();
     }
 
@@ -137,9 +134,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("TEST_KEY").unwrap(), "local_dev_value");
+        assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"local_dev_value".to_string()));
 
-        env::remove_var("TEST_KEY");
         cleanup_env_files();
     }
 
@@ -151,7 +147,7 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert!(env::var("NON_EXISTENT_KEY").is_err());
+        assert_eq!(manager.get_env_vars().get("NON_EXISTENT_KEY"), None);
 
         cleanup_env_files();
     }
@@ -164,8 +160,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert!(env::var("INVALID_LINE").is_err());
-        assert!(env::var("MISSING_EQUALS_SIGN").is_err());
+        assert_eq!(manager.get_env_vars().get("INVALID_LINE"), None);
+        assert_eq!(manager.get_env_vars().get("MISSING_EQUALS_SIGN"), None);
 
         cleanup_env_files();
     }
@@ -178,9 +174,8 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("TEST_KEY").unwrap(), "quoted_value");
+        assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"quoted_value".to_string()));
 
-        env::remove_var("TEST_KEY");
         cleanup_env_files();
     }
 
@@ -190,7 +185,7 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert!(env::var("NON_EXISTENT_KEY").is_err());
+        assert_eq!(manager.get_env_vars().get("NON_EXISTENT_KEY"), None);
 
         cleanup_env_files();
     }
@@ -203,11 +198,9 @@ mod tests {
         let mut manager = EnvVarManager::new(Mode::Dev);
         manager.reload_variables();
 
-        assert_eq!(env::var("KEY1").unwrap(), "value1");
-        assert_eq!(env::var("KEY2").unwrap(), "value2");
-
-        env::remove_var("KEY1");
-        env::remove_var("KEY2");
+        assert_eq!(manager.get_env_vars().get("KEY1"), Some(&"value1".to_string()));
+        assert_eq!(manager.get_env_vars().get("KEY2"), Some(&"value2".to_string()));
+        
         cleanup_env_files();
     }
 }
