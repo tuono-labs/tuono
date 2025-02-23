@@ -13,7 +13,7 @@ export default mergeConfig(
       './src/index.ts',
       './src/build/index.ts',
       './src/config/index.ts',
-      './src/client-types/index.ts',
+      './src/build-client/index.ts',
       './src/ssr/index.ts',
       './src/hydration/index.tsx',
     ],
