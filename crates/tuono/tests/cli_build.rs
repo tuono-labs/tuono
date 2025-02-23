@@ -168,9 +168,11 @@ fn it_fails_without_installed_build_script() {
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
 
-    test_tuono_build.arg("build").assert().failure().stderr(
-        "Failed to read config. Please run `npm install` to generate automatically.\n",
-    );
+    test_tuono_build
+        .arg("build")
+        .assert()
+        .failure()
+        .stderr("Failed to read config. Please run `npm install` to generate automatically.\n");
 }
 
 #[test]
