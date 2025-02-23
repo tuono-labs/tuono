@@ -23,7 +23,7 @@ impl EnvVarManager {
         env_files.push(format!(".env.{}.local", mode_name));
 
         let system_env_names: HashSet<String> = env::vars().map(|(k, _)| k).collect();
-        let env_vars = HashMap::new();
+        let env_vars: HashMap<String, String> = env::vars().collect();
 
         let mut manager = Self {
             env_files,
@@ -93,6 +93,7 @@ mod tests {
 
         assert_eq!(manager.get_env_vars().get("TEST_KEY"), Some(&"system_value".to_string()));
 
+        env::remove_var("TEST_KEY");
         cleanup_env_files();
     }
 
