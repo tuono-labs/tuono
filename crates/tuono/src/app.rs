@@ -255,7 +255,7 @@ mod tests {
 
     #[test]
     fn should_collect_routes() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
         #[cfg(target_os = "windows")]
         let base_path = "\\home\\user\\Documents\\tuono";
 
@@ -322,7 +322,7 @@ mod tests {
 
     #[test]
     fn should_create_multi_level_axum_paths() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
 
         #[cfg(target_os = "windows")]
         let base_path = "\\home\\user\\Documents\\tuono";
@@ -378,7 +378,7 @@ mod tests {
 
     #[test]
     fn should_ignore_whitelisted_extensions() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
         app.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
@@ -398,7 +398,7 @@ mod tests {
 
     #[test]
     fn should_ignore_whitelisted_files() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
         app.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
@@ -417,7 +417,7 @@ mod tests {
 
     #[test]
     fn should_correctly_parse_routes_with_server_handler() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
 
         #[cfg(target_os = "windows")]
         let base_path = "\\home\\user\\Documents\\tuono";
@@ -470,7 +470,7 @@ mod tests {
 
     #[test]
     fn has_dynamic_routes_works() {
-        let mut app = App::new();
+        let mut app = App::new(&Mode::Prod);
         app.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
@@ -484,7 +484,7 @@ mod tests {
 
         assert!(app.has_dynamic_routes());
 
-        let mut app2 = App::new();
+        let mut app2 = App::new(&Mode::Prod);
         app2.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
@@ -498,7 +498,7 @@ mod tests {
 
         assert!(app2.has_dynamic_routes());
 
-        let mut app3 = App::new();
+        let mut app3 = App::new(&Mode::Prod);
         app3.base_path = "/home/user/Documents/tuono".into();
 
         let routes = [
