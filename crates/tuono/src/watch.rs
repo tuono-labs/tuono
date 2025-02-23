@@ -1,5 +1,6 @@
+use std::fs;
 use std::path::Path;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use watchexec_supervisor::command::{Command, Program};
 
 use miette::{IntoDiagnostic, Result};
@@ -7,6 +8,7 @@ use watchexec::Watchexec;
 use watchexec_signals::Signal;
 use watchexec_supervisor::job::{start_job, Job};
 
+use crate::env::EnvVarManager;
 use crate::mode::Mode;
 use crate::source_builder::bundle_axum_source;
 use console::Term;
@@ -79,12 +81,25 @@ pub async fn watch() -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
+    // Initialize EnvVarManager with Dev mode
+    let env_var_manager = Arc::new(RwLock::new(EnvVarManager::new(Mode::Dev)));
+
+    // Clone Arc to move into the closure safely
+    let env_var_manager_clone = Arc::clone(&env_var_manager);
+
     watch_react_src().start().await;
 
     let rust_server = run_rust_dev_server();
     let build_rust_src = build_rust_src();
 
     let build_ssr_bundle = build_react_ssr_src();
+
+    let env_files = fs::read_dir("./")
+        .unwrap()
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
+        .map(|entry| entry.path().to_string_lossy().into_owned())
+        .collect::<Vec<String>>();
 
     build_ssr_bundle.start().await;
     build_rust_src.start().await;
@@ -102,6 +117,7 @@ pub async fn watch() -> Result<()> {
     let wx = Watchexec::new(move |mut action| {
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
+        let mut should_reload_env_file = false;
 
         for event in action.events.iter() {
             for path in event.paths() {
@@ -112,6 +128,16 @@ pub async fn watch() -> Result<()> {
 
                 // Either tsx, jsx and mdx
                 if file_path.ends_with("sx") || file_path.ends_with("mdx") {
+                    should_reload_ssr_bundle = true
+                }
+
+                if path
+                    .0
+                    .file_name()
+                    .map(|f| f.to_string_lossy().starts_with(".env"))
+                    .unwrap_or(false)
+                {
+                    should_reload_env_file = true;
                     should_reload_ssr_bundle = true
                 }
             }
@@ -129,6 +155,18 @@ pub async fn watch() -> Result<()> {
             build_ssr_bundle.start();
         }
 
+        if should_reload_env_file {
+            println!("  Reloading environment variables, and restarting rust server...");
+            if let Ok(mut env) = env_var_manager_clone.write() {
+                env.reload_variables();
+            } else {
+                eprintln!("Failed to acquire write lock on env_var_manager");
+            }
+            rust_server.stop();
+            bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
+            rust_server.start();
+        }
+
         // if Ctrl-C is received, quit
         if action.signals().any(|sig| sig == Signal::Interrupt) {
             action.quit();
@@ -137,8 +175,11 @@ pub async fn watch() -> Result<()> {
         action
     })?;
 
-    // watch the current directory
-    wx.config.pathset(["./src"]);
+    // watch the current directory and all types of .env file
+    let mut paths_to_watch = vec!["./src".to_string()];
+    paths_to_watch.extend(env_files);
+
+    wx.config.pathset(paths_to_watch);
 
     let _ = wx.main().await.into_diagnostic()?;
     Ok(())
