@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
 
-import { describe, expect, it, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, vitest } from 'vitest'
 import react from '@vitejs/plugin-react-swc'
 
 import { createJsonConfig } from './create-json-config'
@@ -8,6 +8,10 @@ import { createJsonConfig } from './create-json-config'
 const writeFileSpy = vitest.spyOn(fs, 'writeFile').mockResolvedValue(void 0)
 
 describe('createJsonConfig', () => {
+  beforeEach(() => {
+    writeFileSpy.mockClear()
+  })
+
   const sampleConfig = { server: { host: 'h', port: 1 } }
 
   it('should process config with only server property', async () => {
