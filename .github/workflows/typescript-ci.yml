@@ -51,13 +51,13 @@ jobs:
         uses: ./.github/actions/install-node-dependencies
 
       - name: Check formatting
-        run: pnpm format:check
+        run: pnpm run format
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm run lint
 
-      - name: Types
-        run: pnpm types
+      - name: Typecheck
+        run: pnpm run typecheck
 
   ci_ok:
     name: Typescript CI OK

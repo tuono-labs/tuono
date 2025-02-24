@@ -5,6 +5,7 @@ use http::Method;
 use std::collections::hash_set::HashSet;
 use std::collections::{hash_map::Entry, HashMap};
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
@@ -12,6 +13,7 @@ use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
 use std::process::Stdio;
+use tracing::error;
 use tuono_internal::config::Config;
 
 use crate::route::Route;
@@ -176,15 +178,18 @@ impl App {
 
     pub fn build_react_prod(&self) {
         if !Path::new(BUILD_JS_SCRIPT).exists() {
-            eprintln!("Failed to find the build script. Please run `npm install`");
+            error!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
-        let output = Command::new(BUILD_JS_SCRIPT)
-            .output()
-            .expect("Failed to build the react source");
+
+        let output = Command::new(BUILD_JS_SCRIPT).output().unwrap_or_else(|_| {
+            error!("Failed to build the react source");
+            std::process::exit(1);
+        });
+
         if !output.status.success() {
-            eprintln!("Failed to build the react source");
-            eprintln!("Error: {}", String::from_utf8_lossy(&output.stderr));
+            error!("Failed to build the react source");
+            error!("Error: {}", String::from_utf8_lossy(&output.stderr));
             std::process::exit(1);
         }
     }
@@ -204,18 +209,26 @@ impl App {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
         }
+
         let config_build_command = Command::new(BUILD_TUONO_CONFIG)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output();
 
-        if let Ok(config) = Config::get() {
-            self.config = Some(config);
-        } else {
-            eprintln!("[CLI] Failed to read tuono.config.ts");
-            std::process::exit(1);
-        };
+        match Config::get() {
+            Ok(config) => self.config = Some(config),
+            Err(error) => {
+                match error.kind() {
+                    io::ErrorKind::NotFound => eprintln!("Failed to read config. Please run `npm install` to generate automatically."),
+                    _ => {
+                        error!("Failed to read config with the following error:");
+                        error!("{}", error);
+                    }
+                }
+                std::process::exit(1);
+            }
+        }
 
         config_build_command
     }

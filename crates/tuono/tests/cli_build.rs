@@ -1,8 +1,9 @@
-mod utils;
 use assert_cmd::Command;
 use serial_test::serial;
 use std::fs;
-use utils::TempTuonoProject;
+
+mod utils;
+use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
@@ -36,7 +37,7 @@ fn it_successfully_create_the_index_route() {
     assert!(temp_main_rs_content.contains("mod index;"));
 
     assert!(temp_main_rs_content
-        .contains(r#".route("/", get(index::tuono__internal__route)).route("/__tuono/data/", get(index::tuono__internal__api))"#));
+        .contains(r#".route("/", get(index::tuono_internal_route)).route("/__tuono/data/", get(index::tuono_internal_api))"#));
 }
 
 #[test]
@@ -58,13 +59,11 @@ fn it_successfully_create_an_api_route() {
     let temp_main_rs_content =
         fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
 
-    dbg!(&temp_main_rs_content);
-
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", post(api_health_check::post__tuono_internal_api))"#
+        r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
 }
 
@@ -94,11 +93,10 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", post(api_health_check::post__tuono_internal_api))"#
+        r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
-    assert!(temp_main_rs_content.contains(
-        r#".route("/api/health_check", get(api_health_check::get__tuono_internal_api))"#
-    ));
+    assert!(temp_main_rs_content
+        .contains(r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#));
 }
 
 #[test]
@@ -129,19 +127,20 @@ fn it_successfully_create_catch_all_routes() {
     assert!(temp_main_rs_content.contains("mod dyn_catch_all_all_routes;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post__tuono_internal_api))"#
+        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
+        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__route))"#
+        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
-    assert!(temp_main_rs_content
-        .contains(r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono__internal__api))"#));
+    assert!(temp_main_rs_content.contains(
+        r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#
+    ));
 }
 
 #[test]
@@ -168,11 +167,12 @@ fn it_fails_without_installed_build_script() {
         .assert()
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+
     test_tuono_build
         .arg("build")
         .assert()
         .failure()
-        .stderr("[CLI] Failed to read tuono.config.ts\n");
+        .stderr("Failed to read config. Please run `npm install` to generate automatically.\n");
 }
 
 #[test]

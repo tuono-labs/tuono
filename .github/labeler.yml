@@ -8,16 +8,13 @@ typescript:
   - changed-files:
       - any-glob-to-any-file:
           [
+            'devtools/**',
             'packages/**',
             'package.json',
             'pnpm-*.yaml',
             'eslint.config.js',
             'tsconfig.json',
           ]
-
-documentation:
-  - changed-files:
-      - any-glob-to-any-file: ['apps/documentation/**']
 
 'CI/CD':
   - changed-files:
@@ -27,6 +24,7 @@ documentation:
   - changed-files:
       - any-glob-to-any-file:
           [
+            'devtools/**',
             '.npmrc',
             '.nvmrc',
             '.prettierrc',

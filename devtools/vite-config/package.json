@@ -1,0 +1,24 @@
+{
+  "name": "vite-config",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --check --ignore-unknown --ignore-path ../../.prettierignore .",
+    "format:fix": "prettier --write --ignore-unknown --ignore-path ../../.prettierignore .",
+    "types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "oxc-transform": "0.52.0",
+    "rollup-plugin-preserve-directives": "0.4.0",
+    "unplugin-isolated-decl": "0.11.2",
+    "vite": "6.1.1",
+    "vite-plugin-externalize-deps": "0.9.0"
+  }
+}

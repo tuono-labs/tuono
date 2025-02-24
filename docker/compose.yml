@@ -18,8 +18,6 @@ services:
       - /tuono/target
       - /tuono/.pnpm-store
       - /tuono/.turbo
-      - /tuono/apps/documentation/node_modules
-      - /tuono/apps/documentation/target
       - /tuono/examples/tuono-app/node_modules
       - /tuono/examples/tuono-app/target
       - /tuono/examples/tuono-tutorial/node_modules

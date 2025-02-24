@@ -1,5 +1,5 @@
 packages:
+  - 'devtools/*'
   - 'packages/*'
-  - 'apps/*'
   - 'examples/*'
   - 'e2e/fixtures/*'

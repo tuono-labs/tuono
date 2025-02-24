@@ -166,7 +166,7 @@ mod tests {
 
     use crate::manifest::BundleInfo;
 
-    fn prepare_payload<'a>(uri: Option<&'a str>, mode: Mode) -> Payload<'a> {
+    fn prepare_payload(uri: Option<&str>, mode: Mode) -> Payload {
         let mut manifest_mock = HashMap::new();
         manifest_mock.insert(
             "client-main".to_string(),

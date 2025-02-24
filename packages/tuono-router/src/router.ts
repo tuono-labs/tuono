@@ -28,7 +28,7 @@ export class Router {
   basePath = '/'
   routeTree?: RouteTree
 
-  isServer = typeof document === 'undefined'
+  isServer: boolean = typeof document === 'undefined'
 
   routesById: Record<string, Route> = {}
 
