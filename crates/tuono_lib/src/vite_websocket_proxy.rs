@@ -65,9 +65,9 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
             if let Ok(msg) = msg {
                 let msg_to_vite = match msg.clone() {
                     ws::Message::Text(str) => Message::Text(str.to_string().into()),
-                    ws::Message::Pong(payload) => Message::Pong(payload.into()),
-                    ws::Message::Ping(payload) => Message::Ping(payload.into()),
-                    ws::Message::Binary(payload) => Message::Binary(payload.into()),
+                    ws::Message::Pong(payload) => Message::Pong(payload),
+                    ws::Message::Ping(payload) => Message::Ping(payload),
+                    ws::Message::Binary(payload) => Message::Binary(payload),
                     // Hard to match axum and tungstenite close payload.
                     // Not a priority
                     ws::Message::Close(_) => Message::Close(None),
@@ -92,9 +92,9 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
         while let Some(Ok(msg)) = vite_receiver.next().await {
             let msg_to_browser = match msg {
                 Message::Text(str) => ws::Message::Text(AxumUtf8Bytes::from(str.to_string())),
-                Message::Ping(payload) => ws::Message::Ping(payload.into()),
-                Message::Pong(payload) => ws::Message::Pong(payload.into()),
-                Message::Binary(payload) => ws::Message::Binary(payload.into()),
+                Message::Ping(payload) => ws::Message::Ping(payload),
+                Message::Pong(payload) => ws::Message::Pong(payload),
+                Message::Binary(payload) => ws::Message::Binary(payload),
                 // Hard to match axum and tungstenite close payload.
                 // Not a priority
                 Message::Close(_) => ws::Message::Close(None),
