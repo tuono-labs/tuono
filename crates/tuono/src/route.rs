@@ -70,7 +70,7 @@ impl AxumInfo {
 }
 
 // TODO: to be extended with common scenarios
-const NO_HTML_EXTENSIONS: [&str; 1] = ["xml"];
+const NO_HTML_EXTENSIONS: [&str; 2] = ["xml", "txt"];
 
 // TODO: Refine this function to catch
 // if the methods are commented.
@@ -306,6 +306,7 @@ mod tests {
             ("/index", "out/static/index.html"),
             ("/documentation", "out/static/documentation/index.html"),
             ("/sitemap.xml", "out/static/sitemap.xml"),
+            ("/robot.txt", "out/static/robot.txt"),
             (
                 "/documentation/routing",
                 "out/static/documentation/routing/index.html",
