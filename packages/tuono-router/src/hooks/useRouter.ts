@@ -3,8 +3,9 @@ import React from 'react'
 import { useRouterContext } from '../components/RouterContext'
 
 type NavigationType = 'pushState' | 'replaceState'
+type NavigationFn = (path: string, opts?: NavigationOptions) => void
 
-interface NavigateOptions {
+interface NavigationOptions {
   /**
    * If "false" the scroll offset will be kept across page navigation. Default "true"
    */
@@ -15,13 +16,13 @@ interface UseRouterResult {
   /**
    * Redirects to the path passed as argument updating the browser history.
    */
-  push: (path: string, opt?: NavigateOptions) => void
+  push: NavigationFn
 
   /**
    * Redirects to the path passed as argument replacing the current history
    * entry.
    */
-  replace: (path: string, opt?: NavigateOptions) => void
+  replace: NavigationFn
 
   /**
    * This object contains all the query params of the current route
@@ -38,8 +39,8 @@ export const useRouter = (): UseRouterResult => {
   const { location, updateLocation } = useRouterContext()
 
   const navigate = React.useCallback(
-    (type: NavigationType, path: string, opt?: NavigateOptions): void => {
-      const { scroll = true } = opt || {}
+    (type: NavigationType, path: string, opts?: NavigationOptions): void => {
+      const { scroll = true } = opts || {}
       const url = new URL(path, window.location.origin)
 
       updateLocation({
@@ -60,15 +61,15 @@ export const useRouter = (): UseRouterResult => {
   )
 
   const push = React.useCallback(
-    (path: string, opt?: NavigateOptions): void => {
-      navigate('pushState', path, opt)
+    (path: string, opts?: NavigationOptions): void => {
+      navigate('pushState', path, opts)
     },
     [navigate],
   )
 
   const replace = React.useCallback(
-    (path: string, opt?: NavigateOptions): void => {
-      navigate('replaceState', path, opt)
+    (path: string, opts?: NavigationOptions): void => {
+      navigate('replaceState', path, opts)
     },
     [navigate],
   )

@@ -75,7 +75,9 @@ export default function Link(
 
     event.preventDefault()
 
-    router[replace ? 'replace' : 'push'](href || '', { scroll })
+    const method = replace ? 'replace' : 'push'
+
+    router[method](href || '', { scroll })
   }
 
   return (

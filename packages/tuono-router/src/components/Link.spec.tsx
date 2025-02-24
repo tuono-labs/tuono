@@ -55,7 +55,7 @@ describe('Link Component', () => {
     expect(pushMock).toHaveBeenCalledWith('/test', { scroll: true })
   })
 
-  it('calls router.replace on normal click when replace prop is true', () => {
+  it('calls router.replace on click when the replace prop is true', () => {
     render(
       <Link href="/test" replace>
         Test Link
