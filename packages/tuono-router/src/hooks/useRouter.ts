@@ -2,7 +2,10 @@ import React from 'react'
 
 import { useRouterContext } from '../components/RouterContext'
 
-interface PushOptions {
+type NavigationType = 'pushState' | 'replaceState'
+type NavigationFn = (path: string, opts?: NavigationOptions) => void
+
+interface NavigationOptions {
   /**
    * If "false" the scroll offset will be kept across page navigation. Default "true"
    */
@@ -13,7 +16,13 @@ interface UseRouterResult {
   /**
    * Redirects to the path passed as argument updating the browser history.
    */
-  push: (path: string, opt?: PushOptions) => void
+  push: NavigationFn
+
+  /**
+   * Redirects to the path passed as argument replacing the current history
+   * entry.
+   */
+  replace: NavigationFn
 
   /**
    * This object contains all the query params of the current route
@@ -29,9 +38,9 @@ interface UseRouterResult {
 export const useRouter = (): UseRouterResult => {
   const { location, updateLocation } = useRouterContext()
 
-  const push = React.useCallback(
-    (path: string, opt?: PushOptions): void => {
-      const { scroll = true } = opt || {}
+  const navigate = React.useCallback(
+    (type: NavigationType, path: string, opts?: NavigationOptions): void => {
+      const { scroll = true } = opts || {}
       const url = new URL(path, window.location.origin)
 
       updateLocation({
@@ -41,7 +50,8 @@ export const useRouter = (): UseRouterResult => {
         searchStr: url.search,
         hash: url.hash,
       })
-      history.pushState(path, '', path)
+
+      history[type](path, '', path)
 
       if (scroll) {
         window.scroll(0, 0)
@@ -50,8 +60,23 @@ export const useRouter = (): UseRouterResult => {
     [updateLocation],
   )
 
+  const push = React.useCallback(
+    (path: string, opts?: NavigationOptions): void => {
+      navigate('pushState', path, opts)
+    },
+    [navigate],
+  )
+
+  const replace = React.useCallback(
+    (path: string, opts?: NavigationOptions): void => {
+      navigate('replaceState', path, opts)
+    },
+    [navigate],
+  )
+
   return {
     push,
+    replace,
     query: location.search,
     pathname: location.pathname,
   }
