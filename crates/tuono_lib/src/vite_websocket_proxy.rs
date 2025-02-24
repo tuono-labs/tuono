@@ -1,5 +1,5 @@
 use crate::config::GLOBAL_CONFIG;
-use axum::extract::ws::{self, WebSocket, WebSocketUpgrade};
+use axum::extract::ws::{self, Utf8Bytes as AxumUtf8Bytes, WebSocket, WebSocketUpgrade};
 use axum::response::IntoResponse;
 use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::connect_async;
@@ -64,7 +64,7 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
         while let Some(msg) = tuono_receiver.next().await {
             if let Ok(msg) = msg {
                 let msg_to_vite = match msg.clone() {
-                    ws::Message::Text(str) => Message::Text(str),
+                    ws::Message::Text(str) => Message::Text(str.to_string().into()),
                     ws::Message::Pong(payload) => Message::Pong(payload),
                     ws::Message::Ping(payload) => Message::Ping(payload),
                     ws::Message::Binary(payload) => Message::Binary(payload),
@@ -91,7 +91,7 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
     tokio::spawn(async move {
         while let Some(Ok(msg)) = vite_receiver.next().await {
             let msg_to_browser = match msg {
-                Message::Text(str) => ws::Message::Text(str),
+                Message::Text(str) => ws::Message::Text(AxumUtf8Bytes::from(str.to_string())),
                 Message::Ping(payload) => ws::Message::Ping(payload),
                 Message::Pong(payload) => ws::Message::Pong(payload),
                 Message::Binary(payload) => ws::Message::Binary(payload),
@@ -100,7 +100,7 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
                 Message::Close(_) => ws::Message::Close(None),
                 _ => {
                     eprintln!("Unexpected message from the vite WebSocket to the browser: {msg:?}");
-                    ws::Message::Text("Unhandled".to_string())
+                    ws::Message::Text("Unhandled".to_string().into())
                 }
             };
 
