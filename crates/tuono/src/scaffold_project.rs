@@ -6,6 +6,7 @@ use std::env;
 use std::fs::{self, create_dir, File, OpenOptions};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 #[derive(Deserialize, Debug)]
 enum GithubFileType {
@@ -59,8 +60,19 @@ pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
     select_head: Option<bool>,
+    git_init: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
+
+    let is_git_installed = is_git_installed();
+
+    // Check if Git is installed when the user requests to use it; otherwise, continue
+    if git_init.unwrap_or(false) && !is_git_installed {
+        exit_with_error("You requested to use Git, but it is not installed.")
+    }
+
+    // Use git by default
+    let git = git_init.unwrap_or(true) && is_git_installed;
 
     let github_api_base_url =
         env::var("__INTERNAL_TUONO_TEST").unwrap_or("https://api.github.com".to_string());
@@ -152,6 +164,12 @@ pub fn create_new_project(
 
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
+
+    if git {
+        init_new_git_repo(&folder_path)
+            .unwrap_or_else(|_| exit_with_error("Failed to initialise a new git repo"));
+    }
+
     outro(folder);
 }
 
@@ -259,6 +277,28 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
         .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)));
 
     Ok(())
+}
+
+fn is_git_installed() -> bool {
+    let output = Command::new("git").arg("--version").output();
+
+    output.is_ok()
+}
+
+fn init_new_git_repo(folder_path: &Path) -> Result<(), io::Error> {
+    let output = Command::new("git").arg("init").arg(folder_path).output()?;
+
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!(
+                "Git init failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ),
+        ))
+    }
 }
 
 fn outro(folder_name: String) {
