@@ -45,8 +45,11 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: 'Print example info'
-        working-directory: examples/${{ matrix.example_name }}
+        working-directory: ./examples/${{ matrix.example_name }}
         run: |
           pnpm info
 
