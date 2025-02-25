@@ -41,13 +41,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 
-    outputs:
-      folders: ${{ steps.set-matrix.outputs.folders }}
-
     steps:
-      - name: 'Print'
+      - name: 'Print package info'
+        working-directory: ${{ matrix.folder }}
         run: |
-          echo "Folder: ${{ matrix.os }}, ${{ matrix.folder }}"
+          pnpm info
 
   ci_ok:
     name: Examples CI OK
