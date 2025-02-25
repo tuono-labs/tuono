@@ -37,7 +37,7 @@ jobs:
           - 'macos-latest'
           - 'windows-latest'
 
-    name: 'Check `${{ matrix.folder }}`'
+    name: 'Check `${{ matrix.folder }}` on ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 
