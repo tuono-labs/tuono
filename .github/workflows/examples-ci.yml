@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - id: find_folder
-        run: echo "::set-output name=matrix::$(ls -d examples/*/ | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "folders=$(ls -d examples/*/ | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
 
   check:
     needs: [examples_folder_list]
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     if: always()
-    needs: [check]
+    needs: [examples_folder_list, check]
     steps:
       - name: Exit with error if some jobs are not successful
         run: exit 1
