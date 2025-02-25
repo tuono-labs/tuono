@@ -20,6 +20,7 @@ impl EnvVarManager {
         };
 
         env_files.push(format!(".env.{}", mode_name));
+        env_files.push(String::from(".env.local"));
         env_files.push(format!(".env.{}.local", mode_name));
 
         let system_env_names: HashSet<String> = env::vars().map(|(k, _)| k).collect();
