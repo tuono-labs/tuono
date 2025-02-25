@@ -1,0 +1,61 @@
+name: Examples CI
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  examples_folder_list:
+    name: Generate examples folder matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+
+    outputs:
+      folders: ${{ steps.find_folder.outputs.folders }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - id: find_folder
+        run: echo "::set-output name=matrix::$(ls -d examples/*/ | jq -R -s -c 'split("\n")[:-1]')"
+
+  check:
+    needs: [examples_folder_list]
+
+    strategy:
+      matrix:
+        folder: ${{ fromJson(needs.examples_folder_list.outputs.folders) }}
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+
+    name: 'Check `${{ matrix.folder }}`'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    outputs:
+      folders: ${{ steps.set-matrix.outputs.folders }}
+
+    steps:
+      - name: 'Print'
+        run: |
+          echo "Folder: ${{ matrix.os }}, ${{ matrix.folder }}"
+
+  ci_ok:
+    name: Examples CI OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs: [check]
+    steps:
+      - name: Exit with error if some jobs are not successful
+        run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')) }}
