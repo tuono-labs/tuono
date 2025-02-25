@@ -48,6 +48,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install NodeJS Dependencies
+        uses: ./.github/actions/install-node-dependencies
+
       - name: 'Print example info'
         working-directory: ./examples/${{ matrix.example_name }}
         run: |
