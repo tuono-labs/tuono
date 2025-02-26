@@ -8,7 +8,9 @@ use crate::app::App;
 use crate::build;
 use crate::mode::Mode;
 use crate::scaffold_project;
-use crate::source_builder::{bundle_axum_source, check_tuono_folder, create_client_entry_files};
+use crate::source_builder::{
+    bundle_axum_source, check_tuono_folder, create_client_entry_files, generate_fallback_html,
+};
 use crate::watch;
 
 #[derive(Subcommand, Debug)]
@@ -82,6 +84,7 @@ pub fn app() -> std::io::Result<()> {
             app.build_tuono_config()
                 .expect("Failed to build tuono.config.ts");
 
+            generate_fallback_html(&app)?;
             app.check_server_availability(Mode::Dev);
 
             watch::watch().unwrap();
