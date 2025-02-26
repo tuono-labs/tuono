@@ -362,7 +362,7 @@ mod tests {
             ("/about", "/about"),
             ("/posts/index", "/posts"),
             ("/posts/any-post", "/posts/any-post"),
-            ("/posts/[post]", "/posts/:post"),
+            ("/posts/[post]", "/posts/{post}"),
         ];
 
         results.into_iter().for_each(|(path, expected_path)| {

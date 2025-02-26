@@ -127,19 +127,19 @@ fn it_successfully_create_catch_all_routes() {
     assert!(temp_main_rs_content.contains("mod dyn_catch_all_all_routes;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
+        r#".route("/api/{*all_apis}", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
+        r#".route("/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
+        r#".route("/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#
+        r#".route("/__tuono/data/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_api))"#
     ));
 }
 
