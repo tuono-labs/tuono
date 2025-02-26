@@ -1,6 +1,6 @@
 {
   "name": "tuono",
-  "version": "0.17.8",
+  "version": "0.17.9",
   "description": "Superfast React fullstack framework",
   "homepage": "https://tuono.dev",
   "scripts": {
