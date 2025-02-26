@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+
+<head> </head>
+
+<body>
+  <script>
+    window['__TUONO_SERVER_PAYLOAD__'] = [SERVER_PAYLOAD]
+  </script>
+  <script type="module" async>
+    import RefreshRuntime from '[BASE_URL]/vite-server/@react-refresh'
+    RefreshRuntime.injectIntoGlobalHook(window)
+    window.$RefreshReg$ = () => { }
+    window.$RefreshSig$ = () => (type) => type
+    window.__vite_plugin_react_preamble_installed__ = true
+  </script>
+  <script type="module" async src="[BASE_URL]/vite-server/@vite/client"></script>
+  <script type="module" async src="[BASE_URL]/vite-server/client-main.tsx"></script>
+</body>
+
+</html>

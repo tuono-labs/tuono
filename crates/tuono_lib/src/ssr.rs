@@ -36,10 +36,10 @@ struct ProdJs;
 impl ProdJs {
     thread_local! {
         pub static SSR: RefCell<Ssr<'static, 'static>> = RefCell::new(
-                Ssr::from(
-                    read_to_string(PathBuf::from(PROD_BUNDLE_PATH)).expect("Server bundle not found"), ""
-                    ).unwrap()
-                )
+            Ssr::from(
+                read_to_string(PathBuf::from(PROD_BUNDLE_PATH)).expect("Server bundle not found"), ""
+            ).unwrap()
+        )
     }
 }
 
@@ -47,11 +47,20 @@ struct DevJs;
 
 impl DevJs {
     pub fn render_to_string(params: Option<&str>) -> Result<String, SsrError> {
-        Ssr::from(
-            read_to_string(PathBuf::from(DEV_BUNDLE_PATH)).expect("Server bundle not found"),
-            "",
-        )
-        .unwrap()
-        .render_to_string(params)
+        let bundle_path = read_to_string(PathBuf::from(DEV_BUNDLE_PATH));
+
+        if let Ok(source) = bundle_path {
+            let ssr = Ssr::from(source, "");
+            if let Ok(mut ssr) = ssr {
+                ssr.render_to_string(params)
+            } else {
+                let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html")).unwrap();
+                Ok(fallback_html.replace("[SERVER_PAYLOAD]", params.unwrap_or("")))
+            }
+        } else {
+            let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html")).unwrap();
+
+            Ok(fallback_html)
+        }
     }
 }

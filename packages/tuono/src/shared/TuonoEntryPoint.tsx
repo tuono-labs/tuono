@@ -6,6 +6,7 @@ import type { ServerPayload } from '../types'
 
 import { TuonoContextProvider } from './TuonoContext'
 import { RouterContextProviderWrapper } from './RouterContextProviderWrapper'
+import { ErrorOverlay } from './ErrorOverlay'
 
 interface TuonoEntryPointProps {
   router: RouterInstanceType
@@ -19,7 +20,9 @@ export function TuonoEntryPoint({
   return (
     <StrictMode>
       <TuonoContextProvider serverPayload={serverPayload}>
-        <RouterContextProviderWrapper router={router} />
+        <ErrorOverlay>
+          <RouterContextProviderWrapper router={router} />
+        </ErrorOverlay>
       </TuonoContextProvider>
     </StrictMode>
   )
