@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
 
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
 import react from '@vitejs/plugin-react-swc'
@@ -12,9 +12,9 @@ describe('createJsonConfig', () => {
     writeFileSpy.mockClear()
   })
 
-  const sampleConfig = { server: { host: 'h', origin: null, port: 1 } }
-
   it('should process config with only server property', async () => {
+    const sampleConfig = { server: { host: 'h', origin: null, port: 1 } }
+
     await createJsonConfig(sampleConfig)
 
     expect(writeFileSpy).toHaveBeenCalledWith(
@@ -24,12 +24,10 @@ describe('createJsonConfig', () => {
     )
   })
 
-  it('should process config with only server property including origin', async () => {
-    const sampleConfigWithOptional = {
-      server: { host: 'h', origin: 'o', port: 1 },
-    }
+  it('should process config with plugins', async () => {
+    const sampleConfig = { server: { host: 'h', origin: null, port: 1 } }
 
-    await createJsonConfig(sampleConfigWithOptional)
+    await createJsonConfig({ ...sampleConfig, vite: { plugins: [react()] } })
 
     expect(writeFileSpy).toHaveBeenCalledWith(
       expect.any(String),
@@ -38,8 +36,10 @@ describe('createJsonConfig', () => {
     )
   })
 
-  it('should process config with plugins', async () => {
-    await createJsonConfig({ ...sampleConfig, vite: { plugins: [react()] } })
+  it('should process config with only server property including origin', async () => {
+    const sampleConfig = { server: { host: 'h', origin: 'o', port: 1 } }
+
+    await createJsonConfig(sampleConfig)
 
     expect(writeFileSpy).toHaveBeenCalledWith(
       expect.any(String),
