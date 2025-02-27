@@ -11,6 +11,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
+    "types": ["tuono/build-client"],
 
     // Interop Constraints
     "isolatedModules": true,
