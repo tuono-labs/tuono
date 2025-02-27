@@ -25,6 +25,20 @@ jobs:
 
       - id: find_folder
         working-directory: examples
+        # produces the list of folder inside examples without leading `./` and trailing `/`:
+        # ```text
+        # tuono-tutorial
+        # with-tailwind
+        # tuono-app
+        # with-mdx
+        # ```
+        #
+        # after, using `jq` the output is converted into a JSON array:
+        # ```json
+        # ["tuono-tutorial","with-tailwind","tuono-app","with-mdx"]
+        # ```
+        #
+        # and added to `$GITHUB_OUTPUT` env variable:
         run: |
           NAMES=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
           echo "names=$(echo "$NAMES" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
