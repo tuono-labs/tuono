@@ -1,8 +1,9 @@
-mod utils;
 use assert_cmd::Command;
 use serial_test::serial;
 use std::fs;
-use utils::TempTuonoProject;
+
+mod utils;
+use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
@@ -57,8 +58,6 @@ fn it_successfully_create_an_api_route() {
 
     let temp_main_rs_content =
         fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
-
-    dbg!(&temp_main_rs_content);
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
@@ -128,19 +127,19 @@ fn it_successfully_create_catch_all_routes() {
     assert!(temp_main_rs_content.contains("mod dyn_catch_all_all_routes;"));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/api/*all_apis", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
+        r#".route("/api/{*all_apis}", post(api_dyn_catch_all_all_apis::post_tuono_internal_api))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
+        r#".route("/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_route))"#
+        r#".route("/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_route))"#
     ));
 
     assert!(temp_main_rs_content.contains(
-        r#".route("/__tuono/data/*all_routes", get(dyn_catch_all_all_routes::tuono_internal_api))"#
+        r#".route("/__tuono/data/{*all_routes}", get(dyn_catch_all_all_routes::tuono_internal_api))"#
     ));
 }
 
@@ -168,11 +167,12 @@ fn it_fails_without_installed_build_script() {
         .assert()
         .success();
     let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+
     test_tuono_build
         .arg("build")
         .assert()
         .failure()
-        .stderr("[CLI] Failed to read tuono.config.ts\n");
+        .stderr("Failed to read config. Please run `npm install` to generate automatically.\n");
 }
 
 #[test]

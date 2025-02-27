@@ -82,7 +82,7 @@ impl Server {
                 .to_owned()
                 .layer(LoggerLayer::new())
                 .route("/vite-server/", get(vite_websocket_proxy))
-                .route("/vite-server/*path", get(vite_reverse_proxy))
+                .route("/vite-server/{*path}", get(vite_reverse_proxy))
                 .fallback_service(
                     ServeDir::new(DEV_PUBLIC_DIR)
                         .fallback(get(catch_all).layer(LoggerLayer::new())),

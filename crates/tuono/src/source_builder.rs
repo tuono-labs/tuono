@@ -127,9 +127,7 @@ pub fn bundle_axum_source(mode: Mode) -> io::Result<App> {
     let base_path = std::env::current_dir().unwrap();
 
     let app = App::new();
-
     let bundled_file = generate_axum_source(&app, mode);
-
     create_main_file(&base_path, &bundled_file);
 
     Ok(app)

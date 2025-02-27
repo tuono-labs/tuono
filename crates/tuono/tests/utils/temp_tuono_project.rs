@@ -11,6 +11,7 @@ pub struct TempTuonoProject {
     temp_dir: TempDir,
 }
 
+#[allow(dead_code)]
 impl TempTuonoProject {
     pub fn new() -> Self {
         let project = TempTuonoProject::new_with_no_config();

@@ -16,6 +16,12 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
    * @default true
    */
   scroll?: boolean
+
+  /**
+   * If "true" the history entry will be replaced instead of pushed.
+   * @default false
+   */
+  replace?: boolean
 }
 
 function isEventModifierKeyActiveAndTargetDifferentFromSelf(
@@ -39,6 +45,7 @@ export default function Link(
     scroll = true,
     children,
     href,
+    replace,
     onClick,
     ...rest
   } = componentProps
@@ -68,7 +75,9 @@ export default function Link(
 
     event.preventDefault()
 
-    router.push(href || '', { scroll })
+    const method = replace ? 'replace' : 'push'
+
+    router[method](href || '', { scroll })
   }
 
   return (
