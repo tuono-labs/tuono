@@ -12,7 +12,6 @@ export default function IndexPage({
   if (isLoading) {
     return <h1>Loading...</h1>
   }
-
   return (
     <>
       <header className="header">

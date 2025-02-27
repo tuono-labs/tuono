@@ -5,7 +5,6 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use clap::crate_version;
-use tracing::error;
 
 use crate::app::App;
 use crate::mode::Mode;
@@ -147,22 +146,28 @@ fn generate_axum_source(app: &App, mode: Mode) -> String {
     src.replace("// AXUM_GET_ROUTE_HANDLER", &import_http_handler)
 }
 
-pub fn generate_fallback_html(app: &App) -> io::Result<()> {
+fn create_html_fallback(app: &App) -> String {
     if let Some(config) = app.config.as_ref() {
-        let base_path = std::env::current_dir().unwrap();
-        let mut data_file = fs::File::create(base_path.join(".tuono/index.html"))?;
-
-        let url = format!("http://{}:{}", config.server.host, config.server.port);
-
-        data_file.write_all(FALLBACK_HTML.replace("[BASE_URL]", url.as_str()).as_bytes())?;
-
-        Ok(())
+        if let Some(origin) = &config.server.origin {
+            FALLBACK_HTML.replace("[BASE_URL]", origin)
+        } else {
+            let url = format!("http://{}:{}", config.server.host, config.server.port);
+            FALLBACK_HTML.replace("[BASE_URL]", url.as_str())
+        }
     } else {
-        Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            "Failed to read config file",
-        ))
+        "".to_string()
     }
+}
+
+pub fn generate_fallback_html(app: &App) -> io::Result<()> {
+    let base_path = std::env::current_dir().unwrap();
+    let mut data_file = fs::File::create(base_path.join(".tuono/index.html"))?;
+
+    let fallback_html = create_html_fallback(app);
+
+    data_file.write_all(fallback_html.as_bytes())?;
+
+    Ok(())
 }
 
 pub fn check_tuono_folder() -> io::Result<()> {
@@ -224,5 +229,17 @@ mod tests {
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
         assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
+    }
+
+    #[test]
+    fn should_create_fallback_html_with_default_config() {
+        let mut app = App::new();
+        app.config = Some(Default::default());
+
+        let fallback_html = create_html_fallback(&app);
+
+        assert!(fallback_html.contains("http://localhost:3000/vite-server/@react-refresh"));
+        assert!(fallback_html.contains("http://localhost:3000/vite-server/@vite/client"));
+        assert!(fallback_html.contains("http://localhost:3000/vite-server/client-main.tsgg"));
     }
 }

@@ -200,3 +200,23 @@ fn build_fails_with_no_config() {
         .failure()
         .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
 }
+
+#[test]
+#[serial]
+fn it_creates_the_fallback_html() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let fallback_html_path = temp_tuono_project.path().join(".tuono/index.html");
+
+    let html = fs::read_to_string(&fallback_html_path)
+        .expect("Failed to read '.tuono/index.html' content.");
+
+    assert_eq!(html, "");
+}
