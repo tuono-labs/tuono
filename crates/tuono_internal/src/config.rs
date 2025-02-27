@@ -6,6 +6,7 @@ use std::path::PathBuf;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ServerConfig {
     pub host: String,
+    pub origin: Option<String>,
     pub port: u16,
 }
 
