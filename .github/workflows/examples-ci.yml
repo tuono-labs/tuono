@@ -30,7 +30,8 @@ jobs:
           echo "names=$(echo "$NAMES" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
 
   check:
-    needs: [example_list]
+    needs:
+      - example_list
 
     strategy:
       matrix:
@@ -61,7 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     if: always()
-    needs: [example_list, check]
+    needs:
+      - example_list
+      - check
     steps:
       - name: Exit with error if some jobs are not successful
         run: exit 1
