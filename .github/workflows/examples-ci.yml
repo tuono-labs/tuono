@@ -1,0 +1,85 @@
+name: Examples CI
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  example_list:
+    name: Get examples names
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+
+    outputs:
+      names: ${{ steps.find_folder.outputs.names }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - id: find_folder
+        working-directory: examples
+        # produces the list of folder inside examples without leading `./` and trailing `/`:
+        # ```text
+        # tuono-tutorial
+        # with-tailwind
+        # tuono-app
+        # with-mdx
+        # ```
+        #
+        # after, using `jq` the output is converted into a JSON array:
+        # ```json
+        # ["tuono-tutorial","with-tailwind","tuono-app","with-mdx"]
+        # ```
+        #
+        # and added to `$GITHUB_OUTPUT` env variable:
+        run: |
+          NAMES=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+          echo "names=$(echo "$NAMES" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
+
+  check:
+    needs:
+      - example_list
+
+    strategy:
+      matrix:
+        example_name: ${{ fromJson(needs.example_list.outputs.names) }}
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+
+    name: 'Check `${{ matrix.example_name }}` on ${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install NodeJS Dependencies
+        uses: ./.github/actions/install-node-dependencies
+
+      - name: 'Print example info'
+        working-directory: ./examples/${{ matrix.example_name }}
+        run: |
+          pnpm info
+
+  ci_ok:
+    name: Examples CI OK
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: always()
+    needs:
+      - example_list
+      - check
+    steps:
+      - name: Exit with error if some jobs are not successful
+        run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')) }}
