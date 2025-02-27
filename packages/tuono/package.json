@@ -27,9 +27,6 @@
       "types": "./dist/esm/build/index.d.ts",
       "default": "./dist/esm/build/index.js"
     },
-    "./build-client": {
-      "types": "./dist/esm/build-client/index.d.ts"
-    },
     "./config": {
       "types": "./dist/esm/config/index.d.ts",
       "default": "./dist/esm/config/index.js"

@@ -11,6 +11,3 @@ node_modules
 .tuono
 out
 target
-
-# Ignore local env files
-*.local
