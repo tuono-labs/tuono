@@ -180,11 +180,13 @@ impl Route {
             }
         };
 
-        if !parent_dir.is_dir() || create_all(parent_dir, false).is_err() {
-            return Err(format!(
-                "Failed to create the parent directory {:?}",
-                parent_dir
-            ));
+        if !parent_dir.is_dir() {
+            if let Err(err) = create_all(parent_dir, false) {
+                return Err(format!(
+                    "Failed to create the parent directory {:?}\nError: {err}",
+                    parent_dir
+                ));
+            }
         }
 
         trace!("Saving the HTML file: {:?}", file_path);
@@ -214,11 +216,13 @@ impl Route {
                 }
             };
 
-            if !data_parent_dir.is_dir() && create_all(data_parent_dir, false).is_err() {
-                return Err(format!(
-                    "Failed to create the parent directory {:?}",
-                    data_parent_dir
-                ));
+            if !data_parent_dir.is_dir() {
+                if let Err(err) = create_all(data_parent_dir, false) {
+                    return Err(format!(
+                        "Failed to create the parent directory {:?}\n Error: {err}",
+                        data_parent_dir
+                    ));
+                }
             }
 
             let base = Url::parse("http://localhost:3000/__tuono/data").unwrap();
