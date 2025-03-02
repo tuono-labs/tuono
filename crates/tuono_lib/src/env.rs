@@ -62,6 +62,12 @@ impl EnvVarManager {
     pub fn get_env_vars(&self) -> &HashMap<String, String> {
         &self.env_vars
     }
+
+    pub fn load_into_env(&self) {
+        for (key, value) in &self.env_vars {
+            env::set_var(key, value);
+        }
+    }
 }
 
 #[cfg(test)]

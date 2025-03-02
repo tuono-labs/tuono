@@ -15,6 +15,7 @@ mod server;
 mod ssr;
 mod vite_reverse_proxy;
 mod vite_websocket_proxy;
+mod env;
 
 pub use mode::Mode;
 pub use payload::Payload;

@@ -6,7 +6,6 @@
 mod app;
 mod build;
 pub mod cli;
-mod env;
 mod mode;
 mod route;
 mod scaffold_project;

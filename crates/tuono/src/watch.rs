@@ -8,7 +8,6 @@ use watchexec::Watchexec;
 use watchexec_signals::Signal;
 use watchexec_supervisor::job::{start_job, Job};
 
-use crate::env::EnvVarManager;
 use crate::mode::Mode;
 use crate::source_builder::bundle_axum_source;
 use console::Term;
@@ -81,12 +80,6 @@ pub async fn watch() -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
-    // Initialize EnvVarManager with Dev mode
-    let env_var_manager = Arc::new(RwLock::new(EnvVarManager::new(Mode::Dev)));
-
-    // Clone Arc to move into the closure safely
-    let env_var_manager_clone = Arc::clone(&env_var_manager);
-
     watch_react_src().start().await;
 
     let rust_server = run_rust_dev_server();
@@ -157,11 +150,6 @@ pub async fn watch() -> Result<()> {
 
         if should_reload_env_file {
             println!("  Reloading environment variables, and restarting rust server...");
-            if let Ok(mut env) = env_var_manager_clone.write() {
-                env.reload_variables();
-            } else {
-                eprintln!("Failed to acquire write lock on env_var_manager");
-            }
             rust_server.stop();
             bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
             rust_server.start();

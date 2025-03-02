@@ -11,6 +11,7 @@ use crate::{
     catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
     vite_websocket_proxy::vite_websocket_proxy,
 };
+use crate::env::EnvVarManager;
 
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
@@ -25,6 +26,7 @@ pub struct Server {
     mode: Mode,
     pub listener: tokio::net::TcpListener,
     pub address: String,
+    env_var_manager: EnvVarManager
 }
 
 impl Server {
@@ -39,6 +41,8 @@ impl Server {
         }
 
         let server_address = format!("{}:{}", config.server.host, config.server.port);
+        
+        let env_var_manager = EnvVarManager::new(mode);
 
         Server {
             router,
@@ -47,6 +51,7 @@ impl Server {
             listener: tokio::net::TcpListener::bind(&server_address)
                 .await
                 .expect("[SERVER] Failed to bind to address"),
+            env_var_manager
         }
     }
 
@@ -56,6 +61,8 @@ impl Server {
          * @see https://github.com/tuono-labs/tuono/issues/460
          */
         let server_base_url = format!("http://{}", self.address);
+        
+        self.env_var_manager.load_into_env();
 
         if self.mode == Mode::Dev {
             println!("  Ready at: {}\n", server_base_url.blue().bold());
