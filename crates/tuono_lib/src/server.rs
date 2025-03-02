@@ -27,7 +27,6 @@ pub struct Server {
     pub listener: tokio::net::TcpListener,
     pub address: String,
     pub origin: Option<String>,
-    env_var_manager: EnvVarManager,
 }
 
 impl Server {
@@ -64,7 +63,7 @@ impl Server {
 
         let server_address = format!("{}:{}", config.server.host, config.server.port);
 
-        let env_var_manager = EnvVarManager::new(mode);
+        let _env_var_manager = EnvVarManager::new(mode);
 
         Server {
             router,
@@ -74,14 +73,11 @@ impl Server {
             listener: tokio::net::TcpListener::bind(&server_address)
                 .await
                 .expect("[SERVER] Failed to bind to address"),
-            env_var_manager,
         }
     }
 
     pub async fn start(self) {
         self.display_start_message();
-
-        self.env_var_manager.load_into_env();
 
         if self.mode == Mode::Dev {
             let router = self

@@ -47,7 +47,6 @@ fn integration_test_env_var_manager() {
         Some(&"system_value".to_string())
     );
 
-    manager.load_into_env();
     assert_eq!(env::var("FOO").unwrap(), "bar");
     assert_eq!(env::var("BAZ").unwrap(), "qux");
     assert_eq!(env::var("HELLO").unwrap(), "world");

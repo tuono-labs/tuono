@@ -32,11 +32,12 @@ impl EnvVarManager {
             env_vars,
         };
 
-        manager.reload_variables(); // Load only missing env variables
+        manager.reload_variables();
+        manager.load_into_env();
         manager
     }
 
-    pub fn reload_variables(&mut self) {
+    fn reload_variables(&mut self) {
         for env_file in &self.env_files {
             if let Ok(contents) = fs::read_to_string(env_file) {
                 for line in contents.lines() {
@@ -57,9 +58,11 @@ impl EnvVarManager {
                 }
             }
         }
+
+        self.load_into_env();
     }
 
-    pub fn load_into_env(&self) {
+    fn load_into_env(&self) {
         for (key, value) in &self.env_vars {
             env::set_var(key, value);
         }
