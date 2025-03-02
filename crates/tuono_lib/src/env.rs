@@ -85,6 +85,15 @@ mod tests {
         let _ = fs::remove_file(".env.production.local");
     }
 
+    fn cleanup_env_vars() {
+        env::remove_var("TEST_KEY");
+        env::remove_var("KEY1");
+        env::remove_var("KEY2");
+        env::remove_var("NON_EXISTENT_KEY");
+        env::remove_var("INVALID_LINE");
+        env::remove_var("MISSING_EQUALS_SIGN");
+    }
+
     #[test]
     #[serial]
     fn test_system_env_var_precedence() {
@@ -96,7 +105,7 @@ mod tests {
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "system_value");
 
-        env::remove_var("TEST_KEY");
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -111,6 +120,7 @@ mod tests {
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "development_value");
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -125,6 +135,7 @@ mod tests {
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_value");
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -140,6 +151,7 @@ mod tests {
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_dev_value");
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -153,6 +165,7 @@ mod tests {
 
         assert!(env::var("NON_EXISTENT_KEY").is_err());
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -167,6 +180,7 @@ mod tests {
         assert!(env::var("INVALID_LINE").is_err());
         assert!(env::var("MISSING_EQUALS_SIGN").is_err());
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -180,6 +194,7 @@ mod tests {
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "quoted_value");
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -191,6 +206,7 @@ mod tests {
 
         assert!(env::var("NON_EXISTENT_KEY").is_err());
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 
@@ -205,6 +221,7 @@ mod tests {
         assert_eq!(env::var("KEY1").unwrap(), "value1");
         assert_eq!(env::var("KEY2").unwrap(), "value2");
 
+        cleanup_env_vars();
         cleanup_env_files();
     }
 }
