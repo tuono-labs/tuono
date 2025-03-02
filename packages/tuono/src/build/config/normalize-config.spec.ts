@@ -15,7 +15,11 @@ describe('normalizeConfig', () => {
     const config: TuonoConfig = {}
 
     expect(normalizeConfig(config)).toStrictEqual({
-      server: { host: 'localhost', port: 3000 },
+      server: {
+        host: 'localhost',
+        origin: null,
+        port: 3000,
+      },
       vite: {
         alias: undefined,
         css: undefined,
@@ -28,7 +32,11 @@ describe('normalizeConfig', () => {
   it('should return an empty config if invalid values are provided', () => {
     // @ts-expect-error testing invalid config
     expect(normalizeConfig({ invalid: true })).toStrictEqual({
-      server: { host: 'localhost', port: 3000 },
+      server: {
+        host: 'localhost',
+        origin: null,
+        port: 3000,
+      },
       vite: {
         alias: undefined,
         css: undefined,
@@ -48,6 +56,28 @@ describe('normalizeConfig', () => {
         expect.objectContaining({
           server: expect.objectContaining({
             host: '0.0.0.0',
+            port: 8080,
+          }) as unknown,
+        }),
+      )
+    })
+  })
+
+  describe('server - origin', () => {
+    it('should assign the origin defined by the user', () => {
+      const config: TuonoConfig = {
+        server: {
+          host: '0.0.0.0',
+          origin: 'https://tuono.localhost',
+          port: 8080,
+        },
+      }
+
+      expect(normalizeConfig(config)).toStrictEqual(
+        expect.objectContaining({
+          server: expect.objectContaining({
+            host: '0.0.0.0',
+            origin: 'https://tuono.localhost',
             port: 8080,
           }) as unknown,
         }),

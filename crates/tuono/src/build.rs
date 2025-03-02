@@ -86,12 +86,18 @@ pub fn build(mut app: App, ssg: bool, no_js_emit: bool) {
 
         while !is_server_ready {
             trace!("Checking server availability");
-            let server_url = format!("http://{}:{}", config.server.host, config.server.port);
+
+            let server_url = match &config.server.origin {
+                Some(origin) => origin.clone(),
+                None => format!("http://{}:{}", config.server.host, config.server.port),
+            };
+
             if reqwest_client.get(&server_url).send().is_ok() {
                 is_server_ready = true;
             } else {
                 trace!("Server not ready yet. Sleeping for 1 second");
             }
+
             sleep(Duration::from_secs(1));
         }
 
