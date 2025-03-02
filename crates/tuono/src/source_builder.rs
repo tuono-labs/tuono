@@ -214,12 +214,12 @@ mod tests {
 
     #[test]
     fn should_set_the_correct_mode() {
-        let source_builder = App::new(&Mode::Dev);
+        let source_builder = App::new();
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
         
         assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
 
-        let source_builder = App::new(&Mode::Prod);
+        let source_builder = App::new();
         let prod_bundle = generate_axum_source(&source_builder, Mode::Prod);
 
         assert!(prod_bundle.contains("const MODE: Mode = Mode::Prod;"));
@@ -227,7 +227,7 @@ mod tests {
 
     #[test]
     fn should_not_load_the_axum_get_function() {
-        let source_builder = App::new(&Mode::Prod);
+        let source_builder = App::new();
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
         assert!(!dev_bundle.contains("use tuono_lib::axum::routing::get;"));
@@ -235,7 +235,7 @@ mod tests {
 
     #[test]
     fn should_load_the_axum_get_function() {
-        let mut source_builder = App::new(&Mode::Prod);
+        let mut source_builder = App::new();
 
         let mut route = Route::new(String::from("index.tsx"));
         route.update_axum_info();

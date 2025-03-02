@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::Path;
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc};
 use watchexec_supervisor::command::{Command, Program};
 
 use miette::{IntoDiagnostic, Result};
