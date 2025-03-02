@@ -7,7 +7,7 @@ use std::fs;
 pub struct EnvVarManager {
     env_files: Vec<String>,
     system_env_names: HashSet<String>,
-    env_vars: HashMap<String, String>,
+    pub env_vars: HashMap<String, String>,
 }
 
 impl EnvVarManager {
