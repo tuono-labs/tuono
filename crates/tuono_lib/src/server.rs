@@ -7,11 +7,11 @@ use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
 use tuono_internal::config::Config;
 
+use crate::env::EnvVarManager;
 use crate::{
     catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
     vite_websocket_proxy::vite_websocket_proxy,
 };
-use crate::env::EnvVarManager;
 
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
@@ -27,7 +27,7 @@ pub struct Server {
     pub listener: tokio::net::TcpListener,
     pub address: String,
     pub origin: Option<String>,
-    env_var_manager: EnvVarManager
+    env_var_manager: EnvVarManager,
 }
 
 impl Server {
@@ -74,7 +74,7 @@ impl Server {
             listener: tokio::net::TcpListener::bind(&server_address)
                 .await
                 .expect("[SERVER] Failed to bind to address"),
-            env_var_manager
+            env_var_manager,
         }
     }
 

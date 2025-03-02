@@ -214,7 +214,7 @@ mod tests {
     fn should_set_the_correct_mode() {
         let source_builder = App::new();
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-        
+
         assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
 
         let source_builder = App::new();
