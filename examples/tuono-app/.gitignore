@@ -13,4 +13,4 @@ out
 target
 
 # Ignore local env files
-*.local
+.env*.local
