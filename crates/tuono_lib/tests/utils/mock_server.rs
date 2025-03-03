@@ -9,10 +9,10 @@ use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
 use crate::utils::catch_all::get_tuono_internal_api as catch_all;
 use crate::utils::dynamic_parameter::get_tuono_internal_api as dynamic_parameter;
+use crate::utils::env::get_tuono_internal_api as test_env;
 use crate::utils::health_check::get_tuono_internal_api as health_check;
 use crate::utils::route as html_route;
 use crate::utils::route::tuono_internal_api as route_api;
-use crate::utils::env::get_tuono_internal_api as test_env;
 
 use std::sync::Once;
 
@@ -60,9 +60,8 @@ impl MockTuonoServer {
 
         let react_prod_build = fs::read_to_string("./tests/assets/fake_react_build.js")
             .expect("Failed to read fake_react_build.js");
-        
-        let env = fs::read_to_string("./tests/assets/.env")
-            .expect("Failed to read .env");
+
+        let env = fs::read_to_string("./tests/assets/.env").expect("Failed to read .env");
 
         env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
 
