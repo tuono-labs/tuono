@@ -12,6 +12,7 @@ use crate::utils::dynamic_parameter::get_tuono_internal_api as dynamic_parameter
 use crate::utils::health_check::get_tuono_internal_api as health_check;
 use crate::utils::route as html_route;
 use crate::utils::route::tuono_internal_api as route_api;
+use crate::utils::env::get_tuono_internal_api as test_env;
 
 use std::sync::Once;
 
@@ -59,6 +60,9 @@ impl MockTuonoServer {
 
         let react_prod_build = fs::read_to_string("./tests/assets/fake_react_build.js")
             .expect("Failed to read fake_react_build.js");
+        
+        let env = fs::read_to_string("./tests/assets/.env")
+            .expect("Failed to read .env");
 
         env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
 
@@ -74,13 +78,16 @@ impl MockTuonoServer {
             r#"{"client-main.tsx": { "file": "assets/index.js", "name": "index", "src": "index.tsx", "isEntry": true,"dynamicImports": [],"css": []}}"#,
         );
 
+        add_file_with_content("./.env", env.as_str());
+
         let router = Router::new()
             .route("/", get(html_route::tuono_internal_route))
             .route("/tuono/data", get(html_route::tuono_internal_api))
             .route("/health_check", get(health_check))
             .route("/route-api", get(route_api))
             .route("/catch_all/{*catch_all}", get(catch_all))
-            .route("/dynamic/{parameter}", get(dynamic_parameter));
+            .route("/dynamic/{parameter}", get(dynamic_parameter))
+            .route("/env", get(test_env));
 
         let server = Server::init(router, Mode::Prod).await;
 
