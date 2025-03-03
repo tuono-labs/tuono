@@ -17,7 +17,6 @@ mod ssr;
 mod vite_reverse_proxy;
 mod vite_websocket_proxy;
 
-pub use env::EnvVarManager;
 pub use mode::Mode;
 pub use payload::Payload;
 pub use request::Request;
