@@ -61,8 +61,6 @@ impl MockTuonoServer {
         let react_prod_build = fs::read_to_string("./tests/assets/fake_react_build.js")
             .expect("Failed to read fake_react_build.js");
 
-        let env = fs::read_to_string("./tests/assets/.env").expect("Failed to read .env");
-
         env::set_current_dir(temp_dir.path()).expect("Failed to change current dir into temp_dir");
 
         add_file_with_content(
@@ -77,7 +75,7 @@ impl MockTuonoServer {
             r#"{"client-main.tsx": { "file": "assets/index.js", "name": "index", "src": "index.tsx", "isEntry": true,"dynamicImports": [],"css": []}}"#,
         );
 
-        add_file_with_content("./.env", env.as_str());
+        add_file_with_content("./.env", r#"MY_TEST_KEY="foobar""#);
 
         let router = Router::new()
             .route("/", get(html_route::tuono_internal_route))

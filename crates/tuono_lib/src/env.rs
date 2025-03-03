@@ -76,14 +76,14 @@ mod tests {
     use serial_test::serial;
 
     struct MockEnv {
-        files: HashSet<String>,
+        files: Vec<String>,
         vars: HashMap<String, String>,
     }
 
     impl MockEnv {
         fn new() -> Self {
             Self {
-                files: HashSet::new(),
+                files: Vec::new(),
                 vars: HashMap::new(),
             }
         }
@@ -94,7 +94,7 @@ mod tests {
         }
 
         pub fn setup_env_file(&mut self, file_name: &str, contents: &str) {
-            self.files.insert(file_name.to_string());
+            self.files.push(file_name.to_string());
             fs::write(file_name, contents).expect("Failed to write test .env file");
         }
     }
