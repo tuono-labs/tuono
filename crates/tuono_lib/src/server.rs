@@ -25,9 +25,31 @@ pub struct Server {
     mode: Mode,
     pub listener: tokio::net::TcpListener,
     pub address: String,
+    pub origin: Option<String>,
 }
 
 impl Server {
+    fn display_start_message(&self) {
+        /*
+         * Format the server address as a valid URL so that it becomes clickable in the CLI
+         * @see https://github.com/tuono-labs/tuono/issues/460
+         */
+        let server_base_url = format!("http://{}", self.address);
+
+        if self.mode == Mode::Dev {
+            println!("  Ready at: {}\n", server_base_url.blue().bold());
+        } else {
+            println!(
+                "  Production server at: {}\n",
+                server_base_url.blue().bold()
+            );
+        }
+
+        if let Some(origin) = &self.origin {
+            println!("  Origin: {}\n", origin.blue().bold());
+        }
+    }
+
     pub async fn init(router: Router, mode: Mode) -> Server {
         let config = Config::get().expect("[SERVER] Failed to load config");
 
@@ -44,6 +66,7 @@ impl Server {
             router,
             mode,
             address: server_address.clone(),
+            origin: config.server.origin.clone(),
             listener: tokio::net::TcpListener::bind(&server_address)
                 .await
                 .expect("[SERVER] Failed to bind to address"),
@@ -51,20 +74,15 @@ impl Server {
     }
 
     pub async fn start(self) {
-        /*
-         * Format the server address as a valid URL so that it becomes clickable in the CLI
-         * @see https://github.com/tuono-labs/tuono/issues/460
-         */
-        let server_base_url = format!("http://{}", self.address);
+        self.display_start_message();
 
         if self.mode == Mode::Dev {
-            println!("  Ready at: {}\n", server_base_url.blue().bold());
             let router = self
                 .router
                 .to_owned()
                 .layer(LoggerLayer::new())
                 .route("/vite-server/", get(vite_websocket_proxy))
-                .route("/vite-server/*path", get(vite_reverse_proxy))
+                .route("/vite-server/{*path}", get(vite_reverse_proxy))
                 .fallback_service(
                     ServeDir::new(DEV_PUBLIC_DIR)
                         .fallback(get(catch_all).layer(LoggerLayer::new())),
@@ -74,10 +92,6 @@ impl Server {
                 .await
                 .expect("Failed to serve development server");
         } else {
-            println!(
-                "  Production server at: {}\n",
-                server_base_url.blue().bold()
-            );
             let router = self
                 .router
                 .to_owned()

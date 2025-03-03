@@ -46,7 +46,7 @@ export default function IndexPage({
         <PokemonLink name="GOAT" id={0} />
 
         {data.results.map((pokemon, i) => (
-          <PokemonLink key={i + 1} name={pokemon.name} id={i + 1} />
+          <PokemonLink key={pokemon.name} name={pokemon.name} id={i + 1} />
         ))}
       </ul>
     </>

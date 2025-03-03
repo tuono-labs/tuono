@@ -46,6 +46,20 @@ impl AxumInfo {
         }
 
         if route.is_dynamic {
+            let dyn_re = Regex::new(r"\[(.*?)\]").expect("Failed to create dyn regex");
+            let catch_all_re =
+                Regex::new(r"\{\.\.\.(.*?)\}").expect("Failed to create catch all regex");
+
+            let dyn_result = dyn_re.replace_all(&axum_route, |caps: &regex::Captures| {
+                format!("{{{}}}", &caps[1])
+            });
+
+            let axum_route = catch_all_re
+                .replace_all(&dyn_result, |caps: &regex::Captures| {
+                    format!("{{*{}}}", &caps[1])
+                })
+                .to_string();
+
             return AxumInfo {
                 module_import: module
                     .as_str()
@@ -55,10 +69,7 @@ impl AxumInfo {
                     .replace('[', "dyn_")
                     .replace("...", "catch_all_")
                     .replace(']', ""),
-                axum_route: axum_route
-                    .replace("[...", "*")
-                    .replace('[', ":")
-                    .replace(']', ""),
+                axum_route,
             };
         }
 
@@ -169,11 +180,13 @@ impl Route {
             }
         };
 
-        if !parent_dir.is_dir() || create_all(parent_dir, false).is_err() {
-            return Err(format!(
-                "Failed to create the parent directory {:?}",
-                parent_dir
-            ));
+        if !parent_dir.is_dir() {
+            if let Err(err) = create_all(parent_dir, false) {
+                return Err(format!(
+                    "Failed to create the parent directory {:?}\nError: {err}",
+                    parent_dir
+                ));
+            }
         }
 
         trace!("Saving the HTML file: {:?}", file_path);
@@ -203,11 +216,13 @@ impl Route {
                 }
             };
 
-            if !data_parent_dir.is_dir() && create_all(data_parent_dir, false).is_err() {
-                return Err(format!(
-                    "Failed to create the parent directory {:?}",
-                    data_parent_dir
-                ));
+            if !data_parent_dir.is_dir() {
+                if let Err(err) = create_all(data_parent_dir, false) {
+                    return Err(format!(
+                        "Failed to create the parent directory {:?}\n Error: {err}",
+                        data_parent_dir
+                    ));
+                }
             }
 
             let base = Url::parse("http://localhost:3000/__tuono/data").unwrap();
@@ -296,7 +311,7 @@ mod tests {
 
         let dyn_info = AxumInfo::new(&Route::new("/[posts]".to_string()));
 
-        assert_eq!(dyn_info.axum_route, "/:posts");
+        assert_eq!(dyn_info.axum_route, "/{posts}");
         assert_eq!(dyn_info.module_import, "dyn_posts");
     }
 
