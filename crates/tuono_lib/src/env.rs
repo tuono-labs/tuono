@@ -75,42 +75,48 @@ mod tests {
     use crate::mode::Mode;
     use serial_test::serial;
 
-    struct MockEnv;
+    struct MockEnv {
+        files: HashSet<String>,
+        vars: HashMap<String, String>,
+    }
 
     impl MockEnv {
         fn new() -> Self {
-            Self
+            Self {
+                files: HashSet::new(),
+                vars: HashMap::new(),
+            }
         }
 
-        pub fn setup_env_file(&self, file_name: &str, contents: &str) {
+        fn add_system_var(&mut self, k: &str, v: &str) {
+            self.vars.insert(k.to_string(), v.to_string());
+            env::set_var(k, v);
+        }
+
+        pub fn setup_env_file(&mut self, file_name: &str, contents: &str) {
+            self.files.insert(file_name.to_string());
             fs::write(file_name, contents).expect("Failed to write test .env file");
         }
     }
 
     impl Drop for MockEnv {
         fn drop(&mut self) {
-            let _ = fs::remove_file(".env");
-            let _ = fs::remove_file(".env.local");
-            let _ = fs::remove_file(".env.development");
-            let _ = fs::remove_file(".env.development.local");
-            let _ = fs::remove_file(".env.production");
-            let _ = fs::remove_file(".env.production.local");
+            for file in self.files.iter() {
+                _ = fs::remove_file(file.as_str());
+            }
 
-            env::remove_var("TEST_KEY");
-            env::remove_var("KEY1");
-            env::remove_var("KEY2");
-            env::remove_var("NON_EXISTENT_KEY");
-            env::remove_var("INVALID_LINE");
-            env::remove_var("MISSING_EQUALS_SIGN");
+            for var in self.vars.iter() {
+                env::remove_var(var.0)
+            }
         }
     }
 
     #[test]
     #[serial]
     fn test_system_env_var_precedence() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
-        env::set_var("TEST_KEY", "system_value");
+        env.add_system_var("TEST_KEY", "system_value");
 
         env.setup_env_file(".env", "TEST_KEY=file_value");
 
@@ -118,13 +124,17 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert_eq!(env::var("TEST_KEY").unwrap(), "system_value");
     }
 
     #[test]
     #[serial]
     fn test_mode_specific_env_var_precedence() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "TEST_KEY=base_value");
         env.setup_env_file(".env.development", "TEST_KEY=development_value");
@@ -133,13 +143,17 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert_eq!(env::var("TEST_KEY").unwrap(), "development_value");
     }
 
     #[test]
     #[serial]
     fn test_local_env_var_precedence() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "TEST_KEY=base_value");
         env.setup_env_file(".env.local", "TEST_KEY=local_value");
@@ -148,13 +162,17 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_value");
     }
 
     #[test]
     #[serial]
     fn test_mode_local_env_var_precedence() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "TEST_KEY=base_value");
         env.setup_env_file(".env.development", "TEST_KEY=development_value");
@@ -164,13 +182,17 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_dev_value");
     }
 
     #[test]
     #[serial]
     fn test_empty_env_file() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "");
 
@@ -178,19 +200,27 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert!(env::var("NON_EXISTENT_KEY").is_err());
     }
 
     #[test]
     #[serial]
     fn test_malformed_env_entries() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "INVALID_LINE\nMISSING_EQUALS_SIGN");
 
         let manager = EnvVarManager::new(Mode::Dev);
 
         manager.load_into_env();
+
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
 
         assert!(env::var("INVALID_LINE").is_err());
         assert!(env::var("MISSING_EQUALS_SIGN").is_err());
@@ -199,7 +229,7 @@ mod tests {
     #[test]
     #[serial]
     fn test_quoted_values_parsing() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", r#"TEST_KEY="quoted_value""#);
 
@@ -207,17 +237,25 @@ mod tests {
 
         manager.load_into_env();
 
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
+
         assert_eq!(env::var("TEST_KEY").unwrap(), "quoted_value");
     }
 
     #[test]
     #[serial]
     fn test_non_existent_env_file() {
-        let _env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         let manager = EnvVarManager::new(Mode::Dev);
 
         manager.load_into_env();
+
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
 
         assert!(env::var("NON_EXISTENT_KEY").is_err());
     }
@@ -225,13 +263,17 @@ mod tests {
     #[test]
     #[serial]
     fn test_multiple_env_vars() {
-        let env = MockEnv::new();
+        let mut env = MockEnv::new();
 
         env.setup_env_file(".env", "KEY1=value1\nKEY2=value2");
 
         let manager = EnvVarManager::new(Mode::Dev);
 
         manager.load_into_env();
+
+        for env_var in manager.env_vars {
+            env.vars.insert(env_var.0, env_var.1);
+        }
 
         assert_eq!(env::var("KEY1").unwrap(), "value1");
         assert_eq!(env::var("KEY2").unwrap(), "value2");
