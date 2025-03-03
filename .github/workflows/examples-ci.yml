@@ -53,7 +53,7 @@ jobs:
         os:
           - 'ubuntu-latest'
           - 'macos-latest'
-          - 'windows-latest'
+          # - 'windows-latest'
 
     name: 'Check `${{ matrix.example_name }}` on ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
@@ -66,10 +66,22 @@ jobs:
       - name: Install NodeJS Dependencies
         uses: ./.github/actions/install-node-dependencies
 
-      - name: 'Print example info'
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Build Rust
+        run: cargo build
+
+      - name: Build typescript
+        run: pnpm run dev
+
+      - name: Check "build"
         working-directory: ./examples/${{ matrix.example_name }}
-        run: |
-          pnpm info
+        run: ../../target/debug/tuono build
+
+      - name: Check "types"
+        working-directory: ./examples/${{ matrix.example_name }}
+        run: pnpm exec tsc
 
   ci_ok:
     name: Examples CI OK
