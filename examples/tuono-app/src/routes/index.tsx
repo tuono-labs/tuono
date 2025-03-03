@@ -17,10 +17,9 @@ export default function IndexPage({
       <header className="header">
         <a href="https://crates.io/crates/tuono" target="_blank">
           Crates
-        </a>
-        <a href="https://www.npmjs.com/package/tuono" target="_blank">
-          Npm
-        </a>
+          <a href="https://www.npmjs.com/package/tuono" target="_blank">
+            Npm
+          </a>
       </header>
       <div className="title-wrap">
         <h1 className="title">

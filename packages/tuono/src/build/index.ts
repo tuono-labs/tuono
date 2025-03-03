@@ -6,6 +6,8 @@ import { TuonoFsRouterPlugin } from 'tuono-fs-router-vite-plugin'
 
 import type { TuonoConfig } from '../config'
 
+import { ErrorOverlayVitePlugin } from './error-overlay'
+
 import { blockingAsync } from './utils'
 import { createJsonConfig, loadConfig } from './config'
 
@@ -119,6 +121,7 @@ const developmentCSRWatch = (): void => {
         {
           // Entry point for the development vite proxy
           base: '/vite-server/',
+          plugins: [{ ...ErrorOverlayVitePlugin, enforce: 'pre' }],
 
           server: {
             host: config.server.host,
@@ -129,6 +132,7 @@ const developmentCSRWatch = (): void => {
             },
           },
           build: {
+            target: 'esnext',
             manifest: true,
             emptyOutDir: true,
             rollupOptions: {
