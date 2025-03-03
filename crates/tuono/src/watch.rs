@@ -110,7 +110,6 @@ pub async fn watch() -> Result<()> {
     let wx = Watchexec::new(move |mut action| {
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
-        let mut should_reload_env_file = false;
 
         for event in action.events.iter() {
             for path in event.paths() {
@@ -130,7 +129,6 @@ pub async fn watch() -> Result<()> {
                     .map(|f| f.to_string_lossy().starts_with(".env"))
                     .unwrap_or(false)
                 {
-                    should_reload_env_file = true;
                     should_reload_ssr_bundle = true
                 }
             }
@@ -146,13 +144,6 @@ pub async fn watch() -> Result<()> {
         if should_reload_ssr_bundle {
             build_ssr_bundle.stop();
             build_ssr_bundle.start();
-        }
-
-        if should_reload_env_file {
-            println!("  Reloading environment variables, and restarting rust server...");
-            rust_server.stop();
-            bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
-            rust_server.start();
         }
 
         // if Ctrl-C is received, quit
