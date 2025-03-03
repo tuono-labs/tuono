@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
 use std::sync::Arc;
@@ -75,6 +77,14 @@ fn build_react_ssr_src() -> Job {
     .0
 }
 
+fn ssr_reload_needed(file_name: Option<&OsStr>, file_path: Cow<str>) -> bool {
+    file_name
+        .map(|f| f.to_string_lossy().starts_with(".env"))
+        .unwrap_or(false)
+        || file_path.ends_with("sx")
+        || file_path.ends_with("mdx")
+}
+
 #[tokio::main]
 pub async fn watch() -> Result<()> {
     let term = Term::stdout();
@@ -118,17 +128,7 @@ pub async fn watch() -> Result<()> {
                     should_reload_rust_server = true
                 }
 
-                // Either tsx, jsx and mdx
-                if file_path.ends_with("sx") || file_path.ends_with("mdx") {
-                    should_reload_ssr_bundle = true
-                }
-
-                if path
-                    .0
-                    .file_name()
-                    .map(|f| f.to_string_lossy().starts_with(".env"))
-                    .unwrap_or(false)
-                {
+                if ssr_reload_needed(path.0.file_name(), file_path) {
                     should_reload_ssr_bundle = true
                 }
             }
