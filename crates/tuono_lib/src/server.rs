@@ -7,7 +7,7 @@ use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
 use tuono_internal::config::Config;
 
-use crate::env::EnvVarManager;
+use crate::env::load_env_vars;
 use crate::{
     catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
     vite_websocket_proxy::vite_websocket_proxy,
@@ -63,7 +63,7 @@ impl Server {
 
         let server_address = format!("{}:{}", config.server.host, config.server.port);
 
-        let _env_var_manager = EnvVarManager::new(mode);
+        load_env_vars(mode);
 
         Server {
             router,
