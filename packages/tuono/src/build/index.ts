@@ -121,18 +121,14 @@ const developmentCSRWatch = (): void => {
         {
           // Entry point for the development vite proxy
           base: '/vite-server/',
-          plugins: [{ ...ErrorOverlayVitePlugin, enforce: 'pre' }],
+          plugins: [ErrorOverlayVitePlugin],
 
           server: {
             host: config.server.host,
             port: config.server.port + 1,
             strictPort: true,
-            hmr: {
-              overlay: true,
-            },
           },
           build: {
-            target: 'esnext',
             manifest: true,
             emptyOutDir: true,
             rollupOptions: {

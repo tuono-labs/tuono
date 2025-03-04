@@ -20,7 +20,7 @@ impl Default for ServerConfig {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Config {
     pub server: ServerConfig,
 }
@@ -34,14 +34,6 @@ impl Config {
     }
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Config {
-            server: ServerConfig::default(),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -50,7 +42,7 @@ mod tests {
     fn test_config_default() {
         let config = Config::default();
 
-        assert_eq!(config.server.host, "127.0.0.1".to_string());
+        assert_eq!(config.server.host, "localhost".to_string());
         assert_eq!(config.server.origin, None);
         assert_eq!(config.server.port, 3000);
     }

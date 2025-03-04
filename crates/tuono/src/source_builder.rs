@@ -240,6 +240,6 @@ mod tests {
 
         assert!(fallback_html.contains("http://localhost:3000/vite-server/@react-refresh"));
         assert!(fallback_html.contains("http://localhost:3000/vite-server/@vite/client"));
-        assert!(fallback_html.contains("http://localhost:3000/vite-server/client-main.tsgg"));
+        assert!(fallback_html.contains("http://localhost:3000/vite-server/client-main.tsx"));
     }
 }

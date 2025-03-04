@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "target": "ESNext"
+    "jsx": "react-jsx"
   },
   "include": ["src", "tests", "vite.config.ts"]
 }

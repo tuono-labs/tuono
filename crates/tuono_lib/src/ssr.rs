@@ -60,7 +60,7 @@ impl DevJs {
         } else {
             let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html")).unwrap();
 
-            Ok(fallback_html)
+            Ok(fallback_html.replace("[SERVER_PAYLOAD]", params.unwrap_or("")))
         }
     }
 }
