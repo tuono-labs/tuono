@@ -213,13 +213,11 @@ mod tests {
     #[test]
     fn should_set_the_correct_mode() {
         let source_builder = App::new();
+
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-
-        assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
-
-        let source_builder = App::new();
         let prod_bundle = generate_axum_source(&source_builder, Mode::Prod);
 
+        assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
         assert!(prod_bundle.contains("const MODE: Mode = Mode::Prod;"));
     }
 
@@ -228,6 +226,7 @@ mod tests {
         let source_builder = App::new();
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+
         assert!(!dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
 
@@ -243,6 +242,7 @@ mod tests {
             .insert(String::from("index.rs"), route);
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+
         assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
 }
