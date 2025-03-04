@@ -73,7 +73,7 @@ jobs:
         run: cargo build
 
       - name: Build typescript
-        run: pnpm run dev
+        run: pnpm run build
 
       - name: Check "build"
         working-directory: ./examples/${{ matrix.example_name }}
