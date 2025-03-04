@@ -43,7 +43,7 @@ jobs:
           NAMES=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
           echo "names=$(echo "$NAMES" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
 
-  check:
+  check_rust:
     needs:
       - example_list
 
@@ -56,16 +56,16 @@ jobs:
           # to be added
           # - 'windows-latest'
 
-    name: 'Check `${{ matrix.example_name }}` on ${{ matrix.os }}'
+        # Only on this repo some examples build including plugins fails
+        # However, if the project is downloaded via `tuono new`` it will work
+        # @see https://github.com/tuono-labs/tuono/pull/605#pullrequestreview-2656262230
+        # needs further investigations
+        exclude:
+          - example_name: with-tailwind
+
+    name: 'Check `${{ matrix.example_name }}` build on ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
-
-    env:
-      # Only on this repo some examples build including plugins fails
-      # However, if the project is downloaded via `tuono new`` it will work
-      # @see https://github.com/tuono-labs/tuono/pull/605#pullrequestreview-2656262230
-      # needs further investigations
-      EXECUTE_BUILD: ${{ matrix.example_name != 'with-tailwind' }}
 
     steps:
       - name: Checkout code
@@ -75,11 +75,9 @@ jobs:
         uses: ./.github/actions/install-node-dependencies
 
       - name: Setup rust toolchain
-        if: ${{ env.EXECUTE_BUILD == 'true' }}
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Build Rust
-        if: ${{ env.EXECUTE_BUILD == 'true' }}
         run: cargo build
 
       - name: Build typescript
@@ -87,12 +85,28 @@ jobs:
 
       - name: Check "build"
         working-directory: ./examples/${{ matrix.example_name }}
-        if: ${{ env.EXECUTE_BUILD == 'true' }}
         run: ../../target/debug/tuono build
 
-      - name: Check "types"
-        working-directory: ./examples/${{ matrix.example_name }}
-        run: pnpm exec tsc
+  check_typescript:
+    name: Check typescript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install NodeJS Dependencies
+        uses: ./.github/actions/install-node-dependencies
+
+      - name: Build typescript
+        run: pnpm run build
+
+      - name: Check formatting
+        run: pnpm run examples:format
+
+      - name: Typecheck
+        run: pnpm run examples:typecheck
 
   ci_ok:
     name: Examples CI OK
@@ -101,7 +115,8 @@ jobs:
     if: always()
     needs:
       - example_list
-      - check
+      - check_rust
+      - check_typescript
     steps:
       - name: Exit with error if some jobs are not successful
         run: exit 1

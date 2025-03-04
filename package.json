@@ -13,9 +13,14 @@
     "test": "turbo test --filter=./devtools/* --filter=./packages/*",
     "test:watch": "turbo test:watch --filter=./devtools/* --filter=./packages/*",
     "test:e2e": "pnpm --filter='fixture-*' run test:e2e",
-    "repo:root:format": "prettier . !./assets/** !./crates !./examples !./devtools/** !./packages/** --check",
-    "repo:root:format:fix": "prettier . !./assets/** !./crates !./examples !./devtools/** !./packages/** --write",
-    "check-all": "turbo build lint format typecheck --filter=!./examples"
+    "examples:format": "prettier ./examples/** --check",
+    "examples:format:fix": "prettier ./examples/** --write",
+    "examples:typecheck": "pnpm --filter \"./examples/*\" exec tsc --noEmit",
+    "repo:root:format": "prettier . !./assets !./crates !./examples !./devtools !./packages --check",
+    "repo:root:format:fix": "prettier . !./assets !./crates !./examples !./devtools !./packages --write",
+    "check-packages": "turbo build lint format typecheck --filter=!./examples",
+    "check-examples": "pnpm run \"/^examples:(format|typecheck)$/\"",
+    "check-all": "pnpm run check-packages && pnpm run check-examples && pnpm run repo:root:format"
   },
   "author": "Valerio Ageno",
   "license": "MIT",
