@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn test_mode_specific_env_var_precedence() {
+    fn test_mode_specific_env_var_precedence_dev() {
         let mut mock_env = MockEnv::new();
 
         mock_env.setup_env_file(".env", "TEST_KEY=base_value");
@@ -119,6 +119,21 @@ mod tests {
         mock_env.capture_keys(&["TEST_KEY"]);
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "development_value");
+    }
+
+    #[test]
+    #[serial]
+    fn test_mode_specific_env_var_precedence_prod() {
+        let mut mock_env = MockEnv::new();
+
+        mock_env.setup_env_file(".env", "TEST_KEY=base_value");
+        mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
+
+        load_env_vars(Mode::Prod);
+
+        mock_env.capture_keys(&["TEST_KEY"]);
+
+        assert_eq!(env::var("TEST_KEY").unwrap(), "production_value");
     }
 
     #[test]
@@ -138,7 +153,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn test_mode_local_env_var_precedence() {
+    fn test_mode_local_env_var_precedence_dev() {
         let mut mock_env = MockEnv::new();
 
         mock_env.setup_env_file(".env", "TEST_KEY=base_value");
@@ -150,6 +165,37 @@ mod tests {
         mock_env.capture_keys(&["TEST_KEY"]);
 
         assert_eq!(env::var("TEST_KEY").unwrap(), "local_dev_value");
+    }
+
+    #[test]
+    #[serial]
+    fn test_mode_local_env_var_precedence_prod() {
+        let mut mock_env = MockEnv::new();
+
+        mock_env.setup_env_file(".env", "TEST_KEY=base_value");
+        mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
+        mock_env.setup_env_file(".env.production.local", "TEST_KEY=local_prod_value");
+
+        load_env_vars(Mode::Prod);
+
+        mock_env.capture_keys(&["TEST_KEY"]);
+
+        assert_eq!(env::var("TEST_KEY").unwrap(), "local_prod_value");
+    }
+
+    #[test]
+    #[serial]
+    fn test_ignores_files_from_other_mode() {
+        let mut mock_env = MockEnv::new();
+
+        mock_env.setup_env_file(".env.development", "TEST_KEY=development_value");
+        mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
+
+        load_env_vars(Mode::Prod);
+
+        mock_env.capture_keys(&["TEST_KEY"]);
+
+        assert_eq!(env::var("TEST_KEY").unwrap(), "production_value");
     }
 
     #[test]
