@@ -174,7 +174,7 @@ const HTMLElement: typeof globalThis.HTMLElement =
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   globalThis.HTMLElement ??
   // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-  class { }
+  class {}
 export class ErrorOverlay extends HTMLElement {
   /**
    * All the fields need to be implemented in the constructor otherwise
