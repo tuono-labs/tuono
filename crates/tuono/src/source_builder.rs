@@ -14,13 +14,30 @@ use crate::route::Route;
 // This fallback is used when the v8 engine fails to server side render the page
 // Instead we will server this static html file so that vite can build the HTML
 // and show the error boundary
+#[cfg(target_os = "windows")]
+const FALLBACK_HTML: &str = include_str!(r#"..\templates\fallback_index.html"#);
+
+#[cfg(target_os = "windows")]
+const SERVER_ENTRY_DATA: &str = include_str!(r#"..\templates\server_entry.ts"#);
+
+#[cfg(target_os = "windows")]
+const CLIENT_ENTRY_DATA: &str = include_str!(r#"..\templates\client_entry.ts"#);
+
+#[cfg(target_os = "windows")]
+const AXUM_ENTRY_POINT: &str = include_str!(r#"..\templates\tuono_main.rs"#);
+
+#[cfg(not(target_os = "windows"))]
 const FALLBACK_HTML: &str = include_str!("../templates/fallback_index.html");
 
+#[cfg(not(target_os = "windows"))]
 const SERVER_ENTRY_DATA: &str = include_str!("../templates/server_entry.ts");
 
+#[cfg(not(target_os = "windows"))]
 const CLIENT_ENTRY_DATA: &str = include_str!("../templates/client_entry.ts");
 
+#[cfg(not(target_os = "windows"))]
 const AXUM_ENTRY_POINT: &str = include_str!("../templates/tuono_main.rs");
+
 const ROUTE_FOLDER: &str = "src/routes";
 const DEV_FOLDER: &str = ".tuono";
 
