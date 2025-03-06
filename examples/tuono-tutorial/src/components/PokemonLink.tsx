@@ -1,6 +1,7 @@
 // src/components/PokemonLink.tsx
 import type { JSX } from 'react'
 import { Link } from 'tuono'
+
 import styles from './PokemonLink.module.css'
 
 interface PokemonLinkProps {

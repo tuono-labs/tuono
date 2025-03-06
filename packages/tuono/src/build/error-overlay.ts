@@ -1,14 +1,16 @@
 /**
- * Most of this file is takend from the Vite project.
- * We needed to re-export it in order to apply the necessary changes related to
- * tuono.
+ * Most of this file is derived from the Vite project.
+ * We need to re-export it to implement the required changes for Tuono.
  *
  * Source: https://github.com/vitejs/vite/blob/2c51565ec044904a080ef5649034c37f02212c7b/packages/vite/src/client/overlay.ts#L209
  * License: https://github.com/vitejs/vite/blob/main/LICENSE
+ *
+ * @see https://github.com/tuono-labs/tuono/pull/607
+ * @see https://github.com/vitejs/vite/issues/19552
  */
 import type { ErrorPayload, Plugin } from 'vite'
 
-// set :host styles to make playwright detect the element as visible
+// Set the `:host` styles to ensure that Playwright can detect the element as visible
 const templateStyle = /*css*/ `
 :host {
   position: fixed;
@@ -171,21 +173,17 @@ const overlayTemplate = `
 `
 
 const HTMLElement: typeof globalThis.HTMLElement =
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  globalThis.HTMLElement ??
-  // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-  class {}
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-extraneous-class
+  globalThis.HTMLElement ?? class {}
+
 export class ErrorOverlay extends HTMLElement {
-  /**
-   * All the fields need to be implemented in the constructor otherwise
-   * we will get an error when trying to use the class.
-   */
+  root: ShadowRoot
+  closeOnEsc: (event: KeyboardEvent) => void
 
   constructor(err: ErrorPayload['err'], links = true) {
     super()
-    // @ts-expect-error cannot declare outside prop
-    this.root = this.attachShadow({ mode: 'open' })
 
+    this.root = this.attachShadow({ mode: 'open' })
     const root = this.getRoot()
 
     root.innerHTML = overlayTemplate
@@ -213,18 +211,17 @@ export class ErrorOverlay extends HTMLElement {
     }
     this.text('.stack', err.stack, links)
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    root.querySelector('.window')!.addEventListener('click', (e: Event) => {
-      e.stopPropagation()
+    const rootWindowElement = root.querySelector('.window') as HTMLElement
+    rootWindowElement.addEventListener('click', (event: Event) => {
+      event.stopPropagation()
     })
 
     this.addEventListener('click', () => {
       this.close()
     })
 
-    // @ts-expect-error cannot declare outside prop
-    this.closeOnEsc = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape' || e.code === 'Escape') {
+    this.closeOnEsc = (event): void => {
+      if (event.key === 'Escape' || event.code === 'Escape') {
         this.close()
       }
     }
@@ -235,20 +232,17 @@ export class ErrorOverlay extends HTMLElement {
   }
 
   getRoot(): ShadowRoot {
-    // @ts-expect-error cannot declare outside prop
-    return this.root as unknown as ShadowRoot
+    return this.root
   }
 
-  getCloseOnEsc(): (e: KeyboardEvent) => void {
-    // @ts-expect-error cannot declare outside prop
-    return this.closeOnEsc as unknown as (e: KeyboardEvent) => void
+  getCloseOnEsc(): this['closeOnEsc'] {
+    return this.closeOnEsc
   }
 
   text(selector: string, text: string, linkFiles = false): void {
     const root = this.getRoot()
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const el = root.querySelector(selector)!
+    const el = root.querySelector(selector) as HTMLElement
     if (!linkFiles) {
       el.textContent = text
     } else {
