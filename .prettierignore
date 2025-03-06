@@ -9,4 +9,3 @@ vite.config.ts.timestamp-*
 packages/tuono-lazy-fn-vite-plugin/tests/sources/*
 
 e2e/fixtures/*/test-results
-e2e/fixtures/invalid-react/*
