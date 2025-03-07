@@ -11,7 +11,7 @@ tuono new [NAME]
 You can install any example included in this folder by just using the `--template` flag:
 
 ```sh
-tuono new [NAME] --template [TEMPLATE] 
+tuono new [NAME] --template [TEMPLATE]
 ```
 
 `[TEMPLATE]` is the folder name.
