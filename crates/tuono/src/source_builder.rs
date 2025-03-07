@@ -5,6 +5,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use clap::crate_version;
+use tracing::error;
 
 use crate::app::App;
 use crate::mode::Mode;
@@ -216,7 +217,10 @@ fn create_html_fallback(app: &App) -> String {
 }
 
 pub fn generate_fallback_html(app: &App) -> io::Result<()> {
-    let base_path = std::env::current_dir().unwrap();
+    let base_path = std::env::current_dir().unwrap_or_else(|_| {
+        error!("Failed to get current directory");
+        std::process::exit(1);
+    });
     let mut data_file = fs::File::create(base_path.join(".tuono/index.html"))?;
 
     let fallback_html = create_html_fallback(app);
