@@ -72,13 +72,15 @@ const dynamicRoute = {
 }
 
 describe('hasParentRoute works', () => {
-  it('Should detect parent route', () => {
+  it('should detect parent route', () => {
     const parentRoute = hasParentRoute(routes, myPost, myPost.path)
+
     expect(parentRoute).toStrictEqual(parent)
   })
 
-  it('Should detect parent route for dynamic routes', () => {
+  it('should detect parent route for dynamic routes', () => {
     const parentRoute = hasParentRoute(routes, dynamicRoute, dynamicRoute.path)
+
     expect(parentRoute).toStrictEqual(parent)
   })
 })

@@ -108,8 +108,9 @@ const expectedSorting = [
 ]
 
 describe('sortRouteNodes works', () => {
-  it('Should correctly sort the nodes', () => {
+  it('should correctly sort the nodes', () => {
     const sorted = sortRouteNodes(routes)
+
     expect(sorted).toStrictEqual(expectedSorting)
   })
 })

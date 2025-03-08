@@ -5,9 +5,19 @@ import eslintPluginImport from 'eslint-plugin-import'
 import eslintPluginReact from 'eslint-plugin-react'
 // @ts-expect-error no types are available for this plugin
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
+import eslintPluginVitest from '@vitest/eslint-plugin'
 
-const REACT_FILES_MATCH =
-  'packages/{tuono,tuono-router}/**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'
+const JS_EXTENSIONS_MATCH = [
+  'js',
+  'mjs',
+  'cjs',
+  'jsx',
+  'mjsx',
+  'ts',
+  'tsx',
+  'mtsx',
+].join(',')
+const REACT_FILES_MATCH = `packages/{tuono,tuono-router}/**/*.{${JS_EXTENSIONS_MATCH}}`
 
 /** @type import('typescript-eslint').ConfigArray */
 const tuonoEslintConfig = tseslint.config(
@@ -170,6 +180,24 @@ const tuonoEslintConfig = tseslint.config(
       'no-undef': 'off',
       'sort-imports': 'off',
       // #endregion misc
+    },
+  },
+
+  {
+    files: [`packages/**/*.spec.{${JS_EXTENSIONS_MATCH}}`],
+    plugins: { vitest: eslintPluginVitest },
+    rules: {
+      ...eslintPluginVitest.configs.recommended.rules,
+      'vitest/consistent-test-filename': [
+        'error',
+        {
+          pattern: '.*\\.spec\\.[tj]sx?$',
+          allTestPattern: '.*\\.(test|spec)\\.[tj]sx?$',
+        },
+      ],
+      'vitest/consistent-test-it': 'error',
+      'vitest/max-expects': 'error',
+      'vitest/max-nested-describe': ['error', { max: 3 }],
     },
   },
 )
