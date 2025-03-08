@@ -7,7 +7,16 @@ import eslintPluginReact from 'eslint-plugin-react'
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 import eslintPluginVitest from '@vitest/eslint-plugin'
 
-const JS_EXTENSIONS_MATCH = 'js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx'
+const JS_EXTENSIONS_MATCH = [
+  'js',
+  'mjs',
+  'cjs',
+  'jsx',
+  'mjsx',
+  'ts',
+  'tsx',
+  'mtsx',
+].join(',')
 const REACT_FILES_MATCH = `packages/{tuono,tuono-router}/**/*.{${JS_EXTENSIONS_MATCH}}`
 
 /** @type import('typescript-eslint').ConfigArray */
