@@ -11,3 +11,4 @@ node_modules
 .tuono
 out
 target
+.env*.local
