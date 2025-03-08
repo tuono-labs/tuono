@@ -6,6 +6,11 @@ import react from '@vitejs/plugin-react-swc'
 
 export default mergeConfig(
   defineConfig({
+    /**
+     * add explicit build target to avoid transpilation on class properties
+     * @see https://github.com/tuono-labs/tuono/pull/607#discussion_r1983979427
+     */
+    build: { target: 'es2022' },
     plugins: [react()],
   }),
   defineViteConfig({
