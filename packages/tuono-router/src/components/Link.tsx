@@ -1,4 +1,4 @@
-import type * as React from 'react'
+import type { JSX, MouseEvent } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 import { useRouter } from '../hooks/useRouter'
@@ -25,7 +25,7 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 function isEventModifierKeyActiveAndTargetDifferentFromSelf(
-  event: React.MouseEvent<HTMLAnchorElement>,
+  event: MouseEvent<HTMLAnchorElement>,
 ): boolean {
   const target = event.currentTarget.getAttribute('target')
   return (
@@ -37,9 +37,7 @@ function isEventModifierKeyActiveAndTargetDifferentFromSelf(
   )
 }
 
-export default function Link(
-  componentProps: TuonoLinkProps,
-): React.JSX.Element {
+export function Link(componentProps: TuonoLinkProps): JSX.Element {
   const {
     preload = true,
     scroll = true,
