@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
 import { useRoute } from './useRoute'
@@ -21,7 +21,7 @@ describe('useRoute', () => {
     useRouterContextMock.mockReset()
   })
 
-  test('match routes by ids', () => {
+  it('should match routes by ids', () => {
     useRouterContextMock.mockReturnValue({
       router: {
         routesById: {
@@ -36,6 +36,7 @@ describe('useRoute', () => {
       },
     })
 
+    /* eslint-disable vitest/max-expects */
     expect(useRoute('/')?.id).toBe('/')
     expect(useRoute('/not-found')?.id).toBe(undefined)
     expect(useRoute('/about')?.id).toBe('/about')
@@ -50,5 +51,6 @@ describe('useRoute', () => {
     expect(useRoute('/blog/catch_all/catch_all')?.id).toBe(
       '/blog/[...catch_all]',
     )
+    /* eslint-enable vitest/max-expects */
   })
 })

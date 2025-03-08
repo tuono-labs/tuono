@@ -63,7 +63,7 @@ const routes = [
 ]
 
 describe('buildRouteConfig works', () => {
-  it('Should build the correct config', () => {
+  it('should build the correct config', () => {
     const config = buildRouteConfig(routes)
     expect(config).toStrictEqual(
       'PostsMyPostRoute,PostsIndexRoute,PostspostIndexRoute',

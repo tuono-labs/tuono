@@ -33,7 +33,7 @@ vi.mock('react-intersection-observer', () => ({
   },
 }))
 
-describe('Link Component', () => {
+describe('Link component', () => {
   beforeEach(() => {
     pushMock.mockReset()
     preloadMock.mockReset()
