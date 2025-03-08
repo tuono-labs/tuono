@@ -8,6 +8,7 @@ import type { TuonoConfig } from '../config'
 
 import { blockingAsync } from './utils'
 import { createJsonConfig, loadConfig } from './config'
+import { ENV_PREFIX } from './constants'
 
 const VITE_SSR_PLUGINS: Array<Plugin> = [
   {
@@ -45,6 +46,7 @@ function createBaseViteConfigFromTuonoConfig(
     publicDir: '../public',
     cacheDir: 'cache',
     envDir: '../',
+    envPrefix: ENV_PREFIX,
 
     resolve: {
       alias: tuonoConfig.vite?.alias ?? {},

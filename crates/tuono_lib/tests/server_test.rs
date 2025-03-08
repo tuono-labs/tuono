@@ -147,3 +147,25 @@ async fn it_reads_the_path_parameter() {
     assert!(response.status().is_success());
     assert_eq!(response.text().await.unwrap(), "url_parameter");
 }
+
+#[tokio::test]
+#[serial]
+async fn it_reads_an_env_var() {
+    let app = MockTuonoServer::spawn().await;
+
+    let client = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .unwrap();
+
+    let server_url = format!("http://{}:{}", &app.address, &app.port);
+
+    let response = client
+        .get(format!("{server_url}/env"))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(response.status().is_success());
+    assert_eq!(response.text().await.unwrap(), "foobar");
+}

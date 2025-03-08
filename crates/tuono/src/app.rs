@@ -1,4 +1,5 @@
 use crate::mode::Mode;
+use crate::route::Route;
 use glob::glob;
 use glob::GlobError;
 use http::Method;
@@ -15,8 +16,6 @@ use std::process::Command;
 use std::process::Stdio;
 use tracing::error;
 use tuono_internal::config::Config;
-
-use crate::route::Route;
 
 const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
 const IGNORE_FILES: [&str; 1] = ["__layout"];

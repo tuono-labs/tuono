@@ -1,5 +1,6 @@
 pub mod catch_all;
 pub mod dynamic_parameter;
+pub mod env;
 pub mod health_check;
 pub mod mock_server;
 pub mod route;
