@@ -54,11 +54,13 @@ impl DevJs {
             if let Ok(mut ssr) = ssr {
                 ssr.render_to_string(params)
             } else {
-                let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html")).unwrap();
+                let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html"))
+                    .unwrap_or("Fallback HTML not loaded".to_string());
                 Ok(fallback_html.replace("[SERVER_PAYLOAD]", params.unwrap_or("")))
             }
         } else {
-            let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html")).unwrap();
+            let fallback_html = read_to_string(PathBuf::from("./.tuono/index.html"))
+                .unwrap_or("Fallback HTML not loaded".to_string());
 
             Ok(fallback_html.replace("[SERVER_PAYLOAD]", params.unwrap_or("")))
         }
