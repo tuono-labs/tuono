@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 
 import { useRouterContext } from '../components/RouterContext'
 
@@ -38,7 +38,7 @@ interface UseRouterResult {
 export const useRouter = (): UseRouterResult => {
   const { location, updateLocation } = useRouterContext()
 
-  const navigate = React.useCallback(
+  const navigate = useCallback(
     (type: NavigationType, path: string, opts?: NavigationOptions): void => {
       const { scroll = true } = opts || {}
       const url = new URL(path, window.location.origin)
@@ -60,14 +60,14 @@ export const useRouter = (): UseRouterResult => {
     [updateLocation],
   )
 
-  const push = React.useCallback(
+  const push = useCallback(
     (path: string, opts?: NavigationOptions): void => {
       navigate('pushState', path, opts)
     },
     [navigate],
   )
 
-  const replace = React.useCallback(
+  const replace = useCallback(
     (path: string, opts?: NavigationOptions): void => {
       navigate('replaceState', path, opts)
     },

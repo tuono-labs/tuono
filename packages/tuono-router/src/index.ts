@@ -1,5 +1,5 @@
 export { RouterProvider } from './components/RouterProvider'
-export { default as Link } from './components/Link'
+export { Link } from './components/Link'
 export { createRouter } from './router'
 export type { RouterInstanceType } from './router'
 export { createRoute, createRootRoute } from './route'

@@ -1,9 +1,9 @@
-import type * as React from 'react'
+import type { JSX } from 'react'
 
 import { useRoute } from '../hooks/useRoute'
 
 import { RouteMatch } from './RouteMatch'
-import NotFound from './NotFound'
+import { NotFound } from './NotFound'
 import { useRouterContext } from './RouterContext'
 
 interface MatchesProps<TServerPayloadData = unknown> {
@@ -11,9 +11,7 @@ interface MatchesProps<TServerPayloadData = unknown> {
   serverInitialData: TServerPayloadData
 }
 
-export function Matches({
-  serverInitialData,
-}: MatchesProps): React.JSX.Element {
+export function Matches({ serverInitialData }: MatchesProps): JSX.Element {
   const { location } = useRouterContext()
 
   const route = useRoute(location.pathname)

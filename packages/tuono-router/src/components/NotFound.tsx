@@ -1,11 +1,11 @@
-import type * as React from 'react'
+import type { JSX } from 'react'
 
 import { useRouterContext } from '../components/RouterContext'
 
 import { RouteMatch } from './RouteMatch'
-import Link from './Link'
+import { Link } from './Link'
 
-export default function NotFound(): React.JSX.Element {
+export function NotFound(): JSX.Element {
   const { router } = useRouterContext()
 
   const custom404Route = router.routesById['/404']

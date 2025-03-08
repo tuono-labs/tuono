@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, fireEvent, screen } from '@testing-library/react'
 
-import Link from './Link'
+import { Link } from './Link'
 
 const pushMock = vi.fn()
 const replaceMock = vi.fn()

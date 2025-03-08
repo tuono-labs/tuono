@@ -1,4 +1,5 @@
-import * as React from 'react'
+import type { JSX } from 'react'
+import { memo, Suspense, useMemo } from 'react'
 
 import type { Route } from '../route'
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
@@ -16,18 +17,18 @@ interface RouteMatchProps<TServerPayloadData = unknown> {
  */
 export const RouteMatch = ({
   route,
-  serverInitialData: serverInitialData,
-}: RouteMatchProps): React.JSX.Element => {
+  serverInitialData,
+}: RouteMatchProps): JSX.Element => {
   const { data, isLoading } = useServerPayloadData(route, serverInitialData)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const routes = React.useMemo(() => loadParentComponents(route), [route.id])
+  const routes = useMemo(() => loadParentComponents(route), [route.id])
 
   return (
     <TraverseRootComponents routes={routes} data={data} isLoading={isLoading}>
-      <React.Suspense>
+      <Suspense>
         <route.component data={data} isLoading={isLoading} />
-      </React.Suspense>
+      </Suspense>
     </TraverseRootComponents>
   )
 }
@@ -40,13 +41,13 @@ interface TraverseRootComponentsProps<TData = unknown> {
   index?: number
 }
 
-/*
- * This component traverses and renders
- * all the components that wraps the selected route (__layout).
- * The parents components need to be memoized in order to avoid
- * re-rendering bugs when changing route.
+/**
+ * This component traverses and renders all components
+ * that wrap the selected route (__layout).
+ * Parent components must be memoized
+ * to prevent re-rendering issues when the route changes.
  */
-const TraverseRootComponents = React.memo(
+const TraverseRootComponents = memo(
   ({
     routes,
     data,
