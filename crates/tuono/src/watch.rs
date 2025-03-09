@@ -99,7 +99,7 @@ pub async fn watch() -> Result<()> {
     let build_ssr_bundle = build_react_ssr_src();
 
     let env_files = fs::read_dir("./")
-        .unwrap()
+        .expect("Error reading env files from current directory")
         .filter_map(|entry| entry.ok())
         .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
         .map(|entry| entry.path().to_string_lossy().into_owned())
