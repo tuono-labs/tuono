@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import type { AnchorHTMLAttributes, HTMLAttributes, JSX } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { cleanup, render, screen } from '@testing-library/react'
@@ -25,15 +25,10 @@ const root = new Route({
   )),
 })
 
-const pushMock = vi.fn()
-const replaceMock = vi.fn()
-
-// Mock required for the <Link /> component
-vi.mock('../hooks/useRouter', () => ({
-  useRouter: (): { push: typeof pushMock; replace: typeof replaceMock } => ({
-    push: pushMock,
-    replace: replaceMock,
-  }),
+vi.mock('./Link', () => ({
+  Link: (props: HTMLAttributes<HTMLAnchorElement>): JSX.Element => (
+    <a {...props} />
+  ),
 }))
 
 vi.mock('../hooks/useServerPayloadData.ts', () => ({
@@ -53,7 +48,7 @@ vi.mock('../components/RouterContext', () => ({
   useRouterContext,
 }))
 
-describe('test <NotFound /> component', () => {
+describe('<NotFound />', () => {
   afterEach(cleanup)
 
   describe('when a custom 404 page exists', () => {
@@ -89,7 +84,7 @@ describe('test <NotFound /> component', () => {
   })
 
   describe('when a custom 404 page does not exist', () => {
-    it('should render the default 404 page wrapped by the user defined __layout', () => {
+    it('should render the default 404 page, wrapped by the root __layout', () => {
       useRouterContext.mockReturnValue({
         router: {
           routesById: {
