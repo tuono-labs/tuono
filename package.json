@@ -18,7 +18,7 @@
     "examples:typecheck": "pnpm --filter \"./examples/*\" exec tsc --noEmit",
     "repo:root:format": "prettier . !./assets !./crates !./examples !./devtools !./packages --check",
     "repo:root:format:fix": "prettier . !./assets !./crates !./examples !./devtools !./packages --write",
-    "check-packages": "turbo build lint format typecheck --filter=!./examples",
+    "check-packages": "turbo build test lint format typecheck --filter=!./examples",
     "check-examples": "pnpm run \"/^examples:(format|typecheck)$/\"",
     "check-all": "pnpm run check-packages && pnpm run check-examples && pnpm run repo:root:format"
   },
