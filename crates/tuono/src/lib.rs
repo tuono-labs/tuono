@@ -4,10 +4,8 @@
 //! You can find the full documentation at [tuono.dev](https://tuono.dev/)
 
 mod app;
-mod build;
 pub mod cli;
+mod commands;
 mod mode;
 mod route;
-mod scaffold_project;
 mod source_builder;
-mod watch;
