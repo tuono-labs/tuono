@@ -143,7 +143,7 @@ fn create_modules_declaration(routes: &HashMap<String, Route>) -> String {
 }
 
 pub fn bundle_axum_source(mode: Mode) -> io::Result<App> {
-    let base_path = std::env::current_dir().unwrap();
+    let base_path = std::env::current_dir()?;
 
     let app = App::new();
     let bundled_file = generate_axum_source(&app, mode);
@@ -261,10 +261,9 @@ mod tests {
         let source_builder = App::new();
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-        assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
-
         let prod_bundle = generate_axum_source(&source_builder, Mode::Prod);
 
+        assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
         assert!(prod_bundle.contains("const MODE: Mode = Mode::Prod;"));
     }
 
@@ -273,6 +272,7 @@ mod tests {
         let source_builder = App::new();
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+
         assert!(!dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
 
@@ -288,6 +288,7 @@ mod tests {
             .insert(String::from("index.rs"), route);
 
         let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+
         assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
 
