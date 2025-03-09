@@ -14,7 +14,7 @@ export function createRoute(options: RouteOptions): Route {
   return new Route(options)
 }
 
-const rootRouteId = '__root__'
+export const ROOT_ROUTE_ID = '__root__'
 
 export class Route {
   options: RouteOptions
@@ -47,10 +47,10 @@ export class Route {
     this.parentRoute = this.options.getParentRoute?.()
 
     if (isRoot) {
-      this.path = rootRouteId
+      this.path = ROOT_ROUTE_ID
     }
 
-    let path: undefined | string = isRoot ? rootRouteId : this.options.path
+    let path: undefined | string = isRoot ? ROOT_ROUTE_ID : this.options.path
 
     // If the path is anything other than an index path, trim it up
     if (path && path !== '/') {
@@ -60,17 +60,17 @@ export class Route {
     const customId = this.options.id || path
 
     // Strip the parentId prefix from the first level of children
-    let id = isRoot ? rootRouteId : joinPaths([customId])
+    let id = isRoot ? ROOT_ROUTE_ID : joinPaths([customId])
 
-    if (path === rootRouteId) {
+    if (path === ROOT_ROUTE_ID) {
       path = '/'
     }
 
-    if (id !== rootRouteId) {
+    if (id !== ROOT_ROUTE_ID) {
       id = joinPaths(['/', id])
     }
 
-    const fullPath = id === rootRouteId ? '/' : path
+    const fullPath = id === ROOT_ROUTE_ID ? '/' : path
 
     this.path = path
     this.id = id

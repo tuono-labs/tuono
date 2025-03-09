@@ -1,11 +1,12 @@
 import type { JSX } from 'react'
 
 import { useRouterContext } from '../components/RouterContext'
+import { ROOT_ROUTE_ID } from '../route'
 
 import { RouteMatch } from './RouteMatch'
 import { Link } from './Link'
 
-export function NotFound(): JSX.Element {
+export function NotFound(): JSX.Element | null {
   const { router } = useRouterContext()
 
   const custom404Route = router.routesById['/404']
@@ -15,10 +16,14 @@ export function NotFound(): JSX.Element {
     return <RouteMatch route={custom404Route} serverInitialData={{}} />
   }
 
+  const RootLayout = router.routesById[ROOT_ROUTE_ID]?.component
+
+  if (!RootLayout) return null
+
   return (
-    <>
+    <RootLayout data={null} isLoading={false}>
       <h1>404 Not found</h1>
       <Link href="/">Return home</Link>
-    </>
+    </RootLayout>
   )
 }
