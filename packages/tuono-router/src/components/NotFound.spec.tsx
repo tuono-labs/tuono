@@ -1,114 +1,88 @@
-import type { HTMLAttributes, JSX } from 'react'
+import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render } from '@testing-library/react'
 
 import { Route } from '../route'
-import type { RouteComponent, RouteProps } from '../types'
+import type { RouteComponent } from '../types'
+
+import type { RouterInstanceType } from '../router'
 
 import { NotFound } from './NotFound'
-
-function createRouteComponent(
-  routeType: string,
-  RouteComponentFn: (props: RouteProps) => JSX.Element,
-): RouteComponent {
-  const RootComponent = RouteComponentFn as RouteComponent
-  RootComponent.preload = vi.fn()
-  RootComponent.displayName = routeType
-  return RootComponent
-}
-
-const root = new Route({
-  isRoot: true,
-  component: createRouteComponent('root', ({ children }) => (
-    <div data-testid="root">{children}</div>
-  )),
-})
-
-vi.mock('./Link', () => ({
-  Link: (props: HTMLAttributes<HTMLAnchorElement>): JSX.Element => (
-    <a {...props} />
-  ),
-}))
-
-vi.mock('../hooks/useServerPayloadData.ts', () => ({
-  useServerPayloadData: (): { data: unknown; isLoading: boolean } => {
-    return {
-      data: undefined,
-      isLoading: false,
-    }
-  },
-}))
-
-const { useRouterContext } = vi.hoisted(() => {
-  return { useRouterContext: vi.fn() }
-})
+import { RouteMatch } from './RouteMatch'
+import { useRouterContext } from './RouterContext'
+import { NotFoundDefaultContent } from './NotFoundDefaultContent'
 
 vi.mock('../components/RouterContext', () => ({
-  useRouterContext,
+  useRouterContext: vi.fn(),
+}))
+vi.mock('./RouteMatch', () => ({
+  RouteMatch: vi.fn(),
+}))
+vi.mock('./NotFoundDefaultContent', () => ({
+  NotFoundDefaultContent: vi.fn(),
 }))
 
+interface RouterMock {
+  router: Pick<RouterInstanceType, 'routesById'>
+}
+const useRouterContextMock = vi.mocked(useRouterContext as () => RouterMock)
+const RouteMatchMock = vi.mocked(RouteMatch)
+const NotFoundDefaultContentMock = vi.mocked(NotFoundDefaultContent)
+
 describe('<NotFound />', () => {
-  afterEach(cleanup)
+  afterEach(() => {
+    cleanup()
+    vi.resetAllMocks()
+  })
+
+  const root = new Route({
+    isRoot: true,
+    component: (({ children }: { children: ReactNode }) => (
+      <div>{children}</div>
+    )) as unknown as RouteComponent,
+  })
 
   describe('when a custom 404 page exists', () => {
     it('should render the custom 404 page', () => {
-      useRouterContext.mockReturnValue({
+      const customRoute404 = new Route({
+        getParentRoute: (): Route => root,
+        component: vi.fn() as unknown as RouteComponent,
+      })
+
+      useRouterContextMock.mockReturnValue({
         router: {
           routesById: {
-            '/404': new Route({
-              getParentRoute: (): Route => root,
-              component: createRouteComponent('404', () => (
-                <div data-testid="404">custom 404</div>
-              )),
-            }),
+            '/404': customRoute404,
             __root__: root,
           },
         },
       })
+
       render(<NotFound />)
-      expect(screen.getByTestId('root')).toMatchInlineSnapshot(
-        `
-        <div
-          data-testid="root"
-        >
-          <div
-            data-testid="404"
-          >
-            custom 404
-          </div>
-        </div>
-        `,
+
+      expect(RouteMatchMock).toHaveBeenCalledExactlyOnceWith(
+        { route: customRoute404, serverInitialData: {} },
+        undefined, // deprecated react context parameter
       )
+      expect(NotFoundDefaultContentMock).not.toHaveBeenCalled()
     })
   })
 
   describe('when a custom 404 page does not exist', () => {
     it('should render the default 404 page, wrapped by the root __layout', () => {
-      useRouterContext.mockReturnValue({
+      useRouterContextMock.mockReturnValue({
         router: {
           routesById: {
             __root__: root,
           },
         },
       })
+
       render(<NotFound />)
-      expect(screen.getByTestId('root')).toMatchInlineSnapshot(
-        `
-        <div
-          data-testid="root"
-        >
-          <h1>
-            404 Not found
-          </h1>
-          <a
-            href="/"
-          >
-            Return home
-          </a>
-        </div>
-        `,
-      )
+
+      expect(RouteMatchMock).not.toHaveBeenCalled()
+      expect(NotFoundDefaultContentMock).toHaveBeenCalledOnce()
     })
   })
 })
