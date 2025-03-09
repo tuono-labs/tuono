@@ -10,7 +10,7 @@ repository = "https://github.com/tuono-labs/tuono"
 readme = "../../README.md"
 license-file = "../../LICENSE.md"
 categories = ["web-programming"]
-include = ["src/*.rs", "Cargo.toml"]
+include = ["src/**/*.rs", "Cargo.toml"]
 
 [lib]
 name = "tuono"

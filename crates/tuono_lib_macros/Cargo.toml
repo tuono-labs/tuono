@@ -10,7 +10,7 @@ readme = "../../README.md"
 license-file = "../../LICENSE.md"
 categories = ["web-programming"]
 include = [
-		"src/*.rs",
+		"src/**/*.rs",
 		"Cargo.toml"
 ]
 
