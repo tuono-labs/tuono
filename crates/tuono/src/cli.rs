@@ -5,13 +5,11 @@ use tracing::{span, Level};
 use tracing_subscriber::EnvFilter;
 
 use crate::app::App;
-use crate::build;
+use crate::commands::{build, dev, new};
 use crate::mode::Mode;
-use crate::scaffold_project;
 use crate::source_builder::{
     bundle_axum_source, check_tuono_folder, create_client_entry_files, generate_fallback_html,
 };
-use crate::watch;
 
 #[derive(Subcommand, Debug)]
 enum Actions {
@@ -87,7 +85,7 @@ pub fn app() -> std::io::Result<()> {
             generate_fallback_html(&app)?;
             app.check_server_availability(Mode::Dev);
 
-            watch::watch().unwrap();
+            dev::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
             let span = span!(Level::TRACE, "BUILD");
@@ -107,7 +105,7 @@ pub fn app() -> std::io::Result<()> {
 
             let _guard = span.enter();
 
-            scaffold_project::create_new_project(folder_name, template, head);
+            new::create_new_project(folder_name, template, head);
         }
     }
 

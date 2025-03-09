@@ -9,7 +9,7 @@ use tuono_internal::config::Config;
 
 use crate::env::load_env_vars;
 use crate::{
-    catch_all::catch_all, logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
+    catch_all::catch_all, services::logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
     vite_websocket_proxy::vite_websocket_proxy,
 };
 
