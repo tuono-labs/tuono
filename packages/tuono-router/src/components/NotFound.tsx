@@ -4,7 +4,7 @@ import { useRouterContext } from '../components/RouterContext'
 import { ROOT_ROUTE_ID } from '../route'
 
 import { RouteMatch } from './RouteMatch'
-import { Link } from './Link'
+import { NotFoundDefaultContent } from './NotFoundDefaultContent'
 
 export function NotFound(): JSX.Element | null {
   const { router } = useRouterContext()
@@ -22,8 +22,7 @@ export function NotFound(): JSX.Element | null {
 
   return (
     <RootLayout data={null} isLoading={false}>
-      <h1>404 Not found</h1>
-      <Link href="/">Return home</Link>
+      <NotFoundDefaultContent />
     </RootLayout>
   )
 }
