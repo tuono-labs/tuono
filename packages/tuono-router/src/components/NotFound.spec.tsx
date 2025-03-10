@@ -1,11 +1,9 @@
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-
 import { cleanup, render } from '@testing-library/react'
 
 import { Route } from '../route'
 import type { RouteComponent } from '../types'
-
 import type { RouterInstanceType } from '../router'
 
 import { NotFound } from './NotFound'
