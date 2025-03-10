@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { JSX, ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render } from '@testing-library/react'
 
@@ -28,17 +28,22 @@ const useRouterContextMock = vi.mocked(useRouterContext as () => RouterMock)
 const RouteMatchMock = vi.mocked(RouteMatch)
 const NotFoundDefaultContentMock = vi.mocked(NotFoundDefaultContent)
 
+const rootRouteComponentMock = vi
+  .fn<(props: { children: ReactNode }) => JSX.Element>()
+  .mockImplementation(({ children }) => <div>{children}</div>)
+
+const root = new Route({
+  isRoot: true,
+  component: rootRouteComponentMock as unknown as RouteComponent,
+})
+
 describe('<NotFound />', () => {
   afterEach(() => {
     cleanup()
-    vi.resetAllMocks()
-  })
-
-  const root = new Route({
-    isRoot: true,
-    component: (({ children }: { children: ReactNode }) => (
-      <div>{children}</div>
-    )) as unknown as RouteComponent,
+    useRouterContextMock.mockReset()
+    RouteMatchMock.mockReset()
+    NotFoundDefaultContentMock.mockReset()
+    rootRouteComponentMock.mockClear()
   })
 
   describe('when a custom 404 page exists', () => {
@@ -63,6 +68,7 @@ describe('<NotFound />', () => {
         { route: customRoute404, serverInitialData: {} },
         undefined, // deprecated react context parameter
       )
+      expect(rootRouteComponentMock).not.toHaveBeenCalled()
       expect(NotFoundDefaultContentMock).not.toHaveBeenCalled()
     })
   })
@@ -80,6 +86,7 @@ describe('<NotFound />', () => {
       render(<NotFound />)
 
       expect(RouteMatchMock).not.toHaveBeenCalled()
+      expect(rootRouteComponentMock).toHaveBeenCalled()
       expect(NotFoundDefaultContentMock).toHaveBeenCalledOnce()
     })
   })
