@@ -1,19 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
+import { useRouterContext } from '../components/RouterContext'
+
 import { useRoute } from './useRoute'
 
-const { useRouterContextMock } = vi.hoisted(() => ({
-  useRouterContextMock: vi.fn<
-    () => {
-      router: { routesById: Record<string, { id: string }> }
-    }
-  >(),
+vi.mock('../components/RouterContext.tsx', () => ({
+  useRouterContext: vi.fn(),
 }))
 
-vi.mock('../components/RouterContext.tsx', () => ({
-  useRouterContext: useRouterContextMock,
-}))
+interface RouterMock {
+  router: { routesById: Record<string, { id: string }> }
+}
+const useRouterContextMock = vi.mocked(useRouterContext as () => RouterMock)
 
 describe('useRoute', () => {
   afterEach(() => {

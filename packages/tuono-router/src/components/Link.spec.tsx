@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, fireEvent, screen } from '@testing-library/react'
+import { render, fireEvent, screen, cleanup } from '@testing-library/react'
 
 import { Link } from './Link'
 
@@ -33,8 +33,9 @@ vi.mock('react-intersection-observer', () => ({
   },
 }))
 
-describe('Link component', () => {
+describe('<Link />', () => {
   beforeEach(() => {
+    cleanup()
     pushMock.mockReset()
     preloadMock.mockReset()
     intersectionObserverCallback = undefined
