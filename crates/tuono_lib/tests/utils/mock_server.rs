@@ -7,6 +7,9 @@ use tempfile::{tempdir, TempDir};
 use tuono_lib::axum::routing::get;
 use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
 
+use crate::utils::catch_all::get_tuono_internal_api as catch_all;
+use crate::utils::dynamic_parameter::get_tuono_internal_api as dynamic_parameter;
+use crate::utils::env::get_tuono_internal_api as test_env;
 use crate::utils::health_check::get_tuono_internal_api as health_check;
 use crate::utils::route as html_route;
 use crate::utils::route::tuono_internal_api as route_api;
@@ -72,11 +75,16 @@ impl MockTuonoServer {
             r#"{"client-main.tsx": { "file": "assets/index.js", "name": "index", "src": "index.tsx", "isEntry": true,"dynamicImports": [],"css": []}}"#,
         );
 
+        add_file_with_content("./.env", r#"MY_TEST_KEY="foobar""#);
+
         let router = Router::new()
             .route("/", get(html_route::tuono_internal_route))
             .route("/tuono/data", get(html_route::tuono_internal_api))
             .route("/health_check", get(health_check))
-            .route("/route-api", get(route_api));
+            .route("/route-api", get(route_api))
+            .route("/catch_all/{*catch_all}", get(catch_all))
+            .route("/dynamic/{parameter}", get(dynamic_parameter))
+            .route("/env", get(test_env));
 
         let server = Server::init(router, Mode::Prod).await;
 

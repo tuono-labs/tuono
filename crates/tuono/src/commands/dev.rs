@@ -1,3 +1,4 @@
+use std::fs;
 use std::path::Path;
 use std::sync::Arc;
 use watchexec_supervisor::command::{Command, Program};
@@ -74,6 +75,17 @@ fn build_react_ssr_src() -> Job {
     .0
 }
 
+fn ssr_reload_needed(path: &Path) -> bool {
+    let file_name_starts_with_env = path
+        .file_name()
+        .map(|f| f.to_string_lossy().starts_with(".env"))
+        .unwrap_or(false);
+
+    let file_path = path.to_string_lossy();
+
+    file_name_starts_with_env || file_path.ends_with("sx") || file_path.ends_with("mdx")
+}
+
 #[tokio::main]
 pub async fn watch() -> Result<()> {
     let term = Term::stdout();
@@ -85,6 +97,13 @@ pub async fn watch() -> Result<()> {
     let build_rust_src = build_rust_src();
 
     let build_ssr_bundle = build_react_ssr_src();
+
+    let env_files = fs::read_dir("./")
+        .expect("Error reading env files from current directory")
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
+        .map(|entry| entry.path().to_string_lossy().into_owned())
+        .collect::<Vec<String>>();
 
     build_ssr_bundle.start().await;
     build_rust_src.start().await;
@@ -110,8 +129,7 @@ pub async fn watch() -> Result<()> {
                     should_reload_rust_server = true
                 }
 
-                // Either tsx, jsx and mdx
-                if file_path.ends_with("sx") || file_path.ends_with("mdx") {
+                if ssr_reload_needed(path.0) {
                     should_reload_ssr_bundle = true
                 }
             }
@@ -137,8 +155,11 @@ pub async fn watch() -> Result<()> {
         action
     })?;
 
-    // watch the current directory
-    wx.config.pathset(["./src"]);
+    // watch the current directory and all types of .env file
+    let mut paths_to_watch = vec!["./src".to_string()];
+    paths_to_watch.extend(env_files);
+
+    wx.config.pathset(paths_to_watch);
 
     let _ = wx.main().await.into_diagnostic()?;
     Ok(())

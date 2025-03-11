@@ -1,5 +1,8 @@
 packages:
-  - 'devtools/*'
-  - 'packages/*'
-  - 'examples/*'
-  - 'e2e/fixtures/*'
+  - devtools/*
+  - packages/*
+  - examples/*
+  - e2e/fixtures/*
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild

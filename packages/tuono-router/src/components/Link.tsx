@@ -1,4 +1,4 @@
-import type * as React from 'react'
+import type { JSX, MouseEvent } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 import { useRouter } from '../hooks/useRouter'
@@ -16,10 +16,16 @@ interface TuonoLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
    * @default true
    */
   scroll?: boolean
+
+  /**
+   * If "true" the history entry will be replaced instead of pushed.
+   * @default false
+   */
+  replace?: boolean
 }
 
 function isEventModifierKeyActiveAndTargetDifferentFromSelf(
-  event: React.MouseEvent<HTMLAnchorElement>,
+  event: MouseEvent<HTMLAnchorElement>,
 ): boolean {
   const target = event.currentTarget.getAttribute('target')
   return (
@@ -31,14 +37,13 @@ function isEventModifierKeyActiveAndTargetDifferentFromSelf(
   )
 }
 
-export default function Link(
-  componentProps: TuonoLinkProps,
-): React.JSX.Element {
+export function Link(componentProps: TuonoLinkProps): JSX.Element {
   const {
     preload = true,
     scroll = true,
     children,
     href,
+    replace,
     onClick,
     ...rest
   } = componentProps
@@ -68,7 +73,9 @@ export default function Link(
 
     event.preventDefault()
 
-    router.push(href || '', { scroll })
+    const method = replace ? 'replace' : 'push'
+
+    router[method](href || '', { scroll })
   }
 
   return (

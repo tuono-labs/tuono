@@ -6,10 +6,21 @@ use std::path::PathBuf;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ServerConfig {
     pub host: String,
+    pub origin: Option<String>,
     pub port: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+impl Default for ServerConfig {
+    fn default() -> Self {
+        ServerConfig {
+            host: "localhost".to_string(),
+            origin: None,
+            port: 3000,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Config {
     pub server: ServerConfig,
 }
@@ -20,5 +31,19 @@ impl Config {
 
         serde_json::from_str(&config_file)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_config_default() {
+        let config = Config::default();
+
+        assert_eq!(config.server.host, "localhost".to_string());
+        assert_eq!(config.server.origin, None);
+        assert_eq!(config.server.port, 3000);
     }
 }

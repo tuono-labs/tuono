@@ -5,11 +5,11 @@ use tracing::{span, Level};
 use tracing_subscriber::EnvFilter;
 
 use crate::app::App;
-use crate::build;
+use crate::commands::{build, dev, new};
 use crate::mode::Mode;
-use crate::scaffold_project;
-use crate::source_builder::{bundle_axum_source, check_tuono_folder, create_client_entry_files};
-use crate::watch;
+use crate::source_builder::{
+    bundle_axum_source, check_tuono_folder, create_client_entry_files, generate_fallback_html,
+};
 
 #[derive(Subcommand, Debug)]
 enum Actions {
@@ -85,9 +85,10 @@ pub fn app() -> std::io::Result<()> {
             app.build_tuono_config()
                 .expect("Failed to build tuono.config.ts");
 
+            generate_fallback_html(&app)?;
             app.check_server_availability(Mode::Dev);
 
-            watch::watch().unwrap();
+            dev::watch().unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
             let span = span!(Level::TRACE, "BUILD");
@@ -108,7 +109,7 @@ pub fn app() -> std::io::Result<()> {
 
             let _guard = span.enter();
 
-            scaffold_project::create_new_project(folder_name, template, head, git_init);
+            new::create_new_project(folder_name, template, head, git_init);
         }
     }
 
