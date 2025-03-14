@@ -24,10 +24,16 @@ export const RouteMatch = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const routes = useMemo(() => loadParentComponents(route), [route.id])
 
+  const routeData = isLoading ? null : data
+
   return (
-    <TraverseRootComponents routes={routes} data={data} isLoading={isLoading}>
+    <TraverseRootComponents
+      routes={routes}
+      data={routeData}
+      isLoading={isLoading}
+    >
       <Suspense>
-        <route.component data={data} isLoading={isLoading} />
+        <route.component data={routeData} isLoading={isLoading} />
       </Suspense>
     </TraverseRootComponents>
   )
