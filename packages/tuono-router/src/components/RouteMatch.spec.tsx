@@ -46,16 +46,14 @@ const route = new Route({
 vi.mock('../hooks/useServerPayloadData', () => ({
   useServerPayloadData: vi.fn(),
 }))
-vi.mocked(useServerPayloadData).mockReturnValue({
-  data: undefined,
-  isLoading: false,
-})
+
+const useServerPayloadDataMock = vi.mocked(useServerPayloadData)
 
 describe('<RouteMatch />', () => {
   afterEach(cleanup)
 
   it('should correctly render nested routes', () => {
-    vi.mocked(useServerPayloadData).mockReturnValue({
+    useServerPayloadDataMock.mockReturnValue({
       data: { some: 'data' },
       isLoading: false,
     })
@@ -84,7 +82,7 @@ describe('<RouteMatch />', () => {
   })
 
   it('should return null data when while loading', () => {
-    vi.mocked(useServerPayloadData).mockReturnValue({
+    useServerPayloadDataMock.mockReturnValue({
       data: { some: 'data' },
       isLoading: true,
     })
