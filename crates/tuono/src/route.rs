@@ -28,7 +28,11 @@ impl AxumInfo {
         let mut module = route.path.chars();
         module.next();
 
-        let axum_route = route.path.replace("/index", "");
+        let axum_route = if route.path.ends_with("/index") {
+            route.path.replace("/index", "")
+        } else {
+            route.path.clone()
+        };
 
         let module_import = module
             .as_str()
@@ -300,6 +304,18 @@ mod tests {
         routes
             .into_iter()
             .for_each(|route| assert_eq!(has_dynamic_path(route.0), route.1));
+    }
+
+    #[test]
+    fn should_allow_index_in_route_name() {
+        let index_route = AxumInfo::new(&Route::new("/index".to_string()));
+        let index_page_route = AxumInfo::new(&Route::new("/index-page".to_string()));
+
+        assert_eq!(index_route.axum_route, "/");
+        assert_eq!(index_route.module_import, "index");
+
+        assert_eq!(index_page_route.axum_route, "/index-page");
+        assert_eq!(index_page_route.module_import, "index_hyphen_page");
     }
 
     #[test]
