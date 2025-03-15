@@ -7,15 +7,21 @@ import { useServerPayloadData } from '../hooks/useServerPayloadData'
 
 import { RouteMatch } from './RouteMatch'
 
-function createRouteComponent(
-  routeType: string,
-  includeChildren: boolean,
-): RouteComponent {
+function createRouteComponent(routeType: string): RouteComponent {
   const RootComponent = (({ children }: RouteProps) => (
     <div data-testid={routeType}>
       {`${routeType} route`}
-      {includeChildren ? children : null}
+      {children}
     </div>
+  )) as RouteComponent
+  RootComponent.preload = vi.fn()
+  RootComponent.displayName = routeType
+  return RootComponent
+}
+
+function createLeafRouteComponent(routeType: string): RouteComponent {
+  const RootComponent = (({ data }: RouteProps) => (
+    <div data-testid={routeType}>{data ? JSON.stringify(data) : null}</div>
   )) as RouteComponent
   RootComponent.preload = vi.fn()
   RootComponent.displayName = routeType
@@ -24,31 +30,34 @@ function createRouteComponent(
 
 const root = new Route({
   isRoot: true,
-  component: createRouteComponent('root', true),
+  component: createRouteComponent('root'),
 })
 
 const parent = new Route({
-  component: createRouteComponent('parent', true),
+  component: createRouteComponent('parent'),
   getParentRoute: (): Route => root,
 })
 
 const route = new Route({
-  component: createRouteComponent('current', false),
+  component: createLeafRouteComponent('current'),
   getParentRoute: (): Route => parent,
 })
 
 vi.mock('../hooks/useServerPayloadData', () => ({
   useServerPayloadData: vi.fn(),
 }))
-vi.mocked(useServerPayloadData).mockReturnValue({
-  data: undefined,
-  isLoading: false,
-})
+
+const useServerPayloadDataMock = vi.mocked(useServerPayloadData)
 
 describe('<RouteMatch />', () => {
   afterEach(cleanup)
 
   it('should correctly render nested routes', () => {
+    useServerPayloadDataMock.mockReturnValue({
+      data: { some: 'data' },
+      isLoading: false,
+    })
+
     render(<RouteMatch route={route} serverInitialData={{}} />)
 
     expect(screen.getByTestId('root')).toMatchInlineSnapshot(
@@ -64,8 +73,35 @@ describe('<RouteMatch />', () => {
           <div
             data-testid="current"
           >
-            current route
+            {"some":"data"}
           </div>
+        </div>
+      </div>
+    `,
+    )
+  })
+
+  it('should return null data when while loading', () => {
+    useServerPayloadDataMock.mockReturnValue({
+      data: { some: 'data' },
+      isLoading: true,
+    })
+
+    render(<RouteMatch route={route} serverInitialData={{}} />)
+
+    expect(screen.getByTestId('root')).toMatchInlineSnapshot(
+      `
+      <div
+        data-testid="root"
+      >
+        root route
+        <div
+          data-testid="parent"
+        >
+          parent route
+          <div
+            data-testid="current"
+          />
         </div>
       </div>
     `,
