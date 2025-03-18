@@ -1,6 +1,6 @@
 // src/routes/index.tsx
 import type { JSX } from 'react'
-import type { TuonoProps } from 'tuono'
+import type { TuonoRouteProps } from 'tuono'
 
 import PokemonLink from '../components/PokemonLink'
 
@@ -10,7 +10,7 @@ interface IndexProps {
 
 export default function IndexPage({
   data,
-}: TuonoProps<IndexProps>): JSX.Element | null {
+}: TuonoRouteProps<IndexProps>): JSX.Element | null {
   if (!data?.results) return null
 
   return (

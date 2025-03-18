@@ -1,6 +1,6 @@
 // src/routes/pokemons/[pokemon].tsx
 import type { JSX } from 'react'
-import type { TuonoProps } from 'tuono'
+import type { TuonoRouteProps } from 'tuono'
 import { Link } from 'tuono'
 
 import PokemonView from '../../components/PokemonView'
@@ -15,7 +15,7 @@ interface Pokemon {
 export default function PokemonPage({
   isLoading,
   data,
-}: TuonoProps<Pokemon>): JSX.Element {
+}: TuonoRouteProps<Pokemon>): JSX.Element {
   return (
     <div>
       <Link href="/">Back</Link>

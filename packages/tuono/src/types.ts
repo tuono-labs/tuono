@@ -47,7 +47,12 @@ export interface ServerPayload<TData = unknown> {
 )
 */
 
-export interface TuonoProps<T> {
-  data?: T
-  isLoading: boolean
-}
+export type TuonoRouteProps<TData> =
+  | {
+      data: null
+      isLoading: true
+    }
+  | {
+      data: TData
+      isLoading: false
+    }
