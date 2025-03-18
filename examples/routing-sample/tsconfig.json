@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    // Typechecking
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Modules
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "types": ["tuono/build-client"],
+
+    // Interop Constraints
+    "isolatedModules": true,
+
+    // Language and Environment
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "useDefineForClassFields": true,
+    "jsx": "react-jsx",
+
+    // Emit
+    "noEmit": true,
+
+    // Completeness
+    "skipLibCheck": true
+  },
+  "include": ["src", "tuono.config.ts"]
+}

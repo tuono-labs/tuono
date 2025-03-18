@@ -1,0 +1,14 @@
+[package]
+name = "tuono-app"
+description = "A simple routing sample"
+version = "0.0.1"
+edition = "2021"
+
+[[bin]]
+name = "tuono"
+path = ".tuono/main.rs"
+
+[dependencies]
+tuono_lib = "0.18.0"
+serde = { version = "1.0.202", features = ["derive"] }
+reqwest = "0.12.14"
