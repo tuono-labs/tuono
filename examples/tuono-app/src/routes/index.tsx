@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import type { TuonoProps } from 'tuono'
+import type { TuonoRouteProps } from 'tuono'
 
 interface IndexProps {
   subtitle: string
@@ -8,7 +8,7 @@ interface IndexProps {
 export default function IndexPage({
   data,
   isLoading,
-}: TuonoProps<IndexProps>): JSX.Element {
+}: TuonoRouteProps<IndexProps>): JSX.Element {
   if (isLoading) {
     return <h1>Loading...</h1>
   }
