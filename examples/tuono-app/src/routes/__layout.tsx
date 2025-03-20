@@ -1,5 +1,6 @@
 import type { ReactNode, JSX } from 'react'
 import { TuonoScripts } from 'tuono'
+
 import '../styles/global.css'
 
 interface RootLayoutProps {
