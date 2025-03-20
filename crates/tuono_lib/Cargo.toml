@@ -31,6 +31,7 @@ regex = "1.10.5"
 either = "1.13.0"
 tower-http = {version = "0.6.0", features = ["fs"]}
 colored = "2.1.0"
+form_urlencoded = "1.2.1"
 
 tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.18.0"}
 tuono_internal = {path = "../tuono_internal", version = "0.18.0"}

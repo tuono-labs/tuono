@@ -48,6 +48,26 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let application_state_extractor = crate_application_state_extractor(argument_names.clone());
     let application_state_import = import_main_application_state(argument_names.clone());
 
+    let modified_request = if http_method == "post" || http_method == "put" || http_method == "patch" {
+        quote! {
+            let (parts, body) = request.into_parts();
+            let path = parts.uri.clone();
+            let headers = parts.headers.clone();
+
+            let mut req = tuono_lib::Request::new(path, headers, params);
+
+
+            if let Ok(bytes) = axum::body::to_bytes(body, usize::MAX).await {
+                req.body = Some(bytes.to_vec());
+            }
+        }
+    } else {
+        quote! {
+            let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params);
+        }
+    };
+
+
     quote! {
         #application_state_import
 
@@ -60,7 +80,7 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
            let pathname = request.uri();
            let headers = request.headers();
 
-           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params);
+           #modified_request
 
            #fn_name(req.clone(), #argument_names).await
         }
