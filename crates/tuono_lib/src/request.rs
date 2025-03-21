@@ -81,7 +81,7 @@ impl Request {
         )))
     }
 
-    pub fn form_data<T>(&mut self) -> Result<T, FormError>
+    pub fn form_data<T>(&self) -> Result<T, FormError>
     where
         T: DeserializeOwned,
     {
