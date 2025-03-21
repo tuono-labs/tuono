@@ -48,7 +48,10 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let application_state_extractor = crate_application_state_extractor(argument_names.clone());
     let application_state_import = import_main_application_state(argument_names.clone());
 
-    let modified_request = if http_method == "post" || http_method == "put" || http_method == "patch" {
+    let modified_request = if http_method == "post"
+        || http_method == "put"
+        || http_method == "patch"
+    {
         quote! {
             let (parts, body) = request.into_parts();
             let path = parts.uri.clone();
@@ -66,7 +69,6 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
             let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params);
         }
     };
-
 
     quote! {
         #application_state_import

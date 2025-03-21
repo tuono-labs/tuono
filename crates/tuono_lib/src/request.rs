@@ -1,7 +1,7 @@
+use axum::http::{HeaderMap, Uri};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use serde::de::DeserializeOwned;
-use axum::http::{HeaderMap, Uri};
 use std::fmt;
 
 /// Location must match client side interface
@@ -38,7 +38,7 @@ pub struct Request {
     pub uri: Uri,
     pub headers: HeaderMap,
     pub params: HashMap<String, String>,
-    pub body: Option<Vec<u8>>
+    pub body: Option<Vec<u8>>,
 }
 
 impl Request {
@@ -47,14 +47,15 @@ impl Request {
             uri,
             headers,
             params,
-            body: None
+            body: None,
         }
     }
 
-
     pub fn body_as_string(&self) -> Result<String, String> {
         match &self.body {
-            Some(body) => String::from_utf8(body.clone()).map_err(|_| "Invalid UTF-8 in body".into()),
+            Some(body) => {
+                String::from_utf8(body.clone()).map_err(|_| "Invalid UTF-8 in body".into())
+            }
             None => Err("Body is missing".into()),
         }
     }
@@ -82,9 +83,10 @@ impl Request {
 
     pub fn form_data<T>(&mut self) -> Result<T, FormError>
     where
-        T: DeserializeOwned
+        T: DeserializeOwned,
     {
-        let content_type = self.headers
+        let content_type = self
+            .headers
             .get("content-type")
             .and_then(|v| v.to_str().ok())
             .unwrap_or("");
@@ -95,26 +97,24 @@ impl Request {
 
         let body_str = match self.body_as_string() {
             Ok(s) => s,
-            Err(e) => return Err(FormError::ParseError(e))
+            Err(e) => return Err(FormError::ParseError(e)),
         };
 
-        let form_data = match form_urlencoded::parse(body_str.as_bytes())
-            .into_owned()
-            .collect::<HashMap<String, String>>()
-        {
-            data => {
-                match serde_json::to_value(data) {
-                    Ok(value) => value,
-                    Err(e) => return Err(FormError::ParseError(e.to_string())),
-                }
-            },
+        let form_data = match serde_json::to_value(
+            form_urlencoded::parse(body_str.as_bytes())
+                .into_owned()
+                .collect::<HashMap<String, String>>(),
+        ) {
+            Ok(value) => value,
+            Err(e) => return Err(FormError::ParseError(e.to_string())),
         };
 
         let result: T = match serde_json::from_value(form_data) {
             Ok(value) => value,
             Err(e) => return Err(FormError::ParseError(e.to_string())),
         };
-        return Ok(result);
+
+        Ok(result)
     }
 }
 
@@ -150,12 +150,9 @@ impl fmt::Display for FormError {
 impl axum::response::IntoResponse for FormError {
     fn into_response(self) -> axum::response::Response {
         let status = match &self {
-            FormError::InvalidContentType =>
-                axum::http::StatusCode::UNSUPPORTED_MEDIA_TYPE,
-            FormError::ParseError(_) =>
-                axum::http::StatusCode::BAD_REQUEST,
-            FormError::ServerError(_) =>
-                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            FormError::InvalidContentType => axum::http::StatusCode::UNSUPPORTED_MEDIA_TYPE,
+            FormError::ParseError(_) => axum::http::StatusCode::BAD_REQUEST,
+            FormError::ServerError(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         let body = axum::Json(serde_json::json!({
@@ -176,7 +173,6 @@ mod tests {
         field1: bool,
         field2: String,
     }
-
 
     #[derive(Debug, Deserialize)]
     struct FormData {
@@ -264,10 +260,9 @@ mod tests {
             HashMap::new(),
         );
 
-        request.headers.insert(
-            "content-type",
-            "application/json".parse().unwrap(),
-        );
+        request
+            .headers
+            .insert("content-type", "application/json".parse().unwrap());
 
         request.headers.insert(
             "body",
@@ -278,7 +273,7 @@ mod tests {
 
         assert!(form_data.is_err());
         match form_data.unwrap_err() {
-            FormError::InvalidContentType => {},
+            FormError::InvalidContentType => {}
             _ => panic!("Expected invalid content type error"),
         }
     }
@@ -295,7 +290,6 @@ mod tests {
             "content-type",
             "application/x-www-form-urlencoded".parse().unwrap(),
         );
-
 
         let form_data: Result<FormData, FormError> = request.form_data();
 

@@ -19,7 +19,7 @@ mod vite_websocket_proxy;
 
 pub use mode::Mode;
 pub use payload::Payload;
-pub use request::{ Request, FormError };
+pub use request::{FormError, Request};
 pub use response::{Props, Response};
 pub use server::{tuono_internal_init_v8_platform, Server};
 pub use tuono_lib_macros::{api, handler};
