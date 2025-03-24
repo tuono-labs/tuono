@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::Path;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use watchexec_supervisor::command::{Command, Program};
 
 use miette::{IntoDiagnostic, Result};
@@ -8,8 +8,7 @@ use watchexec::Watchexec;
 use watchexec_signals::Signal;
 use watchexec_supervisor::job::{start_job, Job};
 
-use crate::mode::Mode;
-use crate::source_builder::bundle_axum_source;
+use crate::source_builder::SourceBuilder;
 use console::Term;
 use spinners::{Spinner, Spinners};
 
@@ -87,7 +86,8 @@ fn ssr_reload_needed(path: &Path) -> bool {
 }
 
 #[tokio::main]
-pub async fn watch() -> Result<()> {
+pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
+    let source_builder = RwLock::new(source_builder);
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
@@ -98,6 +98,7 @@ pub async fn watch() -> Result<()> {
 
     let build_ssr_bundle = build_react_ssr_src();
 
+    // Env files are not hot reloaded
     let env_files = fs::read_dir("./")
         .expect("Error reading env files from current directory")
         .filter_map(|entry| entry.ok())
@@ -138,7 +139,9 @@ pub async fn watch() -> Result<()> {
         if should_reload_rust_server {
             println!("  Reloading...");
             rust_server.stop();
-            bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
+            let mut builder = source_builder.write().unwrap();
+            builder.app.collect_routes();
+            _ = builder.refresh_axum_source();
             rust_server.start();
         }
 

@@ -68,7 +68,7 @@ impl App {
         app
     }
 
-    fn collect_routes(&mut self) {
+    pub fn collect_routes(&mut self) {
         glob(
             self.base_path
                 .join("src/routes/**/*.*")
@@ -203,7 +203,7 @@ impl App {
             .expect("Failed to run the rust server")
     }
 
-    pub fn build_tuono_config(&mut self) -> Result<std::process::Output, std::io::Error> {
+    pub fn build_tuono_config(&mut self) -> io::Result<std::process::Output> {
         if !Path::new(BUILD_TUONO_CONFIG).exists() {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);

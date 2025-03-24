@@ -185,7 +185,7 @@ fn dev_fails_with_no_config() {
         .arg("dev")
         .assert()
         .failure()
-        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+        .stdout("\x1b[31mERROR\x1b[0m \x1b[2mtuono::source_builder\x1b[0m\x1b[2m:\x1b[0m Cannot find tuono.config.ts - is this a tuono project?\n");
 }
 
 #[test]
@@ -198,5 +198,5 @@ fn build_fails_with_no_config() {
         .arg("dev")
         .assert()
         .failure()
-        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+        .stdout("\x1b[31mERROR\x1b[0m \x1b[2mtuono::source_builder\x1b[0m\x1b[2m:\x1b[0m Cannot find tuono.config.ts - is this a tuono project?\n");
 }

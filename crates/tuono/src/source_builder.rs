@@ -3,6 +3,7 @@ use std::fs;
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
+use std::path::PathBuf;
 
 use clap::crate_version;
 use tracing::error;
@@ -77,16 +78,144 @@ async fn main() {
 }
 "##;
 
+#[cfg(target_os = "windows")]
+const MAIN_FILE_PATH: &str = "\\.tuono\\main.rs";
+
+#[cfg(target_os = "windows")]
+const FALLBACK_HTML_PATH: &str = "\\.tuono\\index.html";
+
+#[cfg(not(target_os = "windows"))]
+const MAIN_FILE_PATH: &str = "./.tuono/main.rs";
+
+#[cfg(not(target_os = "windows"))]
+const FALLBACAK_HTML_PATH: &str = "./.tuono/index.html";
+
 const ROUTE_FOLDER: &str = "src/routes";
 const DEV_FOLDER: &str = ".tuono";
 
-fn create_main_file(base_path: &Path, bundled_file: &String) {
-    let mut data_file =
-        fs::File::create(base_path.join(".tuono/main.rs")).expect("creation failed");
+// Use this function to instruct the users on how to
+// fix their setup to make tuono work
+fn recoverable_error(message: &str) -> ! {
+    error!("{}", message);
+    std::process::exit(1);
+}
 
-    data_file
-        .write_all(bundled_file.as_bytes())
-        .expect("write failed");
+// Struct to build the source code
+// on both "dev" and "build" commands
+#[derive(Clone, Debug)]
+pub struct SourceBuilder {
+    pub app: App,
+    mode: Mode,
+    base_path: PathBuf,
+}
+
+impl SourceBuilder {
+    pub fn new(mode: Mode) -> io::Result<Self> {
+        if !PathBuf::from("tuono.config.ts").exists() {
+            recoverable_error("Cannot find tuono.config.ts - is this a tuono project?");
+        }
+
+        let dev_folder = Path::new(DEV_FOLDER);
+        if !&dev_folder.is_dir() {
+            fs::create_dir(dev_folder)?;
+        }
+
+        let app = App::new();
+
+        let base_path = std::env::current_dir()?;
+
+        create_client_entry_files()?;
+
+        Ok(Self {
+            app,
+            mode,
+            base_path,
+        })
+    }
+
+    // Build the source code needed for both build and dev
+    pub fn base_build(&mut self) -> io::Result<()> {
+        let Self { mode, .. } = &self;
+
+        self.refresh_axum_source()?;
+
+        if mode == &Mode::Dev {
+            self.app.build_tuono_config()?;
+            let fallback_html = create_html_fallback(&self.app);
+            self.create_file(FALLBACAK_HTML_PATH, &fallback_html)?;
+        }
+
+        Ok(())
+    }
+
+    fn generate_axum_source(&self) -> String {
+        let Self { app, mode, .. } = &self;
+
+        let src = AXUM_ENTRY_POINT
+            .replace(
+                "// ROUTE_BUILDER\n",
+                &create_routes_declaration(&app.route_map),
+            )
+            .replace(
+                "// MODULE_IMPORTS\n",
+                &create_modules_declaration(&app.route_map),
+            )
+            .replace("/*VERSION*/", crate_version!())
+            .replace("/*MODE*/", mode.as_str())
+            .replace(
+                "//MAIN_FILE_IMPORT//",
+                if app.has_app_state {
+                    r#"#[path="../src/app.rs"]
+                    mod tuono_main_state;
+                    "#
+                } else {
+                    ""
+                },
+            )
+            .replace(
+                "//MAIN_FILE_DEFINITION//",
+                if app.has_app_state {
+                    "let user_custom_state = tuono_main_state::main();"
+                } else {
+                    ""
+                },
+            )
+            .replace(
+                "//MAIN_FILE_USAGE//",
+                if app.has_app_state {
+                    ".with_state(user_custom_state)"
+                } else {
+                    ""
+                },
+            );
+
+        let mut import_http_handler = String::new();
+
+        let used_http_methods = app.get_used_http_methods();
+
+        for method in used_http_methods.into_iter() {
+            let method = method.to_string().to_lowercase();
+            import_http_handler.push_str(&format!("use tuono_lib::axum::routing::{method};\n"))
+        }
+
+        src.replace("// AXUM_GET_ROUTE_HANDLER", &import_http_handler)
+    }
+
+    pub fn refresh_axum_source(&self) -> io::Result<()> {
+        let axum_source = self.generate_axum_source();
+
+        self.create_file(MAIN_FILE_PATH, &axum_source)?;
+
+        Ok(())
+    }
+
+    fn create_file(&self, path: &str, content: &str) -> io::Result<()> {
+        let mut data_file = fs::File::create(self.base_path.join(path))?;
+
+        data_file.write_all(content.as_bytes())?;
+
+        Ok(())
+    }
 }
 
 fn create_routes_declaration(routes: &HashMap<String, Route>) -> String {
@@ -141,67 +270,6 @@ fn create_modules_declaration(routes: &HashMap<String, Route>) -> String {
     route_declarations
 }
 
-pub fn bundle_axum_source(mode: Mode) -> io::Result<App> {
-    let base_path = std::env::current_dir()?;
-
-    let app = App::new();
-    let bundled_file = generate_axum_source(&app, mode);
-    create_main_file(&base_path, &bundled_file);
-
-    Ok(app)
-}
-
-fn generate_axum_source(app: &App, mode: Mode) -> String {
-    let src = AXUM_ENTRY_POINT
-        .replace(
-            "// ROUTE_BUILDER\n",
-            &create_routes_declaration(&app.route_map),
-        )
-        .replace(
-            "// MODULE_IMPORTS\n",
-            &create_modules_declaration(&app.route_map),
-        )
-        .replace("/*VERSION*/", crate_version!())
-        .replace("/*MODE*/", mode.as_str())
-        .replace(
-            "//MAIN_FILE_IMPORT//",
-            if app.has_app_state {
-                r#"#[path="../src/app.rs"]
-                    mod tuono_main_state;
-                    "#
-            } else {
-                ""
-            },
-        )
-        .replace(
-            "//MAIN_FILE_DEFINITION//",
-            if app.has_app_state {
-                "let user_custom_state = tuono_main_state::main();"
-            } else {
-                ""
-            },
-        )
-        .replace(
-            "//MAIN_FILE_USAGE//",
-            if app.has_app_state {
-                ".with_state(user_custom_state)"
-            } else {
-                ""
-            },
-        );
-
-    let mut import_http_handler = String::new();
-
-    let used_http_methods = app.get_used_http_methods();
-
-    for method in used_http_methods.into_iter() {
-        let method = method.to_string().to_lowercase();
-        import_http_handler.push_str(&format!("use tuono_lib::axum::routing::{method};\n"))
-    }
-
-    src.replace("// AXUM_GET_ROUTE_HANDLER", &import_http_handler)
-}
-
 fn create_html_fallback(app: &App) -> String {
     if let Some(config) = app.config.as_ref() {
         if let Some(origin) = &config.server.origin {
@@ -213,29 +281,6 @@ fn create_html_fallback(app: &App) -> String {
     } else {
         "".to_string()
     }
-}
-
-pub fn generate_fallback_html(app: &App) -> io::Result<()> {
-    let base_path = std::env::current_dir().unwrap_or_else(|_| {
-        error!("Failed to get current directory");
-        std::process::exit(1);
-    });
-    let mut data_file = fs::File::create(base_path.join(".tuono/index.html"))?;
-
-    let fallback_html = create_html_fallback(app);
-
-    data_file.write_all(fallback_html.as_bytes())?;
-
-    Ok(())
-}
-
-pub fn check_tuono_folder() -> io::Result<()> {
-    let dev_folder = Path::new(DEV_FOLDER);
-    if !&dev_folder.is_dir() {
-        fs::create_dir(dev_folder)?;
-    }
-
-    Ok(())
 }
 
 pub fn create_client_entry_files() -> io::Result<()> {
@@ -257,10 +302,19 @@ mod tests {
 
     #[test]
     fn should_set_the_correct_mode() {
-        let source_builder = App::new();
+        let dev_bundle = SourceBuilder {
+            app: App::new(),
+            mode: Mode::Dev,
+            base_path: PathBuf::new(),
+        }
+        .generate_axum_source();
 
-        let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
-        let prod_bundle = generate_axum_source(&source_builder, Mode::Prod);
+        let prod_bundle = SourceBuilder {
+            app: App::new(),
+            mode: Mode::Prod,
+            base_path: PathBuf::new(),
+        }
+        .generate_axum_source();
 
         assert!(dev_bundle.contains("const MODE: Mode = Mode::Dev;"));
         assert!(prod_bundle.contains("const MODE: Mode = Mode::Prod;"));
@@ -268,25 +322,33 @@ mod tests {
 
     #[test]
     fn should_not_load_the_axum_get_function() {
-        let source_builder = App::new();
-
-        let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+        let dev_bundle = SourceBuilder {
+            app: App::new(),
+            mode: Mode::Dev,
+            base_path: PathBuf::new(),
+        }
+        .generate_axum_source();
 
         assert!(!dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
 
     #[test]
     fn should_load_the_axum_get_function() {
-        let mut source_builder = App::new();
+        let mut source_builder = SourceBuilder {
+            app: App::new(),
+            mode: Mode::Dev,
+            base_path: PathBuf::new(),
+        };
 
         let mut route = Route::new(String::from("index.tsx"));
         route.update_axum_info();
 
         source_builder
+            .app
             .route_map
             .insert(String::from("index.rs"), route);
 
-        let dev_bundle = generate_axum_source(&source_builder, Mode::Dev);
+        let dev_bundle = source_builder.generate_axum_source();
 
         assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
