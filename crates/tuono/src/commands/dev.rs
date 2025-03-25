@@ -98,7 +98,6 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     let build_ssr_bundle = build_react_ssr_src();
 
-    // Env files are not hot reloaded
     let env_files = fs::read_dir("./")
         .expect("Error reading env files from current directory")
         .filter_map(|entry| entry.ok())

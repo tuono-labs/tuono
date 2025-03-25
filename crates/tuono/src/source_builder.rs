@@ -88,7 +88,7 @@ const FALLBACK_HTML_PATH: &str = "\\.tuono\\index.html";
 const MAIN_FILE_PATH: &str = "./.tuono/main.rs";
 
 #[cfg(not(target_os = "windows"))]
-const FALLBACAK_HTML_PATH: &str = "./.tuono/index.html";
+const FALLBACK_HTML_PATH: &str = "./.tuono/index.html";
 
 const ROUTE_FOLDER: &str = "src/routes";
 const DEV_FOLDER: &str = ".tuono";
@@ -142,7 +142,7 @@ impl SourceBuilder {
         if mode == &Mode::Dev {
             self.app.build_tuono_config()?;
             let fallback_html = create_html_fallback(&self.app);
-            self.create_file(FALLBACAK_HTML_PATH, &fallback_html)?;
+            self.create_file(FALLBACK_HTML_PATH, &fallback_html)?;
         }
 
         Ok(())
