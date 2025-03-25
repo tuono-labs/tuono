@@ -79,10 +79,10 @@ async fn main() {
 "##;
 
 #[cfg(target_os = "windows")]
-const MAIN_FILE_PATH: &str = "\\.tuono\\main.rs";
+const MAIN_FILE_PATH: &str = ".\\.tuono\\main.rs";
 
 #[cfg(target_os = "windows")]
-const FALLBACK_HTML_PATH: &str = "\\.tuono\\index.html";
+const FALLBACK_HTML_PATH: &str = ".\\.tuono\\index.html";
 
 #[cfg(not(target_os = "windows"))]
 const MAIN_FILE_PATH: &str = "./.tuono/main.rs";
