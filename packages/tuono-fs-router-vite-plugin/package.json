@@ -46,6 +46,6 @@
   "devDependencies": {
     "@types/babel__core": "7.20.5",
     "vite-config": "workspace:*",
-    "vitest": "3.0.7"
+    "vitest": "3.0.9"
   }
 }
