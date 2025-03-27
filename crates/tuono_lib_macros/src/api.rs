@@ -57,7 +57,7 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
             let path = parts.uri.clone();
             let headers = parts.headers.clone();
 
-        let body = tuono_lib::axum::body::to_bytes(body, usize::MAX).await.unwrap_or(Vec::new().into()).to_vec();
+            let body = tuono_lib::axum::body::to_bytes(body, usize::MAX).await.unwrap_or(Vec::new().into()).to_vec();
 
             let mut req = tuono_lib::Request::new_with_body(path, headers, params, Some(body));
         }
@@ -66,7 +66,7 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
            let pathname = request.uri();
            let headers = request.headers();
 
-           let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), param);
+           let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params);
         }
     };
 

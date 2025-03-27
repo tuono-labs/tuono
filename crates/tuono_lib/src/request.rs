@@ -101,15 +101,11 @@ mod tests {
 
     #[test]
     fn it_correctly_parse_the_body() {
-        let mut request = Request::new(
+        let request = Request::new_with_body(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
-        );
-
-        request.headers.insert(
-            "body",
-            r#"{"field1": true, "field2": "hello"}"#.parse().unwrap(),
+            Some(r#"{"field1": true, "field2": "hello"}"#.as_bytes().to_vec()),
         );
 
         let body: FakeBody = request.body().expect("Failed to parse body");
@@ -119,29 +115,13 @@ mod tests {
     }
 
     #[test]
-    fn it_should_trigger_an_error_when_no_body_is_found() {
-        let request = Request::new(
-            Uri::from_static("http://localhost:3000"),
-            HeaderMap::new(),
-            HashMap::new(),
-        );
-
-        let body: Result<FakeBody, BodyParseError> = request.body();
-
-        assert!(body.is_err());
-    }
-
-    #[test]
     fn it_should_trigger_an_error_when_body_is_invalid() {
-        let mut request = Request::new(
+        let request = Request::new_with_body(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            Some(r#"{"field1": true"#.as_bytes().to_vec()),
         );
-
-        request
-            .headers
-            .insert("body", r#"{"field1": true"#.parse().unwrap());
 
         let body: Result<FakeBody, BodyParseError> = request.body();
 
