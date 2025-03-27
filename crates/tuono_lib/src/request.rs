@@ -37,14 +37,25 @@ pub struct Request {
     pub uri: Uri,
     pub headers: HeaderMap,
     pub params: HashMap<String, String>,
+    body: Option<Vec<u8>>,
 }
 
 impl Request {
     pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>) -> Request {
+        Self::new_with_body(uri, headers, params, None)
+    }
+
+    pub fn new_with_body(
+        uri: Uri,
+        headers: HeaderMap,
+        params: HashMap<String, String>,
+        body: Option<Vec<u8>>,
+    ) -> Request {
         Request {
             uri,
             headers,
             params,
+            body,
         }
     }
 
@@ -53,20 +64,14 @@ impl Request {
     }
 
     pub fn body<'de, T: Deserialize<'de>>(&'de self) -> Result<T, BodyParseError> {
-        if let Some(body) = self.headers.get("body") {
-            if let Ok(body) = body.to_str() {
-                let body = serde_json::from_str::<T>(body)?;
-                return Ok(body);
-            }
-            return Err(BodyParseError::Io(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                "Failed to read body",
-            )));
+        if let Some(body) = &self.body {
+            let body = serde_json::from_slice::<T>(body)?;
+            return Ok(body);
         }
-        Err(BodyParseError::Io(std::io::Error::new(
+        return Err(BodyParseError::Io(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
-            "No body found",
-        )))
+            "Failed to read body",
+        )));
     }
 }
 
