@@ -68,10 +68,11 @@ impl Request {
             let body = serde_json::from_slice::<T>(body)?;
             return Ok(body);
         }
-        return Err(BodyParseError::Io(std::io::Error::new(
+
+        Err(BodyParseError::Io(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
             "Failed to read body",
-        )));
+        )))
     }
 }
 
