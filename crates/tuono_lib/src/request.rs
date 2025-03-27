@@ -41,11 +41,7 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>) -> Request {
-        Self::new_with_body(uri, headers, params, None)
-    }
-
-    pub fn new_with_body(
+    pub fn new(
         uri: Uri,
         headers: HeaderMap,
         params: HashMap<String, String>,
@@ -101,7 +97,7 @@ mod tests {
 
     #[test]
     fn it_correctly_parse_the_body() {
-        let request = Request::new_with_body(
+        let request = Request::new(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
@@ -116,7 +112,7 @@ mod tests {
 
     #[test]
     fn it_should_trigger_an_error_when_body_is_invalid() {
-        let request = Request::new_with_body(
+        let request = Request::new(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
