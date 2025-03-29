@@ -105,6 +105,7 @@ impl SourceBuilder {
         let Self { app, mode, .. } = &self;
 
         let src = AXUM_ENTRY_POINT
+            .replace("\r", "")
             .replace(
                 "// ROUTE_BUILDER\n",
                 &create_routes_declaration(&app.route_map),
