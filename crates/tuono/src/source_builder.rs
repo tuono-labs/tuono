@@ -13,16 +13,14 @@ use crate::mode::Mode;
 use crate::route::AxumInfo;
 use crate::route::Route;
 
+#[cfg(not(target_os = "windows"))]
 const FALLBACK_HTML: &str = include_str!("../templates/fallback.html");
+#[cfg(not(target_os = "windows"))]
 const SERVER_ENTRY_DATA: &str = include_str!("../templates/server.ts");
+#[cfg(not(target_os = "windows"))]
 const CLIENT_ENTRY_DATA: &str = include_str!("../templates/client.ts");
+#[cfg(not(target_os = "windows"))]
 const AXUM_ENTRY_POINT: &str = include_str!("../templates/server.rs");
-
-#[cfg(target_os = "windows")]
-const MAIN_FILE_PATH: &str = ".\\.tuono\\main.rs";
-
-#[cfg(target_os = "windows")]
-const FALLBACK_HTML_PATH: &str = ".\\.tuono\\index.html";
 
 #[cfg(not(target_os = "windows"))]
 const MAIN_FILE_PATH: &str = "./.tuono/main.rs";
@@ -32,6 +30,21 @@ const FALLBACK_HTML_PATH: &str = "./.tuono/index.html";
 
 const ROUTE_FOLDER: &str = "src/routes";
 const DEV_FOLDER: &str = ".tuono";
+
+#[cfg(target_os = "windows")]
+const FALLBACK_HTML: &str = include_str!("..\\templates\\fallback.html");
+#[cfg(target_os = "windows")]
+const SERVER_ENTRY_DATA: &str = include_str!("..\\templates\\server.ts");
+#[cfg(target_os = "windows")]
+const CLIENT_ENTRY_DATA: &str = include_str!("..\\templates\\client.ts");
+#[cfg(target_os = "windows")]
+const AXUM_ENTRY_POINT: &str = include_str!("..\\templates\\server.rs");
+
+#[cfg(target_os = "windows")]
+const MAIN_FILE_PATH: &str = ".\\.tuono\\main.rs";
+
+#[cfg(target_os = "windows")]
+const FALLBACK_HTML_PATH: &str = ".\\.tuono\\index.html";
 
 // Use this function to instruct the users on how to
 // fix their setup to make tuono work
