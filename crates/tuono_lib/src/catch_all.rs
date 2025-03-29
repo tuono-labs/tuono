@@ -1,4 +1,4 @@
-use crate::{ssr::Js, Payload};
+use crate::{Payload, ssr::Js};
 use axum::extract::{Path, Request};
 use axum::response::Html;
 use std::collections::HashMap;

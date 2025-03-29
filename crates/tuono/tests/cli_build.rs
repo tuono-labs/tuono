@@ -100,8 +100,11 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
     assert!(temp_main_rs_content.contains(
         r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
-    assert!(temp_main_rs_content
-        .contains(r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#));
+    assert!(
+        temp_main_rs_content.contains(
+            r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#
+        )
+    );
 }
 
 #[test]

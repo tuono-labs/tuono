@@ -1,8 +1,8 @@
 use fs_extra::dir::create_all;
 use http::Method;
 use regex::Regex;
-use reqwest::blocking::Client;
 use reqwest::Url;
+use reqwest::blocking::Client;
 use std::fs::File;
 use std::io;
 use std::path::PathBuf;
@@ -180,7 +180,7 @@ impl Route {
                 return Err(format!(
                     "Failed to get the parent directory {:?}",
                     file_path
-                ))
+                ));
             }
         };
 
@@ -216,7 +216,7 @@ impl Route {
                     return Err(format!(
                         "Failed to get the parent directory {:?}",
                         data_file_path
-                    ))
+                    ));
                 }
             };
 
@@ -255,7 +255,7 @@ impl Route {
                     return Err(format!(
                         "Failed to create the JSON file: {:?}",
                         data_file_path
-                    ))
+                    ));
                 }
             };
 

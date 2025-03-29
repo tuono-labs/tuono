@@ -1,4 +1,4 @@
-use fs_extra::dir::{copy, CopyOptions};
+use fs_extra::dir::{CopyOptions, copy};
 use spinners::{Spinner, Spinners};
 use std::path::PathBuf;
 use std::thread::sleep;

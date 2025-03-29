@@ -1,6 +1,6 @@
 use crate::config::GLOBAL_CONFIG;
 use crate::manifest::MANIFEST;
-use crate::mode::{Mode, GLOBAL_MODE};
+use crate::mode::{GLOBAL_MODE, Mode};
 use erased_serde::Serialize;
 use regex::Regex;
 use serde::Serialize as SerdeSerialize;

@@ -6,7 +6,7 @@ use watchexec_supervisor::command::{Command, Program};
 use miette::{IntoDiagnostic, Result};
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
-use watchexec_supervisor::job::{start_job, Job};
+use watchexec_supervisor::job::{Job, start_job};
 
 use crate::source_builder::SourceBuilder;
 use console::Term;
