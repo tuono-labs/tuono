@@ -7,7 +7,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_macro_input, FnArg, ItemFn, Pat};
+use syn::{FnArg, ItemFn, Pat, parse_macro_input};
 
 pub fn handler_core(_args: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as ItemFn);

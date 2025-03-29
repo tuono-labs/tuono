@@ -6,7 +6,7 @@ use proc_macro::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat};
+use syn::{FnArg, Ident, ItemFn, Pat, parse_macro_input};
 
 pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as ItemFn);

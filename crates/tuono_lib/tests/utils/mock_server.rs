@@ -3,9 +3,9 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use std::{env, fs};
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 use tuono_lib::axum::routing::get;
-use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
+use tuono_lib::{Mode, Server, axum::Router, tuono_internal_init_v8_platform};
 
 use crate::utils::catch_all::get_tuono_internal_api as catch_all;
 use crate::utils::dynamic_parameter::get_tuono_internal_api as dynamic_parameter;

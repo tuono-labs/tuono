@@ -4,8 +4,8 @@ use axum::response::IntoResponse;
 use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::connect_async;
 use tokio_tungstenite::tungstenite::{Error, Message};
-use tungstenite::client::IntoClientRequest;
 use tungstenite::ClientRequestBuilder;
+use tungstenite::client::IntoClientRequest;
 
 const VITE_WS_PROTOCOL: &str = "vite-hmr";
 
