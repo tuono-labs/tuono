@@ -14,8 +14,7 @@ mod response;
 mod server;
 mod services;
 mod ssr;
-mod vite_reverse_proxy;
-mod vite_websocket_proxy;
+mod vite;
 
 pub use mode::Mode;
 pub use payload::Payload;
