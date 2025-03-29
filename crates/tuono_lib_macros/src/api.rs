@@ -57,16 +57,14 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
             let path = parts.uri.clone();
             let headers = parts.headers.clone();
 
-            let mut req = tuono_lib::Request::new(path, headers, params);
 
+            let body = axum::body::to_bytes(body).await.unwrap_or_else(|_| axum::body::Bytes::new());
+            let mut req = tuono_lib::Request::new(path, headers, params, Some(body));
 
-            if let Ok(bytes) = axum::body::to_bytes(body, usize::MAX).await {
-                req.body = Some(bytes.to_vec());
-            }
         }
     } else {
         quote! {
-            let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params);
+            let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params, None);
         }
     };
 

@@ -38,11 +38,11 @@ pub struct Request {
     pub uri: Uri,
     pub headers: HeaderMap,
     pub params: HashMap<String, String>,
-    pub body: Option<Vec<u8>>,
+    body: Option<Vec<u8>>,
 }
 
 impl Request {
-    pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>) -> Request {
+    pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>, body: Option<Vec<u8>>) -> Request {
         Request {
             uri,
             headers,
@@ -85,8 +85,7 @@ impl Request {
     where
         T: DeserializeOwned,
     {
-        let content_type = self
-            .headers
+        let content_type = self.headers
             .get("content-type")
             .and_then(|v| v.to_str().ok())
             .unwrap_or("");
@@ -95,26 +94,11 @@ impl Request {
             return Err(FormError::InvalidContentType);
         }
 
-        let body_str = match self.body_as_string() {
-            Ok(s) => s,
-            Err(e) => return Err(FormError::ParseError(e)),
-        };
+        let body_str = self.body_as_string()
+            .map_err(|e| FormError::ParseError(e))?;
 
-        let form_data = match serde_json::to_value(
-            form_urlencoded::parse(body_str.as_bytes())
-                .into_owned()
-                .collect::<HashMap<String, String>>(),
-        ) {
-            Ok(value) => value,
-            Err(e) => return Err(FormError::ParseError(e.to_string())),
-        };
-
-        let result: T = match serde_json::from_value(form_data) {
-            Ok(value) => value,
-            Err(e) => return Err(FormError::ParseError(e.to_string())),
-        };
-
-        Ok(result)
+        serde_urlencoded::from_str::<T>(&body_str)
+            .map_err(|e| FormError::ParseError(e.to_string()))
     }
 }
 
@@ -186,6 +170,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         request.headers.insert(
@@ -205,6 +190,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         let body: Result<FakeBody, BodyParseError> = request.body();
@@ -218,6 +204,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         request
@@ -235,6 +222,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         request.headers.insert(
@@ -258,6 +246,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         request
@@ -284,6 +273,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
+            None
         );
 
         request.headers.insert(
