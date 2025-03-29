@@ -54,7 +54,7 @@ pub fn handler_core(_args: TokenStream, item: TokenStream) -> TokenStream {
            let pathname = request.uri();
            let headers = request.headers();
 
-           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params);
+           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params, None);
 
            #fn_name(req.clone(), #argument_names).await.render_to_string(req)
         }
@@ -68,7 +68,7 @@ pub fn handler_core(_args: TokenStream, item: TokenStream) -> TokenStream {
            let pathname = request.uri();
            let headers = request.headers();
 
-           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params);
+           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params, None);
 
            #fn_name(req.clone(), #argument_names).await.json()
         }

@@ -171,3 +171,26 @@ async fn it_reads_an_env_var() {
     assert!(response.status().is_success());
     assert_eq!(response.text().await.unwrap(), "foobar");
 }
+
+#[tokio::test]
+#[serial]
+async fn it_parses_the_http_body() {
+    let app = MockTuonoServer::spawn().await;
+
+    let client = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .unwrap();
+
+    let server_url = format!("http://{}:{}", &app.address, &app.port);
+
+    let response = client
+        .post(format!("{server_url}/api/post"))
+        .body(r#"{"data":"payload"}"#)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(response.status().is_success());
+    assert_eq!(response.text().await.unwrap(), "payload");
+}
