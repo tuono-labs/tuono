@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, parse_quote, FnArg, Pat, Stmt};
+use syn::{FnArg, Pat, Stmt, parse_quote, parse2};
 
 pub fn create_struct_fn_arg() -> FnArg {
     parse2(quote! {

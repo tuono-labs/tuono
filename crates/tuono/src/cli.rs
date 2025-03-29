@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use tracing::{span, Level};
+use tracing::{Level, span};
 
 use crate::commands::{build, dev, new};
 use crate::mode::Mode;

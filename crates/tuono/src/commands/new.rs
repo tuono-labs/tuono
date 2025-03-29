@@ -3,7 +3,7 @@ use reqwest::blocking;
 use reqwest::blocking::Client;
 use serde::Deserialize;
 use std::env;
-use std::fs::{self, create_dir, File, OpenOptions};
+use std::fs::{self, File, OpenOptions, create_dir};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 
@@ -100,14 +100,18 @@ pub fn create_new_project(
 
     if new_project_files.is_empty() {
         eprintln!("Error: Template '{template}' not found");
-        println!("Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples");
+        println!(
+            "Hint: you can view the available templates at https://github.com/tuono-labs/tuono/tree/main/examples"
+        );
         std::process::exit(1);
     }
 
     if folder != "." {
         if Path::new(&folder).exists() {
             eprintln!("Error: Directory '{folder}' already exists");
-            println!("Hint: you can scaffold a tuono project within an existing folder with 'cd {folder} && tuono new .'");
+            println!(
+                "Hint: you can scaffold a tuono project within an existing folder with 'cd {folder} && tuono new .'"
+            );
             std::process::exit(1);
         }
         create_dir(&folder).unwrap();

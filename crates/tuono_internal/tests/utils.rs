@@ -3,7 +3,7 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 
 #[derive(Debug)]
 pub struct TempTuonoProject {

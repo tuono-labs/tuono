@@ -1,4 +1,4 @@
-use crate::mode::{Mode, GLOBAL_MODE};
+use crate::mode::{GLOBAL_MODE, Mode};
 use ssr_rs::{Ssr, SsrError};
 use std::cell::RefCell;
 use std::fs::read_to_string;

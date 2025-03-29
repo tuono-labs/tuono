@@ -71,11 +71,13 @@ async fn index_html_route() {
 
     // TODO: This should return a 404 status code
     assert!(response.status().is_success());
-    assert!(response
-        .text()
-        .await
-        .unwrap()
-        .starts_with("<!DOCTYPE html>"));
+    assert!(
+        response
+            .text()
+            .await
+            .unwrap()
+            .starts_with("<!DOCTYPE html>")
+    );
 }
 
 #[tokio::test]
