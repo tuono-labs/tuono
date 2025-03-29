@@ -38,25 +38,16 @@ pub struct Request {
     pub uri: Uri,
     pub headers: HeaderMap,
     pub params: HashMap<String, String>,
-    body: Option<Vec<u8>>,
+    body: Option<axum::body::Bytes>
 }
 
 impl Request {
-    pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>, body: Option<Vec<u8>>) -> Request {
+    pub fn new(uri: Uri, headers: HeaderMap, params: HashMap<String, String>, body: Option<axum::body::Bytes>) -> Request {
         Request {
             uri,
             headers,
             params,
-            body: None,
-        }
-    }
-
-    pub fn body_as_string(&self) -> Result<String, String> {
-        match &self.body {
-            Some(body) => {
-                String::from_utf8(body.clone()).map_err(|_| "Invalid UTF-8 in body".into())
-            }
-            None => Err("Body is missing".into()),
+            body,
         }
     }
 
@@ -93,11 +84,11 @@ impl Request {
         if !content_type.contains("application/x-www-form-urlencoded") {
             return Err(FormError::InvalidContentType);
         }
+        let body = self.body
+            .as_ref()
+            .ok_or(FormError::ParseError("Body is missing".to_string()))?;
 
-        let body_str = self.body_as_string()
-            .map_err(|e| FormError::ParseError(e))?;
-
-        serde_urlencoded::from_str::<T>(&body_str)
+        serde_urlencoded::from_bytes::<T>(body)
             .map_err(|e| FormError::ParseError(e.to_string()))
     }
 }
@@ -230,7 +221,7 @@ mod tests {
             "application/x-www-form-urlencoded".parse().unwrap(),
         );
 
-        request.body = Some("name=John+Doe&email=john%40example.com".as_bytes().to_vec());
+        request.body = Some(axum::body::Bytes::from("name=John+Doe&email=john%40example.com"));
 
         let form_data: Result<FormData, FormError> = request.form_data();
 
