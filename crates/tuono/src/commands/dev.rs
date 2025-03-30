@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::Path;
 use std::sync::{Arc, RwLock};
+use std::time::Duration;
+use tokio::task::JoinHandle;
 use watchexec_events::Tag;
 use watchexec_events::filekind::FileEventKind;
 use watchexec_supervisor::command::{Command, Program};
@@ -24,7 +26,7 @@ const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
 #[cfg(not(target_os = "windows"))]
 const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
 
-fn watch_react_src() -> Job {
+fn watch_react_src() -> (Job, JoinHandle<()>) {
     if !Path::new(DEV_SSR_BIN_SRC).exists() {
         eprintln!("Failed to find script to run dev watch. Please run `npm install`");
         std::process::exit(1);
@@ -36,10 +38,9 @@ fn watch_react_src() -> Job {
         },
         options: Default::default(),
     }))
-    .0
 }
 
-fn run_rust_dev_server() -> Job {
+fn run_rust_dev_server() -> (Job, JoinHandle<()>) {
     start_job(Arc::new(Command {
         program: Program::Exec {
             prog: "cargo".into(),
@@ -47,10 +48,9 @@ fn run_rust_dev_server() -> Job {
         },
         options: Default::default(),
     }))
-    .0
 }
 
-fn build_rust_src() -> Job {
+fn build_rust_src() -> (Job, JoinHandle<()>) {
     start_job(Arc::new(Command {
         program: Program::Exec {
             prog: "cargo".into(),
@@ -58,10 +58,9 @@ fn build_rust_src() -> Job {
         },
         options: Default::default(),
     }))
-    .0
 }
 
-fn build_react_ssr_src() -> Job {
+fn build_react_ssr_src() -> (Job, JoinHandle<()>) {
     if !Path::new(DEV_SSR_BIN_SRC).exists() {
         eprintln!("Failed to find script to run dev ssr. Please run `npm install`");
         std::process::exit(1);
@@ -73,7 +72,6 @@ fn build_react_ssr_src() -> Job {
         },
         options: Default::default(),
     }))
-    .0
 }
 
 fn ssr_reload_needed(path: &Path) -> bool {
@@ -93,12 +91,12 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
-    watch_react_src().start().await;
+    let (watch_react, watch_react_handle) = watch_react_src();
 
-    let rust_server = run_rust_dev_server();
-    let build_rust_src = build_rust_src();
+    let (rust_server, rust_server_handle) = run_rust_dev_server();
+    let (build_rust_src, build_rust_src_hanlde) = build_rust_src();
 
-    let build_ssr_bundle = build_react_ssr_src();
+    let (build_ssr_bundle, build_ssr_bundle_hanlde) = build_react_ssr_src();
 
     let env_files = fs::read_dir("./")
         .expect("Error reading env files from current directory")
@@ -109,6 +107,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     build_ssr_bundle.start().await;
     build_rust_src.start().await;
+    watch_react.start().await;
 
     // Wait vite and rust builds
     build_ssr_bundle.to_wait().await;
@@ -124,7 +123,14 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         if action.signals().any(|sig| sig == Signal::Interrupt) {
             rust_server.stop();
             build_ssr_bundle.stop();
-            action.quit();
+            watch_react.stop();
+            watch_react_handle.abort();
+            rust_server_handle.abort();
+            build_rust_src_hanlde.abort();
+            build_ssr_bundle_hanlde.abort();
+
+            action.quit_gracefully(Signal::Quit, Duration::from_secs(30));
+            return action;
         }
 
         let mut should_reload_ssr_bundle = false;
