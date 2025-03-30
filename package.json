@@ -12,7 +12,6 @@
     "typecheck": "turbo typecheck --filter=./devtools/* --filter=./packages/*",
     "test": "turbo test --filter=./devtools/* --filter=./packages/*",
     "test:watch": "turbo test:watch --filter=./devtools/* --filter=./packages/*",
-    "test:e2e": "pnpm --filter='fixture-*' run test:e2e",
     "examples:format": "prettier ./examples/** --check",
     "examples:format:fix": "prettier ./examples/** --write",
     "examples:typecheck": "pnpm --filter \"./examples/*\" exec tsc --noEmit",

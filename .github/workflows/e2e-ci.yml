@@ -38,6 +38,10 @@ jobs:
         run: pnpm exec playwright install
 
       - name: Run Playwright E2E tests
+        # Due to a bug in pnpm on Windows this --filter flag does not work when
+        # called directly with a package.json script.
+        # In order to make it working we need to call it directly with pnpm in
+        # the CI command.
         run: pnpm --filter='fixture-*' run test:e2e
 
   ci_ok:
