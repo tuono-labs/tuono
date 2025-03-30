@@ -38,7 +38,7 @@ jobs:
         run: pnpm exec playwright install
 
       - name: Run Playwright E2E tests
-        run: pnpm test:e2e
+        run: pnpm --filter='fixture-*' run test:e2e
 
   ci_ok:
     name: E2E CI OK
