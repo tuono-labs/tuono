@@ -105,8 +105,19 @@ async fn handle_socket(mut tuono_socket: WebSocket) {
             };
 
             if let Err(err) = tuono_sender.send(msg_to_browser).await {
-                if err.to_string() != Error::AlreadyClosed.to_string() {
-                    eprintln!("Failed to send back message from vite to browser: {err}")
+                let err_str = &err.to_string();
+                let error = err
+                    .into_inner()
+                    .downcast::<Error>()
+                    .unwrap_or(Box::new(Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "Failed to parse error into tungstenite::Error",
+                    ))));
+
+                match *error {
+                    Error::AlreadyClosed => {}
+                    Error::Io(err) => eprintln!("IO error received from vite: {}", err.to_string()),
+                    _ => eprintln!("Failed to send back message from vite to browser: {err_str}"),
                 }
             }
         }

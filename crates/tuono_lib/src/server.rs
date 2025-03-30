@@ -8,10 +8,8 @@ use tower_http::services::ServeDir;
 use tuono_internal::config::Config;
 
 use crate::env::load_env_vars;
-use crate::{
-    catch_all::catch_all, services::logger::LoggerLayer
-};
 use crate::vite::{vite_reverse_proxy, vite_websocket_proxy};
+use crate::{catch_all::catch_all, services::logger::LoggerLayer};
 
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
