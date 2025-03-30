@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::Path;
 use std::sync::{Arc, RwLock};
+use watchexec_events::Tag;
+use watchexec_events::filekind::FileEventKind;
 use watchexec_supervisor::command::{Command, Program};
 
 use miette::{IntoDiagnostic, Result};
@@ -111,7 +113,6 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     // Wait vite and rust builds
     build_ssr_bundle.to_wait().await;
     build_rust_src.to_wait().await;
-
     rust_server.start().await;
 
     // Remove the spinner
@@ -119,26 +120,48 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     _ = term.clear_line();
 
     let wx = Watchexec::new(move |mut action| {
+        // if Ctrl-C is received, quit
+        if action.signals().any(|sig| sig == Signal::Interrupt) {
+            rust_server.stop();
+            build_ssr_bundle.stop();
+            action.quit();
+        }
+
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
+        let mut should_refresh_axum_source = false;
 
         for event in action.events.iter() {
-            for path in event.paths() {
-                let file_path = path.0.to_string_lossy();
-                if file_path.ends_with(".rs") {
-                    // TODO: only the new file show trigger a axum refresh.
-                    // Update of existing file should just reload the server.
-                    should_reload_rust_server = true
-                }
+            for event_type in event.tags.iter() {
+                match event_type {
+                    Tag::FileEventKind(kind) => match kind {
+                        FileEventKind::Create(_) => {
+                            if event.paths().any(|(path, _)| {
+                                path.ends_with(".rs") || 
+                            // APIs might define new HTTP methods that requires
+                            // a refresh of the axum source
+                            path.to_str().unwrap_or("").contains("api")
+                            }) {
+                                should_refresh_axum_source = true;
+                            }
+                        }
+                        FileEventKind::Modify(_) => {
+                            if event.paths().any(|(path, _)| path.ends_with(".rs")) {
+                                should_reload_rust_server = true;
+                            }
 
-                if ssr_reload_needed(path.0) {
-                    should_reload_ssr_bundle = true
+                            if event.paths().any(|(path, _)| ssr_reload_needed(path)) {
+                                should_reload_ssr_bundle = true;
+                            }
+                        }
+                        _ => {}
+                    },
+                    _ => {}
                 }
             }
         }
 
-        if should_reload_rust_server {
-            println!("  Reloading...");
+        if should_refresh_axum_source {
             rust_server.stop();
             if let Ok(mut builder) = source_builder.write() {
                 builder.app.collect_routes();
@@ -147,14 +170,15 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
             rust_server.start();
         }
 
+        if should_reload_rust_server {
+            println!("  Reloading...");
+            rust_server.stop();
+            rust_server.start();
+        }
+
         if should_reload_ssr_bundle {
             build_ssr_bundle.stop();
             build_ssr_bundle.start();
-        }
-
-        // if Ctrl-C is received, quit
-        if action.signals().any(|sig| sig == Signal::Interrupt) {
-            action.quit();
         }
 
         action
