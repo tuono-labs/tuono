@@ -116,7 +116,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     // Remove the spinner
     sp.stop();
-    term.clear_line().unwrap();
+    _ = term.clear_line();
 
     let wx = Watchexec::new(move |mut action| {
         let mut should_reload_ssr_bundle = false;
@@ -126,6 +126,8 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
             for path in event.paths() {
                 let file_path = path.0.to_string_lossy();
                 if file_path.ends_with(".rs") {
+                    // TODO: only the new file show trigger a axum refresh.
+                    // Update of existing file should just reload the server.
                     should_reload_rust_server = true
                 }
 
@@ -138,9 +140,10 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         if should_reload_rust_server {
             println!("  Reloading...");
             rust_server.stop();
-            let mut builder = source_builder.write().unwrap();
-            builder.app.collect_routes();
-            _ = builder.refresh_axum_source();
+            if let Ok(mut builder) = source_builder.write() {
+                builder.app.collect_routes();
+                _ = builder.refresh_axum_source();
+            }
             rust_server.start();
         }
 
