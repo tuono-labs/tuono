@@ -1,14 +1,14 @@
 use crate::mode::Mode;
 use crate::route::Route;
-use glob::glob;
 use glob::GlobError;
+use glob::glob;
 use http::Method;
 use std::collections::hash_set::HashSet;
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::{HashMap, hash_map::Entry};
 use std::fs::File;
 use std::io;
-use std::io::prelude::*;
 use std::io::BufReader;
+use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
@@ -68,7 +68,7 @@ impl App {
         app
     }
 
-    fn collect_routes(&mut self) {
+    pub fn collect_routes(&mut self) {
         glob(
             self.base_path
                 .join("src/routes/**/*.*")
@@ -153,9 +153,9 @@ impl App {
         if let Err(_e) = rust_listener {
             eprintln!("Error: Failed to bind to port {}", config.server.port);
             eprintln!(
-            "Please ensure that port {} is not already in use by another process or application.",
-            config.server.port
-        );
+                "Please ensure that port {} is not already in use by another process or application.",
+                config.server.port
+            );
             std::process::exit(1);
         }
 
@@ -167,9 +167,9 @@ impl App {
             if let Err(_e) = vite_listener {
                 eprintln!("Error: Failed to bind to port {}", vite_port);
                 eprintln!(
-                "Please ensure that port {} is not already in use by another process or application.",
-                vite_port
-            );
+                    "Please ensure that port {} is not already in use by another process or application.",
+                    vite_port
+                );
                 std::process::exit(1);
             }
         }
@@ -203,7 +203,7 @@ impl App {
             .expect("Failed to run the rust server")
     }
 
-    pub fn build_tuono_config(&mut self) -> Result<std::process::Output, std::io::Error> {
+    pub fn build_tuono_config(&mut self) -> io::Result<std::process::Output> {
         if !Path::new(BUILD_TUONO_CONFIG).exists() {
             eprintln!("Failed to find the build script. Please run `npm install`");
             std::process::exit(1);
@@ -219,7 +219,9 @@ impl App {
             Ok(config) => self.config = Some(config),
             Err(error) => {
                 match error.kind() {
-                    io::ErrorKind::NotFound => eprintln!("Failed to read config. Please run `npm install` to generate automatically."),
+                    io::ErrorKind::NotFound => eprintln!(
+                        "Failed to read config. Please run `npm install` to generate automatically."
+                    ),
                     _ => {
                         error!("Failed to read config with the following error:");
                         error!("{}", error);
@@ -453,19 +455,21 @@ mod tests {
             .into_iter()
             .for_each(|(path, expected_has_server_handler)| {
                 if expected_has_server_handler {
-                    assert!(app
-                        .route_map
-                        .get(path)
-                        .expect("Failed to get route path")
-                        .axum_info
-                        .is_some())
+                    assert!(
+                        app.route_map
+                            .get(path)
+                            .expect("Failed to get route path")
+                            .axum_info
+                            .is_some()
+                    )
                 } else {
-                    assert!(app
-                        .route_map
-                        .get(path)
-                        .expect("Failed to get route path")
-                        .axum_info
-                        .is_none())
+                    assert!(
+                        app.route_map
+                            .get(path)
+                            .expect("Failed to get route path")
+                            .axum_info
+                            .is_none()
+                    )
                 }
             })
     }

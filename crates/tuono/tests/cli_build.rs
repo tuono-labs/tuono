@@ -1,12 +1,17 @@
 use assert_cmd::Command;
 use serial_test::serial;
 use std::fs;
+use tracing::Level;
 
 mod utils;
 use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
+
+fn tracing_message(level: Level, module: &str, message: &str) -> String {
+    format!("\x1b[31m{level}\x1b[0m \x1b[2mtuono::{module}\x1b[0m\x1b[2m:\x1b[0m {message}\n")
+}
 
 #[cfg(target_os = "windows")]
 const BUILD_TUONO_CONFIG: &str = ".\\node_modules\\.bin\\tuono-build-config.cmd";
@@ -95,8 +100,11 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
     assert!(temp_main_rs_content.contains(
         r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
-    assert!(temp_main_rs_content
-        .contains(r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#));
+    assert!(
+        temp_main_rs_content.contains(
+            r#".route("/api/health_check", get(api_health_check::get_tuono_internal_api))"#
+        )
+    );
 }
 
 #[test]
@@ -185,7 +193,11 @@ fn dev_fails_with_no_config() {
         .arg("dev")
         .assert()
         .failure()
-        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+        .stdout(tracing_message(
+            Level::ERROR,
+            "source_builder",
+            "Cannot find tuono.config.ts - is this a tuono project?",
+        ));
 }
 
 #[test]
@@ -198,5 +210,9 @@ fn build_fails_with_no_config() {
         .arg("dev")
         .assert()
         .failure()
-        .stderr("Cannot find tuono.config.ts - is this a tuono project?\n");
+        .stdout(tracing_message(
+            Level::ERROR,
+            "source_builder",
+            "Cannot find tuono.config.ts - is this a tuono project?",
+        ));
 }

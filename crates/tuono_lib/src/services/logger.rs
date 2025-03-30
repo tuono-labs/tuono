@@ -1,5 +1,5 @@
 use colored::Colorize;
-use http::{method::Method, Request, Response};
+use http::{Request, Response, method::Method};
 use pin_project::pin_project;
 use std::fmt::Debug;
 use std::future::Future;

@@ -1,15 +1,9 @@
-use std::path::PathBuf;
-
 use clap::{Parser, Subcommand};
-use tracing::{span, Level};
-use tracing_subscriber::EnvFilter;
+use tracing::{Level, span};
 
-use crate::app::App;
 use crate::commands::{build, dev, new};
 use crate::mode::Mode;
-use crate::source_builder::{
-    bundle_axum_source, check_tuono_folder, create_client_entry_files, generate_fallback_html,
-};
+use crate::source_builder::SourceBuilder;
 
 #[derive(Subcommand, Debug)]
 enum Actions {
@@ -46,29 +40,7 @@ struct Args {
     action: Actions,
 }
 
-fn check_for_tuono_config() {
-    if !PathBuf::from("tuono.config.ts").exists() {
-        eprintln!("Cannot find tuono.config.ts - is this a tuono project?");
-        std::process::exit(1);
-    }
-}
-
-fn init_tuono_folder(mode: Mode) -> std::io::Result<App> {
-    check_for_tuono_config();
-    check_tuono_folder()?;
-    let app = bundle_axum_source(mode)?;
-    create_client_entry_files()?;
-
-    Ok(app)
-}
-
 pub fn app() -> std::io::Result<()> {
-    tracing_subscriber::fmt()
-        // Not need for the time since the code is synchronous
-        .without_time()
-        .with_env_filter(EnvFilter::from_default_env())
-        .init();
-
     let args = Args::parse();
 
     match args.action {
@@ -77,24 +49,22 @@ pub fn app() -> std::io::Result<()> {
 
             let _guard = span.enter();
 
-            let mut app = init_tuono_folder(Mode::Dev)?;
+            let mut source_builder = SourceBuilder::new(Mode::Dev)?;
 
-            app.build_tuono_config()
-                .expect("Failed to build tuono.config.ts");
+            source_builder.base_build()?;
 
-            generate_fallback_html(&app)?;
-            app.check_server_availability(Mode::Dev);
+            source_builder.app.check_server_availability(Mode::Dev);
 
-            dev::watch().unwrap();
+            dev::watch(source_builder).unwrap();
         }
         Actions::Build { ssg, no_js_emit } => {
             let span = span!(Level::TRACE, "BUILD");
 
             let _guard = span.enter();
 
-            let app = init_tuono_folder(Mode::Prod)?;
-
-            build::build(app, ssg, no_js_emit);
+            let mut source_builder = SourceBuilder::new(Mode::Prod)?;
+            source_builder.base_build()?;
+            build::build(source_builder.app, ssg, no_js_emit);
         }
         Actions::New {
             folder_name,

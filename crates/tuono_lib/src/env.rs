@@ -3,7 +3,12 @@ use std::collections::HashSet;
 use std::env;
 use std::fs;
 
-pub fn load_env_vars(mode: Mode) {
+/// Read the env variables from the .env files
+/// and set them in the OS env
+///
+/// This function is unsafe because it modifies the OS env variables (which needs
+/// to be done in a single-threaded context).
+pub unsafe fn load_env_vars(mode: Mode) {
     let mut env_files = vec![String::from(".env"), String::from(".env.local")];
 
     let mode_name = match mode {
@@ -32,7 +37,9 @@ pub fn load_env_vars(mode: Mode) {
                         continue; // Skip if key exists in system env
                     }
 
-                    env::set_var(key, value);
+                    unsafe {
+                        env::set_var(key, value);
+                    }
                 }
             }
         }
@@ -63,7 +70,9 @@ mod tests {
 
         fn add_system_var(&mut self, k: &str, v: &str) {
             self.vars.insert(k.to_string(), v.to_string());
-            env::set_var(k, v);
+            unsafe {
+                env::set_var(k, v);
+            }
         }
 
         pub fn setup_env_file(&mut self, file_name: &str, contents: &str) {
@@ -86,7 +95,9 @@ mod tests {
                 let _ = fs::remove_file(file.as_str());
             }
             for key in self.vars.keys() {
-                env::remove_var(key);
+                unsafe {
+                    env::remove_var(key);
+                }
             }
         }
     }
@@ -99,7 +110,9 @@ mod tests {
         mock_env.add_system_var("TEST_KEY", "system_value");
         mock_env.setup_env_file(".env", "TEST_KEY=file_value");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -114,7 +127,9 @@ mod tests {
         mock_env.setup_env_file(".env", "TEST_KEY=base_value");
         mock_env.setup_env_file(".env.development", "TEST_KEY=development_value");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -129,7 +144,9 @@ mod tests {
         mock_env.setup_env_file(".env", "TEST_KEY=base_value");
         mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
 
-        load_env_vars(Mode::Prod);
+        unsafe {
+            load_env_vars(Mode::Prod);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -144,7 +161,9 @@ mod tests {
         mock_env.setup_env_file(".env", "TEST_KEY=base_value");
         mock_env.setup_env_file(".env.local", "TEST_KEY=local_value");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -160,7 +179,9 @@ mod tests {
         mock_env.setup_env_file(".env.development", "TEST_KEY=development_value");
         mock_env.setup_env_file(".env.development.local", "TEST_KEY=local_dev_value");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -176,7 +197,9 @@ mod tests {
         mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
         mock_env.setup_env_file(".env.production.local", "TEST_KEY=local_prod_value");
 
-        load_env_vars(Mode::Prod);
+        unsafe {
+            load_env_vars(Mode::Prod);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -191,7 +214,9 @@ mod tests {
         mock_env.setup_env_file(".env.development", "TEST_KEY=development_value");
         mock_env.setup_env_file(".env.production", "TEST_KEY=production_value");
 
-        load_env_vars(Mode::Prod);
+        unsafe {
+            load_env_vars(Mode::Prod);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -205,7 +230,9 @@ mod tests {
 
         mock_env.setup_env_file(".env", "");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         assert!(env::var("NON_EXISTENT_KEY").is_err());
     }
@@ -216,8 +243,9 @@ mod tests {
         let mut mock_env = MockEnv::new();
 
         mock_env.setup_env_file(".env", "INVALID_LINE\nMISSING_EQUALS_SIGN");
-
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["INVALID_LINE", "MISSING_EQUALS_SIGN"]);
 
@@ -232,7 +260,9 @@ mod tests {
 
         mock_env.setup_env_file(".env", r#"TEST_KEY="quoted_value""#);
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["TEST_KEY"]);
 
@@ -243,8 +273,9 @@ mod tests {
     #[serial]
     fn test_non_existent_env_file() {
         let mut mock_env = MockEnv::new();
-
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["NON_EXISTENT_KEY"]);
 
@@ -258,7 +289,9 @@ mod tests {
 
         mock_env.setup_env_file(".env", "KEY1=value1\nKEY2=value2");
 
-        load_env_vars(Mode::Dev);
+        unsafe {
+            load_env_vars(Mode::Dev);
+        }
 
         mock_env.capture_keys(&["KEY1", "KEY2"]);
 

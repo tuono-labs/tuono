@@ -1,7 +1,7 @@
 use crate::config::GLOBAL_CONFIG;
 use crate::manifest::load_manifest;
-use crate::mode::{Mode, GLOBAL_MODE};
-use axum::routing::{get, Router};
+use crate::mode::{GLOBAL_MODE, Mode};
+use axum::routing::{Router, get};
 use colored::Colorize;
 use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
@@ -63,7 +63,13 @@ impl Server {
 
         let server_address = format!("{}:{}", config.server.host, config.server.port);
 
-        load_env_vars(mode);
+        unsafe {
+            // This function is unsafe because it modifies the OS env variables
+            // which is not thread-safe.
+            // However, we are using it in a controlled environment which hasn't
+            // spawned any threads yet.
+            load_env_vars(mode);
+        }
 
         Server {
             router,

@@ -1,7 +1,7 @@
 [package]
 name = "tuono_lib"
-version = "0.18.0"
-edition = "2021"
+version = "0.19.1"
+edition = "2024"
 authors = ["V. Ageno <valerioageno@yahoo.it>"]
 description = "Superfast React fullstack framework"
 homepage = "https://tuono.dev"
@@ -17,7 +17,7 @@ include = [
 
 
 [dependencies]
-ssr_rs = "0.8.1"
+ssr_rs = "0.8.2"
 axum = {version = "0.8.1", features = ["json", "ws"]}
 axum-extra = {version = "0.10.0", features = ["cookie"]}
 tokio = { version = "1.37.0", features = ["full"] }
@@ -32,8 +32,8 @@ either = "1.13.0"
 tower-http = {version = "0.6.0", features = ["fs"]}
 colored = "2.1.0"
 
-tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.18.0"}
-tuono_internal = {path = "../tuono_internal", version = "0.18.0"}
+tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.19.1"}
+tuono_internal = {path = "../tuono_internal", version = "0.19.1"}
 # Match the same version used by axum
 tokio-tungstenite = "0.26.0"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
@@ -45,4 +45,4 @@ tower = "0.5.1"
 [dev-dependencies]
 fs_extra = "1.3.0"
 tempfile = "3.14.0"
-serial_test = "0.10.0"
+serial_test = "3.0.0"

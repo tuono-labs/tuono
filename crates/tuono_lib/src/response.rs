@@ -1,8 +1,8 @@
 use crate::Request;
-use crate::{ssr::Js, Payload};
+use crate::{Payload, ssr::Js};
+use axum::Json;
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{Html, IntoResponse, Redirect};
-use axum::Json;
 use axum_extra::extract::cookie::{Cookie, CookieJar};
 use erased_serde::Serialize;
 
@@ -82,7 +82,7 @@ impl Props {
 }
 
 impl Response {
-    pub fn render_to_string(&self, req: Request) -> impl IntoResponse {
+    pub fn render_to_string(&self, req: Request) -> impl IntoResponse + use<> {
         match self {
             Self::Props(Props {
                 data,
@@ -106,7 +106,7 @@ impl Response {
         }
     }
 
-    pub fn json(&self) -> impl IntoResponse {
+    pub fn json(&self) -> impl IntoResponse + use<> {
         match self {
             Self::Props(Props {
                 data,
