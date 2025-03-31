@@ -44,7 +44,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     // Fine holding the lock for a longer time since there are no yet other
     // threads
-    #[warn(clippy::await_holding_lock)]
+    #[allow(clippy::await_holding_lock)]
     process_manager.lock().unwrap().start_dev_processes().await;
 
     // Remove the spinner
