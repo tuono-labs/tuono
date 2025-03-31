@@ -10,11 +10,10 @@ struct Payload {
 async fn form_data(req: Request) -> String {
     let form = match req.form_data::<Payload>() {
         Ok(data) => data,
-        Err((status_code, err)) => {
+        Err(e) => {
             return format!(
-                "Error: {}. Status code: {}",
-                err.to_string(),
-                status_code
+                "Error: {}",
+                e.to_string(),
             );
         },
     };

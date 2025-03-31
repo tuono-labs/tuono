@@ -1,8 +1,8 @@
 use axum::http::{HeaderMap, Uri};
-use http::StatusCode;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt::Display;
 
 /// Location must match client side interface
 #[derive(Serialize, Debug)]
@@ -72,7 +72,7 @@ impl Request {
         )))
     }
 
-    pub fn form_data<T>(&self) -> Result<T, (StatusCode, String)>
+    pub fn form_data<T>(&self) -> Result<T, BodyParseError>
     where
         T: DeserializeOwned,
     {
@@ -82,36 +82,46 @@ impl Request {
             .unwrap_or("");
 
         if !content_type.contains("application/x-www-form-urlencoded") {
-            return Err((
-                StatusCode::UNSUPPORTED_MEDIA_TYPE,
+            return Err(BodyParseError::ContentType(
                 "Invalid content type, expected application/x-www-form-urlencoded".to_string()
             ));
         }
 
         let body = self.body
             .as_ref()
-            .ok_or_else(|| (
-                StatusCode::BAD_REQUEST,
-                "Missing request body".to_string()
-            ))?;
+            .ok_or_else(|| BodyParseError::Io(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Missing request body",
+            )))?;
 
         serde_urlencoded::from_bytes::<T>(body)
-            .map_err(|e| (
-                StatusCode::BAD_REQUEST,
-                format!("Failed to parse form data: {}", e)
-            ))
+            .map_err(|e| BodyParseError::UrlEncoded(e))
     }
 }
 
 #[derive(Debug)]
 pub enum BodyParseError {
     Io(std::io::Error),
-    Serde(serde_json::Error)
+    Serde(serde_json::Error),
+    UrlEncoded(serde_urlencoded::de::Error),
+    ContentType(String),
+
 }
 
 impl From<serde_json::Error> for BodyParseError {
     fn from(err: serde_json::Error) -> BodyParseError {
         BodyParseError::Serde(err)
+    }
+}
+
+impl Display for BodyParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BodyParseError::Io(err) => write!(f, "IO error: {}", err),
+            BodyParseError::Serde(err) => write!(f, "Serde error: {}", err),
+            BodyParseError::UrlEncoded(err) => write!(f, "URL encoded error: {}", err),
+            BodyParseError::ContentType(err) => write!(f, "{}", err.to_string()),
+        }
     }
 }
 
@@ -179,7 +189,7 @@ mod tests {
             "name=John+Doe&email=john%40example.com".as_bytes().to_vec(),
         );
 
-        let form_data: Result<FormData, (_, _)> = request.form_data();
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
 
         assert!(form_data.is_ok());
         let data = form_data.unwrap();
@@ -205,15 +215,11 @@ mod tests {
             "name=John+Doe&email=john%40example.com".parse().unwrap(),
         );
 
-        let form_data: Result<FormData, (_, _)> = request.form_data();
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
 
         assert!(form_data.is_err());
         let error = form_data.unwrap_err();
-        assert_eq!(error.0, StatusCode::UNSUPPORTED_MEDIA_TYPE);
-        assert_eq!(
-            error.1,
-            "Invalid content type, expected application/x-www-form-urlencoded".to_string()
-        );
+        assert_eq!(error.to_string(), "Invalid content type, expected application/x-www-form-urlencoded".to_string());
     }
 
     #[test]
@@ -230,7 +236,7 @@ mod tests {
             "application/x-www-form-urlencoded".parse().unwrap(),
         );
 
-        let form_data: Result<FormData, (_, _)> = request.form_data();
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
 
         assert!(form_data.is_err());
     }
