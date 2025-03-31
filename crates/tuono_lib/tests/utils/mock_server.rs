@@ -12,6 +12,7 @@ use crate::utils::dynamic_parameter::get_tuono_internal_api as dynamic_parameter
 use crate::utils::env::get_tuono_internal_api as test_env;
 use crate::utils::health_check::get_tuono_internal_api as health_check;
 use crate::utils::post_api::post_tuono_internal_api as post_api;
+use crate::utils::form_data::post_tuono_internal_api as form_data_api;
 use crate::utils::route as html_route;
 use crate::utils::route::tuono_internal_api as route_api;
 
@@ -86,6 +87,7 @@ impl MockTuonoServer {
             .route("/catch_all/{*catch_all}", get(catch_all))
             .route("/dynamic/{parameter}", get(dynamic_parameter))
             .route("/api/post", post(post_api))
+            .route("/api/form_data", post(form_data_api))
             .route("/env", get(test_env));
 
         let server = Server::init(router, Mode::Prod).await;
