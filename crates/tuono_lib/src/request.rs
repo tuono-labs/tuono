@@ -188,7 +188,7 @@ mod tests {
     }
 
     #[test]
-    fn it_rejects_wrong_content_type() {
+    fn it_rejects_wrong_form_content_type() {
         let mut request = Request::new(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
@@ -217,7 +217,7 @@ mod tests {
     }
 
     #[test]
-    fn it_handles_missing_body() {
+    fn it_handles_missing_form_body() {
         let mut request = Request::new(
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
