@@ -141,7 +141,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
             for event_type in event.tags.iter() {
                 match event_type {
                     Tag::FileEventKind(kind) => match kind {
-                        FileEventKind::Create(_) => {
+                        FileEventKind::Create(_) | FileEventKind::Remove(_) => {
                             if event.paths().any(|(path, _)| {
                                 path.ends_with(".rs") || 
                             // APIs might define new HTTP methods that requires
