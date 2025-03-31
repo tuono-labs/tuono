@@ -139,11 +139,11 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
         for event in action.events.iter() {
             for event_type in event.tags.iter() {
-                match event_type {
-                    Tag::FileEventKind(kind) => match kind {
+                if let Tag::FileEventKind(kind) = event_type {
+                    match kind {
                         FileEventKind::Create(_) | FileEventKind::Remove(_) => {
                             if event.paths().any(|(path, _)| {
-                                path.ends_with(".rs") || 
+                                path.extension().is_some_and(|ext| ext == "rs") || 
                             // APIs might define new HTTP methods that requires
                             // a refresh of the axum source
                             path.to_str().unwrap_or("").contains("api")
@@ -152,7 +152,10 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                             }
                         }
                         FileEventKind::Modify(_) => {
-                            if event.paths().any(|(path, _)| path.ends_with(".rs")) {
+                            if event
+                                .paths()
+                                .any(|(path, _)| path.extension().is_some_and(|ext| ext == "rs"))
+                            {
                                 should_reload_rust_server = true;
                             }
 
@@ -161,8 +164,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                             }
                         }
                         _ => {}
-                    },
-                    _ => {}
+                    }
                 }
             }
         }
