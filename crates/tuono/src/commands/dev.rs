@@ -27,6 +27,16 @@ fn ssr_reload_needed(path: &Path) -> bool {
     file_name_starts_with_env || file_path.ends_with("sx") || file_path.ends_with("mdx")
 }
 
+#[allow(
+    clippy::await_holding_lock,
+    reason = "At this point there is no other thread waiting for the lock"
+)]
+async fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
+    if let Ok(mut pm) = process_manager.lock() {
+        pm.start_dev_processes().await
+    }
+}
+
 #[tokio::main]
 pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     let source_builder = RwLock::new(source_builder);
@@ -42,11 +52,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         .map(|entry| entry.path().to_string_lossy().into_owned())
         .collect::<Vec<String>>();
 
-    // Fine holding the lock for a longer time since there are no yet other
-    // threads
-    #[allow(clippy::await_holding_lock)]
-    process_manager.lock().unwrap().start_dev_processes().await;
-
+    start_all_processes(process_manager.clone()).await;
     // Remove the spinner
     sp.stop();
     _ = term.clear_line();
@@ -55,7 +61,9 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         let process_manager = process_manager.clone();
         // if Ctrl-C is received, quit
         if action.signals().any(|sig| sig == Signal::Interrupt) {
-            process_manager.lock().unwrap().abort_all();
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.abort_all();
+            }
 
             action.quit_gracefully(Signal::Quit, Duration::from_secs(30));
             return action;
@@ -110,17 +118,15 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                     _ = builder.refresh_axum_source();
                 }
             }
-            process_manager
-                .lock()
-                .unwrap()
-                .restart_process(ProcessId::RunRustDevServer);
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.restart_process(ProcessId::RunRustDevServer);
+            }
         }
 
         if should_reload_ssr_bundle {
-            process_manager
-                .lock()
-                .unwrap()
-                .restart_process(ProcessId::BuildReactSSRSrc);
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.restart_process(ProcessId::BuildReactSSRSrc);
+            }
         }
 
         action

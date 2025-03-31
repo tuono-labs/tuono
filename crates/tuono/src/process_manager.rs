@@ -71,6 +71,7 @@ impl ProcessManager {
         }
     }
 
+    // Start all the processes needed for the dev server
     pub async fn start_dev_processes(&mut self) {
         trace!("Starting dev processes");
         self.start_process(ProcessId::WatchReactSrc);
