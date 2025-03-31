@@ -7,5 +7,6 @@ mod app;
 pub mod cli;
 mod commands;
 mod mode;
+mod process_manager;
 mod route;
 mod source_builder;

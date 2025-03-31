@@ -1,78 +1,20 @@
 use std::fs;
 use std::path::Path;
-use std::sync::{Arc, RwLock};
+use std::sync::RwLock;
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use tokio::task::JoinHandle;
 use watchexec_events::Tag;
 use watchexec_events::filekind::FileEventKind;
-use watchexec_supervisor::command::{Command, Program};
+
+use crate::process_manager::{ProcessId, ProcessManager};
 
 use miette::{IntoDiagnostic, Result};
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
-use watchexec_supervisor::job::{Job, start_job};
 
 use crate::source_builder::SourceBuilder;
 use console::Term;
 use spinners::{Spinner, Spinners};
-
-#[cfg(target_os = "windows")]
-const DEV_WATCH_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-watch.cmd";
-#[cfg(target_os = "windows")]
-const DEV_SSR_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-ssr.cmd";
-
-#[cfg(not(target_os = "windows"))]
-const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
-#[cfg(not(target_os = "windows"))]
-const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
-
-fn watch_react_src() -> (Job, JoinHandle<()>) {
-    if !Path::new(DEV_SSR_BIN_SRC).exists() {
-        eprintln!("Failed to find script to run dev watch. Please run `npm install`");
-        std::process::exit(1);
-    }
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: DEV_WATCH_BIN_SRC.into(),
-            args: vec![],
-        },
-        options: Default::default(),
-    }))
-}
-
-fn run_rust_dev_server() -> (Job, JoinHandle<()>) {
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: "cargo".into(),
-            args: vec!["run".to_string(), "-q".to_string()],
-        },
-        options: Default::default(),
-    }))
-}
-
-fn build_rust_src() -> (Job, JoinHandle<()>) {
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: "cargo".into(),
-            args: vec!["build".to_string(), "-q".to_string()],
-        },
-        options: Default::default(),
-    }))
-}
-
-fn build_react_ssr_src() -> (Job, JoinHandle<()>) {
-    if !Path::new(DEV_SSR_BIN_SRC).exists() {
-        eprintln!("Failed to find script to run dev ssr. Please run `npm install`");
-        std::process::exit(1);
-    }
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: DEV_SSR_BIN_SRC.into(),
-            args: vec![],
-        },
-        options: Default::default(),
-    }))
-}
 
 fn ssr_reload_needed(path: &Path) -> bool {
     let file_name_starts_with_env = path
@@ -91,12 +33,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
-    let (watch_react, watch_react_handle) = watch_react_src();
-
-    let (rust_server, rust_server_handle) = run_rust_dev_server();
-    let (build_rust_src, build_rust_src_hanlde) = build_rust_src();
-
-    let (build_ssr_bundle, build_ssr_bundle_hanlde) = build_react_ssr_src();
+    let process_manager = Arc::new(Mutex::new(ProcessManager::new()));
 
     let env_files = fs::read_dir("./")
         .expect("Error reading env files from current directory")
@@ -105,34 +42,30 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         .map(|entry| entry.path().to_string_lossy().into_owned())
         .collect::<Vec<String>>();
 
-    build_ssr_bundle.start().await;
-    build_rust_src.start().await;
-    watch_react.start().await;
-
-    // Wait vite and rust builds
-    build_ssr_bundle.to_wait().await;
-    build_rust_src.to_wait().await;
-    rust_server.start().await;
+    // Fine holding the lock for a longer time since there are no yet other
+    // threads
+    #[warn(clippy::await_holding_lock)]
+    process_manager.lock().unwrap().start_dev_processes().await;
 
     // Remove the spinner
     sp.stop();
     _ = term.clear_line();
 
     let wx = Watchexec::new(move |mut action| {
+        let process_manager = process_manager.clone();
         // if Ctrl-C is received, quit
         if action.signals().any(|sig| sig == Signal::Interrupt) {
-            rust_server.stop();
-            build_ssr_bundle.stop();
-            watch_react.stop();
-            watch_react_handle.abort();
-            rust_server_handle.abort();
-            build_rust_src_hanlde.abort();
-            build_ssr_bundle_hanlde.abort();
+            process_manager.lock().unwrap().abort_all();
 
             action.quit_gracefully(Signal::Quit, Duration::from_secs(30));
             return action;
         }
 
+        // The best way to trigger the processes is to use these
+        // flags.
+        // This because the same event can be triggered multiple times
+        // and we don't want to restart the process multiple times for the same
+        // purpose.
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
         let mut should_refresh_axum_source = false;
@@ -169,24 +102,25 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
             }
         }
 
-        if should_refresh_axum_source {
-            rust_server.stop();
-            if let Ok(mut builder) = source_builder.write() {
-                builder.app.collect_routes();
-                _ = builder.refresh_axum_source();
-            }
-            rust_server.start();
-        }
-
-        if should_reload_rust_server {
+        if should_reload_rust_server || should_refresh_axum_source {
             println!("  Reloading...");
-            rust_server.stop();
-            rust_server.start();
+            if should_refresh_axum_source {
+                if let Ok(mut builder) = source_builder.write() {
+                    builder.app.collect_routes();
+                    _ = builder.refresh_axum_source();
+                }
+            }
+            process_manager
+                .lock()
+                .unwrap()
+                .restart_process(ProcessId::RunRustDevServer);
         }
 
         if should_reload_ssr_bundle {
-            build_ssr_bundle.stop();
-            build_ssr_bundle.start();
+            process_manager
+                .lock()
+                .unwrap()
+                .restart_process(ProcessId::BuildReactSSRSrc);
         }
 
         action
