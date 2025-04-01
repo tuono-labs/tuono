@@ -37,6 +37,17 @@ async fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
     }
 }
 
+fn detect_existing_env_files() -> Vec<String> {
+    if let Ok(dir) = fs::read_dir("./") {
+        dir.filter_map(|entry| entry.ok())
+            .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
+            .map(|entry| entry.path().to_string_lossy().into_owned())
+            .collect::<Vec<String>>()
+    } else {
+        Vec::new()
+    }
+}
+
 #[tokio::main]
 pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     let source_builder = RwLock::new(source_builder);
@@ -45,12 +56,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     let process_manager = Arc::new(Mutex::new(ProcessManager::new()));
 
-    let env_files = fs::read_dir("./")
-        .expect("Error reading env files from current directory")
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
-        .map(|entry| entry.path().to_string_lossy().into_owned())
-        .collect::<Vec<String>>();
+    let env_files = detect_existing_env_files();
 
     start_all_processes(process_manager.clone()).await;
 
