@@ -11,11 +11,8 @@ async fn form_data(req: Request) -> String {
     let form = match req.form_data::<Payload>() {
         Ok(data) => data,
         Err(e) => {
-            return format!(
-                "Error: {}",
-                e.to_string(),
-            );
-        },
+            return format!("Error: {}", e.to_string());
+        }
     };
     form.data
 }

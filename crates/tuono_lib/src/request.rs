@@ -76,26 +76,26 @@ impl Request {
     where
         T: DeserializeOwned,
     {
-        let content_type = self.headers
+        let content_type = self
+            .headers
             .get("content-type")
             .and_then(|v| v.to_str().ok())
             .unwrap_or("");
 
         if !content_type.contains("application/x-www-form-urlencoded") {
             return Err(BodyParseError::ContentType(
-                "Invalid content type, expected application/x-www-form-urlencoded".to_string()
+                "Invalid content type, expected application/x-www-form-urlencoded".to_string(),
             ));
         }
 
-        let body = self.body
-            .as_ref()
-            .ok_or_else(|| BodyParseError::Io(std::io::Error::new(
+        let body = self.body.as_ref().ok_or_else(|| {
+            BodyParseError::Io(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 "Missing request body",
-            )))?;
+            ))
+        })?;
 
-        serde_urlencoded::from_bytes::<T>(body)
-            .map_err(|e| BodyParseError::UrlEncoded(e))
+        serde_urlencoded::from_bytes::<T>(body).map_err(BodyParseError::UrlEncoded)
     }
 }
 
@@ -105,7 +105,6 @@ pub enum BodyParseError {
     Serde(serde_json::Error),
     UrlEncoded(serde_urlencoded::de::Error),
     ContentType(String),
-
 }
 
 impl From<serde_json::Error> for BodyParseError {
@@ -120,7 +119,7 @@ impl Display for BodyParseError {
             BodyParseError::Io(err) => write!(f, "IO error: {}", err),
             BodyParseError::Serde(err) => write!(f, "Serde error: {}", err),
             BodyParseError::UrlEncoded(err) => write!(f, "URL encoded error: {}", err),
-            BodyParseError::ContentType(err) => write!(f, "{}", err.to_string()),
+            BodyParseError::ContentType(err) => write!(f, "{}", err),
         }
     }
 }
@@ -177,7 +176,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
-            None
+            None,
         );
 
         request.headers.insert(
@@ -185,9 +184,7 @@ mod tests {
             "application/x-www-form-urlencoded".parse().unwrap(),
         );
 
-        request.body = Some(
-            "name=John+Doe&email=john%40example.com".as_bytes().to_vec(),
-        );
+        request.body = Some("name=John+Doe&email=john%40example.com".as_bytes().to_vec());
 
         let form_data: Result<FormData, BodyParseError> = request.form_data();
 
@@ -203,7 +200,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
-            None
+            None,
         );
 
         request
@@ -219,7 +216,10 @@ mod tests {
 
         assert!(form_data.is_err());
         let error = form_data.unwrap_err();
-        assert_eq!(error.to_string(), "Invalid content type, expected application/x-www-form-urlencoded".to_string());
+        assert_eq!(
+            error.to_string(),
+            "Invalid content type, expected application/x-www-form-urlencoded".to_string()
+        );
     }
 
     #[test]
@@ -228,7 +228,7 @@ mod tests {
             Uri::from_static("http://localhost:3000"),
             HeaderMap::new(),
             HashMap::new(),
-            None
+            None,
         );
 
         request.headers.insert(
