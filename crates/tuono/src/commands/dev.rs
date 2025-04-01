@@ -53,6 +53,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         .collect::<Vec<String>>();
 
     start_all_processes(process_manager.clone()).await;
+
     // Remove the spinner
     sp.stop();
     _ = term.clear_line();
@@ -82,7 +83,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
             for event_type in event.tags.iter() {
                 if let Tag::FileEventKind(kind) = event_type {
                     match kind {
-                        FileEventKind::Create(_) | FileEventKind::Remove(_) => {
+                        FileEventKind::Remove(_) => {
                             if event.paths().any(|(path, _)| {
                                 path.extension().is_some_and(|ext| ext == "rs") || 
                             // APIs might define new HTTP methods that requires
