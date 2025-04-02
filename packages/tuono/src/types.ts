@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 /**
  * Provided by the rust server and used in the ssr env
  * @see tuono-router {@link ServerInitialLocation}
@@ -56,3 +58,7 @@ export type TuonoRouteProps<TData> =
       data: TData
       isLoading: false
     }
+
+export interface TuonoLayoutProps {
+  children: ReactNode
+}
