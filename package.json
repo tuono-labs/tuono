@@ -28,7 +28,7 @@
     "@eslint/js": "9.20.0",
     "@playwright/test": "1.51.1",
     "@types/node": "22.13.17",
-    "@vitest/eslint-plugin": "1.1.36",
+    "@vitest/eslint-plugin": "1.1.38",
     "eslint": "9.20.0",
     "eslint-import-resolver-typescript": "3.7.0",
     "eslint-plugin-import": "2.31.0",
