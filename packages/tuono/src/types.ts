@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import type { TuonoConfigServer } from './config'
+
 /**
  * Provided by the rust server and used in the ssr env
  * @see tuono-router {@link ServerInitialLocation}
@@ -13,27 +15,11 @@ export interface ServerPayloadLocation {
 /**
  * @see crates/tuono_lib/src/payload.rs
  */
-export interface ServerPayload<TData = unknown> {
-  mode: 'Prod' | 'Dev'
-
+export type ServerPayload<TData = unknown> = {
   location: ServerPayloadLocation
 
   data: TData
-
-  /** Available only on 'Prod' mode */
-  jsBundles: Array<string> | null
-  cssBundles: Array<string> | null
-
-  /** Available only on 'Dev' mode */
-  devServerConfig?: {
-    port: number
-    origin: string | null
-    host: string
-  }
-}
-
-/* the above type could be refined with an union like this
-(
+} & (
   | {
       mode: 'Prod'
       jsBundles: Array<string>
@@ -41,13 +27,9 @@ export interface ServerPayload<TData = unknown> {
     }
   | {
       mode: 'Dev'
-      devServerConfig: {
-        port: number
-        host: string
-      }
+      devServerConfig?: TuonoConfigServer
     }
 )
-*/
 
 export type TuonoRouteProps<TData> =
   | {
