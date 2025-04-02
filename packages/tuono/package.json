@@ -80,7 +80,7 @@
   "devDependencies": {
     "@types/babel__core": "7.20.5",
     "@types/babel__traverse": "7.20.7",
-    "@types/node": "22.13.13",
+    "@types/node": "22.13.17",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "react": "19.0.0",
