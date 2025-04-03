@@ -8,11 +8,6 @@ struct Payload {
 
 #[tuono_lib::api(POST)]
 async fn form_data(req: Request) -> String {
-    let form = match req.form_data::<Payload>() {
-        Ok(data) => data,
-        Err(e) => {
-            return format!("Error: {}", e.to_string());
-        }
-    };
+    let form = req.form_data::<Payload>().unwrap();
     form.data
 }

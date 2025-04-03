@@ -2,7 +2,6 @@ use axum::http::{HeaderMap, Uri};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fmt::Display;
 
 /// Location must match client side interface
 #[derive(Serialize, Debug)]
@@ -113,17 +112,6 @@ impl From<serde_json::Error> for BodyParseError {
     }
 }
 
-impl Display for BodyParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            BodyParseError::Io(err) => write!(f, "IO error: {}", err),
-            BodyParseError::Serde(err) => write!(f, "Serde error: {}", err),
-            BodyParseError::UrlEncoded(err) => write!(f, "URL encoded error: {}", err),
-            BodyParseError::ContentType(err) => write!(f, "{}", err),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
 
@@ -215,11 +203,6 @@ mod tests {
         let form_data: Result<FormData, BodyParseError> = request.form_data();
 
         assert!(form_data.is_err());
-        let error = form_data.unwrap_err();
-        assert_eq!(
-            error.to_string(),
-            "Invalid content type, expected application/x-www-form-urlencoded".to_string()
-        );
     }
 
     #[test]
