@@ -1,4 +1,6 @@
 mod utils;
+use std::collections::HashMap;
+
 use crate::utils::mock_server::MockTuonoServer;
 use serial_test::serial;
 
@@ -187,6 +189,33 @@ async fn it_parses_the_http_body() {
     let response = client
         .post(format!("{server_url}/api/post"))
         .body(r#"{"data":"payload"}"#)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(response.status().is_success());
+    assert_eq!(response.text().await.unwrap(), "payload");
+}
+
+#[tokio::test]
+#[serial]
+async fn it_parses_the_form_encoded_url() {
+    let app = MockTuonoServer::spawn().await;
+
+    let client = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .unwrap();
+
+    let server_url = format!("http://{}:{}", &app.address, &app.port);
+
+    let mut form_params = HashMap::new();
+    form_params.insert("data", "payload");
+
+    let response = client
+        .post(format!("{server_url}/api/form_data"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .form(&form_params)
         .send()
         .await
         .expect("Failed to execute request.");
