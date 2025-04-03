@@ -64,17 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     if: always()
-    needs: [build_and_test, lint_and_fmt]
-    env:
-      FAILURE: ${{ contains(join(needs.*.result, ','), 'failure') }}
-      CANCELLED: ${{ contains(join(needs.*.result, ','), 'cancelled') }}
+    needs:
+      - build_and_test
+      - lint_and_fmt
     steps:
-      - name: Check for failure or cancelled jobs result
-        shell: bash
-        run: |
-          echo "Failure: $FAILURE - Cancelled: $CANCELLED"
-          if [ "$FAILURE" = "false" ] && [ "$CANCELLED" = "false" ]; then
-            exit 0
-          else
-            exit 1
-          fi
+      - name: Exit with error if some jobs are not successful
+        run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')) }}
