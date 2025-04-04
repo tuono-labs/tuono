@@ -1,7 +1,7 @@
 // src/routes/index.rs
 use reqwest::{Client, StatusCode};
 use serde::{Deserialize, Serialize};
-use tuono_lib::{Props, Request, Response};
+use tuono_lib::{Props, Request, Response, Type};
 
 const ALL_POKEMON: &str = "https://pokeapi.co/api/v2/pokemon?limit=151";
 
@@ -10,7 +10,7 @@ struct Pokemons {
     results: Vec<Pokemon>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Type, Deserialize)]
 struct Pokemon {
     name: String,
     url: String,

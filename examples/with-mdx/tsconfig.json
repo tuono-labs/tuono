@@ -26,7 +26,10 @@
     "noEmit": true,
 
     // Completeness
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "tuono/types": ["./.tuono/types.ts"]
+    }
   },
   "include": ["src", "tuono.config.ts"]
 }
