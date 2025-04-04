@@ -1,6 +1,6 @@
 [package]
 name = "tuono_lib"
-version = "0.19.1"
+version = "0.19.2"
 edition = "2024"
 authors = ["V. Ageno <valerioageno@yahoo.it>"]
 description = "Superfast React fullstack framework"
@@ -32,8 +32,8 @@ either = "1.13.0"
 tower-http = {version = "0.6.0", features = ["fs"]}
 colored = "2.1.0"
 
-tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.19.1"}
-tuono_internal = {path = "../tuono_internal", version = "0.19.1"}
+tuono_lib_macros = {path = "../tuono_lib_macros", version = "0.19.2"}
+tuono_internal = {path = "../tuono_internal", version = "0.19.2"}
 # Match the same version used by axum
 tokio-tungstenite = "0.26.0"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
