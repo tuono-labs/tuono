@@ -43,7 +43,7 @@ jobs:
           NAMES=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
           echo "names=$(echo "$NAMES" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
 
-  check_rust_and_typescript:
+  check_example:
     needs:
       - example_list
 
@@ -100,7 +100,7 @@ jobs:
     if: always()
     needs:
       - example_list
-      - check_rust_and_typescript
+      - check_example
     steps:
       - name: Exit with error if some jobs are not successful
         run: exit 1
