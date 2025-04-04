@@ -88,10 +88,10 @@ jobs:
         run: ../../target/debug/tuono build
 
       - name: Check formatting
-        run: pnpm run examples:format
+        run: pnpm run format
 
       - name: Typecheck
-        run: pnpm run examples:typecheck
+        run: pnpm run typecheck
 
   ci_ok:
     name: Examples CI OK
