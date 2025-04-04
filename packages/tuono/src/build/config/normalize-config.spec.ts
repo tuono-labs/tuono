@@ -21,7 +21,12 @@ describe('normalizeConfig', () => {
         port: 3000,
       },
       vite: {
-        alias: undefined,
+        alias: [
+          {
+            find: 'tuono/types',
+            replacement: '.tuono/types.ts',
+          },
+        ],
         css: undefined,
         optimizeDeps: undefined,
         plugins: [],
@@ -38,7 +43,12 @@ describe('normalizeConfig', () => {
         port: 3000,
       },
       vite: {
-        alias: undefined,
+        alias: [
+          {
+            find: 'tuono/types',
+            replacement: '.tuono/types.ts',
+          },
+        ],
         css: undefined,
         optimizeDeps: undefined,
         plugins: [],
@@ -99,6 +109,7 @@ describe('normalizeConfig', () => {
             alias: {
               '@tabler/icons-react':
                 '@tabler/icons-react/dist/esm/icons/index.mjs',
+              'tuono/types': '.tuono/types.ts',
             },
           }) as unknown,
         }),
@@ -116,6 +127,7 @@ describe('normalizeConfig', () => {
             alias: {
               '@': path.join(PROCESS_CWD_MOCK, 'src'),
               '@no-prefix': path.join(PROCESS_CWD_MOCK, 'src'),
+              'tuono/types': '.tuono/types.ts',
             },
           }) as unknown,
         }),
@@ -133,6 +145,7 @@ describe('normalizeConfig', () => {
             alias: {
               '@1': '/src/pippo',
               '@2': 'file://pluto',
+              'tuono/types': '.tuono/types.ts',
             },
           }) as unknown,
         }),
@@ -157,6 +170,7 @@ describe('normalizeConfig', () => {
               { find: '1', replacement: '@tabler/icons-react-fun' },
               { find: '2', replacement: path.join(PROCESS_CWD_MOCK, 'src') },
               { find: '3', replacement: 'file://pluto' },
+              { find: 'tuono/types', replacement: '.tuono/types.ts' },
             ],
           }) as unknown,
         }),

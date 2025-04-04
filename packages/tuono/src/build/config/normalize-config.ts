@@ -1,12 +1,21 @@
 import path from 'node:path'
 
-import type { AliasOptions } from 'vite'
+import type { Alias, AliasOptions } from 'vite'
 
 import type { TuonoConfig } from '../../config'
 
 import type { InternalTuonoConfig } from '../types'
 
 import { DOT_TUONO_FOLDER_NAME, CONFIG_FOLDER_NAME } from '../constants'
+
+/**
+ * This default alias is used to ensure that all the types generates from
+ * the rust files are available in the user project.
+ */
+const DEFAULT_ALIAS: Alias = {
+  find: 'tuono/types',
+  replacement: '.tuono/types.ts',
+}
 
 /**
  *  Normalize vite alias option:
@@ -38,15 +47,17 @@ const normalizeAliasPath = (aliasPath: string): string => {
  * @see https://github.com/Valerioageno/tuono/pull/153#issuecomment-2508142877
  */
 const normalizeViteAlias = (alias?: AliasOptions): AliasOptions | undefined => {
-  if (!alias) return
+  if (!alias) return [DEFAULT_ALIAS]
 
   if (Array.isArray(alias)) {
-    return (alias as Extract<AliasOptions, ReadonlyArray<unknown>>).map(
-      ({ replacement, ...userAliasDefinition }) => ({
-        ...userAliasDefinition,
-        replacement: normalizeAliasPath(replacement),
-      }),
-    )
+    const normalizedAlias = (
+      alias as Extract<AliasOptions, ReadonlyArray<unknown>>
+    ).map(({ replacement, ...userAliasDefinition }) => ({
+      ...userAliasDefinition,
+      replacement: normalizeAliasPath(replacement),
+    }))
+    normalizedAlias.push(DEFAULT_ALIAS)
+    return normalizedAlias
   }
 
   if (typeof alias === 'object') {
@@ -54,7 +65,10 @@ const normalizeViteAlias = (alias?: AliasOptions): AliasOptions | undefined => {
     for (const [key, value] of Object.entries(alias)) {
       normalizedAlias[key] = normalizeAliasPath(value as string)
     }
-    return normalizedAlias
+    return {
+      ...normalizedAlias,
+      [DEFAULT_ALIAS.find as string]: DEFAULT_ALIAS.replacement,
+    }
   }
 
   return alias
