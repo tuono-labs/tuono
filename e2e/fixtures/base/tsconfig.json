@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "tuono/types": ["./.tuono/types.ts"]
+    }
   },
   "include": ["src", "tuono.config.ts"]
 }
