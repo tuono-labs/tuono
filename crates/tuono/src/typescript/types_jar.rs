@@ -21,6 +21,7 @@ impl TypesJar {
     /// Removes all types from the jar that are
     /// present in the provided `file_path`.
     /// This function is triggered when a file is deleted
+    #[allow(dead_code)]
     pub fn remove_types_from_file(&mut self, file_path: &PathBuf) {
         self.types.retain(|ttype| ttype.file_path != *file_path);
     }
@@ -55,12 +56,18 @@ impl From<&PathBuf> for TypesJar {
                     let file_path = path.unwrap_or_default();
                     if let Ok(file_str) = read_to_string(&file_path) {
                         if file_str.contains(TUONO_MACRO_TRAIT_NAME) {
-                            if let Ok(ttype) = FileTypes::try_from((file_path, file_str)) {
+                            if let Ok(ttype) = FileTypes::try_from((file_path.clone(), file_str)) {
                                 jar.types.push(ttype);
+                            } else {
+                                error!("Failed to parse file: {:?}", file_path);
                             }
                         }
+                    } else {
+                        error!("Failed to read file: {:?}", file_path);
                     }
                 });
+            } else {
+                error!("Failed to read glob pattern: {:?}", path);
             }
         }
         jar
