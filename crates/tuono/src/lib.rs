@@ -10,3 +10,4 @@ mod mode;
 mod process_manager;
 mod route;
 mod source_builder;
+mod typescript;
