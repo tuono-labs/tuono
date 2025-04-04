@@ -26,9 +26,7 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
         String::new()
     };
 
-    let mut fields_as_string = String::from(format!(
-        "export interface {struct_name}{generics_as_string} {{\n"
-    ));
+    let mut fields_as_string = format!("export interface {struct_name}{generics_as_string} {{\n");
 
     for field in &element.fields {
         let field_name = field.ident.as_ref().unwrap().to_string();

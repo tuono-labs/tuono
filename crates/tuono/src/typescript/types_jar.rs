@@ -1,7 +1,7 @@
 use crate::typescript::FileTypes;
 use glob::glob;
 use std::fs::read_to_string;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tracing::error;
 
 const TUONO_MACRO_TRAIT_NAME: &str = "Type";
@@ -36,7 +36,7 @@ impl TypesJar {
         typescript
     }
 
-    pub fn generate_typescript_file(&self, base_path: &PathBuf) -> std::io::Result<()> {
+    pub fn generate_typescript_file(&self, base_path: &Path) -> std::io::Result<()> {
         let typescript = self.generate_typescript();
         let typescript_file_path = base_path.join(".tuono").join("types.ts");
         std::fs::write(typescript_file_path, typescript)?;
