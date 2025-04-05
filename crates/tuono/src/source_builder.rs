@@ -170,6 +170,14 @@ impl SourceBuilder {
         Ok(())
     }
 
+    pub fn refresh_typescript_file(&mut self, path: PathBuf) {
+        self.types_jar.refresh_file(path);
+    }
+
+    pub fn generate_typescript_file(&self) -> io::Result<()> {
+        self.types_jar.generate_typescript_file(&self.base_path)
+    }
+
     fn create_routes_declaration(&self) -> String {
         let routes = &self.app.route_map;
         let mut route_declarations = String::from("// ROUTE_BUILDER\n");
