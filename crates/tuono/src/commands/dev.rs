@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::sync::RwLock;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tracing::error;
 use watchexec_events::Tag;
 use watchexec_events::filekind::FileEventKind;
 
@@ -118,6 +119,17 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                         _ => {}
                     }
                 }
+            }
+        }
+
+        if !paths_to_refresh_types.is_empty() {
+            if let Ok(mut builder) = source_builder.write() {
+                for path in paths_to_refresh_types {
+                    builder.refresh_typescript_file(path)
+                }
+                if builder.generate_typescript_file().is_err() {
+                    error!("Failed to generate typescript file");
+                };
             }
         }
 

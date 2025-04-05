@@ -26,12 +26,32 @@ impl TypesJar {
         self.types.retain(|ttype| ttype.file_path != *file_path);
     }
 
+    pub fn refresh_file(&mut self, path: PathBuf) {
+        if let Ok(file_str) = read_to_string(&path) {
+            if file_str.contains(TUONO_MACRO_TRAIT_NAME) {
+                if let Ok(ttype) = FileTypes::try_from((path.clone(), file_str)) {
+                    self.types.retain(|t| t.file_path != path);
+                    self.types.push(ttype);
+                } else {
+                    error!("Failed to parse file: {:?}", path);
+                }
+            }
+        } else {
+            error!("Failed to read file: {:?}", path);
+        }
+    }
+
     /// Generate the string containing all the typescript types
     /// found in the jar.
     fn generate_typescript(&self) -> String {
         let mut typescript = String::from("declare module \"tuono/types\" {\n");
         for ttype in &self.types {
+            typescript.push_str(&format!(
+                "// START [{}]\n",
+                ttype.file_path.to_string_lossy()
+            ));
             typescript.push_str(&ttype.types_as_string);
+            typescript.push_str(&format!("// END [{}]\n", ttype.file_path.to_string_lossy()));
         }
         typescript.push_str("}\n");
         typescript
