@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::Path;
+use std::path::PathBuf;
 use std::sync::RwLock;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -89,6 +90,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
         let mut should_refresh_axum_source = false;
+        let mut paths_to_refresh_types: Vec<PathBuf> = vec![];
 
         for event in action.events.iter() {
             for event_type in event.tags.iter() {
@@ -104,18 +106,15 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                                 should_refresh_axum_source = true;
                             }
                         }
-                        FileEventKind::Modify(_) => {
-                            if event
-                                .paths()
-                                .any(|(path, _)| path.extension().is_some_and(|ext| ext == "rs"))
-                            {
+                        FileEventKind::Modify(_) => event.paths().for_each(|(path, _)| {
+                            if path.extension().is_some_and(|ext| ext == "rs") {
                                 should_reload_rust_server = true;
+                                paths_to_refresh_types.push(path.to_path_buf());
                             }
-
-                            if event.paths().any(|(path, _)| ssr_reload_needed(path)) {
+                            if ssr_reload_needed(path) {
                                 should_reload_ssr_bundle = true;
                             }
-                        }
+                        }),
                         _ => {}
                     }
                 }
