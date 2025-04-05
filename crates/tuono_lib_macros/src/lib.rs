@@ -19,3 +19,13 @@ pub fn handler(args: TokenStream, item: TokenStream) -> TokenStream {
 pub fn api(args: TokenStream, item: TokenStream) -> TokenStream {
     api::api_core(args, item)
 }
+
+/// Automatically generate typescript's types
+/// from Rust's structs, types and enums.
+///
+/// The types will be exported on the client side
+/// and it will be available from the `"tuono/types"` module.
+#[proc_macro_derive(Type)]
+pub fn derive_typescript_type(_: TokenStream) -> TokenStream {
+    TokenStream::new()
+}
