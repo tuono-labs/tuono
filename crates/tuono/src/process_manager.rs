@@ -96,7 +96,7 @@ impl ProcessManager {
         // @see https://github.com/tuono-labs/tuono/issues/460
         let server_base_url = format!("http://{}", server_address);
 
-        println!("");
+        println!();
         tuono_println!("⚡ Tuono v{}", crate_version!());
 
         tuono_println!("Development server at: {}\n", server_base_url.blue().bold());
