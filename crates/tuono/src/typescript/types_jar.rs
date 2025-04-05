@@ -29,10 +29,11 @@ impl TypesJar {
     /// Generate the string containing all the typescript types
     /// found in the jar.
     fn generate_typescript(&self) -> String {
-        let mut typescript = String::new();
+        let mut typescript = String::from("declare module \"tuono/types\" {\n");
         for ttype in &self.types {
             typescript.push_str(&ttype.types_as_string);
         }
+        typescript.push_str("}\n");
         typescript
     }
 
