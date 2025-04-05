@@ -31,7 +31,7 @@ fn ssr_reload_needed(path: &Path) -> bool {
     clippy::await_holding_lock,
     reason = "At this point there is no other thread waiting for the lock"
 )]
-async fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
+async unsafe fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
     if let Ok(mut pm) = process_manager.lock() {
         pm.start_dev_processes().await
     }
@@ -58,7 +58,12 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     let env_files = detect_existing_env_files();
 
-    start_all_processes(process_manager.clone()).await;
+    unsafe {
+        // It is safe to call this function because here
+        // only one thread is running and the lock is not
+        // needed by any other thread.
+        start_all_processes(process_manager.clone()).await;
+    }
 
     // Remove the spinner
     sp.stop();
