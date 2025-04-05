@@ -3,6 +3,7 @@ use std::path::Path;
 use std::sync::RwLock;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tuono_internal::tuono_println;
 use watchexec_events::Tag;
 use watchexec_events::filekind::FileEventKind;
 
@@ -64,6 +65,14 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
     sp.stop();
     _ = term.clear_line();
 
+    // Server address log for production
+    // is done on the server process.
+    if let Ok(builder) = source_builder.read() {
+        if let Ok(pm) = process_manager.lock() {
+            pm.log_server_address(builder.app.config.clone().unwrap_or_default());
+        }
+    }
+
     let wx = Watchexec::new(move |mut action| {
         let process_manager = process_manager.clone();
         // if Ctrl-C is received, quit
@@ -118,7 +127,7 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         }
 
         if should_reload_rust_server || should_refresh_axum_source {
-            println!("  Reloading...");
+            tuono_println!("Reloading...");
             if should_refresh_axum_source {
                 if let Ok(mut builder) = source_builder.write() {
                     builder.app.collect_routes();
