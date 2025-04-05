@@ -125,6 +125,8 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         if !paths_to_refresh_types.is_empty() {
             if let Ok(mut builder) = source_builder.write() {
                 for path in paths_to_refresh_types {
+                    // There is no need to check here if the `Type` trait is
+                    // derived since it will be checked later by the TypeJar struct.
                     builder.refresh_typescript_file(path)
                 }
                 if builder.generate_typescript_file().is_err() {
