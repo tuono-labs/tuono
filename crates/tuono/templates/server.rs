@@ -13,7 +13,10 @@ const MODE: Mode = /*MODE*/;
 #[tokio::main]
 async fn main() {
     tuono_internal_init_v8_platform();
-    println!("\n  ⚡ Tuono v/*VERSION*/");
+    
+    if MODE == Mode::Prod {
+        println!("\n  ⚡ Tuono v/*VERSION*/");
+    }
 
     //MAIN_FILE_DEFINITION//
 
