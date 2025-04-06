@@ -3,6 +3,7 @@ import { memo, Suspense, useMemo } from 'react'
 
 import type { Route } from '../route'
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
+import { useRouterContext } from './RouterContext'
 
 interface RouteMatchProps<TServerPayloadData = unknown> {
   route: Route
@@ -19,21 +20,22 @@ export const RouteMatch = ({
   route,
   serverInitialData,
 }: RouteMatchProps): JSX.Element => {
-  const { data, isLoading } = useServerPayloadData(route, serverInitialData)
+  const { data } = useServerPayloadData(route, serverInitialData)
+  const { isTransitioning } = useRouterContext()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const routes = useMemo(() => loadParentComponents(route), [route.id])
 
-  const routeData = isLoading ? null : data
+  const routeData = isTransitioning ? null : data
 
   return (
     <TraverseRootComponents
       routes={routes}
       data={routeData}
-      isLoading={isLoading}
+      isLoading={isTransitioning}
     >
       <Suspense>
-        <route.component data={routeData} isLoading={isLoading} />
+        <route.component data={routeData} isLoading={isTransitioning} />
       </Suspense>
     </TraverseRootComponents>
   )

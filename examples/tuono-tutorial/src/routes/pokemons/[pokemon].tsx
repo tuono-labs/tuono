@@ -16,6 +16,7 @@ export default function PokemonPage({
   isLoading,
   data,
 }: TuonoRouteProps<Pokemon>): JSX.Element {
+  console.log('pokemon', data)
   return (
     <div>
       <Link href="/">Back</Link>

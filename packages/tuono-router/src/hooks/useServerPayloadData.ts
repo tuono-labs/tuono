@@ -37,14 +37,14 @@ export function useServerPayloadData<TServerPayloadData>(
   serverInitialData: TServerPayloadData,
 ): UseServerPayloadDataResult<TServerPayloadData> {
   const isFirstRendering = useRef<boolean>(true)
-  const { location, updateLocation } = useRouterContext()
-  const [isLoading, setIsLoading] = useState<boolean>(
+  const { location, updateLocation, stopTransitioning } = useRouterContext()
+  const [isLoading] = useState<boolean>(
     // Force loading if has handler
     !!route.options.hasHandler &&
-      // Avoid loading on the server
-      !isServer &&
-      // Avoid loading if first rendering
-      !isFirstRendering.current,
+    // Avoid loading on the server
+    !isServer &&
+    // Avoid loading if first rendering
+    !isFirstRendering.current,
   )
 
   const [data, setData] = useState<TServerPayloadData | undefined>(
@@ -56,14 +56,14 @@ export function useServerPayloadData<TServerPayloadData>(
     // props are already bundled by the SSR
     if (isFirstRendering.current) {
       isFirstRendering.current = false
+      stopTransitioning()
       return
     }
     // After client side routing load again the remote data
     if (route.options.hasHandler) {
       // The error management is already handled inside the IIFE
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      ;(async (): Promise<void> => {
-        setIsLoading(true)
+      ; (async (): Promise<void> => {
         try {
           const response = await fetchClientSideData()
           if (response.info.redirect_destination) {
@@ -84,16 +84,23 @@ export function useServerPayloadData<TServerPayloadData>(
         } catch (error) {
           throw Error('Failed loading Server Side Data', { cause: error })
         } finally {
-          setIsLoading(false)
+          stopTransitioning()
         }
       })()
+    } else {
+      stopTransitioning()
     }
 
     // Clean up the data when changing route
     return (): void => {
       setData(undefined)
     }
-  }, [location.pathname, route.options.hasHandler, updateLocation])
+  }, [
+    location.pathname,
+    route.options.hasHandler,
+    updateLocation,
+    stopTransitioning,
+  ])
 
   return { isLoading, data: data as TServerPayloadData }
 }

@@ -11,6 +11,7 @@ interface IndexProps {
 export default function IndexPage({
   data,
 }: TuonoRouteProps<IndexProps>): JSX.Element | null {
+  console.log('index', data)
   if (!data?.results) return null
 
   return (
