@@ -1,12 +1,13 @@
-import type { ReactNode, JSX } from 'react'
+import type { JSX } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import { TuonoScripts } from 'tuono'
+import type { TuonoLayoutProps } from 'tuono'
 
-interface RootLayoutProps {
-  children: ReactNode
-}
+import '../styles/global.css'
 
-export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
+export default function RootLayout({
+  children,
+}: TuonoLayoutProps): JSX.Element {
   return (
     <html>
       <body>

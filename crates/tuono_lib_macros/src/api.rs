@@ -6,7 +6,7 @@ use proc_macro::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat};
+use syn::{FnArg, Ident, ItemFn, Pat, parse_macro_input};
 
 pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as ItemFn);
@@ -48,6 +48,28 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let application_state_extractor = crate_application_state_extractor(argument_names.clone());
     let application_state_import = import_main_application_state(argument_names.clone());
 
+    let modified_request = if http_method == "post"
+        || http_method == "put"
+        || http_method == "patch"
+    {
+        quote! {
+            let (parts, body) = request.into_parts();
+            let path = parts.uri.clone();
+            let headers = parts.headers.clone();
+
+            let body = tuono_lib::axum::body::to_bytes(body, usize::MAX).await.unwrap_or(Vec::new().into()).to_vec();
+
+            let req = tuono_lib::Request::new(path, headers, params, Some(body));
+        }
+    } else {
+        quote! {
+           let pathname = request.uri();
+           let headers = request.headers();
+
+           let req = tuono_lib::Request::new(request.uri().to_owned(), request.headers().to_owned(), params, None);
+        }
+    };
+
     quote! {
         #application_state_import
 
@@ -55,12 +77,9 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
 
         pub async fn #api_fn_name(#axum_arguments)#return_type {
 
-            #application_state_extractor
+           #application_state_extractor
 
-           let pathname = request.uri();
-           let headers = request.headers();
-
-           let req = tuono_lib::Request::new(pathname.to_owned(), headers.to_owned(), params);
+           #modified_request
 
            #fn_name(req.clone(), #argument_names).await
         }

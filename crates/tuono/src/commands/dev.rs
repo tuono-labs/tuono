@@ -1,79 +1,20 @@
 use std::fs;
 use std::path::Path;
-use std::sync::Arc;
-use watchexec_supervisor::command::{Command, Program};
+use std::sync::RwLock;
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
+use watchexec_events::Tag;
+use watchexec_events::filekind::FileEventKind;
+
+use crate::process_manager::{ProcessId, ProcessManager};
 
 use miette::{IntoDiagnostic, Result};
 use watchexec::Watchexec;
 use watchexec_signals::Signal;
-use watchexec_supervisor::job::{start_job, Job};
 
-use crate::mode::Mode;
-use crate::source_builder::bundle_axum_source;
+use crate::source_builder::SourceBuilder;
 use console::Term;
 use spinners::{Spinner, Spinners};
-
-#[cfg(target_os = "windows")]
-const DEV_WATCH_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-watch.cmd";
-#[cfg(target_os = "windows")]
-const DEV_SSR_BIN_SRC: &str = "node_modules\\.bin\\tuono-dev-ssr.cmd";
-
-#[cfg(not(target_os = "windows"))]
-const DEV_WATCH_BIN_SRC: &str = "node_modules/.bin/tuono-dev-watch";
-#[cfg(not(target_os = "windows"))]
-const DEV_SSR_BIN_SRC: &str = "node_modules/.bin/tuono-dev-ssr";
-
-fn watch_react_src() -> Job {
-    if !Path::new(DEV_SSR_BIN_SRC).exists() {
-        eprintln!("Failed to find script to run dev watch. Please run `npm install`");
-        std::process::exit(1);
-    }
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: DEV_WATCH_BIN_SRC.into(),
-            args: vec![],
-        },
-        options: Default::default(),
-    }))
-    .0
-}
-
-fn run_rust_dev_server() -> Job {
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: "cargo".into(),
-            args: vec!["run".to_string(), "-q".to_string()],
-        },
-        options: Default::default(),
-    }))
-    .0
-}
-
-fn build_rust_src() -> Job {
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: "cargo".into(),
-            args: vec!["build".to_string(), "-q".to_string()],
-        },
-        options: Default::default(),
-    }))
-    .0
-}
-
-fn build_react_ssr_src() -> Job {
-    if !Path::new(DEV_SSR_BIN_SRC).exists() {
-        eprintln!("Failed to find script to run dev ssr. Please run `npm install`");
-        std::process::exit(1);
-    }
-    start_job(Arc::new(Command {
-        program: Program::Exec {
-            prog: DEV_SSR_BIN_SRC.into(),
-            args: vec![],
-        },
-        options: Default::default(),
-    }))
-    .0
-}
 
 fn ssr_reload_needed(path: &Path) -> bool {
     let file_name_starts_with_env = path
@@ -86,70 +27,113 @@ fn ssr_reload_needed(path: &Path) -> bool {
     file_name_starts_with_env || file_path.ends_with("sx") || file_path.ends_with("mdx")
 }
 
+#[allow(
+    clippy::await_holding_lock,
+    reason = "At this point there is no other thread waiting for the lock"
+)]
+async fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
+    if let Ok(mut pm) = process_manager.lock() {
+        pm.start_dev_processes().await
+    }
+}
+
+fn detect_existing_env_files() -> Vec<String> {
+    if let Ok(dir) = fs::read_dir("./") {
+        dir.filter_map(|entry| entry.ok())
+            .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
+            .map(|entry| entry.path().to_string_lossy().into_owned())
+            .collect::<Vec<String>>()
+    } else {
+        Vec::new()
+    }
+}
+
 #[tokio::main]
-pub async fn watch() -> Result<()> {
+pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
+    let source_builder = RwLock::new(source_builder);
     let term = Term::stdout();
     let mut sp = Spinner::new(Spinners::Dots, "Starting dev server...".into());
 
-    watch_react_src().start().await;
+    let process_manager = Arc::new(Mutex::new(ProcessManager::new()));
 
-    let rust_server = run_rust_dev_server();
-    let build_rust_src = build_rust_src();
+    let env_files = detect_existing_env_files();
 
-    let build_ssr_bundle = build_react_ssr_src();
-
-    let env_files = fs::read_dir("./")
-        .expect("Error reading env files from current directory")
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| entry.file_name().to_string_lossy().starts_with(".env"))
-        .map(|entry| entry.path().to_string_lossy().into_owned())
-        .collect::<Vec<String>>();
-
-    build_ssr_bundle.start().await;
-    build_rust_src.start().await;
-
-    // Wait vite and rust builds
-    build_ssr_bundle.to_wait().await;
-    build_rust_src.to_wait().await;
-
-    rust_server.start().await;
+    start_all_processes(process_manager.clone()).await;
 
     // Remove the spinner
     sp.stop();
-    term.clear_line().unwrap();
+    _ = term.clear_line();
 
     let wx = Watchexec::new(move |mut action| {
+        let process_manager = process_manager.clone();
+        // if Ctrl-C is received, quit
+        if action.signals().any(|sig| sig == Signal::Interrupt) {
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.abort_all();
+            }
+
+            action.quit_gracefully(Signal::Quit, Duration::from_secs(30));
+            return action;
+        }
+
+        // The best way to trigger the processes is to use these
+        // flags.
+        // This because the same event can be triggered multiple times
+        // and we don't want to restart the process multiple times for the same
+        // purpose.
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
+        let mut should_refresh_axum_source = false;
 
         for event in action.events.iter() {
-            for path in event.paths() {
-                let file_path = path.0.to_string_lossy();
-                if file_path.ends_with(".rs") {
-                    should_reload_rust_server = true
-                }
+            for event_type in event.tags.iter() {
+                if let Tag::FileEventKind(kind) = event_type {
+                    match kind {
+                        FileEventKind::Remove(_) => {
+                            if event.paths().any(|(path, _)| {
+                                path.extension().is_some_and(|ext| ext == "rs") || 
+                            // APIs might define new HTTP methods that requires
+                            // a refresh of the axum source
+                            path.to_str().unwrap_or("").contains("api")
+                            }) {
+                                should_refresh_axum_source = true;
+                            }
+                        }
+                        FileEventKind::Modify(_) => {
+                            if event
+                                .paths()
+                                .any(|(path, _)| path.extension().is_some_and(|ext| ext == "rs"))
+                            {
+                                should_reload_rust_server = true;
+                            }
 
-                if ssr_reload_needed(path.0) {
-                    should_reload_ssr_bundle = true
+                            if event.paths().any(|(path, _)| ssr_reload_needed(path)) {
+                                should_reload_ssr_bundle = true;
+                            }
+                        }
+                        _ => {}
+                    }
                 }
             }
         }
 
-        if should_reload_rust_server {
+        if should_reload_rust_server || should_refresh_axum_source {
             println!("  Reloading...");
-            rust_server.stop();
-            bundle_axum_source(Mode::Dev).expect("Failed to bundle rust source");
-            rust_server.start();
+            if should_refresh_axum_source {
+                if let Ok(mut builder) = source_builder.write() {
+                    builder.app.collect_routes();
+                    _ = builder.refresh_axum_source();
+                }
+            }
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.restart_process(ProcessId::RunRustDevServer);
+            }
         }
 
         if should_reload_ssr_bundle {
-            build_ssr_bundle.stop();
-            build_ssr_bundle.start();
-        }
-
-        // if Ctrl-C is received, quit
-        if action.signals().any(|sig| sig == Signal::Interrupt) {
-            action.quit();
+            if let Ok(mut pm) = process_manager.lock() {
+                pm.restart_process(ProcessId::BuildReactSSRSrc);
+            }
         }
 
         action

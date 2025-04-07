@@ -12,6 +12,12 @@ export default mergeConfig(
      */
     build: { target: 'es2022' },
     plugins: [react()],
+
+    test: {
+      typecheck: {
+        enabled: true,
+      },
+    },
   }),
   defineViteConfig({
     entry: [

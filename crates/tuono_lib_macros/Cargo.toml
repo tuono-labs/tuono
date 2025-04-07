@@ -1,7 +1,7 @@
 [package]
 name = "tuono_lib_macros"
-version = "0.18.0"
-edition = "2021"
+version = "0.19.2"
+edition = "2024"
 description = "Superfast React fullstack framework"
 homepage = "https://tuono.dev"
 keywords = [ "react", "typescript", "fullstack", "web", "ssr"]

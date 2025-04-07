@@ -13,4 +13,4 @@ export {
 
 export { TuonoScripts } from './shared/TuonoScripts'
 
-export type { TuonoProps } from './types'
+export type { TuonoRouteProps, TuonoLayoutProps } from './types'
