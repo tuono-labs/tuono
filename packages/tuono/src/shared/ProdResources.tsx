@@ -1,10 +1,14 @@
 import type { JSX } from 'react'
 
-import { useTuonoContextServerPayload } from './TuonoContext'
+interface ProdResourcesProps {
+  jsBundles: Array<string> | null
+  cssBundles: Array<string> | null
+}
 
-export const ProdResources = (): JSX.Element => {
-  const { cssBundles, jsBundles } = useTuonoContextServerPayload()
-
+export const ProdResources = ({
+  cssBundles,
+  jsBundles,
+}: ProdResourcesProps): JSX.Element => {
   return (
     <>
       {cssBundles?.map((cssHref) => (
