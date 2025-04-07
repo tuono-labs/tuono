@@ -271,12 +271,6 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn is_git_installed() -> bool {
-    let output = Command::new("git").arg("--version").output();
-
-    output.is_ok()
-}
-
 fn init_new_git_repo(folder_path: &Path) -> Result<(), io::Error> {
     let output = Command::new("git").arg("init").arg(folder_path).output()?;
 
