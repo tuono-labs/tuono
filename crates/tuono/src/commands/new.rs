@@ -7,7 +7,7 @@ use std::fs::{self, File, OpenOptions, create_dir};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use tracing::error;
+use tracing::trace;
 
 #[derive(Deserialize, Debug)]
 enum GithubFileType {
@@ -69,7 +69,7 @@ pub fn create_new_project(
 
     // Check if Git is installed when the user requests to use it; otherwise, continue
     if git_init.unwrap_or(false) && !is_git_installed {
-        error!("You requested to use Git, but it is not installed.")
+        trace!("You requested to use Git, but it is not installed.")
     }
 
     // Use git by default
@@ -172,7 +172,7 @@ pub fn create_new_project(
 
     if git {
         init_new_git_repo(&folder_path)
-            .unwrap_or_else(|_| error!("Failed to initialise a new git repo"));
+            .unwrap_or_else(|_| trace!("Failed to initialise a new git repo"));
     }
 
     outro(folder);
