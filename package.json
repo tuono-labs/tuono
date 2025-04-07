@@ -25,18 +25,18 @@
   "author": "Valerio Ageno",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "9.20.0",
+    "@eslint/js": "9.24.0",
     "@playwright/test": "1.51.1",
     "@types/node": "22.14.0",
     "@vitest/eslint-plugin": "1.1.39",
-    "eslint": "9.20.0",
-    "eslint-import-resolver-typescript": "3.7.0",
+    "eslint": "9.24.0",
+    "eslint-import-resolver-typescript": "3.10.0",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-react": "7.37.4",
-    "eslint-plugin-react-hooks": "5.1.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
     "prettier": "3.5.3",
     "turbo": "2.5.0",
     "typescript": "5.7.3",
-    "typescript-eslint": "8.24.0"
+    "typescript-eslint": "8.29.0"
   }
 }
