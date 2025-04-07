@@ -61,19 +61,8 @@ pub fn create_new_project(
     folder_name: Option<String>,
     template: Option<String>,
     select_head: Option<bool>,
-    git_init: Option<bool>,
 ) {
     let folder = folder_name.unwrap_or(".".to_string());
-
-    let is_git_installed = is_git_installed();
-
-    // Check if Git is installed when the user requests to use it; otherwise, continue
-    if git_init.unwrap_or(false) && !is_git_installed {
-        trace!("You requested to use Git, but it is not installed.")
-    }
-
-    // Use git by default
-    let git = git_init.unwrap_or(true) && is_git_installed;
 
     let github_api_base_url =
         env::var("__INTERNAL_TUONO_TEST").unwrap_or("https://api.github.com".to_string());
@@ -170,10 +159,8 @@ pub fn create_new_project(
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
 
-    if git {
-        init_new_git_repo(&folder_path)
-            .unwrap_or_else(|_| trace!("Failed to initialise a new git repo"));
-    }
+    init_new_git_repo(&folder_path)
+        .unwrap_or_else(|_| trace!("Failed to initialise a new git repo"));
 
     outro(folder);
 }

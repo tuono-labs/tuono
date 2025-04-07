@@ -30,9 +30,6 @@ enum Actions {
         /// Load the latest commit available on the main branch
         #[arg(long)]
         head: Option<bool>,
-        /// Initialize a new Git repository in the specified directory
-        #[arg(short, long)]
-        git_init: Option<bool>,
     },
 }
 
@@ -73,13 +70,12 @@ pub fn app() -> std::io::Result<()> {
             folder_name,
             template,
             head,
-            git_init,
         } => {
             let span = span!(Level::TRACE, "NEW");
 
             let _guard = span.enter();
 
-            new::create_new_project(folder_name, template, head, git_init);
+            new::create_new_project(folder_name, template, head);
         }
     }
 
