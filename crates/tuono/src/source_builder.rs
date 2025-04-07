@@ -174,6 +174,10 @@ impl SourceBuilder {
         self.types_jar.refresh_file(path);
     }
 
+    pub fn remove_typescript_file(&mut self, path: PathBuf) {
+        self.types_jar.remove_file(path);
+    }
+
     pub fn generate_typescript_file(&self) -> io::Result<()> {
         self.types_jar.generate_typescript_file(&self.base_path)
     }
