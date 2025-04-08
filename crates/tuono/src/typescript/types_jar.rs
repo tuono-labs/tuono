@@ -1,5 +1,6 @@
 use crate::typescript::FileTypes;
 use glob::glob;
+use std::collections::HashMap;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use tracing::error;
@@ -38,6 +39,33 @@ impl TypesJar {
         } else {
             error!("Failed to read file: {:?}", path);
         }
+    }
+
+    pub fn check_duplicate_types(&self) -> HashMap<String, PathBuf> {
+        let mut duplicates: HashMap<String, PathBuf> = HashMap::new();
+        let mut paths: Vec<&PathBuf> = vec![];
+        let mut types: Vec<&Vec<String>> = vec![];
+
+        for file_types in self.types.iter() {
+            paths.push(&file_types.file_path);
+            types.push(&file_types.types);
+        }
+
+        // Check that the types are not duplicated across files
+        for i in 0..types.len() {
+            for j in (i + 1)..types.len() {
+                let types_i = types[i];
+                let types_j = types[j];
+
+                for type_i in types_i {
+                    if types_j.contains(type_i) {
+                        duplicates.insert(type_i.clone(), paths[j].clone());
+                    }
+                }
+            }
+        }
+
+        duplicates
     }
 
     /// Generate the string containing all the typescript types
@@ -91,5 +119,71 @@ impl From<&PathBuf> for TypesJar {
             }
         }
         jar
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_correctly_finds_duplicate_types() {
+        let file_type1 = FileTypes {
+            file_path: PathBuf::from("src/types1.rs"),
+            types_as_string: String::from("type1"),
+            types: vec![
+                String::from("Type1"),
+                String::from("Type2"),
+                String::from("Type3"),
+            ],
+        };
+        let file_type2 = FileTypes {
+            file_path: PathBuf::from("src/types2.rs"),
+            types_as_string: String::from("type1"),
+            types: vec![
+                String::from("Type1"),
+                String::from("Type2"),
+                String::from("Type4"),
+            ],
+        };
+
+        let file_type3 = FileTypes {
+            file_path: PathBuf::from("src/types2.rs"),
+            types_as_string: String::from("type1"),
+            types: vec![String::from("Type3")],
+        };
+
+        let mut jar = TypesJar::new();
+        jar.types.push(file_type1);
+        jar.types.push(file_type2);
+        jar.types.push(file_type3);
+
+        let result = jar.check_duplicate_types();
+
+        assert!(
+            result
+                .keys()
+                .collect::<Vec<&String>>()
+                .contains(&&"Type1".to_string())
+        );
+        assert!(
+            result
+                .keys()
+                .collect::<Vec<&String>>()
+                .contains(&&"Type2".to_string())
+        );
+        assert!(
+            result
+                .keys()
+                .collect::<Vec<&String>>()
+                .contains(&&"Type3".to_string())
+        );
+
+        assert!(
+            !result
+                .keys()
+                .collect::<Vec<&String>>()
+                .contains(&&"Type4".to_string())
+        );
     }
 }
