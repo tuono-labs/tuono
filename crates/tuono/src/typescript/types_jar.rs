@@ -1,6 +1,7 @@
 use crate::typescript::FileTypes;
 use glob::glob;
 use std::collections::HashMap;
+use std::env;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use tracing::error;
@@ -41,8 +42,8 @@ impl TypesJar {
         }
     }
 
-    pub fn check_duplicate_types(&self) -> HashMap<String, PathBuf> {
-        let mut duplicates: HashMap<String, PathBuf> = HashMap::new();
+    pub fn check_duplicate_types(&self) -> HashMap<String, (PathBuf, PathBuf)> {
+        let mut duplicates: HashMap<String, (PathBuf, PathBuf)> = HashMap::new();
         let mut paths: Vec<&PathBuf> = vec![];
         let mut types: Vec<&Vec<String>> = vec![];
 
@@ -51,7 +52,6 @@ impl TypesJar {
             types.push(&file_types.types);
         }
 
-        // Check that the types are not duplicated across files
         for i in 0..types.len() {
             for j in (i + 1)..types.len() {
                 let types_i = types[i];
@@ -59,7 +59,7 @@ impl TypesJar {
 
                 for type_i in types_i {
                     if types_j.contains(type_i) {
-                        duplicates.insert(type_i.clone(), paths[j].clone());
+                        duplicates.insert(type_i.clone(), (paths[j].clone(), paths[i].clone()));
                     }
                 }
             }
@@ -71,6 +71,26 @@ impl TypesJar {
     /// Generate the string containing all the typescript types
     /// found in the jar.
     fn generate_typescript(&self) -> String {
+        let duplicates = self.check_duplicate_types();
+        let base_path = env::current_dir().unwrap_or_default();
+        let base_path_str = base_path.to_string_lossy();
+
+        for (type_name, file_paths) in duplicates.iter() {
+            // TODO: replace this with tuono_println! macro
+            println!(
+                "  Duplicate \"{}\" type found in files:\n\n  - {}\n  - {}",
+                type_name,
+                file_paths
+                    .0
+                    .to_string_lossy()
+                    .replace(&base_path_str.to_string(), ""),
+                file_paths
+                    .1
+                    .to_string_lossy()
+                    .replace(&base_path_str.to_string(), ""),
+            );
+        }
+
         let mut typescript = String::from("declare module \"tuono/types\" {\n");
         for ttype in &self.types {
             typescript.push_str(&format!(
