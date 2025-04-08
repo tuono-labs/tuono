@@ -68,9 +68,7 @@ impl TypesJar {
         duplicates
     }
 
-    /// Generate the string containing all the typescript types
-    /// found in the jar.
-    fn generate_typescript(&self) -> String {
+    fn log_duplicated_types(&self) {
         let duplicates = self.check_duplicate_types();
         let base_path = env::current_dir().unwrap_or_default();
         let base_path_str = base_path.to_string_lossy();
@@ -78,7 +76,7 @@ impl TypesJar {
         for (type_name, file_paths) in duplicates.iter() {
             // TODO: replace this with tuono_println! macro
             println!(
-                "  Duplicate \"{}\" type found in files:\n\n  - {}\n  - {}",
+                "  Duplicate \"{}\" type found in files:\n\n  - {}\n  - {}\n",
                 type_name,
                 file_paths
                     .0
@@ -90,7 +88,12 @@ impl TypesJar {
                     .replace(&base_path_str.to_string(), ""),
             );
         }
+    }
 
+    /// Generate the string containing all the typescript types
+    /// found in the jar.
+    fn generate_typescript(&self) -> String {
+        self.log_duplicated_types();
         let mut typescript = String::from("declare module \"tuono/types\" {\n");
         for ttype in &self.types {
             typescript.push_str(&format!(
