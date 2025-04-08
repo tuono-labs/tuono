@@ -159,8 +159,7 @@ pub fn create_new_project(
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
 
-    init_new_git_repo(&folder_path)
-        .unwrap_or_else(|_| trace!("Failed to initialise a new git repo"));
+    init_new_git_repo(&folder_path);
 
     outro(folder);
 }
@@ -271,19 +270,13 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn init_new_git_repo(folder_path: &Path) -> Result<(), io::Error> {
-    let output = Command::new("git").arg("init").arg(folder_path).output()?;
-
-    if output.status.success() {
-        Ok(())
+fn init_new_git_repo(folder_path: &Path) {
+    if let Ok(output) = Command::new("git").arg("init").arg(folder_path).output() {
+        if !output.status.success() {
+            trace!("Failed to initialise a new git repo")
+        }
     } else {
-        Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!(
-                "Git init failed: {}",
-                String::from_utf8_lossy(&output.stderr)
-            ),
-        ))
+        trace!("Failed to initialise a new git repo")
     }
 }
 
