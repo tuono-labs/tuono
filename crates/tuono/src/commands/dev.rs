@@ -92,21 +92,18 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         let mut should_reload_rust_server = false;
         let mut should_refresh_axum_source = false;
         let mut paths_to_refresh_types: Vec<PathBuf> = vec![];
+        let mut removed_files_from_types: Vec<PathBuf> = vec![];
 
         for event in action.events.iter() {
             for event_type in event.tags.iter() {
                 if let Tag::FileEventKind(kind) = event_type {
                     match kind {
-                        FileEventKind::Remove(_) => {
-                            if event.paths().any(|(path, _)| {
-                                path.extension().is_some_and(|ext| ext == "rs") || 
-                            // APIs might define new HTTP methods that requires
-                            // a refresh of the axum source
-                            path.to_str().unwrap_or("").contains("api")
-                            }) {
+                        FileEventKind::Remove(_) => event.paths().for_each(|(path, _)| {
+                            if path.extension().is_some_and(|ext| ext == "rs") {
+                                removed_files_from_types.push(path.to_path_buf());
                                 should_refresh_axum_source = true;
                             }
-                        }
+                        }),
                         FileEventKind::Modify(_) => event.paths().for_each(|(path, _)| {
                             if path.extension().is_some_and(|ext| ext == "rs") {
                                 should_reload_rust_server = true;
@@ -128,6 +125,17 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                     // There is no need to check here if the `Type` trait is
                     // derived since it will be checked later by the TypeJar struct.
                     builder.refresh_typescript_file(path)
+                }
+                if builder.generate_typescript_file().is_err() {
+                    error!("Failed to generate typescript file");
+                };
+            }
+        }
+
+        if !removed_files_from_types.is_empty() {
+            if let Ok(mut builder) = source_builder.write() {
+                for path in removed_files_from_types {
+                    builder.remove_typescript_file(path);
                 }
                 if builder.generate_typescript_file().is_err() {
                     error!("Failed to generate typescript file");

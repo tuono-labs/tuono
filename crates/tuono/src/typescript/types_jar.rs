@@ -21,9 +21,8 @@ impl TypesJar {
     /// Removes all types from the jar that are
     /// present in the provided `file_path`.
     /// This function is triggered when a file is deleted
-    #[allow(dead_code)]
-    pub fn remove_types_from_file(&mut self, file_path: &PathBuf) {
-        self.types.retain(|ttype| ttype.file_path != *file_path);
+    pub fn remove_file(&mut self, file_path: PathBuf) {
+        self.types.retain(|ttype| ttype.file_path != file_path);
     }
 
     pub fn refresh_file(&mut self, path: PathBuf) {
