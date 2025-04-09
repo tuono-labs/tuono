@@ -12,14 +12,14 @@ const TUONO_MACRO_TRAIT_NAME: &str = "Type";
 #[derive(Debug, Clone, Default)]
 pub struct TypesJar {
     types: Vec<FileTypes>,
-    should_create_generate_module_file: bool,
+    should_generate_typescript_file: bool,
 }
 
 impl TypesJar {
     pub fn new() -> Self {
         Self {
             types: vec![],
-            should_create_generate_module_file: true,
+            should_generate_typescript_file: true,
         }
     }
 }
@@ -29,7 +29,7 @@ impl TypesJar {
     /// present in the provided `file_path`.
     /// This function is triggered when a file is deleted
     pub fn remove_file(&mut self, file_path: PathBuf) {
-        self.should_create_generate_module_file = true;
+        self.should_generate_typescript_file = true;
         self.types.retain(|ttype| ttype.file_path != file_path);
     }
 
@@ -44,7 +44,7 @@ impl TypesJar {
                     }
                     trace!("Refreshing: {:?} type", ttype.types);
 
-                    self.should_create_generate_module_file = true;
+                    self.should_generate_typescript_file = true;
                     self.remove_file(path);
                     self.types.push(ttype);
                 } else {
@@ -127,11 +127,11 @@ impl TypesJar {
     }
 
     pub fn generate_typescript_file(&mut self, base_path: &Path) -> std::io::Result<()> {
-        if !self.should_create_generate_module_file {
+        if !self.should_generate_typescript_file {
             trace!("No need to create typescript module file");
             return Ok(());
         }
-        self.should_create_generate_module_file = false;
+        self.should_generate_typescript_file = false;
         trace!("Creating typescript module file");
         let typescript = self.generate_typescript();
         let typescript_file_path = base_path.join(".tuono").join("types.ts");
