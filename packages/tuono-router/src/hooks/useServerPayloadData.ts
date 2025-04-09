@@ -52,7 +52,7 @@ export function useServerPayloadData<TServerPayloadData>(
     if (route.options.hasHandler) {
       // The error management is already handled inside the IIFE
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      ; (async (): Promise<void> => {
+      ;(async (): Promise<void> => {
         try {
           const response = await fetchClientSideData()
           if (response.info.redirect_destination) {
