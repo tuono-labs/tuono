@@ -4,8 +4,10 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { Route } from '../route'
 import type { RouteComponent, RouteProps } from '../types'
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
+import { useRouterContext } from '../components/RouterContext'
 
 import { RouteMatch } from './RouteMatch'
+import { Router } from '../router'
 
 function createRouteComponent(routeType: string): RouteComponent {
   const RootComponent = (({ children }: RouteProps) => (
@@ -47,7 +49,12 @@ vi.mock('../hooks/useServerPayloadData', () => ({
   useServerPayloadData: vi.fn(),
 }))
 
+vi.mock('../components/RouterContext', () => ({
+  useRouterContext: vi.fn(),
+}))
+
 const useServerPayloadDataMock = vi.mocked(useServerPayloadData)
+const useRouterContextMock = vi.mocked(useRouterContext)
 
 describe('<RouteMatch />', () => {
   afterEach(cleanup)
@@ -55,7 +62,11 @@ describe('<RouteMatch />', () => {
   it('should correctly render nested routes', () => {
     useServerPayloadDataMock.mockReturnValue({
       data: { some: 'data' },
-      isLoading: false,
+    })
+
+    // @ts-expect-error no need to define the full context here
+    useRouterContextMock.mockReturnValue({
+      isTransitioning: false,
     })
 
     render(<RouteMatch route={route} serverInitialData={{}} />)
@@ -84,7 +95,11 @@ describe('<RouteMatch />', () => {
   it('should return null data when while loading', () => {
     useServerPayloadDataMock.mockReturnValue({
       data: { some: 'data' },
-      isLoading: true,
+    })
+
+    // @ts-expect-error no need to define the full context here
+    useRouterContextMock.mockReturnValue({
+      isTransitioning: true,
     })
 
     render(<RouteMatch route={route} serverInitialData={{}} />)

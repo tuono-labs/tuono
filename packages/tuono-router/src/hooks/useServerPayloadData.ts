@@ -5,8 +5,6 @@ import { fromUrlToParsedLocation } from '../utils/from-url-to-parsed-location'
 
 import { useRouterContext } from '../components/RouterContext'
 
-const isServer = typeof document === 'undefined'
-
 interface TuonoApi {
   data?: unknown
   info: {
@@ -22,7 +20,6 @@ const fetchClientSideData = async (): Promise<TuonoApi> => {
 
 interface UseServerPayloadDataResult<TData> {
   data: TData
-  isLoading: boolean
 }
 
 /*
@@ -38,14 +35,6 @@ export function useServerPayloadData<TServerPayloadData>(
 ): UseServerPayloadDataResult<TServerPayloadData> {
   const isFirstRendering = useRef<boolean>(true)
   const { location, updateLocation, stopTransitioning } = useRouterContext()
-  const [isLoading] = useState<boolean>(
-    // Force loading if has handler
-    !!route.options.hasHandler &&
-      // Avoid loading on the server
-      !isServer &&
-      // Avoid loading if first rendering
-      !isFirstRendering.current,
-  )
 
   const [data, setData] = useState<TServerPayloadData | undefined>(
     serverInitialData,
@@ -63,7 +52,7 @@ export function useServerPayloadData<TServerPayloadData>(
     if (route.options.hasHandler) {
       // The error management is already handled inside the IIFE
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      ;(async (): Promise<void> => {
+      ; (async (): Promise<void> => {
         try {
           const response = await fetchClientSideData()
           if (response.info.redirect_destination) {
@@ -102,5 +91,5 @@ export function useServerPayloadData<TServerPayloadData>(
     stopTransitioning,
   ])
 
-  return { isLoading, data: data as TServerPayloadData }
+  return { data: data as TServerPayloadData }
 }
