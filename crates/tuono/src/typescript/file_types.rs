@@ -14,7 +14,7 @@ pub struct FileTypes {
     pub types_as_string: String,
     /// The types found in the file.
     /// Used to check that the types are not duplicated across files.
-    types: Vec<String>,
+    pub types: Vec<String>,
 }
 
 impl TryFrom<(PathBuf, String)> for FileTypes {
