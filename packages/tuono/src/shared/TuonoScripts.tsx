@@ -12,8 +12,15 @@ export function TuonoScripts(): JSX.Element {
   return (
     <>
       <script>{`window['${SERVER_PAYLOAD_VARIABLE_NAME}']=${JSON.stringify(serverPayload)}`}</script>
-      {serverPayload.mode === 'Dev' && <DevResources />}
-      {serverPayload.mode === 'Prod' && <ProdResources />}
+      {serverPayload.mode === 'Dev' && (
+        <DevResources devServerConfig={serverPayload.devServerConfig} />
+      )}
+      {serverPayload.mode === 'Prod' && (
+        <ProdResources
+          jsBundles={serverPayload.jsBundles}
+          cssBundles={serverPayload.cssBundles}
+        />
+      )}
     </>
   )
 }

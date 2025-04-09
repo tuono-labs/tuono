@@ -5,15 +5,17 @@ import type {
   CSSOptions,
 } from 'vite'
 
+export interface TuonoConfigServer {
+  host: string
+  origin: string | null
+  port: number
+}
+
 /**
  * @see http://tuono.dev/documentation/configuration
  */
 export interface TuonoConfig {
-  server?: {
-    host?: string
-    origin?: string | null
-    port?: number
-  }
+  server?: Partial<TuonoConfigServer>
   vite?: {
     alias?: AliasOptions
     css?: CSSOptions

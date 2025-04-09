@@ -6,6 +6,8 @@ use std::env;
 use std::fs::{self, File, OpenOptions, create_dir};
 use std::io::{self, prelude::*};
 use std::path::{Path, PathBuf};
+use std::process::Command;
+use tracing::trace;
 
 #[derive(Deserialize, Debug)]
 enum GithubFileType {
@@ -156,6 +158,9 @@ pub fn create_new_project(
 
     update_package_json_version(&folder_path).expect("Failed to update package.json version");
     update_cargo_toml_version(&folder_path).expect("Failed to update Cargo.toml version");
+
+    init_new_git_repo(&folder_path);
+
     outro(folder);
 }
 
@@ -263,6 +268,16 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
         .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)));
 
     Ok(())
+}
+
+fn init_new_git_repo(folder_path: &Path) {
+    if let Ok(output) = Command::new("git").arg("init").arg(folder_path).output() {
+        if !output.status.success() {
+            trace!("Failed to initialise a new git repo")
+        }
+    } else {
+        trace!("Failed to initialise a new git repo")
+    }
 }
 
 fn outro(folder_name: String) {

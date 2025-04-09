@@ -1,6 +1,6 @@
 [package]
 name = "tuono_internal"
-version = "0.19.0"
+version = "0.19.2"
 edition = "2024"
 authors = ["V. Ageno <valerioageno@yahoo.it>"]
 description = "Superfast React fullstack framework"

@@ -1,7 +1,7 @@
+use axum::http::{HeaderMap, Uri};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-use axum::http::{HeaderMap, Uri};
 
 /// Location must match client side interface
 #[derive(Serialize, Debug)]
@@ -70,12 +70,40 @@ impl Request {
             "Failed to read body",
         )))
     }
+
+    pub fn form_data<T>(&self) -> Result<T, BodyParseError>
+    where
+        T: DeserializeOwned,
+    {
+        let content_type = self
+            .headers
+            .get("content-type")
+            .and_then(|v| v.to_str().ok())
+            .unwrap_or("");
+
+        if !content_type.contains("application/x-www-form-urlencoded") {
+            return Err(BodyParseError::ContentType(
+                "Invalid content type, expected application/x-www-form-urlencoded".to_string(),
+            ));
+        }
+
+        let body = self.body.as_ref().ok_or_else(|| {
+            BodyParseError::Io(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Missing request body",
+            ))
+        })?;
+
+        serde_urlencoded::from_bytes::<T>(body).map_err(BodyParseError::UrlEncoded)
+    }
 }
 
 #[derive(Debug)]
 pub enum BodyParseError {
     Io(std::io::Error),
     Serde(serde_json::Error),
+    UrlEncoded(serde_urlencoded::de::Error),
+    ContentType(String),
 }
 
 impl From<serde_json::Error> for BodyParseError {
@@ -93,6 +121,12 @@ mod tests {
     struct FakeBody {
         field1: bool,
         field2: String,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct FormData {
+        name: String,
+        email: Option<String>,
     }
 
     #[test]
@@ -122,5 +156,71 @@ mod tests {
         let body: Result<FakeBody, BodyParseError> = request.body();
 
         assert!(body.is_err());
+    }
+
+    #[test]
+    fn it_correctly_parses_form_data() {
+        let mut request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+            None,
+        );
+
+        request.headers.insert(
+            "content-type",
+            "application/x-www-form-urlencoded".parse().unwrap(),
+        );
+
+        request.body = Some("name=John+Doe&email=john%40example.com".as_bytes().to_vec());
+
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
+
+        assert!(form_data.is_ok());
+        let data = form_data.unwrap();
+        assert_eq!(data.name, "John Doe");
+        assert_eq!(data.email, Some("john@example.com".to_string()));
+    }
+
+    #[test]
+    fn it_rejects_wrong_form_content_type() {
+        let mut request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+            None,
+        );
+
+        request
+            .headers
+            .insert("content-type", "application/json".parse().unwrap());
+
+        request.headers.insert(
+            "body",
+            "name=John+Doe&email=john%40example.com".parse().unwrap(),
+        );
+
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
+
+        assert!(form_data.is_err());
+    }
+
+    #[test]
+    fn it_handles_missing_form_body() {
+        let mut request = Request::new(
+            Uri::from_static("http://localhost:3000"),
+            HeaderMap::new(),
+            HashMap::new(),
+            None,
+        );
+
+        request.headers.insert(
+            "content-type",
+            "application/x-www-form-urlencoded".parse().unwrap(),
+        );
+
+        let form_data: Result<FormData, BodyParseError> = request.form_data();
+
+        assert!(form_data.is_err());
     }
 }

@@ -1,12 +1,17 @@
 import type { JSX } from 'react'
 
-import { useTuonoContextServerPayload } from './TuonoContext'
+import type { TuonoConfigServer } from '../config'
 
 const VITE_PROXY_PATH = '/vite-server'
 const DEFAULT_SERVER_CONFIG = { host: 'localhost', origin: null, port: 3000 }
 
-export const DevResources = (): JSX.Element => {
-  const { devServerConfig } = useTuonoContextServerPayload()
+interface DevResourcesProps {
+  devServerConfig?: TuonoConfigServer
+}
+
+export const DevResources = ({
+  devServerConfig,
+}: DevResourcesProps): JSX.Element => {
   const { host, origin, port } = devServerConfig ?? DEFAULT_SERVER_CONFIG
 
   const viteBaseUrl =
