@@ -88,7 +88,7 @@ impl SourceBuilder {
 
     // Build the source code needed for both build and dev
     pub fn base_build(&mut self) -> io::Result<()> {
-        let Self { mode, .. } = &self;
+        let mode = self.mode.clone();
 
         self.refresh_axum_source()?;
         let dev_folder = Path::new(DEV_FOLDER);
@@ -97,7 +97,7 @@ impl SourceBuilder {
 
         self.types_jar.generate_typescript_file(&self.base_path)?;
 
-        if mode == &Mode::Dev {
+        if mode == Mode::Dev {
             self.app.build_tuono_config()?;
             let fallback_html = self.build_html_fallback();
             self.create_file(PathBuf::from(FALLBACK_HTML_PATH), &fallback_html)?;
@@ -178,7 +178,7 @@ impl SourceBuilder {
         self.types_jar.remove_file(path);
     }
 
-    pub fn generate_typescript_file(&self) -> io::Result<()> {
+    pub fn generate_typescript_file(&mut self) -> io::Result<()> {
         self.types_jar.generate_typescript_file(&self.base_path)
     }
 

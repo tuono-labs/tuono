@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -100,8 +101,10 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         let mut should_reload_ssr_bundle = false;
         let mut should_reload_rust_server = false;
         let mut should_refresh_axum_source = false;
-        let mut paths_to_refresh_types: Vec<PathBuf> = vec![];
-        let mut removed_files_from_types: Vec<PathBuf> = vec![];
+
+        // Using HashSet to avoid duplicates
+        let mut paths_to_refresh_types: HashSet<PathBuf> = HashSet::new();
+        let mut removed_files_from_types: HashSet<PathBuf> = HashSet::new();
 
         for event in action.events.iter() {
             for event_type in event.tags.iter() {
@@ -109,14 +112,14 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
                     match kind {
                         FileEventKind::Remove(_) => event.paths().for_each(|(path, _)| {
                             if path.extension().is_some_and(|ext| ext == "rs") {
-                                removed_files_from_types.push(path.to_path_buf());
+                                removed_files_from_types.insert(path.to_path_buf());
                                 should_refresh_axum_source = true;
                             }
                         }),
                         FileEventKind::Modify(_) => event.paths().for_each(|(path, _)| {
                             if path.extension().is_some_and(|ext| ext == "rs") {
                                 should_reload_rust_server = true;
-                                paths_to_refresh_types.push(path.to_path_buf());
+                                paths_to_refresh_types.insert(path.to_path_buf());
                             }
                             if ssr_reload_needed(path) {
                                 should_reload_ssr_bundle = true;
