@@ -9,10 +9,8 @@ use tuono_internal::config::Config;
 use tuono_internal::tuono_println;
 
 use crate::env::load_env_vars;
-use crate::{
-    catch_all::catch_all, services::logger::LoggerLayer, vite_reverse_proxy::vite_reverse_proxy,
-    vite_websocket_proxy::vite_websocket_proxy,
-};
+use crate::vite::{vite_reverse_proxy, vite_websocket_proxy};
+use crate::{catch_all::catch_all, services::logger::LoggerLayer};
 
 const DEV_PUBLIC_DIR: &str = "public";
 const PROD_PUBLIC_DIR: &str = "out/client";
