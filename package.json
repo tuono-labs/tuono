@@ -7,7 +7,7 @@
     "dev": "turbo dev --filter=./devtools/* --filter=./packages/*",
     "build": "turbo build --filter=./devtools/* --filter=./packages/*",
     "lint": "turbo lint --filter=./devtools/* --filter=./packages/*",
-    "format:fix": "turbo format --filter=./devtools/* --filter=./packages/*",
+    "format:fix": "turbo format:fix --filter=./devtools/* --filter=./packages/*",
     "format": "turbo format --filter=./devtools/* --filter=./packages/*",
     "typecheck": "turbo typecheck --filter=./devtools/* --filter=./packages/*",
     "test": "turbo test --filter=./devtools/* --filter=./packages/*",
