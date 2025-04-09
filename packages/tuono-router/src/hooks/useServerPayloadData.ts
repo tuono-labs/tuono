@@ -41,10 +41,10 @@ export function useServerPayloadData<TServerPayloadData>(
   const [isLoading] = useState<boolean>(
     // Force loading if has handler
     !!route.options.hasHandler &&
-    // Avoid loading on the server
-    !isServer &&
-    // Avoid loading if first rendering
-    !isFirstRendering.current,
+      // Avoid loading on the server
+      !isServer &&
+      // Avoid loading if first rendering
+      !isFirstRendering.current,
   )
 
   const [data, setData] = useState<TServerPayloadData | undefined>(
@@ -63,7 +63,7 @@ export function useServerPayloadData<TServerPayloadData>(
     if (route.options.hasHandler) {
       // The error management is already handled inside the IIFE
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      ; (async (): Promise<void> => {
+      ;(async (): Promise<void> => {
         try {
           const response = await fetchClientSideData()
           if (response.info.redirect_destination) {
