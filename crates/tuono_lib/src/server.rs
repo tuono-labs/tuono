@@ -44,7 +44,7 @@ impl Server {
                 tuono_println!("Origin: {}\n", origin.blue().bold());
             }
         } else {
-            tuono_println!("Ready");
+            tuono_println!("Ready\n");
         }
     }
 
