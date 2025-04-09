@@ -5,6 +5,7 @@ use std::env;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use tracing::{error, trace};
+use tuono_internal::tuono_println;
 
 const TUONO_MACRO_TRAIT_NAME: &str = "Type";
 
@@ -28,6 +29,7 @@ impl TypesJar {
     /// present in the provided `file_path`.
     /// This function is triggered when a file is deleted
     pub fn remove_file(&mut self, file_path: PathBuf) {
+        self.should_create_generate_module_file = true;
         self.types.retain(|ttype| ttype.file_path != file_path);
     }
 
@@ -48,6 +50,11 @@ impl TypesJar {
                 } else {
                     error!("Failed to parse file: {:?}", path);
                 }
+            } else {
+                // Check if the file exist. In case it is it means that the user
+                // removed the "Type" derived trait. Hence we have to remove it from
+                // the jar
+                self.remove_file(path.clone());
             }
         } else {
             error!("Failed to read file: {:?}", path);
@@ -87,19 +94,18 @@ impl TypesJar {
         let base_path_str = base_path.to_string_lossy();
 
         for (type_name, file_paths) in duplicates.iter() {
-            // TODO: replace this with tuono_println! macro
-            println!(
-                "  Duplicate \"{}\" type found in files:\n\n  - {}\n  - {}\n",
-                type_name,
-                file_paths
-                    .0
-                    .to_string_lossy()
-                    .replace(&base_path_str.to_string(), ""),
-                file_paths
-                    .1
-                    .to_string_lossy()
-                    .replace(&base_path_str.to_string(), ""),
-            );
+            let first_file_path = file_paths
+                .0
+                .to_string_lossy()
+                .replace(&base_path_str.to_string(), "");
+            let second_file_path = file_paths
+                .1
+                .to_string_lossy()
+                .replace(&base_path_str.to_string(), "");
+
+            tuono_println!("Duplicate \"{}\" type found in files:\n", type_name);
+            tuono_println!("- {}", first_file_path);
+            tuono_println!("- {}\n", second_file_path);
         }
     }
 
@@ -147,12 +153,13 @@ impl From<&PathBuf> for TypesJar {
                 files.for_each(|path| {
                     let file_path = path.unwrap_or_default();
                     if let Ok(file_str) = read_to_string(&file_path) {
-                        if file_str.contains(TUONO_MACRO_TRAIT_NAME) {
-                            if let Ok(ttype) = FileTypes::try_from((file_path.clone(), file_str)) {
-                                jar.types.push(ttype);
-                            } else {
-                                error!("Failed to parse file: {:?}", file_path);
-                            }
+                        if !file_str.contains(TUONO_MACRO_TRAIT_NAME) {
+                            return;
+                        }
+                        if let Ok(ttype) = FileTypes::try_from((file_path.clone(), file_str)) {
+                            jar.types.push(ttype);
+                        } else {
+                            error!("Failed to parse file: {:?}", file_path);
                         }
                     } else {
                         error!("Failed to read file: {:?}", file_path);
