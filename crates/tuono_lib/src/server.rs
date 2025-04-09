@@ -6,6 +6,7 @@ use colored::Colorize;
 use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
 use tuono_internal::config::Config;
+use tuono_internal::tuono_println;
 
 use crate::env::load_env_vars;
 use crate::{
@@ -31,23 +32,19 @@ pub struct Server {
 
 impl Server {
     fn display_start_message(&self) {
-        /*
-         * Format the server address as a valid URL so that it becomes clickable in the CLI
-         * @see https://github.com/tuono-labs/tuono/issues/460
-         */
+        // Format the server address as a valid URL so that it becomes clickable in the CLI
+        // @see https://github.com/tuono-labs/tuono/issues/460
         let server_base_url = format!("http://{}", self.address);
 
-        if self.mode == Mode::Dev {
-            println!("  Ready at: {}\n", server_base_url.blue().bold());
+        // In order to avoid multiple logs on `tuono dev`
+        // the server address prompt for tuono dev is made on the CLI process
+        if self.mode == Mode::Prod {
+            tuono_println!("Production server at: {}\n", server_base_url.blue().bold());
+            if let Some(origin) = &self.origin {
+                tuono_println!("Origin: {}\n", origin.blue().bold());
+            }
         } else {
-            println!(
-                "  Production server at: {}\n",
-                server_base_url.blue().bold()
-            );
-        }
-
-        if let Some(origin) = &self.origin {
-            println!("  Origin: {}\n", origin.blue().bold());
+            tuono_println!("Ready\n");
         }
     }
 

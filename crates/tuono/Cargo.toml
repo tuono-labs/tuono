@@ -22,6 +22,8 @@ syn = { version = "2.0.100", features = ["full"] }
 tracing = "0.1.41"
 tracing-subscriber = {version = "0.3.19", features = ["env-filter"]}
 miette = "7.2.0"
+
+colored = "2.1.0"
 watchexec = "5.0.0"
 watchexec-signals = "4.0.0"
 watchexec-events = "4.0.0"
