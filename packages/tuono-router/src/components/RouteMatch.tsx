@@ -2,7 +2,9 @@ import type { JSX } from 'react'
 import { memo, Suspense, useMemo } from 'react'
 
 import type { Route } from '../route'
+
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
+
 import { useRouterContext } from './RouterContext'
 
 interface RouteMatchProps<TServerPayloadData = unknown> {

@@ -7,7 +7,6 @@ import { useServerPayloadData } from '../hooks/useServerPayloadData'
 import { useRouterContext } from '../components/RouterContext'
 
 import { RouteMatch } from './RouteMatch'
-import { Router } from '../router'
 
 function createRouteComponent(routeType: string): RouteComponent {
   const RootComponent = (({ children }: RouteProps) => (

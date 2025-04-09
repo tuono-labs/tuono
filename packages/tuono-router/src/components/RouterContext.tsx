@@ -120,7 +120,7 @@ export function RouterContextProvider({
       updateLocation,
       stopTransitioning,
     }),
-    [location, router, isTransitioning],
+    [location, router, isTransitioning, updateLocation, stopTransitioning],
   )
 
   return (
