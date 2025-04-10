@@ -59,14 +59,10 @@ describe('<RouteMatch />', () => {
   afterEach(cleanup)
 
   it('should correctly render nested routes', () => {
-    useServerPayloadDataMock.mockReturnValue({
-      data: { some: 'data' },
-    })
+    useServerPayloadDataMock.mockReturnValue({ data: { some: 'data' } })
 
-    // @ts-expect-error no need to define the full context here
-    useRouterContextMock.mockReturnValue({
-      isTransitioning: false,
-    })
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: false })
 
     render(<RouteMatch route={route} serverInitialData={{}} />)
 
@@ -91,17 +87,15 @@ describe('<RouteMatch />', () => {
     )
   })
 
-  it('should return null data when while loading', () => {
-    useServerPayloadDataMock.mockReturnValue({
-      data: { some: 'data' },
-    })
+  it('should correctly handle loading transition', () => {
+    useServerPayloadDataMock.mockReturnValue({ data: { some: 'data' } })
 
-    // @ts-expect-error no need to define the full context here
-    useRouterContextMock.mockReturnValue({
-      isTransitioning: true,
-    })
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: true })
 
-    render(<RouteMatch route={route} serverInitialData={{}} />)
+    const { rerender } = render(
+      <RouteMatch route={route} serverInitialData={{}} />,
+    )
 
     expect(screen.getByTestId('root')).toMatchInlineSnapshot(
       `
@@ -116,6 +110,31 @@ describe('<RouteMatch />', () => {
           <div
             data-testid="current"
           />
+        </div>
+      </div>
+    `,
+    )
+
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: false })
+
+    rerender(<RouteMatch route={route} serverInitialData={{}} />)
+
+    expect(screen.getByTestId('root')).toMatchInlineSnapshot(
+      `
+      <div
+        data-testid="root"
+      >
+        root route
+        <div
+          data-testid="parent"
+        >
+          parent route
+          <div
+            data-testid="current"
+          >
+            {"some":"data"}
+          </div>
         </div>
       </div>
     `,
