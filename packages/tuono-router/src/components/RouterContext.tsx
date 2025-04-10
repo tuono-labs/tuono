@@ -73,8 +73,8 @@ export function RouterContextProvider({
   const [location, setLocation] = useState<ParsedLocation>(() =>
     getInitialLocation(serverInitialLocation),
   )
-  // Gloabal state to handle the loading time across the page transitions
-  // It gets false when the page is fully loaded (server side data included).
+  // Global state to track whether a page transition is in progress.
+  // Set to `false` once the page is fully loaded, including server-side data.
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
 
   /**
