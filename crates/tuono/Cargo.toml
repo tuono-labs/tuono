@@ -1,6 +1,6 @@
 [package]
 name = "tuono"
-version = "0.19.2"
+version = "0.19.3"
 edition = "2024"
 authors = ["V. Ageno <valerioageno@yahoo.it>"]
 description = "Superfast React fullstack framework"
@@ -36,7 +36,7 @@ reqwest = { version = "0.12.4", features = ["blocking", "json"] }
 serde_json = "1.0"
 fs_extra = "1.3.0"
 http = "1.1.0"
-tuono_internal = {path = "../tuono_internal", version = "0.19.2"}
+tuono_internal = {path = "../tuono_internal", version = "0.19.3"}
 spinners = "4.1.1"
 console = "0.15.10"
 

@@ -1,4 +1,11 @@
-import { createContext, useState, useEffect, useContext, useMemo } from 'react'
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  useCallback,
+} from 'react'
 import type { ReactNode } from 'react'
 
 import type { Router } from '../router'
@@ -17,7 +24,9 @@ export interface ParsedLocation {
 interface RouterContextValue {
   router: Router
   location: ParsedLocation
+  isTransitioning: boolean
   updateLocation: (loc: ParsedLocation) => void
+  stopTransitioning: () => void
 }
 
 const RouterContext = createContext({} as RouterContextValue)
@@ -64,6 +73,9 @@ export function RouterContextProvider({
   const [location, setLocation] = useState<ParsedLocation>(() =>
     getInitialLocation(serverInitialLocation),
   )
+  // Global state to track whether a page transition is in progress.
+  // Set to `false` once the page is fully loaded, including server-side data.
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
 
   /**
    * Listen browser navigation events
@@ -91,13 +103,24 @@ export function RouterContextProvider({
     }
   }, [])
 
+  const updateLocation = useCallback((newLocation: ParsedLocation): void => {
+    setIsTransitioning(true)
+    setLocation(newLocation)
+  }, [])
+
+  const stopTransitioning = useCallback((): void => {
+    setIsTransitioning(false)
+  }, [])
+
   const contextValue: RouterContextValue = useMemo(
     () => ({
       router,
       location,
-      updateLocation: setLocation,
+      isTransitioning,
+      updateLocation,
+      stopTransitioning,
     }),
-    [location, router],
+    [location, router, isTransitioning, updateLocation, stopTransitioning],
   )
 
   return (
