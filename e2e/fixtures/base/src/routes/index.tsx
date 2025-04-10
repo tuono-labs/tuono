@@ -1,15 +1,12 @@
 import type { JSX } from 'react'
 import type { TuonoRouteProps } from 'tuono'
 import { Link } from 'tuono'
-
-interface IndexProps {
-  subtitle: string
-}
+import type { MyResponse } from 'tuono/types'
 
 export default function IndexPage({
   data,
   isLoading,
-}: TuonoRouteProps<IndexProps>): JSX.Element {
+}: TuonoRouteProps<MyResponse>): JSX.Element {
   if (isLoading) {
     return <h1>Loading...</h1>
   }

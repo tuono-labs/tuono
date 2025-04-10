@@ -1,7 +1,6 @@
 use crate::mode::Mode;
 use crate::route::Route;
-use glob::GlobError;
-use glob::glob;
+use glob::{GlobError, glob};
 use http::Method;
 use std::collections::hash_set::HashSet;
 use std::collections::{HashMap, hash_map::Entry};
