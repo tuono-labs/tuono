@@ -5,8 +5,6 @@ import { fromUrlToParsedLocation } from '../utils/from-url-to-parsed-location'
 
 import { useRouterContext } from '../components/RouterContext'
 
-const isServer = typeof document === 'undefined'
-
 interface TuonoApi {
   data?: unknown
   info: {
@@ -22,7 +20,6 @@ const fetchClientSideData = async (): Promise<TuonoApi> => {
 
 interface UseServerPayloadDataResult<TData> {
   data: TData
-  isLoading: boolean
 }
 
 /*
@@ -37,15 +34,7 @@ export function useServerPayloadData<TServerPayloadData>(
   serverInitialData: TServerPayloadData,
 ): UseServerPayloadDataResult<TServerPayloadData> {
   const isFirstRendering = useRef<boolean>(true)
-  const { location, updateLocation } = useRouterContext()
-  const [isLoading, setIsLoading] = useState<boolean>(
-    // Force loading if has handler
-    !!route.options.hasHandler &&
-      // Avoid loading on the server
-      !isServer &&
-      // Avoid loading if first rendering
-      !isFirstRendering.current,
-  )
+  const { location, updateLocation, stopTransitioning } = useRouterContext()
 
   const [data, setData] = useState<TServerPayloadData | undefined>(
     serverInitialData,
@@ -56,6 +45,7 @@ export function useServerPayloadData<TServerPayloadData>(
     // props are already bundled by the SSR
     if (isFirstRendering.current) {
       isFirstRendering.current = false
+      stopTransitioning()
       return
     }
     // After client side routing load again the remote data
@@ -63,7 +53,6 @@ export function useServerPayloadData<TServerPayloadData>(
       // The error management is already handled inside the IIFE
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       ;(async (): Promise<void> => {
-        setIsLoading(true)
         try {
           const response = await fetchClientSideData()
           if (response.info.redirect_destination) {
@@ -84,16 +73,23 @@ export function useServerPayloadData<TServerPayloadData>(
         } catch (error) {
           throw Error('Failed loading Server Side Data', { cause: error })
         } finally {
-          setIsLoading(false)
+          stopTransitioning()
         }
       })()
+    } else {
+      stopTransitioning()
     }
 
     // Clean up the data when changing route
     return (): void => {
       setData(undefined)
     }
-  }, [location.pathname, route.options.hasHandler, updateLocation])
+  }, [
+    location.pathname,
+    route.options.hasHandler,
+    updateLocation,
+    stopTransitioning,
+  ])
 
-  return { isLoading, data: data as TServerPayloadData }
+  return { data: data as TServerPayloadData }
 }

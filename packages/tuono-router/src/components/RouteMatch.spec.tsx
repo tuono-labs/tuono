@@ -4,6 +4,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { Route } from '../route'
 import type { RouteComponent, RouteProps } from '../types'
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
+import { useRouterContext } from '../components/RouterContext'
 
 import { RouteMatch } from './RouteMatch'
 
@@ -47,16 +48,21 @@ vi.mock('../hooks/useServerPayloadData', () => ({
   useServerPayloadData: vi.fn(),
 }))
 
+vi.mock('../components/RouterContext', () => ({
+  useRouterContext: vi.fn(),
+}))
+
 const useServerPayloadDataMock = vi.mocked(useServerPayloadData)
+const useRouterContextMock = vi.mocked(useRouterContext)
 
 describe('<RouteMatch />', () => {
   afterEach(cleanup)
 
   it('should correctly render nested routes', () => {
-    useServerPayloadDataMock.mockReturnValue({
-      data: { some: 'data' },
-      isLoading: false,
-    })
+    useServerPayloadDataMock.mockReturnValue({ data: { some: 'data' } })
+
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: false })
 
     render(<RouteMatch route={route} serverInitialData={{}} />)
 
@@ -81,13 +87,15 @@ describe('<RouteMatch />', () => {
     )
   })
 
-  it('should return null data when while loading', () => {
-    useServerPayloadDataMock.mockReturnValue({
-      data: { some: 'data' },
-      isLoading: true,
-    })
+  it('should correctly handle loading transition', () => {
+    useServerPayloadDataMock.mockReturnValue({ data: { some: 'data' } })
 
-    render(<RouteMatch route={route} serverInitialData={{}} />)
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: true })
+
+    const { rerender } = render(
+      <RouteMatch route={route} serverInitialData={{}} />,
+    )
 
     expect(screen.getByTestId('root')).toMatchInlineSnapshot(
       `
@@ -102,6 +110,31 @@ describe('<RouteMatch />', () => {
           <div
             data-testid="current"
           />
+        </div>
+      </div>
+    `,
+    )
+
+    // @ts-expect-error only isTransitioning is used by RouteMatch
+    useRouterContextMock.mockReturnValue({ isTransitioning: false })
+
+    rerender(<RouteMatch route={route} serverInitialData={{}} />)
+
+    expect(screen.getByTestId('root')).toMatchInlineSnapshot(
+      `
+      <div
+        data-testid="root"
+      >
+        root route
+        <div
+          data-testid="parent"
+        >
+          parent route
+          <div
+            data-testid="current"
+          >
+            {"some":"data"}
+          </div>
         </div>
       </div>
     `,
