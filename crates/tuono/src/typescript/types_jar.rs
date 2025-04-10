@@ -237,4 +237,24 @@ mod tests {
                 .contains(&&"Type4".to_string())
         );
     }
+
+    #[test]
+    fn it_correctly_removes_types() {
+        let mut jar = TypesJar::new();
+        let file_path = PathBuf::from("src/types.rs");
+        let file_type = FileTypes {
+            file_path: file_path.clone(),
+            types_as_string: String::from("type1"),
+            types: vec![String::from("Type1")],
+        };
+        assert!(jar.should_generate_typescript_file);
+        //Force file generation to false
+        jar.should_generate_typescript_file = false;
+
+        jar.types.push(file_type);
+        jar.remove_file(file_path.clone());
+
+        assert!(jar.should_generate_typescript_file);
+        assert_eq!(jar.types.len(), 0);
+    }
 }
