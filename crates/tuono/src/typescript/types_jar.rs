@@ -1,3 +1,4 @@
+use crate::symbols::TYPE_TRAIT;
 use crate::typescript::FileTypes;
 use glob::glob;
 use std::collections::HashMap;
@@ -6,8 +7,6 @@ use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use tracing::{error, trace};
 use tuono_internal::tuono_println;
-
-const TUONO_MACRO_TRAIT_NAME: &str = "Type";
 
 #[derive(Debug, Clone, Default)]
 pub struct TypesJar {
@@ -35,7 +34,7 @@ impl TypesJar {
 
     pub fn refresh_file(&mut self, path: PathBuf) {
         if let Ok(file_str) = read_to_string(&path) {
-            if file_str.contains(TUONO_MACRO_TRAIT_NAME) {
+            if file_str.contains(*TYPE_TRAIT) {
                 if let Ok(ttype) = FileTypes::try_from((path.clone(), file_str)) {
                     if Some(&ttype) == self.types.iter().find(|t| t.file_path == path) {
                         // The new file exactly matches the old one
@@ -153,7 +152,7 @@ impl From<&PathBuf> for TypesJar {
                 files.for_each(|path| {
                     let file_path = path.unwrap_or_default();
                     if let Ok(file_str) = read_to_string(&file_path) {
-                        if !file_str.contains(TUONO_MACRO_TRAIT_NAME) {
+                        if !file_str.contains(*TYPE_TRAIT) {
                             return;
                         }
                         if let Ok(ttype) = FileTypes::try_from((file_path.clone(), file_str)) {
