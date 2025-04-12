@@ -95,7 +95,7 @@ fn parse_generics_to_typescript_string(element: &syn::ItemStruct) -> String {
 /// struct compiled to a typescript interface
 pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
     let struct_name = element.ident.to_string();
-    let generics = parse_generics_to_typescript_string(&element);
+    let generics = parse_generics_to_typescript_string(element);
 
     let mut fields_as_string = format!("export interface {struct_name}{generics} {{\n");
 
