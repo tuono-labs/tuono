@@ -1,5 +1,5 @@
 use super::utils::has_derive_type;
-use crate::typescript::parser::parse_struct;
+use crate::typescript::parser::{parse_enum, parse_struct};
 use std::error::Error;
 use std::path::PathBuf;
 use tracing::trace;
@@ -43,6 +43,10 @@ impl TryFrom<(PathBuf, String)> for FileTypes {
                         continue;
                     }
                     trace!("Found enum in file: {:?}", &file_path);
+
+                    let (enum_name, typescript_definition) = parse_enum(&element);
+                    types_as_string.push_str(&typescript_definition);
+                    types.push(enum_name);
                 }
                 _ => {}
             }

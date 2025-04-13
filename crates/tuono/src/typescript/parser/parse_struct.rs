@@ -1,88 +1,11 @@
-use std::str::FromStr;
-
+use crate::typescript::parser::utils::{
+    RenameSerdeOptions, parse_generics_to_typescript_string, parse_serde_attribute,
+};
 use crate::typescript::utils::type_to_typescript;
 
-use convert_case::{Case, Casing};
 use syn::{self, GenericArgument, PathArguments};
 
-// This enum matches serde's RenameRule enum
-#[derive(Debug, Eq, PartialEq, Default)]
-enum RenameSerdeOptions {
-    #[default]
-    None,
-    LowerCase,
-    UpperCase,
-    PascalCase,
-    CamelCase,
-    SnakeCase,
-    ScreamingSnakeCase,
-    KebabCase,
-    ScreamingKebabCase,
-}
-
-impl FromStr for RenameSerdeOptions {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "lowercase" => Ok(RenameSerdeOptions::LowerCase),
-            "UPPERCASE" => Ok(RenameSerdeOptions::UpperCase),
-            "PascalCase" => Ok(RenameSerdeOptions::PascalCase),
-            "camelCase" => Ok(RenameSerdeOptions::CamelCase),
-            "snake_case" => Ok(RenameSerdeOptions::SnakeCase),
-            "SCREAMING_SNAKE_CASE" => Ok(RenameSerdeOptions::ScreamingSnakeCase),
-            "kebab-case" => Ok(RenameSerdeOptions::KebabCase),
-            "SCREAMING-KEBAB-CASE" => Ok(RenameSerdeOptions::ScreamingKebabCase),
-            _ => Err(()),
-        }
-    }
-}
-
-/// Parse any "assign" `#[serde(... = "...")]` attribute and return the value of the specified
-/// attribute.
-fn parse_serde_attribute<T>(attrs: &[syn::Attribute], attribute_name: &str) -> T
-where
-    T: Default + FromStr,
-{
-    for attr in attrs {
-        if attr.path().is_ident("serde") {
-            if let Ok(meta) = attr.parse_args::<syn::Expr>() {
-                match meta {
-                    syn::Expr::Assign(assign) => {
-                        if let syn::Expr::Path(path) = *assign.left {
-                            if !path.path.is_ident(attribute_name) {
-                                return T::default();
-                            }
-                        }
-                        if let syn::Expr::Lit(syn::ExprLit {
-                            lit: syn::Lit::Str(lit_str),
-                            ..
-                        }) = *assign.right
-                        {
-                            return T::from_str(&lit_str.value()).unwrap_or_default();
-                        }
-                    }
-                    _ => return T::default(),
-                }
-            }
-        }
-    }
-    T::default()
-}
-
-// Check if the field has the `#[serde(skip)]` or `#[serde(skip_serializing)]` attribute
-fn should_skip_field(field: &syn::Field) -> bool {
-    for attr in &field.attrs {
-        if attr.path().is_ident("serde") {
-            if let Ok(meta) = attr.parse_args::<syn::Ident>() {
-                if meta == "skip" || meta == "skip_serializing" {
-                    return true;
-                }
-            }
-        }
-    }
-    false
-}
+use super::utils::should_skip_element;
 
 fn get_field_name(field: &syn::Field) -> String {
     let field_name: String = parse_serde_attribute(&field.attrs, "rename");
@@ -98,43 +21,18 @@ fn get_field_name(field: &syn::Field) -> String {
     }
 }
 
-/// Parse the struct generics and return them collected into a "<...>" string.
-/// If no generics are present, return an empty string.
-fn parse_generics_to_typescript_string(element: &syn::ItemStruct) -> String {
-    let generics = element
-        .generics
-        .clone()
-        .params
-        .iter()
-        .map(|param| {
-            if let syn::GenericParam::Type(type_param) = param {
-                type_param.ident.to_string()
-            } else {
-                String::new()
-            }
-        })
-        .filter(|name| !name.is_empty())
-        .collect::<Vec<String>>();
-
-    if !generics.is_empty() {
-        return format!("<{}>", generics.join(", "));
-    }
-
-    String::new()
-}
-
 /// Parse a rust struct and returns a tuple of the struct name and the
 /// struct compiled to a typescript interface
 pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
     let struct_name = element.ident.to_string();
-    let generics = parse_generics_to_typescript_string(element);
+    let generics = parse_generics_to_typescript_string(element.generics.clone().params);
 
     let mut fields_as_string = format!("export interface {struct_name}{generics} {{\n");
 
     let rename_option: RenameSerdeOptions = parse_serde_attribute(&element.attrs, "rename_all");
 
     for field in &element.fields {
-        if should_skip_field(field) {
+        if should_skip_element(&field.attrs) {
             continue;
         }
 
@@ -213,13 +111,7 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
             _ => "unknown".to_string(),
         };
 
-        let field_name = match rename_option {
-            RenameSerdeOptions::LowerCase => field_name.to_lowercase(),
-            RenameSerdeOptions::UpperCase => field_name.to_uppercase(),
-            RenameSerdeOptions::CamelCase => field_name.to_case(Case::Camel),
-            RenameSerdeOptions::PascalCase => field_name.to_case(Case::Pascal),
-            _ => field_name,
-        };
+        let field_name = rename_option.transform(field_name);
 
         fields_as_string.push_str(&format!("  {field_name}: {field_type};\n"));
     }
