@@ -1,12 +1,14 @@
 use crate::typescript::parser::utils::{
-    RenameSerdeOptions, get_field_name, parse_serde_attribute, rust_to_typescript_type,
-    should_skip_element,
+    RenameSerdeOptions, get_field_name, parse_generics_to_typescript_string, parse_serde_attribute,
+    rust_to_typescript_type, should_skip_element,
 };
 
 /// Parse a rust enum and returns a tuple of the enum name and the
 /// enum compiled to a typescript type
 pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
     let enum_name = element.ident.to_string();
+
+    let generics = parse_generics_to_typescript_string(element.generics.clone().params);
     let mut enum_variants: Vec<String> = Vec::new();
 
     let rename_option: RenameSerdeOptions = parse_serde_attribute(&element.attrs, "rename_all");
@@ -44,7 +46,10 @@ pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
         }
     }
 
-    let enum_type = format!("export type {enum_name} = {}", enum_variants.join(" | "));
+    let enum_type = format!(
+        "export type {enum_name}{generics} = {}",
+        enum_variants.join(" | ")
+    );
     (enum_name, enum_type)
 }
 
@@ -177,6 +182,29 @@ mod tests {
         assert_eq!(
             typescript_definition,
             r#"export type MyEnum = {"Request": { body: Bytes }} | {"Response": { payload: Bytes }}"#
+        );
+    }
+
+    #[test]
+    fn it_correctly_parse_the_generic_type() {
+        let enum_str = r#"
+            #[derive(Type)]
+            enum MyEnum<T> {
+                Id,
+                User {
+                    name: T,
+                    age: u32
+                },
+            }
+        "#;
+
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let (enum_name, typescript_definition) = parse_enum(&parsed_enum);
+
+        assert_eq!(enum_name, "MyEnum");
+        assert_eq!(
+            typescript_definition,
+            r#"export type MyEnum<T> = "Id" | {"User": { name: T, age: number }}"#
         );
     }
 }
