@@ -59,7 +59,7 @@ where
                             ..
                         }) = *assign.right
                         {
-                            return T::from_str(&lit_str.value()).unwrap_or(T::default());
+                            return T::from_str(&lit_str.value()).unwrap_or_default();
                         }
                     }
                     _ => return T::default(),
