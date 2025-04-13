@@ -17,7 +17,7 @@ pub struct TypesJar {
 impl TypesJar {
     pub fn new() -> Self {
         Self {
-            types: vec![],
+            types: Vec::new(),
             should_generate_typescript_file: true,
         }
     }
@@ -63,8 +63,8 @@ impl TypesJar {
     pub fn check_duplicate_types(&self) -> HashMap<String, (PathBuf, PathBuf)> {
         trace!("Checking for duplicated types");
         let mut duplicates: HashMap<String, (PathBuf, PathBuf)> = HashMap::new();
-        let mut paths: Vec<&PathBuf> = vec![];
-        let mut types: Vec<&Vec<String>> = vec![];
+        let mut paths: Vec<&PathBuf> = Vec::new();
+        let mut types: Vec<&Vec<String>> = Vec::new();
 
         for file_types in self.types.iter() {
             paths.push(&file_types.file_path);
