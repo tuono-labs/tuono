@@ -92,9 +92,9 @@ fn get_field_name(field: &syn::Field) -> String {
     }
 
     if let Some(field) = field.ident.as_ref() {
-        return field.to_string();
+        field.to_string()
     } else {
-        return String::from("unknown");
+        String::from("unknown")
     }
 }
 
