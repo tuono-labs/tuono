@@ -1,5 +1,5 @@
-use super::parser;
 use super::utils::has_derive_type;
+use crate::typescript::parser::parse_struct;
 use std::error::Error;
 use std::path::PathBuf;
 use tracing::trace;
@@ -34,7 +34,7 @@ impl TryFrom<(PathBuf, String)> for FileTypes {
                         continue;
                     }
                     trace!("Found struct in file: {:?}", &file_path);
-                    let (struct_name, typescript_definition) = parser::parse_struct(&element);
+                    let (struct_name, typescript_definition) = parse_struct(&element);
                     types_as_string.push_str(&typescript_definition);
                     types.push(struct_name);
                 }

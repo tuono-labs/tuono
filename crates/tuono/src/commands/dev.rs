@@ -1,7 +1,6 @@
 use std::collections::HashSet;
 use std::fs;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::RwLock;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;

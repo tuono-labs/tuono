@@ -48,7 +48,7 @@ impl ProcessManager {
         let mut processes = HashMap::new();
         processes.insert(
             ProcessId::WatchReactSrc,
-            start_supervisor_job(DEV_WATCH_BIN_SRC, vec![]),
+            start_supervisor_job(DEV_WATCH_BIN_SRC, Vec::new()),
         );
 
         processes.insert(
@@ -63,7 +63,7 @@ impl ProcessManager {
 
         processes.insert(
             ProcessId::BuildReactSSRSrc,
-            start_supervisor_job(DEV_SSR_BIN_SRC, vec![]),
+            start_supervisor_job(DEV_SSR_BIN_SRC, Vec::new()),
         );
 
         Self { processes }

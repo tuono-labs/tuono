@@ -1,6 +1,5 @@
+use crate::symbols::TYPE_TRAIT;
 use syn::{Attribute, Meta};
-
-const DERIVE_TYPE: &str = "Type";
 
 pub fn has_derive_type(attrs: &[Attribute]) -> bool {
     for attr in attrs {
@@ -13,7 +12,7 @@ pub fn has_derive_type(attrs: &[Attribute]) -> bool {
                     .unwrap_or_default()
                 {
                     if let Meta::Path(path) = nested_meta {
-                        if path.is_ident(DERIVE_TYPE) {
+                        if path.is_ident(&TYPE_TRAIT) {
                             return true;
                         }
                     }

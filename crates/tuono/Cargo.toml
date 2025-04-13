@@ -39,6 +39,7 @@ http = "1.1.0"
 tuono_internal = {path = "../tuono_internal", version = "0.19.3"}
 spinners = "4.1.1"
 console = "0.15.10"
+convert_case = "0.8.0"
 
 [dev-dependencies]
 wiremock = "0.6.2"
