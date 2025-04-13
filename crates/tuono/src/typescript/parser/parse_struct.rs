@@ -84,6 +84,20 @@ fn should_skip_field(field: &syn::Field) -> bool {
     false
 }
 
+fn get_field_name(field: &syn::Field) -> String {
+    let field_name: String = parse_serde_attribute(&field.attrs, "rename");
+
+    if !field_name.is_empty() {
+        return field_name;
+    }
+
+    if let Some(field) = field.ident.as_ref() {
+        return field.to_string();
+    } else {
+        return String::from("unknown");
+    }
+}
+
 /// Parse the struct generics and return them collected into a "<...>" string.
 /// If no generics are present, return an empty string.
 fn parse_generics_to_typescript_string(element: &syn::ItemStruct) -> String {
@@ -124,68 +138,74 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
             continue;
         }
 
-        let field_name: String = parse_serde_attribute(&field.attrs, "rename");
-
-        let field_name = if field_name.is_empty() {
-            field.ident.as_ref().unwrap().to_string()
-        } else {
-            field_name
-        };
+        let field_name = get_field_name(field);
 
         let field_type = match &field.ty {
             syn::Type::Path(type_path) => {
-                let last_segment = type_path.path.segments.last().unwrap();
-                let outer_type = last_segment.ident.to_string();
-                if let PathArguments::AngleBracketed(args) = &last_segment.arguments {
-                    let inner_types: Vec<String> = args
-                        .args
-                        .iter()
-                        .filter_map(|arg| {
-                            if let GenericArgument::Type(inner_type) = arg {
-                                match inner_type {
-                                    syn::Type::Path(inner_type_path) => {
-                                        Some(inner_type_path.path.segments[0].ident.to_string())
-                                    }
-                                    syn::Type::Reference(reference) => {
-                                        if let syn::Type::Path(inner_type_path) = &*reference.elem {
+                if let Some(last_segment) = type_path.path.segments.last() {
+                    let outer_type = last_segment.ident.to_string();
+                    if let PathArguments::AngleBracketed(args) = &last_segment.arguments {
+                        let inner_types: Vec<String> = args
+                            .args
+                            .iter()
+                            .filter_map(|arg| {
+                                if let GenericArgument::Type(inner_type) = arg {
+                                    match inner_type {
+                                        syn::Type::Path(inner_type_path) => {
                                             Some(inner_type_path.path.segments[0].ident.to_string())
-                                        } else {
-                                            Some("unknown".to_string())
                                         }
+                                        syn::Type::Reference(reference) => {
+                                            if let syn::Type::Path(inner_type_path) =
+                                                &*reference.elem
+                                            {
+                                                Some(
+                                                    inner_type_path.path.segments[0]
+                                                        .ident
+                                                        .to_string(),
+                                                )
+                                            } else {
+                                                Some("unknown".to_string())
+                                            }
+                                        }
+                                        _ => Some("unknown".to_string()),
                                     }
-                                    _ => Some("unknown".to_string()),
+                                } else {
+                                    None
                                 }
-                            } else {
-                                None
-                            }
-                        })
-                        .collect();
+                            })
+                            .collect();
 
-                    match outer_type.as_str() {
-                        "Option" => {
-                            format!("{} | null", type_to_typescript(&inner_types[0]))
+                        match outer_type.as_str() {
+                            "Option" => {
+                                format!("{} | null", type_to_typescript(&inner_types[0]))
+                            }
+                            "Vec" => {
+                                format!("{}[]", type_to_typescript(&inner_types[0]))
+                            }
+                            "HashMap" | "BTreeMap" => {
+                                format!(
+                                    "Record<{}, {}>",
+                                    type_to_typescript(&inner_types[0]),
+                                    type_to_typescript(&inner_types[1])
+                                )
+                            }
+                            _ => "unknown".to_string(),
                         }
-                        "Vec" => {
-                            format!("{}[]", type_to_typescript(&inner_types[0]))
-                        }
-                        "HashMap" | "BTreeMap" => {
-                            format!(
-                                "Record<{}, {}>",
-                                type_to_typescript(&inner_types[0]),
-                                type_to_typescript(&inner_types[1])
-                            )
-                        }
-                        _ => "unknown".to_string(),
+                    } else {
+                        type_to_typescript(&outer_type).to_string()
                     }
                 } else {
-                    type_to_typescript(&outer_type).to_string()
+                    "unknown".to_string()
                 }
             }
             syn::Type::Reference(reference) => {
                 // Ignore lifetimes and treat references as their base type
                 if let syn::Type::Path(type_path) = &*reference.elem {
-                    let base_type = type_path.path.segments.last().unwrap().ident.to_string();
-                    type_to_typescript(&base_type).to_string()
+                    if let Some(base_type) = type_path.path.segments.last() {
+                        type_to_typescript(&base_type.ident.to_string()).to_string()
+                    } else {
+                        "unknown".to_string()
+                    }
                 } else {
                     "unknown".to_string()
                 }
