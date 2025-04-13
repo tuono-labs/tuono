@@ -66,6 +66,20 @@ fn get_rename_option(attrs: &[syn::Attribute]) -> RenameSerdeOptions {
     RenameSerdeOptions::None
 }
 
+// Check if the field has the `#[serde(skip)]` or `#[serde(skip_serializing)]` attribute
+fn should_skip_field(field: &syn::Field) -> bool {
+    for attr in &field.attrs {
+        if attr.path().is_ident("serde") {
+            if let Ok(meta) = attr.parse_args::<syn::Ident>() {
+                if meta == "skip" || meta == "skip_serializing" {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 /// Parse the struct generics and return them collected into a "<...>" string.
 /// If no generics are present, return an empty string.
 fn parse_generics_to_typescript_string(element: &syn::ItemStruct) -> String {
@@ -102,6 +116,10 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
     let rename_option = get_rename_option(&element.attrs);
 
     for field in &element.fields {
+        if should_skip_field(field) {
+            continue;
+        }
+
         let field_name = field.ident.as_ref().unwrap().to_string();
         let field_type = match &field.ty {
             syn::Type::Path(type_path) => {
@@ -297,5 +315,27 @@ mod tests {
         let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
         let rename_option = get_rename_option(&parsed_struct.attrs);
         assert_eq!(rename_option, RenameSerdeOptions::CamelCase);
+    }
+
+    #[test]
+    fn it_correctly_identifies_skip_fields() {
+        let struct_str = r#"
+            #[derive(Type)]
+            struct MyStruct {
+                #[serde(skip)]
+                field_one: &str,
+                field_two: i32,
+                #[serde(skip_serializing)]
+                field_three: i32,
+            }
+        "#;
+
+        let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
+
+        let (_, typescript_definition) = parse_struct(&parsed_struct);
+        assert_eq!(
+            typescript_definition,
+            "export interface MyStruct {\n  field_two: number;\n}\n"
+        );
     }
 }
