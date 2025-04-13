@@ -23,16 +23,6 @@ pub fn has_derive_type(attrs: &[Attribute]) -> bool {
     false
 }
 
-pub fn type_to_typescript(type_name: &str) -> &str {
-    match type_name {
-        "i8" | "i16" | "i32" | "i64" | "i128" | "u8" | "u16" | "u32" | "u64" | "f32" | "f64"
-        | "isize" | "usize" => "number",
-        "str" | "String" | "char" => "string",
-        "bool" => "boolean",
-        _ => type_name,
-    }
-}
-
 #[cfg(test)]
 mod tests {
 
