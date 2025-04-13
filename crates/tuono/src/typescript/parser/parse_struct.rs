@@ -6,8 +6,9 @@ use convert_case::{Case, Casing};
 use syn::{self, GenericArgument, PathArguments};
 
 // This enum matches serde's RenameRule enum
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Default)]
 enum RenameSerdeOptions {
+    #[default]
     None,
     LowerCase,
     UpperCase,
@@ -37,16 +38,20 @@ impl FromStr for RenameSerdeOptions {
     }
 }
 
-/// Check if the struct has the `#[serde(rename_all = "...")]` attribute
-fn get_rename_option(attrs: &[syn::Attribute]) -> RenameSerdeOptions {
+/// Parse any "assign" `#[serde(... = "...")]` attribute and return the value of the specified
+/// attribute.
+fn parse_serde_attribute<T>(attrs: &[syn::Attribute], attribute_name: &str) -> T
+where
+    T: Default + FromStr,
+{
     for attr in attrs {
         if attr.path().is_ident("serde") {
             if let Ok(meta) = attr.parse_args::<syn::Expr>() {
                 match meta {
                     syn::Expr::Assign(assign) => {
                         if let syn::Expr::Path(path) = *assign.left {
-                            if !path.path.is_ident("rename_all") {
-                                return RenameSerdeOptions::None;
+                            if !path.path.is_ident(attribute_name) {
+                                return T::default();
                             }
                         }
                         if let syn::Expr::Lit(syn::ExprLit {
@@ -54,16 +59,15 @@ fn get_rename_option(attrs: &[syn::Attribute]) -> RenameSerdeOptions {
                             ..
                         }) = *assign.right
                         {
-                            return RenameSerdeOptions::from_str(&lit_str.value())
-                                .unwrap_or(RenameSerdeOptions::None);
+                            return T::from_str(&lit_str.value()).unwrap_or(T::default());
                         }
                     }
-                    _ => return RenameSerdeOptions::None,
+                    _ => return T::default(),
                 }
             }
         }
     }
-    RenameSerdeOptions::None
+    T::default()
 }
 
 // Check if the field has the `#[serde(skip)]` or `#[serde(skip_serializing)]` attribute
@@ -113,14 +117,21 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
 
     let mut fields_as_string = format!("export interface {struct_name}{generics} {{\n");
 
-    let rename_option = get_rename_option(&element.attrs);
+    let rename_option: RenameSerdeOptions = parse_serde_attribute(&element.attrs, "rename_all");
 
     for field in &element.fields {
         if should_skip_field(field) {
             continue;
         }
 
-        let field_name = field.ident.as_ref().unwrap().to_string();
+        let field_name: String = parse_serde_attribute(&field.attrs, "rename");
+
+        let field_name = if field_name.is_empty() {
+            field.ident.as_ref().unwrap().to_string()
+        } else {
+            field_name
+        };
+
         let field_type = match &field.ty {
             syn::Type::Path(type_path) => {
                 let last_segment = type_path.path.segments.last().unwrap();
@@ -185,7 +196,6 @@ pub fn parse_struct(element: &syn::ItemStruct) -> (String, String) {
         let field_name = match rename_option {
             RenameSerdeOptions::LowerCase => field_name.to_lowercase(),
             RenameSerdeOptions::UpperCase => field_name.to_uppercase(),
-
             RenameSerdeOptions::CamelCase => field_name.to_case(Case::Camel),
             RenameSerdeOptions::PascalCase => field_name.to_case(Case::Pascal),
             _ => field_name,
@@ -302,7 +312,8 @@ mod tests {
         "#;
 
         let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
-        let rename_option = get_rename_option(&parsed_struct.attrs);
+        let rename_option: RenameSerdeOptions =
+            parse_serde_attribute(&parsed_struct.attrs, "rename_all");
 
         assert_eq!(rename_option, RenameSerdeOptions::PascalCase);
 
@@ -313,7 +324,8 @@ mod tests {
                 field_one: &str,
             }"#;
         let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
-        let rename_option = get_rename_option(&parsed_struct.attrs);
+        let rename_option: RenameSerdeOptions =
+            parse_serde_attribute(&parsed_struct.attrs, "rename_all");
         assert_eq!(rename_option, RenameSerdeOptions::CamelCase);
     }
 
@@ -336,6 +348,24 @@ mod tests {
         assert_eq!(
             typescript_definition,
             "export interface MyStruct {\n  field_two: number;\n}\n"
+        );
+    }
+
+    #[test]
+    fn it_correctly_override_a_field_name() {
+        let struct_str = r#"
+            #[derive(Type)]
+            struct MyStruct {
+                #[serde(rename = "field_one")]
+                field_two: i32,
+            }
+        "#;
+
+        let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
+        let (_, typescript_definition) = parse_struct(&parsed_struct);
+        assert_eq!(
+            typescript_definition,
+            "export interface MyStruct {\n  field_one: number;\n}\n"
         );
     }
 }
