@@ -20,29 +20,40 @@ pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
 
         let mut parsed_variant = rename_option.transform(variant.ident.to_string());
 
-        if !variant.fields.is_empty() {
-            parsed_variant = format!("{{\"{}\": {{ ", parsed_variant);
-        }
+        match &variant.fields {
+            syn::Fields::Named(field) => {
+                parsed_variant = format!("{{\"{}\": {{ ", parsed_variant);
+                let mut variant_fields: Vec<String> = Vec::new();
 
-        let mut variant_fields: Vec<String> = Vec::new();
+                for field in &field.named {
+                    if should_skip_element(&field.attrs) {
+                        continue;
+                    }
 
-        for field in &variant.fields {
-            if should_skip_element(&field.attrs) {
-                continue;
+                    let field_name = rename_option.transform(get_field_name(&field));
+
+                    let field_type = rust_to_typescript_type(&field.ty);
+                    variant_fields.push(format!("{field_name}: {field_type}"));
+                }
+                enum_variants.push(format!(
+                    "{parsed_variant}{} }}}}",
+                    variant_fields.join(", ")
+                ));
             }
-            let field_name = rename_option.transform(get_field_name(field));
-
-            let field_type = rust_to_typescript_type(&field.ty);
-            variant_fields.push(format!("{field_name}: {field_type}"));
-        }
-
-        if !variant.fields.is_empty() {
-            enum_variants.push(format!(
-                "{parsed_variant}{} }}}}",
-                variant_fields.join(", ")
-            ));
-        } else {
-            enum_variants.push(format!("\"{parsed_variant}\""));
+            syn::Fields::Unnamed(field) => {
+                let mut variant_fields: Vec<String> = Vec::new();
+                for field in &field.unnamed {
+                    let field_type = rust_to_typescript_type(&field.ty);
+                    variant_fields.push(field_type);
+                }
+                enum_variants.push(format!(
+                    "{{\"{parsed_variant}\": [{}]}}",
+                    variant_fields.join(", ")
+                ));
+            }
+            syn::Fields::Unit => {
+                enum_variants.push(format!("\"{parsed_variant}\""));
+            }
         }
     }
 
@@ -205,6 +216,25 @@ mod tests {
         assert_eq!(
             typescript_definition,
             r#"export type MyEnum<T> = "Id" | {"User": { name: T, age: number }}"#
+        );
+    }
+
+    #[test]
+    fn it_correctly_parse_the_tuple_variant() {
+        let enum_str = r#"
+            #[derive(Type)]
+            enum MyEnum {
+                Id,
+                User(String, u32),
+            }
+        "#;
+
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let (_, typescript_definition) = parse_enum(&parsed_enum);
+
+        assert_eq!(
+            typescript_definition,
+            r#"export type MyEnum = "Id" | {"User": [string, number]}"#
         );
     }
 }
