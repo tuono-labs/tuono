@@ -1,5 +1,5 @@
 use super::utils::has_derive_type;
-use crate::typescript::parser::parse_struct;
+use crate::typescript::parser::{parse_enum, parse_struct};
 use std::error::Error;
 use std::path::PathBuf;
 use tracing::trace;
@@ -43,6 +43,10 @@ impl TryFrom<(PathBuf, String)> for FileTypes {
                         continue;
                     }
                     trace!("Found enum in file: {:?}", &file_path);
+
+                    let (enum_name, typescript_definition) = parse_enum(&element);
+                    types_as_string.push_str(&typescript_definition);
+                    types.push(enum_name);
                 }
                 _ => {}
             }
@@ -74,6 +78,12 @@ mod tests {
                 field1: String,
                 field2: i32,
             }
+
+            #[derive(Type)]
+            enum MyEnum {
+                Variant1,
+                Variant2,
+            }
         "#
         .to_string();
 
@@ -82,8 +92,8 @@ mod tests {
         assert_eq!(ttype.file_path, file_path);
         assert_eq!(
             ttype.types_as_string,
-            "export interface MyStruct {\n  field1: string;\n  field2: number;\n}\n"
+            "export interface MyStruct {\n  field1: string;\n  field2: number;\n}\nexport type MyEnum = \"Variant1\" | \"Variant2\";\n"
         );
-        assert_eq!(ttype.types, vec!["MyStruct"]);
+        assert_eq!(ttype.types, vec!["MyStruct", "MyEnum"]);
     }
 }
