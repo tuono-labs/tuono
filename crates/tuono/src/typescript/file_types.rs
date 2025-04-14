@@ -78,6 +78,12 @@ mod tests {
                 field1: String,
                 field2: i32,
             }
+
+            #[derive(Type)]
+            enum MyEnum {
+                Variant1,
+                Variant2,
+            }
         "#
         .to_string();
 
@@ -86,8 +92,8 @@ mod tests {
         assert_eq!(ttype.file_path, file_path);
         assert_eq!(
             ttype.types_as_string,
-            "export interface MyStruct {\n  field1: string;\n  field2: number;\n}\n"
+            "export interface MyStruct {\n  field1: string;\n  field2: number;\n}\nexport type MyEnum = \"Variant1\" | \"Variant2\";\n"
         );
-        assert_eq!(ttype.types, vec!["MyStruct"]);
+        assert_eq!(ttype.types, vec!["MyStruct", "MyEnum"]);
     }
 }

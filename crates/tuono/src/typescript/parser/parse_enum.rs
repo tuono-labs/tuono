@@ -58,7 +58,7 @@ pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
     }
 
     let enum_type = format!(
-        "export type {enum_name}{generics} = {}",
+        "export type {enum_name}{generics} = {};\n",
         enum_variants.join(" | ")
     );
     (enum_name, enum_type)
@@ -85,7 +85,7 @@ mod tests {
         assert_eq!(enum_name, "MyEnum");
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "Variant1" | "Variant2" | "Variant3""#
+            "export type MyEnum = \"Variant1\" | \"Variant2\" | \"Variant3\";\n"
         );
     }
 
@@ -107,7 +107,7 @@ mod tests {
         assert_eq!(enum_name, "MyEnum");
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "id" | "name" | "userage""#
+            "export type MyEnum = \"id\" | \"name\" | \"userage\";\n"
         );
     }
 
@@ -130,7 +130,7 @@ mod tests {
 
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "id" | "name" | "userage""#
+            "export type MyEnum = \"id\" | \"name\" | \"userage\";\n"
         );
     }
 
@@ -152,7 +152,7 @@ mod tests {
 
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "Id" | {"User": { name: string, age: number }}"#
+            "export type MyEnum = \"Id\" | {\"User\": { name: string, age: number }};\n"
         );
 
         let enum_str = r#"
@@ -172,7 +172,7 @@ mod tests {
 
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "Id" | {"User": { name: string }}"#
+            "export type MyEnum = \"Id\" | {\"User\": { name: string }};\n"
         );
 
         let enum_str = r#"
@@ -192,7 +192,7 @@ mod tests {
 
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = {"Request": { body: Bytes }} | {"Response": { payload: Bytes }}"#
+            "export type MyEnum = {\"Request\": { body: Bytes }} | {\"Response\": { payload: Bytes }};\n"
         );
     }
 
@@ -215,7 +215,7 @@ mod tests {
         assert_eq!(enum_name, "MyEnum");
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum<T> = "Id" | {"User": { name: T, age: number }}"#
+            "export type MyEnum<T> = \"Id\" | {\"User\": { name: T, age: number }};\n"
         );
     }
 
@@ -234,7 +234,7 @@ mod tests {
 
         assert_eq!(
             typescript_definition,
-            r#"export type MyEnum = "Id" | {"User": [string, number]}"#
+            "export type MyEnum = \"Id\" | {\"User\": [string, number]};\n"
         );
     }
 }
