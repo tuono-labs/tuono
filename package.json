@@ -27,8 +27,8 @@
   "devDependencies": {
     "@eslint/js": "9.24.0",
     "@playwright/test": "1.51.1",
-    "@types/node": "22.14.0",
-    "@vitest/eslint-plugin": "1.1.39",
+    "@types/node": "22.14.1",
+    "@vitest/eslint-plugin": "1.1.42",
     "eslint": "9.24.0",
     "eslint-import-resolver-typescript": "4.3.2",
     "eslint-plugin-import": "2.31.0",
@@ -37,6 +37,6 @@
     "prettier": "3.5.3",
     "turbo": "2.5.0",
     "typescript": "5.7.3",
-    "typescript-eslint": "8.29.0"
+    "typescript-eslint": "8.29.1"
   }
 }
