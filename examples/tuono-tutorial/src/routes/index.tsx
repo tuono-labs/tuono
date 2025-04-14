@@ -1,12 +1,11 @@
 // src/routes/index.tsx
 import type { JSX } from 'react'
 import type { TuonoRouteProps } from 'tuono'
-import type { Pokemon } from 'tuono/types'
 
 import PokemonLink from '../components/PokemonLink'
 
 interface IndexProps {
-  results: Array<Pokemon>
+  results: Array<{ name: string; url: string }>
 }
 
 export default function IndexPage({
