@@ -1,8 +1,7 @@
 use serde::Serialize;
-use tuono_lib::Type;
 use tuono_lib::{Props, Request, Response};
 
-#[derive(Serialize, Type)]
+#[derive(Serialize)]
 struct MyResponse<'a> {
     subtitle: &'a str,
 }

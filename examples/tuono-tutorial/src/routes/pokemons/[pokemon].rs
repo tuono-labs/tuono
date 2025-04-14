@@ -1,20 +1,12 @@
 // src/routes/pokemons/[pokemon].rs
 use reqwest::{Client, StatusCode};
 use serde::{Deserialize, Serialize};
-use tuono_lib::{Props, Request, Response, Type};
+use tuono_lib::{Props, Request, Response};
 
 const POKEMON_API: &str = "https://pokeapi.co/api/v2/pokemon";
 
-#[derive(Debug, Serialize, Type, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Pokemon {
-    name: String,
-    id: u16,
-    weight: u16,
-    height: u16,
-}
-
-#[derive(Debug, Serialize, Type, Deserialize)]
-struct MyType {
     name: String,
     id: u16,
     weight: u16,
