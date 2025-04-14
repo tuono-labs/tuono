@@ -99,6 +99,11 @@ pub fn should_skip_element(attrs: &[syn::Attribute]) -> bool {
 
 pub fn rust_to_typescript_type(ty: &syn::Type) -> String {
     match ty {
+        syn::Type::Tuple(tuple) => {
+            let inner_types: Vec<String> =
+                tuple.elems.iter().map(rust_to_typescript_type).collect();
+            format!("[{}]", inner_types.join(", "))
+        }
         syn::Type::Path(type_path) => {
             if let Some(last_segment) = type_path.path.segments.last() {
                 let outer_type = last_segment.ident.to_string();

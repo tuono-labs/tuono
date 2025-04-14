@@ -66,6 +66,24 @@ mod tests {
     }
 
     #[test]
+    fn it_correctly_parse_tuple_fields() {
+        let struct_str = r#"
+            #[derive(Type)]
+            struct MyStruct {
+                tuple: (i32, i32, String, User),
+
+            }"#;
+
+        let parsed_struct = syn::parse_str::<syn::ItemStruct>(struct_str).unwrap();
+        let (_, typescript_definition) = parse_struct(&parsed_struct);
+
+        assert_eq!(
+            typescript_definition,
+            "export interface MyStruct {\n  tuple: [number, number, string, User];\n}\n"
+        );
+    }
+
+    #[test]
     fn it_correctly_parses_struct_with_no_generics() {
         let struct_str = r#"
             #[derive(Type)]
