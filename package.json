@@ -27,7 +27,7 @@
   "devDependencies": {
     "@eslint/js": "9.24.0",
     "@playwright/test": "1.51.1",
-    "@types/node": "22.14.0",
+    "@types/node": "22.14.1",
     "@vitest/eslint-plugin": "1.1.39",
     "eslint": "9.24.0",
     "eslint-import-resolver-typescript": "4.3.2",
