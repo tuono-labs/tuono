@@ -30,7 +30,7 @@ pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
                         continue;
                     }
 
-                    let field_name = rename_option.transform(get_field_name(&field));
+                    let field_name = rename_option.transform(get_field_name(field));
 
                     let field_type = rust_to_typescript_type(&field.ty);
                     variant_fields.push(format!("{field_name}: {field_type}"));
