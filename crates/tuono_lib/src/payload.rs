@@ -107,7 +107,7 @@ impl<'a> Payload<'a> {
                         .filter(|path| !path.is_empty())
                         .collect::<Vec<&str>>();
 
-                    let mut route_segments_collector: Vec<&str> = vec![];
+                    let mut route_segments_collector: Vec<&str> = Vec::new();
 
                     for i in 0..dyn_route_segments.len() {
                         if dyn_route_segments[i].starts_with("[...") {

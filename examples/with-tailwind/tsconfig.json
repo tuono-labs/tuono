@@ -28,5 +28,5 @@
     // Completeness
     "skipLibCheck": true
   },
-  "include": ["src", "tuono.config.ts"]
+  "include": ["src", "tuono.config.ts", "./.tuono/types.ts"]
 }

@@ -11,6 +11,7 @@ use crate::app::App;
 use crate::mode::Mode;
 use crate::route::AxumInfo;
 use crate::route::Route;
+use crate::typescript::TypesJar;
 
 #[cfg(not(target_os = "windows"))]
 const FALLBACK_HTML: &str = include_str!("../templates/fallback.html");
@@ -59,6 +60,7 @@ pub struct SourceBuilder {
     pub app: App,
     mode: Mode,
     base_path: PathBuf,
+    types_jar: TypesJar,
 }
 
 impl SourceBuilder {
@@ -79,20 +81,23 @@ impl SourceBuilder {
         Ok(Self {
             app,
             mode,
+            types_jar: TypesJar::from(&base_path),
             base_path,
         })
     }
 
     // Build the source code needed for both build and dev
     pub fn base_build(&mut self) -> io::Result<()> {
-        let Self { mode, .. } = &self;
+        let mode = self.mode.clone();
 
         self.refresh_axum_source()?;
         let dev_folder = Path::new(DEV_FOLDER);
         self.create_file(dev_folder.join("server-main.tsx"), SERVER_ENTRY_DATA)?;
         self.create_file(dev_folder.join("client-main.tsx"), CLIENT_ENTRY_DATA)?;
 
-        if mode == &Mode::Dev {
+        self.types_jar.generate_typescript_file(&self.base_path)?;
+
+        if mode == Mode::Dev {
             self.app.build_tuono_config()?;
             let fallback_html = self.build_html_fallback();
             self.create_file(PathBuf::from(FALLBACK_HTML_PATH), &fallback_html)?;
@@ -163,6 +168,18 @@ impl SourceBuilder {
         data_file.write_all(content.as_bytes())?;
 
         Ok(())
+    }
+
+    pub fn refresh_typescript_file(&mut self, path: PathBuf) {
+        self.types_jar.refresh_file(path);
+    }
+
+    pub fn remove_typescript_file(&mut self, path: PathBuf) {
+        self.types_jar.remove_file(path);
+    }
+
+    pub fn generate_typescript_file(&mut self) -> io::Result<()> {
+        self.types_jar.generate_typescript_file(&self.base_path)
     }
 
     fn create_routes_declaration(&self) -> String {
@@ -244,6 +261,7 @@ mod tests {
             app: App::new(),
             mode: Mode::Dev,
             base_path: PathBuf::new(),
+            types_jar: TypesJar::default(),
         }
         .generate_axum_source();
 
@@ -251,6 +269,7 @@ mod tests {
             app: App::new(),
             mode: Mode::Prod,
             base_path: PathBuf::new(),
+            types_jar: TypesJar::default(),
         }
         .generate_axum_source();
 
@@ -264,6 +283,7 @@ mod tests {
             app: App::new(),
             mode: Mode::Dev,
             base_path: PathBuf::new(),
+            types_jar: TypesJar::default(),
         }
         .generate_axum_source();
 
@@ -276,6 +296,7 @@ mod tests {
             app: App::new(),
             mode: Mode::Dev,
             base_path: PathBuf::new(),
+            types_jar: TypesJar::default(),
         };
 
         let mut route = Route::new(String::from("index.tsx"));
@@ -300,6 +321,7 @@ mod tests {
             app,
             mode: Mode::Dev,
             base_path: PathBuf::new(),
+            types_jar: TypesJar::default(),
         };
 
         let fallback_html = source_builder.build_html_fallback();

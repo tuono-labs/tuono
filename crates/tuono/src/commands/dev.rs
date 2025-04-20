@@ -1,8 +1,10 @@
+use std::collections::HashSet;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::RwLock;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use tracing::error;
 use tuono_internal::tuono_println;
 use watchexec_events::Tag;
 use watchexec_events::filekind::FileEventKind;
@@ -32,7 +34,7 @@ fn ssr_reload_needed(path: &Path) -> bool {
     clippy::await_holding_lock,
     reason = "At this point there is no other thread waiting for the lock"
 )]
-async fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
+async unsafe fn start_all_processes(process_manager: Arc<Mutex<ProcessManager>>) {
     if let Ok(mut pm) = process_manager.lock() {
         pm.start_dev_processes().await
     }
@@ -59,7 +61,12 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
 
     let env_files = detect_existing_env_files();
 
-    start_all_processes(process_manager.clone()).await;
+    unsafe {
+        // It is safe to call this function because here
+        // only one thread is running and the lock is not
+        // needed by any other thread.
+        start_all_processes(process_manager.clone()).await;
+    }
 
     // Remove the spinner
     sp.stop();
@@ -94,35 +101,56 @@ pub async fn watch(source_builder: SourceBuilder) -> Result<()> {
         let mut should_reload_rust_server = false;
         let mut should_refresh_axum_source = false;
 
+        // Using HashSet to avoid duplicates
+        let mut paths_to_refresh_types: HashSet<PathBuf> = HashSet::new();
+        let mut removed_files_from_types: HashSet<PathBuf> = HashSet::new();
+
         for event in action.events.iter() {
             for event_type in event.tags.iter() {
                 if let Tag::FileEventKind(kind) = event_type {
                     match kind {
-                        FileEventKind::Remove(_) => {
-                            if event.paths().any(|(path, _)| {
-                                path.extension().is_some_and(|ext| ext == "rs") || 
-                            // APIs might define new HTTP methods that requires
-                            // a refresh of the axum source
-                            path.to_str().unwrap_or("").contains("api")
-                            }) {
+                        FileEventKind::Remove(_) => event.paths().for_each(|(path, _)| {
+                            if path.extension().is_some_and(|ext| ext == "rs") {
+                                removed_files_from_types.insert(path.to_path_buf());
                                 should_refresh_axum_source = true;
                             }
-                        }
-                        FileEventKind::Modify(_) => {
-                            if event
-                                .paths()
-                                .any(|(path, _)| path.extension().is_some_and(|ext| ext == "rs"))
-                            {
+                        }),
+                        FileEventKind::Modify(_) => event.paths().for_each(|(path, _)| {
+                            if path.extension().is_some_and(|ext| ext == "rs") {
                                 should_reload_rust_server = true;
+                                paths_to_refresh_types.insert(path.to_path_buf());
                             }
-
-                            if event.paths().any(|(path, _)| ssr_reload_needed(path)) {
+                            if ssr_reload_needed(path) {
                                 should_reload_ssr_bundle = true;
                             }
-                        }
+                        }),
                         _ => {}
                     }
                 }
+            }
+        }
+
+        if !paths_to_refresh_types.is_empty() {
+            if let Ok(mut builder) = source_builder.write() {
+                for path in paths_to_refresh_types {
+                    // There is no need to check here if the `Type` trait is
+                    // derived since it will be checked later by the TypeJar struct.
+                    builder.refresh_typescript_file(path)
+                }
+                if builder.generate_typescript_file().is_err() {
+                    error!("Failed to generate typescript file");
+                };
+            }
+        }
+
+        if !removed_files_from_types.is_empty() {
+            if let Ok(mut builder) = source_builder.write() {
+                for path in removed_files_from_types {
+                    builder.remove_typescript_file(path);
+                }
+                if builder.generate_typescript_file().is_err() {
+                    error!("Failed to generate typescript file");
+                };
             }
         }
 
