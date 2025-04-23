@@ -116,7 +116,7 @@ impl SourceBuilder {
             .replace("/*VERSION*/", crate_version!())
             .replace("/*MODE*/", mode.as_str())
             .replace(
-                "//MAIN_FILE_IMPORT//",
+                "//APP_STATE_IMPORT//",
                 if app.has_app_state {
                     r#"#[path="../src/app.rs"]
                     mod tuono_main_state;
@@ -126,7 +126,17 @@ impl SourceBuilder {
                 },
             )
             .replace(
-                "//MAIN_FILE_DEFINITION//",
+                "//SERVER_IMPORT//",
+                if app.has_app_state {
+                    r#"#[path="../src/server.rs"]
+                    mod tuono_main_server;
+                    "#
+                } else {
+                    ""
+                },
+            )
+            .replace(
+                "//APP_STATE_DEFINITION//",
                 if app.has_app_state {
                     "let user_custom_state = tuono_main_state::main();"
                 } else {
@@ -134,7 +144,24 @@ impl SourceBuilder {
                 },
             )
             .replace(
-                "//MAIN_FILE_USAGE//",
+                "//SERVER_DEFINITION//",
+                if app.has_server {
+                    "let serve = tuono_main_server::main;"
+                } else {
+                    r#"let serve = {
+                        use tuono_lib::axum;
+                        |server_address: String, router: axum::routing::Router| async move {
+                            let listener = tokio::net::TcpListener::bind(&server_address)
+                                .await
+                                .expect("[SERVER] Failed to bind to address");
+                            axum::serve(listener, router)
+                                .await
+                        }
+                    };"#
+                },
+            )
+            .replace(
+                "//APP_STATE_USAGE//",
                 if app.has_app_state {
                     ".with_state(user_custom_state)"
                 } else {
@@ -252,7 +279,6 @@ impl SourceBuilder {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]

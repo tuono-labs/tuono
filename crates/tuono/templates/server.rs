@@ -8,7 +8,8 @@ const MODE: Mode = /*MODE*/;
 
 // MODULE_IMPORTS
 
-//MAIN_FILE_IMPORT//
+//APP_STATE_IMPORT//
+//SERVER_IMPORT//
 
 #[tokio::main]
 async fn main() {
@@ -18,12 +19,14 @@ async fn main() {
         println!("\n  ⚡ Tuono v/*VERSION*/");
     }
 
-    //MAIN_FILE_DEFINITION//
+    //APP_STATE_DEFINITION//
 
     let router = Router::new()
         // ROUTE_BUILDER
-        //MAIN_FILE_USAGE//;
+        //APP_STATE_USAGE//;
 
-    Server::init(router, MODE).await.start().await
+    //SERVER_DEFINITION//
+
+    Server::init(router, MODE, serve).await.start().await
 }
 

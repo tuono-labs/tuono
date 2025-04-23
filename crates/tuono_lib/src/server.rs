@@ -1,7 +1,7 @@
 use crate::config::GLOBAL_CONFIG;
 use crate::manifest::load_manifest;
-use crate::mode::{GLOBAL_MODE, Mode};
-use axum::routing::{Router, get};
+use crate::mode::{Mode, GLOBAL_MODE};
+use axum::routing::{get, Router};
 use colored::Colorize;
 use ssr_rs::Ssr;
 use tower_http::services::ServeDir;
@@ -22,15 +22,19 @@ pub fn tuono_internal_init_v8_platform() {
 }
 
 #[derive(Debug)]
-pub struct Server {
+pub struct Server<S> {
     router: Router,
     mode: Mode,
-    pub listener: tokio::net::TcpListener,
+    serve: S,
     pub address: String,
     pub origin: Option<String>,
 }
 
-impl Server {
+impl<S, Fut> Server<S>
+where
+    S: Fn(String, Router) -> Fut,
+    Fut: Future<Output = Result<(), std::io::Error>>,
+{
     fn display_start_message(&self) {
         // Format the server address as a valid URL so that it becomes clickable in the CLI
         // @see https://github.com/tuono-labs/tuono/issues/460
@@ -48,7 +52,11 @@ impl Server {
         }
     }
 
-    pub async fn init(router: Router, mode: Mode) -> Server {
+    pub async fn init(router: Router, mode: Mode, serve: S) -> Server<S>
+    where
+        S: Fn(String, Router) -> Fut,
+        Fut: Future<Output = Result<(), std::io::Error>>,
+    {
         let config = Config::get().expect("[SERVER] Failed to load config");
 
         let _ = GLOBAL_MODE.set(mode);
@@ -71,11 +79,9 @@ impl Server {
         Server {
             router,
             mode,
+            serve,
             address: server_address.clone(),
             origin: config.server.origin.clone(),
-            listener: tokio::net::TcpListener::bind(&server_address)
-                .await
-                .expect("[SERVER] Failed to bind to address"),
         }
     }
 
@@ -94,7 +100,7 @@ impl Server {
                         .fallback(get(catch_all).layer(LoggerLayer::new())),
                 );
 
-            axum::serve(self.listener, router)
+            (self.serve)(self.address, router)
                 .await
                 .expect("Failed to serve development server");
         } else {
@@ -107,7 +113,7 @@ impl Server {
                         .fallback(get(catch_all).layer(LoggerLayer::new())),
                 );
 
-            axum::serve(self.listener, router)
+            (self.serve)(self.address, router)
                 .await
                 .expect("Failed to serve production server");
         }
