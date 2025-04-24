@@ -1,4 +1,5 @@
 use quote::quote;
+use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FnArg, Pat, Stmt, parse_quote, parse2};
@@ -44,4 +45,12 @@ pub fn request_argument() -> FnArg {
             request: tuono_lib::axum::extract::Request
     })
     .unwrap()
+}
+
+pub fn parse_parethesized_terminated<T: Parse, S: Parse>(
+    input: ParseStream,
+) -> syn::Result<Punctuated<T, S>> {
+    let group;
+    syn::parenthesized!(group in input);
+    Punctuated::parse_terminated(&group)
 }

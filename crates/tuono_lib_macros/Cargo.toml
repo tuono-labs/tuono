@@ -4,14 +4,14 @@ version = "0.19.4"
 edition = "2024"
 description = "Superfast React fullstack framework"
 homepage = "https://tuono.dev"
-keywords = [ "react", "typescript", "fullstack", "web", "ssr"]
+keywords = ["react", "typescript", "fullstack", "web", "ssr"]
 repository = "https://github.com/tuono-labs/tuono"
 readme = "../../README.md"
 license-file = "../../LICENSE.md"
 categories = ["web-programming"]
 include = [
-		"src/**/*.rs",
-		"Cargo.toml"
+    "src/**/*.rs",
+    "Cargo.toml"
 ]
 
 [lib]
@@ -20,3 +20,6 @@ proc-macro = true
 [dependencies]
 syn = { version = "2.0.0", features = ["full"] }
 quote = "1.0"
+
+[dev-dependencies]
+tuono_lib = { path = "../tuono_lib" }
