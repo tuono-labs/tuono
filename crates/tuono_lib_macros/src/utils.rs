@@ -1,8 +1,8 @@
 use quote::quote;
-use syn::parse::{Parse, ParseStream};
+use syn::parse::ParseStream;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FnArg, Pat, Stmt, parse_quote, parse2};
+use syn::{FnArg, Pat, Stmt, Token, parse_quote, parse2};
 
 pub fn create_struct_fn_arg() -> FnArg {
     parse2(quote! {
@@ -47,10 +47,11 @@ pub fn request_argument() -> FnArg {
     .unwrap()
 }
 
-pub fn parse_parethesized_terminated<T: Parse, S: Parse>(
+/// Parse through `=`, then the next T
+pub fn parse_next_value<T: FnOnce() -> Result<R, syn::Error>, R: Sized>(
     input: ParseStream,
-) -> syn::Result<Punctuated<T, S>> {
-    let group;
-    syn::parenthesized!(group in input);
-    Punctuated::parse_terminated(&group)
+    next: T,
+) -> Result<R, syn::Error> {
+    input.parse::<Token![=]>()?;
+    next()
 }

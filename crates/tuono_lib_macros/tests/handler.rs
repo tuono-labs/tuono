@@ -1,5 +1,5 @@
-use tuono_lib::axum::http::StatusCode;
-use tuono_lib::cookie::{Cookie, CookieJar};
+use tuono_lib::axum::extract::Query;
+use tuono_lib::cookie::CookieJar;
 use tuono_lib::{Props, Request, Response};
 
 pub mod tuono_main_state {
@@ -12,19 +12,9 @@ pub mod tuono_main_state {
 fn handler_with_axum_arguments_and_state() {
     // If this compiles, it's a success
     #[allow(dead_code)]
-    #[tuono_lib_macros::handler(axum_arguments(cookie_jar))]
-    async fn get_foo(_req: Request, bar: String, cookie_jar: CookieJar) -> Response {
-        let cookie = cookie_jar
-            .get("baz")
-            .cloned()
-            .unwrap_or(Cookie::new("baz", "qux"));
-        Response::Props(Props::new_with_status(
-            vec![
-                ("foo".to_string(), bar),
-                ("baz".to_string(), cookie.to_string()),
-            ],
-            StatusCode::OK,
-        ))
+    #[tuono_lib_macros::handler(axum_arguments((_cookies)))]
+    async fn get_foo(_req: Request, bar: String, _cookies: CookieJar) -> Response {
+        Response::Props(Props::new(bar))
     }
 }
 
@@ -32,16 +22,12 @@ fn handler_with_axum_arguments_and_state() {
 fn handler_with_axum_arguments_no_state() {
     // If this compiles, it's a success
     #[allow(dead_code)]
-    #[tuono_lib_macros::handler(axum_arguments(cookie_jar))]
-    async fn get_foo(_req: Request, cookie_jar: CookieJar) -> Response {
-        let cookie = cookie_jar
-            .get("baz")
-            .cloned()
-            .unwrap_or(Cookie::new("baz", "qux"));
-        Response::Props(Props::new_with_status(
-            vec![("baz".to_string(), cookie.to_string())],
-            StatusCode::OK,
-        ))
+    #[tuono_lib_macros::handler(axum_arguments(
+        (s, extractor = Query),
+        (_cookies)
+    ))]
+    async fn get_foo(_req: Request, _cookies: CookieJar, s: String) -> Response {
+        Response::Props(Props::new(s))
     }
 }
 
@@ -49,18 +35,8 @@ fn handler_with_axum_arguments_no_state() {
 fn handler_with_axum_arguments_reverse_order() {
     // If this compiles, it's a success
     #[allow(dead_code)]
-    #[tuono_lib_macros::handler(axum_arguments(cookie_jar))]
-    async fn get_foo(_req: Request, cookie_jar: CookieJar, bar: String) -> Response {
-        let cookie = cookie_jar
-            .get("baz")
-            .cloned()
-            .unwrap_or(Cookie::new("baz", "qux"));
-        Response::Props(Props::new_with_status(
-            vec![
-                ("foo".to_string(), bar),
-                ("baz".to_string(), cookie.to_string()),
-            ],
-            StatusCode::OK,
-        ))
+    #[tuono_lib_macros::handler(axum_arguments((_cookies)))]
+    async fn get_foo(_req: Request, _cookies: CookieJar, bar: String) -> Response {
+        Response::Props(Props::new(bar))
     }
 }

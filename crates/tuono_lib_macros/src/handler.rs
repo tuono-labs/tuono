@@ -1,22 +1,24 @@
 use crate::utils::{
     crate_application_state_extractor, create_struct_fn_arg, import_main_application_state,
-    params_argument, parse_parethesized_terminated, request_argument,
+    params_argument, request_argument,
 };
 
+use crate::axum_argument::AxumArgument;
 use proc_macro::TokenStream;
 use quote::quote;
-use std::collections::HashSet;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FnArg, Ident, ItemFn, Pat, parse_macro_input};
+use syn::{
+    FnArg, Ident, ItemFn, Pat, PatIdent, Token, parenthesized, parse_macro_input, parse_quote,
+};
 
 /// Attributes for the handler proc macro
 #[derive(Default)]
-pub struct HandlerAttr {
+struct HandlerAttr {
     /// Which arguments should be passed to both axum routes and handler funciton, but
     /// excluded from state destructuring
-    axum_arguments: HashSet<String>,
+    axum_arguments: Vec<AxumArgument>,
 }
 
 impl Parse for HandlerAttr {
@@ -36,10 +38,13 @@ impl Parse for HandlerAttr {
 
             match attribute_name {
                 "axum_arguments" => {
-                    attr.axum_arguments = parse_parethesized_terminated::<Ident, Comma>(input)?
-                        .into_iter()
-                        .map(|ident| ident.to_string())
-                        .collect()
+                    let axum_arguments;
+                    parenthesized!(axum_arguments in input);
+                    attr.axum_arguments =
+                        Punctuated::<AxumArgument, Token![,]>::parse_terminated(&axum_arguments)
+                            .map(|punctuated| {
+                                punctuated.into_iter().collect::<Vec<AxumArgument>>()
+                            })?;
                 }
                 _ => {
                     return Err(syn::Error::new(ident.span(), EXPECTED_ATTRIBUTE_MESSAGE));
@@ -68,12 +73,21 @@ pub fn handler_core(attr: TokenStream, item: TokenStream) -> TokenStream {
         if let FnArg::Typed(pat_type) = arg {
             let argument_name = *pat_type.pat.clone();
             match &argument_name {
-                Pat::Ident(ident) => {
-                    if handler_attribute
+                Pat::Ident(PatIdent { ident, .. }) => {
+                    if let Some(AxumArgument::Tuple(axum_argument)) = handler_attribute
                         .axum_arguments
-                        .contains(&ident.ident.to_string())
+                        .iter()
+                        .find(|axum_argument| {
+                            matches!(axum_argument, AxumArgument::Tuple(a) if a.name == *ident)
+                        })
                     {
-                        axum_arguments.push(arg.to_owned());
+                        let ty = &pat_type.ty;
+                        let extracted_fn_arg: FnArg = if let Some(extractor) = axum_argument.extractor.as_ref() {
+                            parse_quote!(#extractor(#ident): #extractor<#ty>)
+                        } else {
+                            parse_quote!(#ident: #ty)
+                        };
+                        axum_arguments.push(extracted_fn_arg);
                         argument_names.push(argument_name.clone());
                     } else {
                         // State extractor needs to be included if there are state arguments
@@ -85,14 +99,8 @@ pub fn handler_core(attr: TokenStream, item: TokenStream) -> TokenStream {
                         state_argument_names.push(argument_name.clone());
                     }
                 }
-                _ => {
-                    // State extractor needs to be included if there are state arguments
-                    if !state_included {
-                        axum_arguments.push(create_struct_fn_arg());
-                        state_included = true;
-                    }
-                    argument_names.push(argument_name.clone());
-                    state_argument_names.push(argument_name.clone());
+                t => {
+                    panic!("unsupported argument type {t:?}");
                 }
             }
         }
