@@ -31,7 +31,7 @@ const tuonoEslintConfig = tseslint.config(
       // #endregion shared
 
       // #region package-specific
-      'packages/tuono-fs-router-vite-plugin/tests/generator/**',
+      'packages/tuono-react-vite-plugin/tests/generator/**',
 
       'packages/tuono-lazy-fn-vite-plugin/tests/sources/**',
 
@@ -69,7 +69,6 @@ const tuonoEslintConfig = tseslint.config(
   {
     files: [REACT_FILES_MATCH],
     plugins: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       'react-hooks': eslintPluginReactHooks,
     },
     rules: {

@@ -1,4 +1,4 @@
-import type { RouteNode } from './types'
+import type { RouteNode } from '../types'
 
 export function removeExt(d: string, keepExtension: boolean = false): string {
   return keepExtension ? d : d.substring(0, d.lastIndexOf('.')) || d

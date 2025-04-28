@@ -1,6 +1,7 @@
+import type { RouteNode } from '../types'
+
 import { LAYOUT_PATH_ID } from './constants'
 import { multiSortBy } from './utils'
-import type { RouteNode } from './types'
 
 export function hasParentRoute(
   routes: Array<RouteNode>,

@@ -208,9 +208,9 @@ importers:
       fast-text-encoding:
         specifier: ^1.0.6
         version: 1.0.6
-      tuono-fs-router-vite-plugin:
+      tuono-react-vite-plugin:
         specifier: workspace:*
-        version: link:../tuono-fs-router-vite-plugin
+        version: link:../tuono-react-vite-plugin
       tuono-router:
         specifier: workspace:*
         version: link:../tuono-router
@@ -252,7 +252,7 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.1)(sugarss@4.0.1(postcss@8.5.3))
 
-  packages/tuono-fs-router-vite-plugin:
+  packages/tuono-react-vite-plugin:
     dependencies:
       '@babel/core':
         specifier: ^7.24.4

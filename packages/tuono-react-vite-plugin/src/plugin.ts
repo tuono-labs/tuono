@@ -2,13 +2,13 @@ import { normalize } from 'node:path'
 
 import type { Plugin } from 'vite'
 
-import { routeGenerator } from './generator'
+import { routeGenerator } from './fs-routing/generator'
 
 const ROUTES_DIRECTORY_PATH = './src/routes'
 
 let lock = false
 
-export function TuonoFsRouterPlugin(): Plugin {
+export function TuonoReactPlugin(): Plugin {
   const generate = async (): Promise<void> => {
     if (lock) return
     lock = true
@@ -31,7 +31,7 @@ export function TuonoFsRouterPlugin(): Plugin {
   }
 
   return {
-    name: 'vite-plugin-tuono-fs-router',
+    name: 'vite-plugin-tuono-react',
     configResolved: async (): Promise<void> => {
       await generate()
     },

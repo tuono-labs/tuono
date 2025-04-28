@@ -1,4 +1,5 @@
-import type { RouteNode } from './types'
+import type { RouteNode } from '../types'
+
 import { multiSortBy } from './utils'
 import { LAYOUT_PATH_ID } from './constants'
 
