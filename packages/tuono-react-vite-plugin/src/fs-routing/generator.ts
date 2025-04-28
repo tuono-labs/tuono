@@ -3,6 +3,8 @@ import path from 'path'
 
 import { format } from 'prettier'
 
+import type { Config, RouteNode } from '../types'
+
 import { buildRouteConfig } from './build-route-config'
 import { hasParentRoute } from './has-parent-route'
 import {
@@ -17,7 +19,6 @@ import {
   removeUnderscores,
 } from './utils'
 
-import type { Config, RouteNode } from './types'
 import {
   ROUTES_FOLDER,
   LAYOUT_PATH_ID,
@@ -26,7 +27,7 @@ import {
 } from './constants'
 
 import { sortRouteNodes } from './sort-route-nodes'
-import isDefaultExported from './utils/is-default-exported'
+import isDefaultExported from './is-default-exported'
 
 let latestTask = 0
 

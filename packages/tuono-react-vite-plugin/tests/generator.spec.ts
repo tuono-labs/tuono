@@ -2,7 +2,7 @@ import fs from 'fs/promises'
 
 import { describe, it, expect } from 'vitest'
 
-import { routeGenerator } from '../src/generator'
+import { routeGenerator } from '../src/fs-routing/generator'
 
 describe('generator works', async () => {
   const folderNames = await fs.readdir(`${process.cwd()}/tests/generator`)
