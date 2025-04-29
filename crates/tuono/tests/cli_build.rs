@@ -6,7 +6,7 @@ use tracing::Level;
 mod utils;
 use utils::temp_tuono_project::TempTuonoProject;
 
-const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
+const POST_API_FILE: &str = r"#[tuono_lib::api(POST, axum_arguments())]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
 
 fn tracing_message(level: Level, module: &str, message: &str) -> String {

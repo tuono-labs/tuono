@@ -90,18 +90,16 @@ const NO_HTML_EXTENSIONS: [&str; 2] = ["xml", "txt"];
 // TODO: Refine this function to catch
 // if the methods are commented.
 fn read_http_methods_from_file(path: &String) -> Vec<Method> {
-    let regex = Regex::new(r"tuono_lib::api\((.*?)\)]").expect("Failed to create API regex");
+    let regex = Regex::new(r"#\[tuono_lib::api\((([^,\]]*)(,\s*([^,\]]*))*)\)]")
+        .expect("Failed to create API regex");
 
     let file = fs_extra::file::read_to_string(path).expect("Failed to read API file");
 
     regex
-        .find_iter(&file)
+        .captures_iter(&file)
         .map(|proc_macro| {
-            let http_method = proc_macro
-                .as_str()
-                // Extract just the element surrounded by the phrantesist.
-                .replace("tuono_lib::api(", "")
-                .replace(")]", "");
+            // Capture group 2 is where the http method is
+            let http_method = proc_macro.get(2).unwrap().as_str().to_lowercase();
             Method::from_str(http_method.as_str()).unwrap_or(Method::GET)
         })
         .collect::<Vec<Method>>()
@@ -126,6 +124,7 @@ impl ApiData {
             .unwrap()
             .to_string();
         let methods = read_http_methods_from_file(&file_path);
+        println!("{:?}", methods);
 
         Some(ApiData { methods })
     }
@@ -283,7 +282,6 @@ impl Route {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]
