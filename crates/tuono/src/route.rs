@@ -99,7 +99,7 @@ fn read_http_methods_from_file(path: &String) -> Vec<Method> {
         .captures_iter(&file)
         .map(|proc_macro| {
             // Capture group 2 is where the http method is
-            let http_method = proc_macro.get(2).unwrap().as_str().to_lowercase();
+            let http_method = proc_macro.get(2).unwrap().as_str().to_uppercase();
             Method::from_str(http_method.as_str()).unwrap_or(Method::GET)
         })
         .collect::<Vec<Method>>()
