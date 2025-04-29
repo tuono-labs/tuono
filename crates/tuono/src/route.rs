@@ -124,7 +124,6 @@ impl ApiData {
             .unwrap()
             .to_string();
         let methods = read_http_methods_from_file(&file_path);
-        println!("{:?}", methods);
 
         Some(ApiData { methods })
     }
