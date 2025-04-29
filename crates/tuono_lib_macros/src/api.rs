@@ -1,56 +1,131 @@
+use crate::axum_argument::AxumArgument;
 use crate::utils::{
     crate_application_state_extractor, create_struct_fn_arg, import_main_application_state,
     params_argument, request_argument,
 };
 use proc_macro::{Span, TokenStream};
 use quote::quote;
+use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FnArg, Ident, ItemFn, Pat, parse_macro_input};
+use syn::{
+    FnArg, Ident, ItemFn, Pat, PatIdent, Token, parenthesized, parse_macro_input, parse_quote,
+};
 
-pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
+/// Attributes for the handler proc macro
+#[derive(Default)]
+struct ApiAttr {
+    http_method: String,
+    /// Which arguments should be passed to both axum routes and handler function, but
+    /// excluded from state destructuring
+    axum_arguments: Vec<AxumArgument>,
+}
+
+impl Parse for ApiAttr {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        const EXPECTED_ATTRIBUTE_MESSAGE: &str =
+            "unexpected identifier, expected any of: axum_arguments";
+        let mut attr = ApiAttr::default();
+
+        while !input.is_empty() {
+            let ident = input.parse::<Ident>().map_err(|error| {
+                syn::Error::new(
+                    error.span(),
+                    format!("{EXPECTED_ATTRIBUTE_MESSAGE}, {error}"),
+                )
+            })?;
+            let attribute_name = &*ident.to_string();
+
+            match attribute_name {
+                "axum_arguments" => {
+                    let axum_arguments;
+                    parenthesized!(axum_arguments in input);
+                    attr.axum_arguments =
+                        Punctuated::<AxumArgument, Token![,]>::parse_terminated(&axum_arguments)
+                            .map(|punctuated| {
+                                punctuated.into_iter().collect::<Vec<AxumArgument>>()
+                            })?;
+                }
+                _ => {
+                    attr.http_method = ident.to_string().to_lowercase();
+
+                    // skip comma between this and other properties
+                    if !input.is_empty() {
+                        input.parse::<Token![,]>()?;
+                    }
+                }
+            }
+        }
+        Ok(attr)
+    }
+}
+
+pub fn api_core(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let api_attribute = syn::parse_macro_input!(attr as ApiAttr);
     let item = parse_macro_input!(item as ItemFn);
-    let http_method = parse_macro_input!(attrs as Ident)
-        .to_string()
-        .to_lowercase();
 
     let api_fn_name = Ident::new(
-        &format!("{}_tuono_internal_api", http_method),
+        &format!("{}_tuono_internal_api", api_attribute.http_method),
         Span::call_site().into(),
     );
 
     let fn_name = &item.sig.ident;
     let return_type = &item.sig.output;
 
+    let mut state_argument_names: Punctuated<Pat, Comma> = Punctuated::new();
     let mut argument_names: Punctuated<Pat, Comma> = Punctuated::new();
     let mut axum_arguments: Punctuated<FnArg, Comma> = Punctuated::new();
 
+    let mut state_included = false;
+    // The request argument
+    axum_arguments.push(params_argument());
     // Fn Arguments minus the first which always is the request
-    for (i, arg) in item.sig.inputs.iter().enumerate() {
-        if i == 0 {
-            axum_arguments.insert(i, params_argument());
-            continue;
-        }
-
-        if i == 1 {
-            axum_arguments.insert(1, create_struct_fn_arg())
-        }
-
+    for arg in item.sig.inputs.iter().skip(1) {
         if let FnArg::Typed(pat_type) = arg {
-            let index = i - 1;
             let argument_name = *pat_type.pat.clone();
-            argument_names.insert(index, argument_name.clone());
+            match &argument_name {
+                Pat::Ident(PatIdent { ident, .. }) => {
+                    if let Some(AxumArgument::Tuple(axum_argument)) = api_attribute
+                        .axum_arguments
+                        .iter()
+                        .find(|axum_argument| {
+                            matches!(axum_argument, AxumArgument::Tuple(a) if a.name == *ident)
+                        })
+                    {
+                        let ty = &pat_type.ty;
+                        let extracted_fn_arg: FnArg = if let Some(extractor) = axum_argument.extractor.as_ref() {
+                            parse_quote!(#extractor(#ident): #extractor<#ty>)
+                        } else {
+                            parse_quote!(#ident: #ty)
+                        };
+                        axum_arguments.push(extracted_fn_arg);
+                        argument_names.push(argument_name.clone());
+                    } else {
+                        // State extractor needs to be included if there are state arguments
+                        if !state_included {
+                            axum_arguments.push(create_struct_fn_arg());
+                            state_included = true;
+                        }
+                        argument_names.push(argument_name.clone());
+                        state_argument_names.push(argument_name.clone());
+                    }
+                }
+                t => {
+                    panic!("unsupported argument type {t:?}");
+                }
+            }
         }
     }
 
     axum_arguments.insert(axum_arguments.len(), request_argument());
 
-    let application_state_extractor = crate_application_state_extractor(argument_names.clone());
-    let application_state_import = import_main_application_state(argument_names.clone());
+    let application_state_extractor =
+        crate_application_state_extractor(state_argument_names.clone());
+    let application_state_import = import_main_application_state(state_argument_names.clone());
 
-    let modified_request = if http_method == "post"
-        || http_method == "put"
-        || http_method == "patch"
+    let modified_request = if api_attribute.http_method == "post"
+        || api_attribute.http_method == "put"
+        || api_attribute.http_method == "patch"
     {
         quote! {
             let (parts, body) = request.into_parts();

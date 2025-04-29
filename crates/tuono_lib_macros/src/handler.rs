@@ -16,7 +16,7 @@ use syn::{
 /// Attributes for the handler proc macro
 #[derive(Default)]
 struct HandlerAttr {
-    /// Which arguments should be passed to both axum routes and handler funciton, but
+    /// Which arguments should be passed to both axum routes and handler function, but
     /// excluded from state destructuring
     axum_arguments: Vec<AxumArgument>,
 }
