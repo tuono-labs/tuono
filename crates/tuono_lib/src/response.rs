@@ -6,12 +6,100 @@ use axum::response::{Html, IntoResponse, Redirect};
 use axum_extra::extract::cookie::{Cookie, CookieJar};
 use erased_serde::Serialize;
 
+/// Represents server-rendered data (props) to be passed into a React component.
+///
+/// `Props` is used within a [`Response::Props`] variant to deliver serialized data
+/// to the client during server-side rendering (SSR). It also supports setting
+/// HTTP status codes and cookies for the response.
+///
+/// # Fields
+/// - `data`: A boxed `Serialize` object that will be sent as props to the React component.
+/// - `http_code`: HTTP status code (e.g., 200 OK, 404 Not Found).
+/// - `cookies`: A `CookieJar` to set cookies in the user's browser.
+///
+/// # Example
+/// ```rust
+/// use serde::Serialize;
+/// use tuono_lib::{Props, Response};
+///
+/// #[derive(Serialize)]
+/// struct PageProps {
+///     title: String,
+/// }
+///
+/// fn get_props() -> Response {
+///     let mut props = Props::new(PageProps {
+///         title: "Welcome to Tuono!".into(),
+///     });
+///
+///     props.status(axum::http::StatusCode::OK);
+///     props.add_cookie(axum_extra::extract::cookie::Cookie::new("theme", "dark"));
+///
+///     Response::Props(props)
+/// }
+/// ```
+///
+/// You can also use `Props::new_with_status` to set the HTTP code at creation.
 pub struct Props {
     data: Box<dyn Serialize>,
     http_code: StatusCode,
     cookies: CookieJar,
 }
 
+/// Represents a server-side response returned from a Tuono handler function.
+///
+/// The `Response` enum is the core return type used in server-side logic within
+/// Tuono. It defines how data or redirection should be handled when passed
+/// back to the framework's runtime. Each variant is rendered differently on
+/// the client and server.
+///
+/// # Variants
+///
+/// - `Response::Props`: Used for server-side rendering (SSR) of React components.
+///   It wraps a [`Props`] struct containing serializable props, HTTP status,
+///   and cookies.
+/// - `Response::Redirect`: Returns an HTTP 308 permanent redirect to the given URL.
+/// - `Response::Custom`: A lower-level response option for advanced use cases.
+///   Allows manual control over status, headers, and body content.
+///
+/// # Example: Returning SSR Props
+/// ```rust
+/// use serde::Serialize;
+/// use tuono_lib::{Props, Response};
+///
+/// #[derive(Serialize)]
+/// struct MyProps {
+///     message: String,
+/// }
+///
+/// fn handler() -> Response {
+///     let props = MyProps {
+///         message: "Hello from Tuono!".to_string(),
+///     };
+///     Response::Props(Props::new(props))
+/// }
+/// ```
+///
+/// # Example: Redirecting
+/// ```rust
+/// use tuono_lib::Response;
+///
+/// fn login_redirect() -> Response {
+///     Response::Redirect("/login".to_string())
+/// }
+/// ```
+///
+/// # Example: Custom Response
+/// ```rust
+/// use axum::http::{HeaderMap, StatusCode};
+/// use tuono_lib::Response;
+///
+/// fn custom() -> Response {
+///     let mut headers = HeaderMap::new();
+///     headers.insert("x-custom", "value".parse().unwrap());
+///     Response::Custom((StatusCode::BAD_REQUEST, headers, "Invalid request".to_string()))
+/// }
+/// ```
 pub enum Response {
     Redirect(String),
     Props(Props),

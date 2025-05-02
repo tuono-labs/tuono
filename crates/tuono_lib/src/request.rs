@@ -32,6 +32,57 @@ impl From<Uri> for Location {
     }
 }
 
+/// Represents an incoming HTTP request in a Tuono server-side handler or API.
+///
+/// The `Request` struct provides access to the URI, headers, route parameters,
+/// and optionally the request body. It is designed to be passed to Tuono handler
+/// and API functions, offering utility methods to deserialize body content
+/// or extract query/path information.
+///
+/// # Fields
+/// - `uri`: The full request URI (including path and query string).
+/// - `headers`: The request headers, provided as an Axum `HeaderMap`.
+/// - `params`: Route parameters extracted from the matched path.
+/// - `body`: An optional raw body payload, if present.
+///
+/// # Use Cases
+///
+/// - Access route parameters or headers for dynamic behavior.
+/// - Parse a JSON or form body using `.body()` or `.form_data()`.
+/// - Extract information about the current location using `.location()`.
+///
+/// # Example: Parsing a JSON Body
+/// ```rust
+/// use serde::Deserialize;
+/// use tuono_lib::Request;
+///
+/// #[derive(Deserialize)]
+/// struct Payload {
+///     username: String,
+/// }
+///
+/// async fn handler(req: Request) {
+///     if let Ok(body) = req.body::<Payload>() {
+///         println!("Got username: {}", body.username);
+///     }
+/// }
+/// ```
+///
+/// # Example: Accessing Form Data
+/// ```rust
+/// use serde::Deserialize;
+///
+/// #[derive(Deserialize)]
+/// struct FormInput {
+///     email: String,
+/// }
+///
+/// async fn form_handler(req: tuono_lib::Request) {
+///     if let Ok(form) = req.form_data::<FormInput>() {
+///         println!("Submitted email: {}", form.email);
+///     }
+/// }
+/// ```
 #[derive(Debug, Clone)]
 pub struct Request {
     pub uri: Uri,
