@@ -38,7 +38,7 @@ impl From<Uri> for Location {
 /// and optionally the request body.
 ///
 /// # Example: Parsing a JSON Body
-/// 
+///
 /// ```
 /// #[tuono_lib::handler]
 /// async fn handler(req: Request) -> Response { ... }
