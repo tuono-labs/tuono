@@ -53,15 +53,6 @@ pub struct Props {
 /// back to the framework's runtime. Each variant is rendered differently on
 /// the client and server.
 ///
-/// # Variants
-///
-/// - `Response::Props`: Used for server-side rendering (SSR) of React components.
-///   It wraps a [`Props`] struct containing serializable props, HTTP status,
-///   and cookies.
-/// - `Response::Redirect`: Returns an HTTP 308 permanent redirect to the given URL.
-/// - `Response::Custom`: A lower-level response option for advanced use cases.
-///   Allows manual control over status, headers, and body content.
-///
 /// # Example: Returning SSR Props
 /// ```rust
 /// use serde::Serialize;
