@@ -1,8 +1,8 @@
-use crate::Request;
-use crate::{Payload, ssr::Js};
-use axum::Json;
+use crate::{ssr::Js, Payload};
+use axum::extract::Request;
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{Html, IntoResponse, Redirect};
+use axum::Json;
 use axum_extra::extract::cookie::{Cookie, CookieJar};
 use erased_serde::Serialize;
 
