@@ -3,7 +3,7 @@
 
 mod router;
 
-use tuono_lib::{Mode, Server, axum::Router, tokio, tuono_internal_init_v8_platform};
+use tuono_lib::tokio;
 
 #[tokio::main]
 async fn main() {
