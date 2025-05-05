@@ -33,10 +33,10 @@ fn it_successfully_create_the_index_route() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/index.rs"]"#));
     assert!(temp_main_rs_content.contains("mod index;"));
@@ -59,15 +59,15 @@ fn it_successfully_create_an_api_route() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_router_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
-    assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
-    assert!(temp_main_rs_content.contains("mod api_health_check;"));
+    assert!(temp_router_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
+    assert!(temp_router_rs_content.contains("mod api_health_check;"));
 
-    assert!(temp_main_rs_content.contains(
+    assert!(temp_router_rs_content.contains(
         r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
 }
@@ -89,10 +89,10 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
@@ -158,10 +158,10 @@ fn it_successfully_create_catch_all_routes() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/[...all_apis].rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_dyn_catch_all_all_apis;"));

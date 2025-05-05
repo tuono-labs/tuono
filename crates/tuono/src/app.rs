@@ -40,6 +40,7 @@ pub struct App {
     pub route_map: HashMap<String, Route>,
     pub base_path: PathBuf,
     pub has_app_state: bool,
+    pub has_main: bool,
     pub config: Option<Config>,
 }
 
@@ -51,6 +52,14 @@ fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
     Ok(contents.contains("pub fn main"))
 }
 
+fn has_main(base_path: PathBuf) -> std::io::Result<bool> {
+    let file = File::open(base_path.join("src/main.rs"))?;
+    let mut buf_reader = BufReader::new(file);
+    let mut contents = String::new();
+    buf_reader.read_to_string(&mut contents)?;
+    Ok(contents.contains("async fn main"))
+}
+
 impl App {
     pub fn new() -> Self {
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
@@ -58,7 +67,8 @@ impl App {
         let mut app = App {
             route_map: HashMap::new(),
             base_path: base_path.clone(),
-            has_app_state: has_app_state(base_path).unwrap_or(false),
+            has_app_state: has_app_state(base_path.to_owned()).unwrap_or(false),
+            has_main: has_main(base_path).unwrap_or(false),
             config: None,
         };
 

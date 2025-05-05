@@ -21,9 +21,13 @@ const SERVER_ENTRY_DATA: &str = include_str!("../templates/server.ts");
 const CLIENT_ENTRY_DATA: &str = include_str!("../templates/client.ts");
 #[cfg(not(target_os = "windows"))]
 const AXUM_ENTRY_POINT: &str = include_str!("../templates/server.rs");
+#[cfg(not(target_os = "windows"))]
+const AXUM_ROUTER: &str = include_str!("../templates/router.rs");
 
 #[cfg(not(target_os = "windows"))]
 const MAIN_FILE_PATH: &str = "./.tuono/main.rs";
+#[cfg(not(target_os = "windows"))]
+const ROUTER_FILE_PATH: &str = "./.tuono/router.rs";
 
 #[cfg(not(target_os = "windows"))]
 const FALLBACK_HTML_PATH: &str = "./.tuono/index.html";
@@ -39,9 +43,13 @@ const SERVER_ENTRY_DATA: &str = include_str!("..\\templates\\server.ts");
 const CLIENT_ENTRY_DATA: &str = include_str!("..\\templates\\client.ts");
 #[cfg(target_os = "windows")]
 const AXUM_ENTRY_POINT: &str = include_str!("..\\templates\\server.rs");
+#[cfg(target_os = "windows")]
+const AXUM_ROUTER: &str = include_str!("..\\templates\\router.rs");
 
 #[cfg(target_os = "windows")]
 const MAIN_FILE_PATH: &str = ".\\.tuono\\main.rs";
+#[cfg(target_os = "windows")]
+const ROUTER_FILE_PATH: &str = ".\\.tuono\\router.rs";
 
 #[cfg(target_os = "windows")]
 const FALLBACK_HTML_PATH: &str = ".\\.tuono\\index.html";
@@ -106,27 +114,27 @@ impl SourceBuilder {
         Ok(())
     }
 
-    fn generate_axum_source(&self) -> String {
+    fn generate_axum_source(&self) -> (Option<String>, String) {
         let Self { app, mode, .. } = &self;
 
-        let src = AXUM_ENTRY_POINT
+        let router_src = AXUM_ROUTER
             .replace("\r", "")
-            .replace("// ROUTE_BUILDER\n", &self.create_routes_declaration())
-            .replace("// MODULE_IMPORTS\n", &self.create_modules_declaration())
-            .replace("/*VERSION*/", crate_version!())
-            .replace("/*MODE*/", mode.as_str())
+            .replace("//ROUTE_BUILDER//", &self.create_routes_declaration())
+            .replace("//MODULE_IMPORTS//", &self.create_modules_declaration())
+            .replace("//VERSION//", crate_version!())
+            .replace("//MODE//", mode.as_str())
             .replace(
-                "//MAIN_FILE_IMPORT//",
+                "//APP_STATE_IMPORT//",
                 if app.has_app_state {
                     r#"#[path="../src/app.rs"]
-                    mod tuono_main_state;
-                    "#
+                        mod tuono_main_state;
+                        "#
                 } else {
                     ""
                 },
             )
             .replace(
-                "//MAIN_FILE_DEFINITION//",
+                "//APP_STATE_DECLARATION//",
                 if app.has_app_state {
                     "let user_custom_state = tuono_main_state::main();"
                 } else {
@@ -134,13 +142,19 @@ impl SourceBuilder {
                 },
             )
             .replace(
-                "//MAIN_FILE_USAGE//",
+                "//APP_STATE_USAGE//",
                 if app.has_app_state {
                     ".with_state(user_custom_state)"
                 } else {
                     ""
                 },
             );
+
+        let main_src = if !app.has_main {
+            Some(AXUM_ENTRY_POINT.replace("\r", ""))
+        } else {
+            None
+        };
 
         let mut import_http_handler = String::new();
 
@@ -151,13 +165,19 @@ impl SourceBuilder {
             import_http_handler.push_str(&format!("use tuono_lib::axum::routing::{method};\n"))
         }
 
-        src.replace("// AXUM_GET_ROUTE_HANDLER", &import_http_handler)
+        (
+            main_src,
+            router_src.replace("//AXUM_GET_ROUTE_HANDLER//", &import_http_handler),
+        )
     }
 
     pub fn refresh_axum_source(&self) -> io::Result<()> {
-        let axum_source = self.generate_axum_source();
+        let (main_source, router_source) = self.generate_axum_source();
 
-        self.create_file(PathBuf::from(MAIN_FILE_PATH), &axum_source)?;
+        if let Some(main_source) = main_source {
+            self.create_file(PathBuf::from(MAIN_FILE_PATH), &main_source)?;
+        }
+        self.create_file(PathBuf::from(ROUTER_FILE_PATH), &router_source)?;
 
         Ok(())
     }
@@ -201,13 +221,13 @@ impl SourceBuilder {
                     ));
 
                     route_declarations.push_str(&format!(
-                            r#".route("/__tuono/data{axum_route}", get({module_import}::tuono_internal_api))"#
+                        r#".route("/__tuono/data{axum_route}", get({module_import}::tuono_internal_api))"#
                     ));
                 } else {
                     for method in route.api_data.as_ref().unwrap().methods.clone() {
                         let method = method.to_string().to_lowercase();
                         route_declarations.push_str(&format!(
-                                r#".route("{axum_route}", {method}({module_import}::{method}_tuono_internal_api))"#
+                            r#".route("{axum_route}", {method}({module_import}::{method}_tuono_internal_api))"#
                         ));
                     }
                 }
@@ -252,12 +272,11 @@ impl SourceBuilder {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]
     fn should_set_the_correct_mode() {
-        let dev_bundle = SourceBuilder {
+        let (_, dev_bundle) = SourceBuilder {
             app: App::new(),
             mode: Mode::Dev,
             base_path: PathBuf::new(),
@@ -265,7 +284,7 @@ mod tests {
         }
         .generate_axum_source();
 
-        let prod_bundle = SourceBuilder {
+        let (_, prod_bundle) = SourceBuilder {
             app: App::new(),
             mode: Mode::Prod,
             base_path: PathBuf::new(),
@@ -279,7 +298,7 @@ mod tests {
 
     #[test]
     fn should_not_load_the_axum_get_function() {
-        let dev_bundle = SourceBuilder {
+        let (_, dev_bundle) = SourceBuilder {
             app: App::new(),
             mode: Mode::Dev,
             base_path: PathBuf::new(),
@@ -307,7 +326,7 @@ mod tests {
             .route_map
             .insert(String::from("index.rs"), route);
 
-        let dev_bundle = source_builder.generate_axum_source();
+        let (_, dev_bundle) = source_builder.generate_axum_source();
 
         assert!(dev_bundle.contains("use tuono_lib::axum::routing::get;"));
     }
