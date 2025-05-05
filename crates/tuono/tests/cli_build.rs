@@ -8,6 +8,11 @@ use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
+const CUSTOM_MAIN_FILE: &str = r"
+async fn main() {
+    // this is custom
+}
+";
 
 fn tracing_message(level: Level, module: &str, message: &str) -> String {
     format!("\x1b[31m{level}\x1b[0m \x1b[2mtuono::{module}\x1b[0m\x1b[2m:\x1b[0m {message}\n")
@@ -250,4 +255,21 @@ fn build_fails_with_no_config() {
             "source_builder",
             "Cannot find tuono.config.ts - is this a tuono project?",
         ));
+}
+
+#[test]
+#[serial]
+fn is_uses_custom_main_when_present() {
+    let temp_tuono_project = TempTuonoProject::new();
+    temp_tuono_project.add_file_with_content("./src/main.rs", CUSTOM_MAIN_FILE);
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    assert!(!temp_tuono_main_rs_path.exists());
 }
