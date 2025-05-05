@@ -128,6 +128,7 @@ impl SourceBuilder {
                 if app.has_app_state {
                     r#"#[path="../src/app.rs"]
                         mod tuono_main_state;
+                        use tuono_main_state::ApplicationState;
                         "#
                 } else {
                     ""
@@ -144,9 +145,17 @@ impl SourceBuilder {
             .replace(
                 "//APP_STATE_USAGE//",
                 if app.has_app_state {
-                    ".with_state(user_custom_state)"
+                    "|router, user_custom_state| async { router.with_state(user_custom_state) }"
                 } else {
-                    ""
+                    "|router| async { router }"
+                },
+            )
+            .replace(
+                "//GET_ROUTER_SIGNATURE//",
+                if app.has_app_state {
+                    "F: Fn(Router<ApplicationState>, ApplicationState) -> Fut,"
+                } else {
+                    "F: Fn(Router) -> Fut,"
                 },
             );
 
