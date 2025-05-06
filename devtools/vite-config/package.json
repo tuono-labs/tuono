@@ -18,7 +18,7 @@
     "oxc-transform": "0.63.0",
     "rollup-plugin-preserve-directives": "0.4.0",
     "unplugin-isolated-decl": "0.13.6",
-    "vite": "6.1.3",
+    "vite": "6.1.6",
     "vite-plugin-externalize-deps": "0.9.0"
   }
 }
