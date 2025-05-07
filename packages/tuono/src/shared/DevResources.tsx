@@ -2,8 +2,8 @@ import type { JSX } from 'react'
 
 import type { TuonoConfigServer } from '../config'
 
-const VITE_PROXY_PATH = '/vite-server'
 const DEFAULT_SERVER_CONFIG = { host: 'localhost', origin: null, port: 3000 }
+const VITE_PROXY_PATH = '/vite-server'
 
 interface DevResourcesProps {
   devServerConfig?: TuonoConfigServer

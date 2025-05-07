@@ -2,10 +2,13 @@ import type { JSX } from 'react'
 import { RouterProvider } from 'tuono-router'
 import type { RouterInstanceType } from 'tuono-router'
 
+import type { Mode } from '../types'
+
 import { useTuonoContextServerPayload } from './TuonoContext'
 
 interface RouterContextProviderWrapperProps {
   router: RouterInstanceType
+  mode?: Mode
 }
 
 /**
@@ -17,6 +20,7 @@ interface RouterContextProviderWrapperProps {
  */
 export function RouterContextProviderWrapper({
   router,
+  mode,
 }: RouterContextProviderWrapperProps): JSX.Element {
   const serverPayload = useTuonoContextServerPayload()
 
@@ -25,6 +29,7 @@ export function RouterContextProviderWrapper({
       router={router}
       serverInitialLocation={serverPayload.location}
       serverInitialData={serverPayload.data}
+      mode={mode}
     />
   )
 }
