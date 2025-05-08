@@ -1,3 +1,6 @@
+use once_cell::sync::Lazy;
+use regex::Regex;
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -19,6 +22,12 @@ use crate::source_builder::SourceBuilder;
 use console::Term;
 use spinners::{Spinner, Spinners};
 
+fn is_css_module(file_name: Cow<str>) -> bool {
+    static RE: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"^.*\.module\.(css|scss|sass|less|styl|stylus)$").unwrap());
+    RE.is_match(&file_name)
+}
+
 fn ssr_reload_needed(path: &Path) -> bool {
     let file_name_starts_with_env = path
         .file_name()
@@ -27,7 +36,12 @@ fn ssr_reload_needed(path: &Path) -> bool {
 
     let file_path = path.to_string_lossy();
 
-    file_name_starts_with_env || file_path.ends_with("sx") || file_path.ends_with("mdx")
+    file_name_starts_with_env
+        || file_path.ends_with("sx")
+        || file_path.ends_with("mdx")
+    // When a CSS module is modified
+    // also the class names get modified.
+        || is_css_module(file_path)
 }
 
 #[allow(
