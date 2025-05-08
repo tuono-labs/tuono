@@ -33,6 +33,8 @@ export function TuonoReactPlugin(): Plugin {
     }
   }
 
+  // This manifest is used to store the CSS modules contents in dev mode
+  // { [filePath]: cssContent }
   const cssModulesManifest: Record<string, string> = {}
 
   return {

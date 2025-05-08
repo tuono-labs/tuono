@@ -9,11 +9,9 @@ import type { ModuleNode, ViteDevServer } from 'vite'
 
 const isCssFile = (file: string): boolean => cssFileRegExp.test(file)
 
-// Vite doesn't expose these so we just copy the list for now
-// https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/constants.ts#L49C23-L50
 const cssFileRegExp =
   /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/
-// https://github.com/vitejs/vite/blob/d6bde8b03d433778aaed62afc2be0630c8131908/packages/vite/src/node/plugins/css.ts#L160
+
 const cssModulesRegExp = new RegExp(`\\.module${cssFileRegExp.source}`)
 
 const routesFolder = path.relative(process.cwd(), 'src/routes')
@@ -48,6 +46,10 @@ const isCssUrlWithoutSideEffects = (url: string): boolean => {
   return false
 }
 
+/**
+ * This function transform the componentId into a file path.
+ * File extension is not required for the vite.moduleGraph URL search.
+ */
 function findFileFromComponentId(id: string): string {
   if (id.endsWith('/')) {
     return id + 'index'
@@ -62,6 +64,9 @@ function findFileFromComponentId(id: string): string {
 
 export const getStylesForComponentId = async (
   viteDevServer: ViteDevServer,
+  /**
+   * The route name (should match tuono-router specs)
+   */
   componentId: string | null,
   /**
    * All the CSS modules are preloaded and saved in this manifest
@@ -117,10 +122,7 @@ export const getStylesForComponentId = async (
               await viteDevServer.ssrLoadModule(
                 // We need the ?inline query in Vite v6 when loading CSS in SSR
                 // since it does not expose the default export for CSS in a
-                // server environment. This is to align with non-SSR
-                // environments. For backwards compatibility with v5 we keep
-                // using the URL without ?inline query because the HMR code was
-                // relying on the implicit SSR-client module graph relationship.
+                // server environment.
                 injectQuery(dep.url, 'inline'),
               )
             ).default as string)
@@ -131,10 +133,8 @@ export const getStylesForComponentId = async (
 
         styles[dep.url] = css
       } catch {
+        // this can happen with dynamically imported modules
         console.warn(`Could not load ${dep.file}`)
-        // this can happen with dynamically imported modules, I think
-        // because the Vite module graph doesn't distinguish between
-        // static and dynamic imports? TODO investigate, submit fix
       }
     }
   }
@@ -153,6 +153,10 @@ export const getStylesForComponentId = async (
   )
 }
 
+/**
+ * This function is used to find all the dependencies of a module node.
+ * The starting node is always a route.
+ */
 const findNodeDependencies = async (
   vite: ViteDevServer,
   node: ModuleNode,

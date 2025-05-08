@@ -14,7 +14,3 @@ export interface Config {
   folderName: string
   generatedRouteTree: string
 }
-
-export interface DevServerHooks {
-  getCriticalCss?: (pathname: string) => Promise<string | undefined>
-}
