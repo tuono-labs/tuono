@@ -23,25 +23,6 @@ mod utils;
 ///
 /// The function should return a `Response`,
 /// with serializable props for a React component.
-///
-/// # Example
-///
-/// ```rust
-/// use serde::Serialize;
-/// use tuono_lib::{Props, Request, Response};
-///
-/// #[derive(Serialize)]
-/// struct MyResponse<'a> {
-///     subtitle: &'a str,
-/// }
-///
-/// #[tuono_lib::handler]
-/// async fn get_server_side_props(_req: Request) -> Response {
-///     Response::Props(Props::new(MyResponse {
-///         subtitle: "The react / rust fullstack framework",
-///     }))
-/// }
-/// ```
 #[proc_macro_attribute]
 pub fn handler(args: TokenStream, item: TokenStream) -> TokenStream {
     handler::handler_core(args, item)
@@ -56,18 +37,6 @@ pub fn handler(args: TokenStream, item: TokenStream) -> TokenStream {
 /// The function should accept a `Request` (from `tuono_lib`) as input and return
 /// a type compatible with Axum, such as `StatusCode`, `Json<T>`, or any type
 /// implementing `IntoResponse`.
-///
-/// # Example
-///
-/// ```rust
-/// use tuono_lib::Request;
-/// use tuono_lib::axum::http::StatusCode;
-///
-/// #[tuono_lib::api(GET)]
-/// pub async fn health_check(_req: Request) -> StatusCode {
-///     StatusCode::OK
-/// }
-/// ```
 ///
 /// This makes the function accessible as an HTTP `GET /health_check` route
 /// in the Tuono server.
