@@ -1,16 +1,19 @@
 import type { JSX } from 'react'
 import { memo, Suspense, useMemo } from 'react'
 
+import type { Mode } from '../types'
 import type { Route } from '../route'
 
 import { useServerPayloadData } from '../hooks/useServerPayloadData'
 
 import { useRouterContext } from './RouterContext'
+import { CriticalCss } from './CriticalCss'
 
 interface RouteMatchProps<TServerPayloadData = unknown> {
   route: Route
   // User defined server side props
   serverInitialData: TServerPayloadData
+  mode?: Mode
 }
 
 /**
@@ -21,6 +24,7 @@ interface RouteMatchProps<TServerPayloadData = unknown> {
 export const RouteMatch = ({
   route,
   serverInitialData,
+  mode,
 }: RouteMatchProps): JSX.Element => {
   const { data } = useServerPayloadData(route, serverInitialData)
   const { isTransitioning } = useRouterContext()
@@ -35,8 +39,10 @@ export const RouteMatch = ({
       routes={routes}
       data={routeData}
       isLoading={isTransitioning}
+      mode={mode}
     >
       <Suspense>
+        <CriticalCss routeId={route.id} mode={mode} />
         <route.component data={routeData} isLoading={isTransitioning} />
       </Suspense>
     </TraverseRootComponents>
@@ -49,6 +55,7 @@ interface TraverseRootComponentsProps<TData = unknown> {
   isLoading: boolean
   children?: React.ReactNode
   index?: number
+  mode?: Mode
 }
 
 /**
@@ -63,18 +70,22 @@ const TraverseRootComponents = memo(
     data,
     isLoading,
     index = 0,
+    mode,
     children,
   }: TraverseRootComponentsProps): React.JSX.Element => {
     if (routes.length > index) {
-      const Parent = (routes[index] as Route).component
+      const route = routes[index] as Route
+      const Parent = route.component
 
       return (
         <Parent data={data} isLoading={isLoading}>
+          <CriticalCss routeId={route.id} mode={mode} />
           <TraverseRootComponents
             routes={routes}
             data={data}
             isLoading={isLoading}
             index={index + 1}
+            mode={mode}
           >
             {children}
           </TraverseRootComponents>

@@ -1,12 +1,16 @@
 use crate::config::GLOBAL_CONFIG;
 use axum::body::Body;
-use axum::extract::Path;
+use axum::extract::{Path, Query};
+use std::collections::HashMap;
 
 use axum::http::{HeaderName, HeaderValue};
 use axum::response::{IntoResponse, Response};
 use reqwest::Client;
 
-pub async fn vite_reverse_proxy(Path(path): Path<String>) -> impl IntoResponse {
+pub async fn vite_reverse_proxy(
+    Path(path): Path<String>,
+    query: Query<HashMap<String, String>>,
+) -> impl IntoResponse {
     let client = Client::new();
 
     let config = GLOBAL_CONFIG
@@ -19,7 +23,24 @@ pub async fn vite_reverse_proxy(Path(path): Path<String>) -> impl IntoResponse {
         config.server.port + 1
     );
 
-    match client.get(format!("{vite_url}/{path}")).send().await {
+    let query_string = query
+        .0
+        .iter()
+        .map(|(k, v)| format!("{}={}", k, v))
+        .collect::<Vec<_>>()
+        .join("&");
+
+    let query_string = if query_string.is_empty() {
+        String::new()
+    } else {
+        format!("?{}", query_string)
+    };
+
+    match client
+        .get(format!("{vite_url}/{path}{query_string}"))
+        .send()
+        .await
+    {
         Ok(res) => {
             let mut response_builder = Response::builder().status(res.status().as_u16());
 

@@ -16,7 +16,9 @@ export function sanitizePathname(pathname: string): string {
   return pathname
 }
 
-/*
+/**
+ * Returns the route that matches the given pathname
+ *
  * This hook is also implemented on server side to match the bundle
  * file to load at the first rendering.
  *
