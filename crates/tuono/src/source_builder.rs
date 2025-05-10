@@ -114,6 +114,9 @@ impl SourceBuilder {
         Ok(())
     }
 
+    /// Returns a tuple containing:
+    /// - The optional `.tuono/main.rs` file content
+    /// - The dynamically generated `.tuono/router.rs` file content
     fn generate_axum_source(&self) -> (Option<String>, String) {
         let Self { app, mode, .. } = &self;
 
@@ -159,7 +162,7 @@ impl SourceBuilder {
                 },
             );
 
-        let main_src = if !app.has_main {
+        let main_src = if !app.has_custom_main {
             Some(AXUM_ENTRY_POINT.replace("\r", ""))
         } else {
             None

@@ -259,7 +259,7 @@ fn build_fails_with_no_config() {
 
 #[test]
 #[serial]
-fn is_uses_custom_main_when_present() {
+fn it_uses_custom_main_when_present() {
     let temp_tuono_project = TempTuonoProject::new();
     temp_tuono_project.add_file_with_content("./src/main.rs", CUSTOM_MAIN_FILE);
 
@@ -272,4 +272,57 @@ fn is_uses_custom_main_when_present() {
 
     let temp_tuono_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
     assert!(!temp_tuono_main_rs_path.exists());
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    assert!(temp_tuono_router_rs_path.exists());
+}
+
+#[test]
+#[serial]
+fn it_uses_stateful_get_router_function_when_stateful() {
+    let temp_tuono_project = TempTuonoProject::new();
+    temp_tuono_project.add_file_with_content(
+        "./src/app.rs",
+        r#"
+        pub fn main() -> ApplicationState;
+        "#,
+    );
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    let temp_tuono_router_rs_content = fs::read_to_string(&temp_tuono_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
+    assert!(
+        temp_tuono_router_rs_content
+            .contains(r#"F: Fn(Router<ApplicationState>, ApplicationState) -> Fut,"#)
+    );
+    assert!(
+        temp_tuono_router_rs_content.contains(
+            r#"|router, user_custom_state| async { router.with_state(user_custom_state) }"#
+        )
+    );
+}
+
+#[test]
+#[serial]
+fn it_uses_stateless_get_router_function_when_stateless() {
+    let temp_tuono_project = TempTuonoProject::new();
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    let temp_tuono_router_rs_content = fs::read_to_string(&temp_tuono_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
+    assert!(temp_tuono_router_rs_content.contains(r#"F: Fn(Router) -> Fut,"#));
+    assert!(temp_tuono_router_rs_content.contains(r#"|router| async { router }"#));
 }

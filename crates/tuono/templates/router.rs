@@ -30,7 +30,7 @@ where
     tuono_internal_init_v8_platform();
     let router = get_router(f).await;
     if MODE == Mode::Prod {
-        println!("\n  ⚡ Tuono v0.19.4");
+        println!("\n  ⚡ Tuono v//VERSION//");
     }
     Server::init(router, MODE).await
 }
