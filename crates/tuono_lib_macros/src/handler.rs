@@ -70,7 +70,7 @@ pub fn handler_core(_args: TokenStream, item: TokenStream) -> TokenStream {
         // If request arg is not passed, we need to create one for the route handler
         None => {
             let mut route_arguments = arguments.clone();
-            route_arguments.push(parse_quote!(req: axum::extract::Request));
+            route_arguments.push(parse_quote!(req: tuono_lib::axum::extract::Request));
 
             quote! {
                 #item

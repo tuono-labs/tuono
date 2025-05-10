@@ -1,5 +1,5 @@
 use serde::Serialize;
-use tuono_lib::{Props, Request, Response, Type};
+use tuono_lib::{Props, Response, Type};
 
 #[derive(Serialize, Type)]
 struct MyResponse<'a> {
@@ -7,7 +7,7 @@ struct MyResponse<'a> {
 }
 
 #[tuono_lib::handler]
-async fn get_server_side_props(_req: Request) -> Response {
+async fn get_server_side_props() -> Response {
     Response::Props(Props::new(MyResponse {
         subtitle: "Subtitle received from the server",
     }))
