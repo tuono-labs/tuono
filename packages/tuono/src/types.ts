@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 
 import type { TuonoConfigServer } from './config'
 
+export type Mode = 'Dev' | 'Prod'
+
 /**
  * Provided by the rust server and used in the ssr env
  * @see tuono-router {@link ServerInitialLocation}

@@ -1,5 +1,6 @@
+import type { RouteNode } from '../types'
+
 import { spaces } from './utils'
-import type { RouteNode } from './types'
 
 export function buildRouteConfig(nodes: Array<RouteNode>, depth = 1): string {
   const children = nodes.map((node) => {
