@@ -1,6 +1,6 @@
-use tuono_lib::{Props, Request, Response};
+use tuono_lib::{Props, Response};
 
 #[tuono_lib::handler]
-async fn route(_: Request) -> Response {
+async fn route() -> Response {
     Response::Props(Props::new("{}"))
 }
