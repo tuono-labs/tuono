@@ -37,6 +37,8 @@ export class Route {
   /**
    * Utility to identify the route in the file system
    * Used i.e. for finding the criticalCss to load
+   *
+   * The path does not include the file extension
    */
   filePath?: string
 
