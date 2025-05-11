@@ -21,12 +21,14 @@ const Postscatchall = createRoute({ component: PostscatchallImport })
 const IndexRoute = Index.update({
   path: '/',
   getParentRoute: () => rootRoute,
+  filePath: '/',
 })
 
 const PostscatchallRoute = Postscatchall.update({
   path: '/posts/[...catch_all]',
   getParentRoute: () => rootRoute,
   hasHandler: true,
+  filePath: '/posts/[...catch_all]',
 })
 
 // Create and export the route tree
