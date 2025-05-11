@@ -100,13 +100,13 @@ export const getStylesForModule = async (
         const css = isCssModulesFile(dep.file)
           ? cssModulesManifest[dep.file]
           : ((
-            await viteDevServer.ssrLoadModule(
-              // We need the ?inline query in Vite v6 when loading CSS in SSR
-              // since it does not expose the default export for CSS in a
-              // server environment.
-              injectQuery(normalizePath(dep.file), 'inline'),
-            )
-          ).default as string)
+              await viteDevServer.ssrLoadModule(
+                // We need the ?inline query in Vite v6 when loading CSS in SSR
+                // since it does not expose the default export for CSS in a
+                // server environment.
+                injectQuery(normalizePath(dep.file), 'inline'),
+              )
+            ).default as string)
 
         if (css === undefined) {
           throw new Error()
