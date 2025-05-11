@@ -21,11 +21,13 @@ const Index = createRoute({ component: IndexImport })
 const AboutRoute = About.update({
   path: '/about',
   getParentRoute: () => rootRoute,
+  filePath: '/about',
 })
 
 const IndexRoute = Index.update({
   path: '/',
   getParentRoute: () => rootRoute,
+  filePath: '/',
 })
 
 // Create and export the route tree

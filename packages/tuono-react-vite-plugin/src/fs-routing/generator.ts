@@ -207,6 +207,7 @@ export async function routeGenerator(
             rustHandlersNodes.includes(node.path || '')
               ? 'hasHandler: true'
               : '',
+            `filePath: '${node.path || '/'}'`,
           ]
             .filter(Boolean)
             .join(',')}

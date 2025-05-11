@@ -6,6 +6,7 @@ interface RouteOptions {
   isRoot?: boolean
   getParentRoute?: () => Route
   path?: string
+  filePath?: string
   component: RouteComponent
   hasHandler?: boolean
 }
@@ -19,10 +20,27 @@ export const ROOT_ROUTE_ID = '__root__'
 export class Route {
   options: RouteOptions
 
+  /**
+   * The route id is used to identify the route in the router
+   * and is used to match the route with the URL.
+   *
+   * For now is the `path`
+   */
   id?: string
   isRoot: boolean
+  /**
+   * Used for identify the route by matching the URL
+   */
   path?: string
   fullPath!: string
+
+  /**
+   * Utility to identify the route in the file system
+   * Used i.e. for finding the criticalCss to load
+   *
+   * The path does not include the file extension
+   */
+  filePath?: string
 
   children?: Array<Route>
   parentRoute?: Route
@@ -70,11 +88,10 @@ export class Route {
       id = joinPaths(['/', id])
     }
 
-    const fullPath = id === ROOT_ROUTE_ID ? '/' : path
-
+    this.filePath = this.options.filePath
     this.path = path
     this.id = id
-    this.fullPath = fullPath || ''
+    this.fullPath = path || ''
   }
 
   addChildren(routes: Array<Route>): this {
