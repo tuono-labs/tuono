@@ -18,7 +18,7 @@ export function NotFound({ mode }: { mode?: Mode }): JSX.Element | null {
   if (custom404Route) {
     return (
       <>
-        <CriticalCss routeId={custom404Route.id} mode={mode} />
+        <CriticalCss routeFilePath={custom404Route.filePath} mode={mode} />
         <RouteMatch route={custom404Route} mode={mode} serverInitialData={{}} />
       </>
     )
@@ -30,7 +30,7 @@ export function NotFound({ mode }: { mode?: Mode }): JSX.Element | null {
 
   return (
     <RootLayout data={null} isLoading={false}>
-      <CriticalCss routeId="__root__" mode={mode} />
+      <CriticalCss routeFilePath="__root__" mode={mode} />
       <NotFoundDefaultContent />
     </RootLayout>
   )

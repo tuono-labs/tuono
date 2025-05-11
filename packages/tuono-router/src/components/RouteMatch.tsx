@@ -42,7 +42,7 @@ export const RouteMatch = ({
       mode={mode}
     >
       <Suspense>
-        <CriticalCss routeId={route.id} mode={mode} />
+        <CriticalCss routeFilePath={route.filePath} mode={mode} />
         <route.component data={routeData} isLoading={isTransitioning} />
       </Suspense>
     </TraverseRootComponents>
@@ -77,9 +77,13 @@ const TraverseRootComponents = memo(
       const route = routes[index] as Route
       const Parent = route.component
 
+      // Fallback to the route id if the filePath is not defined
+      // as is the case for the root route
+      const routeFilePath = route.filePath || route.id
+
       return (
         <Parent data={data} isLoading={isLoading}>
-          <CriticalCss routeId={route.id} mode={mode} />
+          <CriticalCss routeFilePath={routeFilePath} mode={mode} />
           <TraverseRootComponents
             routes={routes}
             data={data}

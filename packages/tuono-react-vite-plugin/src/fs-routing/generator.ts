@@ -170,17 +170,16 @@ export async function routeGenerator(
   const imports = [
     ...sortedRouteNodes.map((node) => {
       const extension = node.filePath.endsWith('mdx') ? '.mdx' : ''
-      return `const ${
-        node.variableName as string
-      }Import = ${DYNAMIC_FN}(() => import('./${replaceBackslash(
-        removeExt(
-          path.relative(
-            path.dirname(config.generatedRouteTree),
-            path.resolve(config.folderName, node.filePath),
+      return `const ${node.variableName as string
+        }Import = ${DYNAMIC_FN}(() => import('./${replaceBackslash(
+          removeExt(
+            path.relative(
+              path.dirname(config.generatedRouteTree),
+              path.resolve(config.folderName, node.filePath),
+            ),
+            false,
           ),
-          false,
-        ),
-      )}${extension}'))`
+        )}${extension}'))`
     }),
   ].join('\n')
 
@@ -207,6 +206,7 @@ export async function routeGenerator(
             rustHandlersNodes.includes(node.path || '')
               ? 'hasHandler: true'
               : '',
+            `filePath: '${node.path || '/'}'`,
           ]
             .filter(Boolean)
             .join(',')}

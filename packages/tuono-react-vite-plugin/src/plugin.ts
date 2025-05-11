@@ -3,7 +3,11 @@ import { normalize } from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 
 import { routeGenerator } from './fs-routing/generator'
-import { getStylesForComponentId, isCssModulesFile } from './styles'
+import {
+  getStylesForComponentId,
+  isCssModulesFile,
+  getStylesForModule,
+} from './styles'
 
 const CRITICAL_CSS_PATH = '/vite-server/tuono_internal__critical_css'
 
@@ -76,6 +80,27 @@ export function TuonoReactPlugin(): Plugin {
           res.end(css)
           return
         }
+
+        if (url.pathname === '/vite-server/graph') {
+          server.moduleGraph.idToModuleMap.forEach(console.log)
+          res.end('done')
+          return
+        }
+
+        if (url.pathname === '/vite-server/module-css') {
+          const componentId = url.searchParams.get('componentId')
+
+          const css = await getStylesForModule(
+            server,
+            componentId || '',
+            cssModulesManifest,
+          )
+
+          res.writeHead(200, { 'Content-Type': 'text/css' })
+          res.end(css)
+          return
+        }
+
         next()
       })
     },

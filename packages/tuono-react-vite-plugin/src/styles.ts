@@ -46,6 +46,94 @@ const isCssUrlWithoutSideEffects = (url: string): boolean => {
   return false
 }
 
+const normalizePath = (modulePath: string): string => {
+  return modulePath.startsWith('node_modules')
+    ? path.join(process.cwd(), modulePath)
+    : modulePath
+}
+
+export const getStylesForModule = async (
+  viteDevServer: ViteDevServer,
+  moduleUrl: string,
+  /**
+   * All the CSS modules are preloaded and saved in this manifest
+   */
+  cssModulesManifest: Record<string, string>,
+): Promise<string | undefined> => {
+  const styles: Record<string, string> = {}
+  const deps: Set<ModuleNode> = new Set()
+
+  const moduleFilePath = normalizePath(moduleUrl)
+  try {
+    let node: ModuleNode | undefined =
+      await viteDevServer.moduleGraph.getModuleByUrl(moduleFilePath)
+
+    // If the module is only present in the client module graph, the module
+    // won't have been found on the first request to the server. If so, we
+    // request the module so it's in the module graph, then try again.
+    if (!node) {
+      try {
+        await viteDevServer.transformRequest(moduleFilePath)
+      } catch (err) {
+        console.error(err)
+      }
+
+      node = await viteDevServer.moduleGraph.getModuleByUrl(moduleFilePath)
+    }
+
+    if (!node) {
+      console.error(`Could not resolve module for file: ${moduleFilePath}`)
+      return
+    }
+    await findNodeDependencies(viteDevServer, node, deps)
+  } catch (error) {
+    console.error(error)
+  }
+
+  for (const dep of deps) {
+    if (
+      dep.file &&
+      isCssFile(dep.file) &&
+      !isCssUrlWithoutSideEffects(dep.url) // Ignore styles that resolved as URLs, inline or raw. These shouldn't get injected.
+    ) {
+      try {
+        const css = isCssModulesFile(dep.file)
+          ? cssModulesManifest[dep.file]
+          : ((
+            await viteDevServer.ssrLoadModule(
+              // We need the ?inline query in Vite v6 when loading CSS in SSR
+              // since it does not expose the default export for CSS in a
+              // server environment.
+              injectQuery(normalizePath(dep.file), 'inline'),
+            )
+          ).default as string)
+
+        if (css === undefined) {
+          throw new Error()
+        }
+
+        styles[dep.url] = css
+      } catch {
+        // this can happen with dynamically imported modules
+        console.warn(`Could not load ${dep.file}`)
+      }
+    }
+  }
+
+  return (
+    Object.entries(styles)
+      .map(([fileName, css]) => [
+        `\n/* ${fileName
+          // Escape comment syntax in file paths
+          .replace(/\/\*/g, '/\\*')
+          .replace(/\*\//g, '*\\/')} */`,
+        css,
+      ])
+      .flat()
+      .join('\n') || undefined
+  )
+}
+
 /**
  * This function transform the componentId into a file path.
  * File extension is not required for the vite.moduleGraph URL search.
@@ -80,77 +168,7 @@ export const getStylesForComponentId = async (
 
   const fileUrl = path.join(process.cwd(), relativeFilePath)
 
-  const styles: Record<string, string> = {}
-  const deps: Set<ModuleNode> = new Set()
-
-  try {
-    let node: ModuleNode | undefined =
-      await viteDevServer.moduleGraph.getModuleByUrl(fileUrl)
-
-    // If the module is only present in the client module graph, the module
-    // won't have been found on the first request to the server. If so, we
-    // request the module so it's in the module graph, then try again.
-    if (!node) {
-      try {
-        await viteDevServer.transformRequest(fileUrl)
-      } catch (err) {
-        console.error(err)
-      }
-
-      node = await viteDevServer.moduleGraph.getModuleByUrl(fileUrl)
-    }
-
-    if (!node) {
-      console.error(`Could not resolve module for file: ${fileUrl}`)
-      return
-    }
-    await findNodeDependencies(viteDevServer, node, deps)
-  } catch (error) {
-    console.error(error)
-  }
-
-  for (const dep of deps) {
-    if (
-      dep.file &&
-      isCssFile(dep.file) &&
-      !isCssUrlWithoutSideEffects(dep.url) // Ignore styles that resolved as URLs, inline or raw. These shouldn't get injected.
-    ) {
-      try {
-        const css = isCssModulesFile(dep.file)
-          ? cssModulesManifest[dep.file]
-          : ((
-              await viteDevServer.ssrLoadModule(
-                // We need the ?inline query in Vite v6 when loading CSS in SSR
-                // since it does not expose the default export for CSS in a
-                // server environment.
-                injectQuery(dep.url, 'inline'),
-              )
-            ).default as string)
-
-        if (css === undefined) {
-          throw new Error()
-        }
-
-        styles[dep.url] = css
-      } catch {
-        // this can happen with dynamically imported modules
-        console.warn(`Could not load ${dep.file}`)
-      }
-    }
-  }
-
-  return (
-    Object.entries(styles)
-      .map(([fileName, css]) => [
-        `\n/* ${fileName
-          // Escape comment syntax in file paths
-          .replace(/\/\*/g, '/\\*')
-          .replace(/\*\//g, '*\\/')} */`,
-        css,
-      ])
-      .flat()
-      .join('\n') || undefined
-  )
+  return await getStylesForModule(viteDevServer, fileUrl, cssModulesManifest)
 }
 
 /**

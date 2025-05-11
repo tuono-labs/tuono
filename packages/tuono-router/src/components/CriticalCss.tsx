@@ -6,7 +6,7 @@ const VITE_PROXY_PATH = '/vite-server'
 const CRITICAL_CSS_PATH = VITE_PROXY_PATH + '/tuono_internal__critical_css'
 
 interface CriticalCssProps {
-  routeId?: string
+  routeFilePath?: string
   mode?: Mode
 }
 
@@ -16,16 +16,16 @@ interface CriticalCssProps {
  * since vite does not support CSS injection without JS waterfall
  */
 export function CriticalCss({
-  routeId,
+  routeFilePath,
   mode,
 }: CriticalCssProps): JSX.Element | null {
-  if (!routeId || mode !== 'Dev') {
+  if (!routeFilePath || mode !== 'Dev') {
     return null
   }
 
   return (
     <link
-      href={`${CRITICAL_CSS_PATH}?componentId=${routeId}`}
+      href={`${CRITICAL_CSS_PATH}?componentId=${routeFilePath}`}
       precedence="high"
       rel="stylesheet"
     />
