@@ -2,6 +2,7 @@
 // Do not manually change it
 
 use tuono_lib::{axum::Router, tuono_internal_init_v8_platform, Mode, Server};
+use std::future::Future;
 
 //AXUM_GET_ROUTE_HANDLER//
 
@@ -19,7 +20,7 @@ where
     //APP_STATE_DECLARATION//
     let router = Router::new()
     //ROUTE_BUILDER//;
-    f(router, user_custom_state).await
+    //GET_ROUTER_USAGE//
 }
 
 pub async fn init_server_with_router<F, Fut>(f: F) -> Server

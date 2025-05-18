@@ -160,6 +160,14 @@ impl SourceBuilder {
                 } else {
                     "F: Fn(Router) -> Fut,"
                 },
+            )
+            .replace(
+                "//GET_ROUTER_USAGE//",
+                if app.has_app_state {
+                    "f(router, user_custom_state).await"
+                } else {
+                    "f(router).await"
+                },
             );
 
         let main_src = if !app.has_custom_main {

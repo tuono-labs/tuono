@@ -1,9 +1,9 @@
 use crate::mode::Mode;
 use crate::route::Route;
-use glob::{glob, GlobError};
+use glob::{GlobError, glob};
 use http::Method;
 use std::collections::hash_set::HashSet;
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::{HashMap, hash_map::Entry};
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
