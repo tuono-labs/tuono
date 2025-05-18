@@ -1,4 +1,4 @@
-use crate::{ssr::Js, Payload};
+use crate::{Payload, ssr::Js};
 use axum::extract::Request;
 use axum::response::Html;
 

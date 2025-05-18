@@ -3,7 +3,7 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{parse_macro_input, parse_quote, Expr, FnArg, Ident, ItemFn, Pat, PatIdent, Type};
+use syn::{Expr, FnArg, Ident, ItemFn, Pat, PatIdent, Type, parse_macro_input, parse_quote};
 
 pub fn handler_core(_args: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as ItemFn);
