@@ -36,31 +36,37 @@ const PostsMyPost = createRoute({ component: PostsMyPostImport })
 
 const PostslayoutRoute = Postslayout.update({
   getParentRoute: () => rootRoute,
+  filePath: '/posts/__layout',
 })
 
 const AboutRoute = About.update({
   path: '/about',
   getParentRoute: () => rootRoute,
+  filePath: '/about',
 })
 
 const IndexRoute = Index.update({
   path: '/',
   getParentRoute: () => rootRoute,
+  filePath: '/',
 })
 
 const PostspostRoute = Postspost.update({
   path: '/posts/[post]',
   getParentRoute: () => PostslayoutRoute,
+  filePath: '/posts/[post]',
 })
 
 const PostsIndexRoute = PostsIndex.update({
   path: '/posts',
   getParentRoute: () => PostslayoutRoute,
+  filePath: '/posts/',
 })
 
 const PostsMyPostRoute = PostsMyPost.update({
   path: '/posts/my-post',
   getParentRoute: () => PostslayoutRoute,
+  filePath: '/posts/my-post',
 })
 
 // Create and export the route tree
