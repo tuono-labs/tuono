@@ -109,6 +109,41 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
 
 #[test]
 #[serial]
+fn it_successfully_import_mixed_case_routes() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    for method in ["get", "post", "put", "delete", "patch"] {
+        temp_tuono_project.add_file_with_content(
+            &format!("./src/routes/api/{}_lower.rs", method),
+            &format!(r"#[tuono_lib::api({})]", method),
+        );
+        temp_tuono_project.add_file_with_content(
+            &format!("./src/routes/api/{}_upper.rs", method),
+            &format!(r"#[tuono_lib::api({})]", method.to_uppercase()),
+        );
+    }
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+
+    let temp_main_rs_content =
+        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+
+    for method in ["get", "post", "put", "delete", "patch"] {
+        let expected = format!(r#"use tuono_lib::axum::routing::{};"#, method);
+        let imports = temp_main_rs_content.match_indices(&expected);
+        assert_eq!(imports.count(), 1);
+    }
+}
+
+#[test]
+#[serial]
 fn it_successfully_create_catch_all_routes() {
     let temp_tuono_project = TempTuonoProject::new();
 
