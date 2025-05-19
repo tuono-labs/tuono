@@ -102,7 +102,7 @@ fn read_http_methods_from_file(path: &String) -> Vec<Method> {
                 // Extract just the element surrounded by the phrantesist.
                 .replace("tuono_lib::api(", "")
                 .replace(")]", "");
-            Method::from_str(http_method.as_str()).unwrap_or(Method::GET)
+            Method::from_str(http_method.to_uppercase().as_str()).unwrap_or(Method::GET)
         })
         .collect::<Vec<Method>>()
 }
@@ -283,7 +283,6 @@ impl Route {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]
