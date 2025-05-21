@@ -188,6 +188,7 @@ async fn it_parses_the_http_body() {
 
     let response = client
         .post(format!("{server_url}/api/post"))
+        .header("content-type", "application/json")
         .body(r#"{"data":"payload"}"#)
         .send()
         .await

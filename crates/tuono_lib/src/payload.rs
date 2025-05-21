@@ -1,16 +1,46 @@
 use crate::config::GLOBAL_CONFIG;
 use crate::manifest::MANIFEST;
 use crate::mode::{GLOBAL_MODE, Mode};
+use axum::extract::Request;
 use erased_serde::Serialize;
+use http::Uri;
 use regex::Regex;
 use serde::Serialize as SerdeSerialize;
+use std::collections::HashMap;
 use tuono_internal::config::ServerConfig;
-
-use crate::request::{Location, Request};
 
 fn has_dynamic_path(route: &str) -> bool {
     let regex = Regex::new(r"\[(.*?)\]").expect("Failed to create the regex");
     regex.is_match(route)
+}
+
+/// Location must match client side interface
+#[derive(SerdeSerialize, Debug)]
+pub struct Location {
+    href: String,
+    pathname: String,
+    #[serde(rename(serialize = "searchStr"))]
+    search_str: String,
+    search: HashMap<String, String>,
+}
+
+impl Location {
+    pub fn pathname(&self) -> &String {
+        &self.pathname
+    }
+}
+
+impl From<&Uri> for Location {
+    fn from(uri: &Uri) -> Self {
+        let query = uri.query().unwrap_or("");
+        Location {
+            // TODO: build correct href
+            href: uri.to_string(),
+            pathname: uri.path().to_string(),
+            search_str: query.to_string(),
+            search: serde_urlencoded::from_str(query).unwrap_or(HashMap::new()),
+        }
+    }
 }
 
 #[derive(SerdeSerialize)]
@@ -42,7 +72,7 @@ impl<'a> Payload<'a> {
         };
 
         Payload {
-            location: req.location(),
+            location: req.uri().into(),
             data,
             mode,
             js_bundles: None,
@@ -159,7 +189,6 @@ impl<'a> Payload<'a> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use axum::http::Uri;
     use std::collections::HashMap;
@@ -230,7 +259,7 @@ mod tests {
             .parse::<Uri>()
             .unwrap();
 
-        let location = Location::from(uri);
+        let location = Location::from(&uri);
 
         Payload {
             location,

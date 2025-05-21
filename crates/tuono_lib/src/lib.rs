@@ -19,7 +19,6 @@ mod vite_websocket_proxy;
 
 pub use mode::Mode;
 pub use payload::Payload;
-pub use request::Request;
 pub use response::{Props, Response};
 pub use server::{Server, tuono_internal_init_v8_platform};
 pub use tuono_lib_macros::{Type, api, handler};

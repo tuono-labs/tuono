@@ -1,19 +1,10 @@
 use crate::{Payload, ssr::Js};
-use axum::extract::{Path, Request};
+use axum::extract::Request;
 use axum::response::Html;
-use std::collections::HashMap;
 
-pub async fn catch_all(
-    Path(params): Path<HashMap<String, String>>,
-    request: Request,
-) -> Html<String> {
-    let pathname = request.uri();
-    let headers = request.headers();
-
-    let req = crate::Request::new(pathname.to_owned(), headers.to_owned(), params, None);
-
+pub async fn catch_all(request: Request) -> Html<String> {
     // TODO: remove unwrap
-    let payload = Payload::new(&req, &"").client_payload().unwrap();
+    let payload = Payload::new(&request, &"").client_payload().unwrap();
 
     let result = Js::render_to_string(Some(&payload));
 
