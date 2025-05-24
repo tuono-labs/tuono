@@ -32,6 +32,17 @@ impl From<Uri> for Location {
     }
 }
 
+/// Represents an incoming HTTP request in a Tuono server-side handler or API.
+///
+/// The `Request` struct provides access to the URI, headers, route parameters,
+/// and optionally the request body.
+///
+/// # Example: Parsing a JSON Body
+///
+/// ```
+/// #[tuono_lib::handler]
+/// async fn handler(req: Request) -> Response { ... }
+/// ```
 #[derive(Debug, Clone)]
 pub struct Request {
     pub uri: Uri,
