@@ -229,9 +229,9 @@ pub fn load_manifest() -> std::io::Result<()> {
     let file = File::open(PathBuf::from(VITE_MANIFEST_PATH))?;
     let reader = BufReader::new(file);
     let manifest: ViteManifest = serde_json::from_reader(reader)?;
-    MANIFEST.set(Manifest::from(manifest)).map_err(|_| {
-        std::io::Error::new(std::io::ErrorKind::Other, "Failed to set the manifest")
-    })?;
+    MANIFEST
+        .set(Manifest::from(manifest))
+        .map_err(|_| std::io::Error::other("Failed to set the manifest"))?;
     Ok(())
 }
 
