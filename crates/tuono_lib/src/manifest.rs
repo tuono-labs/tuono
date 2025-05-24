@@ -228,113 +228,112 @@ mod tests {
     // It includes dynamic routes, static routes, catch all routes, nested
     // __layout and shared components.
     const MANIFEST_EXAMPLE: &str = r#"{
-  "../src/routes/about.tsx": {
-    "file": "assets/about-C3UqHfGb.js",
-    "name": "about",
-    "src": "../src/routes/about.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/about-DUhMJ_Ze.css"
-    ]
-  },
-  "../src/routes/catch_all/[...slug].tsx": {
-    "file": "assets/_...slug_-CpJyPnPj.js",
-    "name": "_...slug_",
-    "src": "../src/routes/catch_all/[...slug].tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/_..-CipbPoTl.css"
-    ]
-  },
-  "../src/routes/index.tsx": {
-    "file": "assets/index-B3tnHOzi.js",
-    "name": "index",
-    "src": "../src/routes/index.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/index-CynfArjF.css"
-    ]
-  },
-  "../src/routes/pokemons/[pokemon]/[type].tsx": {
-    "file": "assets/_type_-B-sJOcVJ.js",
-    "name": "_type_",
-    "src": "../src/routes/pokemons/[pokemon]/[type].tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx",
-      "_PokemonView-jNGFFO0j.js"
-    ],
-    "css": [
-      "assets/_type_-B8vgxybx.css"
-    ]
-  },
-  "../src/routes/pokemons/[pokemon]/index.tsx": {
-    "file": "assets/index-ByRBj7WK.js",
-    "name": "index",
-    "src": "../src/routes/pokemons/[pokemon]/index.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx",
-      "_PokemonView-jNGFFO0j.js"
-    ],
-    "css": [
-      "assets/index-CM86zKWq.css"
-    ]
-  },
-  "../src/routes/pokemons/__layout.tsx": {
-    "file": "assets/__layout-2v3JiSeL.js",
-    "name": "__layout",
-    "src": "../src/routes/pokemons/__layout.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/__layout-CXGGqNw5.css"
-    ]
-  },
-  "_PokemonView-BcJZaQaO.css": {
-    "file": "assets/PokemonView-BcJZaQaO.css",
-    "src": "_PokemonView-BcJZaQaO.css"
-  },
-  "_PokemonView-jNGFFO0j.js": {
-    "file": "assets/PokemonView-jNGFFO0j.js",
-    "name": "PokemonView",
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/PokemonView-BcJZaQaO.css"
-    ]
-  },
-  "client-main.tsx": {
-    "file": "assets/client-main-DOdr9gvl.js",
-    "name": "client-main",
-    "src": "client-main.tsx",
-    "isEntry": true,
-    "dynamicImports": [
-      "../src/routes/pokemons/__layout.tsx",
-      "../src/routes/about.tsx",
-      "../src/routes/index.tsx",
-      "../src/routes/catch_all/[...slug].tsx",
-      "../src/routes/pokemons/[pokemon]/[type].tsx",
-      "../src/routes/pokemons/[pokemon]/index.tsx"
-    ],
-    "css": [
-      "assets/client-main-BS7N-NIa.css"
-    ]
-  }
-}
-"#;
+      "../src/routes/about.tsx": {
+        "file": "assets/about-C3UqHfGb.js",
+        "name": "about",
+        "src": "../src/routes/about.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/about-DUhMJ_Ze.css"
+        ]
+      },
+      "../src/routes/catch_all/[...slug].tsx": {
+        "file": "assets/_...slug_-CpJyPnPj.js",
+        "name": "_...slug_",
+        "src": "../src/routes/catch_all/[...slug].tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/_..-CipbPoTl.css"
+        ]
+      },
+      "../src/routes/index.tsx": {
+        "file": "assets/index-B3tnHOzi.js",
+        "name": "index",
+        "src": "../src/routes/index.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/index-CynfArjF.css"
+        ]
+      },
+      "../src/routes/pokemons/[pokemon]/[type].tsx": {
+        "file": "assets/_type_-B-sJOcVJ.js",
+        "name": "_type_",
+        "src": "../src/routes/pokemons/[pokemon]/[type].tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx",
+          "_PokemonView-jNGFFO0j.js"
+        ],
+        "css": [
+          "assets/_type_-B8vgxybx.css"
+        ]
+      },
+      "../src/routes/pokemons/[pokemon]/index.tsx": {
+        "file": "assets/index-ByRBj7WK.js",
+        "name": "index",
+        "src": "../src/routes/pokemons/[pokemon]/index.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx",
+          "_PokemonView-jNGFFO0j.js"
+        ],
+        "css": [
+          "assets/index-CM86zKWq.css"
+        ]
+      },
+      "../src/routes/pokemons/__layout.tsx": {
+        "file": "assets/__layout-2v3JiSeL.js",
+        "name": "__layout",
+        "src": "../src/routes/pokemons/__layout.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/__layout-CXGGqNw5.css"
+        ]
+      },
+      "_PokemonView-BcJZaQaO.css": {
+        "file": "assets/PokemonView-BcJZaQaO.css",
+        "src": "_PokemonView-BcJZaQaO.css"
+      },
+      "_PokemonView-jNGFFO0j.js": {
+        "file": "assets/PokemonView-jNGFFO0j.js",
+        "name": "PokemonView",
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/PokemonView-BcJZaQaO.css"
+        ]
+      },
+      "client-main.tsx": {
+        "file": "assets/client-main-DOdr9gvl.js",
+        "name": "client-main",
+        "src": "client-main.tsx",
+        "isEntry": true,
+        "dynamicImports": [
+          "../src/routes/pokemons/__layout.tsx",
+          "../src/routes/about.tsx",
+          "../src/routes/index.tsx",
+          "../src/routes/catch_all/[...slug].tsx",
+          "../src/routes/pokemons/[pokemon]/[type].tsx",
+          "../src/routes/pokemons/[pokemon]/index.tsx"
+        ],
+        "css": [
+          "assets/client-main-BS7N-NIa.css"
+        ]
+      }
+    }"#;
 
     #[test]
     fn correctly_parse_the_manifest_json() {
