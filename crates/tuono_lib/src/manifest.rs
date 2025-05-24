@@ -1,4 +1,6 @@
+use once_cell::sync::Lazy;
 use once_cell::sync::OnceCell;
+use regex::Regex;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
@@ -7,167 +9,459 @@ use std::path::PathBuf;
 
 const VITE_MANIFEST_PATH: &str = "./out/client/.vite/manifest.json";
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
-pub struct BundleInfo {
-    /// TODO: Add also the import field and load the dynamic
-    /// values in the payload bundles.
-    pub file: String,
-    #[serde(default = "default_css_vector")]
-    pub css: Vec<String>,
+fn has_dynamic_path(pathname: &str) -> bool {
+    static RE: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"\[(.*?)\]").expect("Invalid regex for dynamic path detection"));
+    RE.is_match(pathname)
 }
 
-fn default_css_vector() -> Vec<String> {
+/// ViteManifest is the mapping between the vite output bundled files
+/// and the originals.
+/// Vite doc: https://vitejs.dev/config/build-options.html#build-manifest
+pub type ViteManifest = HashMap<String, BundleInfo>;
+
+fn empty_vector() -> Vec<String> {
     Vec::with_capacity(0)
 }
 
-/// Manifest is the mapping between the vite output bundled files
-/// and the originals.
-/// Vite doc: https://vitejs.dev/config/build-options.html#build-manifest
-pub static MANIFEST: OnceCell<HashMap<String, BundleInfo>> = OnceCell::new();
-
-pub fn load_manifest() {
-    let file = File::open(PathBuf::from(VITE_MANIFEST_PATH)).unwrap();
-    let reader = BufReader::new(file);
-    let manifest = serde_json::from_reader(reader).unwrap();
-    let _ = MANIFEST.set(remap_manifest_keys(manifest));
+/// Interface representing the bundle information
+/// as they are in the vite manifest.json.
+///
+/// Used for deserialization
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct BundleInfo {
+    pub file: String,
+    #[serde(default = "empty_vector")]
+    pub css: Vec<String>,
+    #[serde(default = "empty_vector")]
+    pub imports: Vec<String>,
+    // TODO: Add also dynamic imports
 }
 
-fn remap_manifest_keys(manifest: HashMap<String, BundleInfo>) -> HashMap<String, BundleInfo> {
-    let mut new_hashmap = HashMap::new();
+#[derive(Debug, Default, Clone)]
+pub struct RouteBundle {
+    pub css_files: Vec<String>,
+    pub js_files: Vec<String>,
+}
 
-    manifest.keys().for_each(|key| {
-        let new_key = key
-            .replace("../src/routes", "")
-            .replace(".tsx", "")
-            .replace(".jsx", "")
-            .replace("index", "");
+#[derive(Debug)]
+pub struct Manifest {
+    /// The mapping between the route and the bundle
+    bundles: HashMap<String, RouteBundle>,
+}
 
-        new_hashmap.insert(new_key, manifest.get(key).unwrap().clone());
-    });
+fn clean_route_path(path: String) -> String {
+    let path = path
+        .replace("../src/routes", "")
+        .replace(".tsx", "")
+        .replace(".jsx", "");
 
-    new_hashmap
+    if path == "/index" {
+        return "/".to_string();
+    }
+
+    path.replace("/index", "")
+}
+
+impl From<ViteManifest> for Manifest {
+    fn from(manifest: ViteManifest) -> Self {
+        let mut bundles = HashMap::new();
+        let client_main = manifest
+            .get("client-main.tsx")
+            // client-main.tsx is the entry point and always exists
+            .expect("client-main.tsx not found in the manifest")
+            .clone();
+
+        for (key, bundle) in &manifest {
+            if key.contains("__layout") {
+                continue;
+            }
+
+            if key == "client-main.tsx" {
+                bundles.insert(
+                    "client-main".to_string(),
+                    RouteBundle {
+                        css_files: bundle.css.clone(),
+                        js_files: vec![bundle.file.clone()],
+                    },
+                );
+                continue;
+            }
+
+            let route = clean_route_path(key.clone());
+
+            // Skip components/utils files
+            if !route.starts_with("/") {
+                continue;
+            }
+
+            let css_files = [bundle.css.clone(), client_main.css.clone()].concat();
+            let js_files = vec![bundle.file.clone(), client_main.file.clone()];
+
+            let mut route_bundle = RouteBundle {
+                css_files,
+                js_files,
+            };
+
+            // the imports bundle always contains at least the client-main
+            if bundle.imports.len() > 1 {
+                for import in &bundle.imports {
+                    if import == "client-main.tsx" {
+                        continue;
+                    }
+
+                    if let Some(import_bundle) = manifest.get(import) {
+                        route_bundle.js_files.push(import_bundle.file.clone());
+                        route_bundle.css_files.extend(import_bundle.css.clone());
+                    }
+                }
+            }
+
+            bundles.insert(route, route_bundle);
+        }
+
+        // Add __layout imports
+        for (key, layout_bundle) in manifest {
+            let route = clean_route_path(key);
+            if route.contains("__layout") {
+                let path_included_in_layout = route.replace("__layout", "");
+
+                for (key, route_bundles) in &mut bundles {
+                    if key.starts_with(path_included_in_layout.as_str()) {
+                        route_bundles.js_files.push(layout_bundle.file.clone());
+                        route_bundles.css_files.extend(layout_bundle.css.clone());
+                    }
+                }
+            }
+        }
+
+        Manifest { bundles }
+    }
+}
+
+impl Manifest {
+    /// This method adds the route specific bundles to the server
+    /// side rendered HTML.
+    ///
+    /// The same matching algorithm is implemented on the client side in
+    /// this file (packages/tuono/src/router/components/Matches.ts).
+    ///
+    /// Optimizations should occour on both.
+    pub fn get_bundle_from_pathname(&self, pathname: &str) -> RouteBundle {
+        // Exact match
+        if let Some(bundle) = self.bundles.get(pathname) {
+            return bundle.clone();
+        }
+
+        let dynamic_routes = self
+            .bundles
+            .keys()
+            .filter(|path| has_dynamic_path(path))
+            .collect::<Vec<&String>>();
+
+        if !dynamic_routes.is_empty() {
+            let path_segments = pathname
+                .split('/')
+                .filter(|path| !path.is_empty())
+                .collect::<Vec<&str>>();
+
+            '_dynamic_routes_loop: for dyn_route in dynamic_routes.iter() {
+                let dyn_route_segments = dyn_route
+                    .split('/')
+                    .filter(|path| !path.is_empty())
+                    .collect::<Vec<&str>>();
+
+                let mut route_segments_collector: Vec<&str> = Vec::new();
+
+                for i in 0..dyn_route_segments.len() {
+                    // Catch all dynamic route
+                    if dyn_route_segments[i].starts_with("[...") {
+                        route_segments_collector.push(dyn_route_segments[i]);
+
+                        let manifest_key = route_segments_collector.join("/");
+
+                        let route_data = self.bundles.get(&format!("/{manifest_key}"));
+
+                        if let Some(data) = route_data {
+                            return data.clone();
+                        }
+                        break '_dynamic_routes_loop;
+                    }
+                    if path_segments.len() == i {
+                        break;
+                    }
+                    if dyn_route_segments[i] == path_segments[i]
+                        || has_dynamic_path(dyn_route_segments[i])
+                    {
+                        route_segments_collector.push(dyn_route_segments[i])
+                    } else {
+                        break;
+                    }
+                }
+
+                if route_segments_collector.len() == path_segments.len() {
+                    let manifest_key = route_segments_collector.join("/");
+
+                    let route_data = self.bundles.get(&format!("/{manifest_key}"));
+                    if let Some(data) = route_data {
+                        return data.clone();
+                    }
+                    break;
+                }
+            }
+        }
+
+        // No dynamic routes, return the client main bundle
+        if let Some(bundle) = self.bundles.get("client-main") {
+            return bundle.clone();
+        }
+
+        // This should never happen because client-main always exists
+        RouteBundle::default()
+    }
+}
+
+pub static MANIFEST: OnceCell<Manifest> = OnceCell::new();
+
+/// Load the vite manifest from the file system and set it in the MANIFEST
+/// static variable.
+pub fn load_manifest() -> std::io::Result<()> {
+    let file = File::open(PathBuf::from(VITE_MANIFEST_PATH))?;
+    let reader = BufReader::new(file);
+    let manifest: ViteManifest = serde_json::from_reader(reader)?;
+    MANIFEST
+        .set(Manifest::from(manifest))
+        .map_err(|_| std::io::Error::other("Failed to set the manifest"))?;
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    // This manifest is an example of a complex vite manifest.json
+    // It includes dynamic routes, static routes, catch all routes, nested
+    // __layout and shared components.
+    const MANIFEST_EXAMPLE: &str = r#"{
+      "../src/routes/about.tsx": {
+        "file": "assets/about-C3UqHfGb.js",
+        "name": "about",
+        "src": "../src/routes/about.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/about-DUhMJ_Ze.css"
+        ]
+      },
+      "../src/routes/catch_all/[...slug].tsx": {
+        "file": "assets/_...slug_-CpJyPnPj.js",
+        "name": "_...slug_",
+        "src": "../src/routes/catch_all/[...slug].tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/_..-CipbPoTl.css"
+        ]
+      },
+      "../src/routes/index.tsx": {
+        "file": "assets/index-B3tnHOzi.js",
+        "name": "index",
+        "src": "../src/routes/index.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/index-CynfArjF.css"
+        ]
+      },
+      "../src/routes/pokemons/[pokemon]/[type].tsx": {
+        "file": "assets/_type_-B-sJOcVJ.js",
+        "name": "_type_",
+        "src": "../src/routes/pokemons/[pokemon]/[type].tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx",
+          "_PokemonView-jNGFFO0j.js"
+        ],
+        "css": [
+          "assets/_type_-B8vgxybx.css"
+        ]
+      },
+      "../src/routes/pokemons/[pokemon]/index.tsx": {
+        "file": "assets/index-ByRBj7WK.js",
+        "name": "index",
+        "src": "../src/routes/pokemons/[pokemon]/index.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx",
+          "_PokemonView-jNGFFO0j.js"
+        ],
+        "css": [
+          "assets/index-CM86zKWq.css"
+        ]
+      },
+      "../src/routes/pokemons/__layout.tsx": {
+        "file": "assets/__layout-2v3JiSeL.js",
+        "name": "__layout",
+        "src": "../src/routes/pokemons/__layout.tsx",
+        "isDynamicEntry": true,
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/__layout-CXGGqNw5.css"
+        ]
+      },
+      "_PokemonView-BcJZaQaO.css": {
+        "file": "assets/PokemonView-BcJZaQaO.css",
+        "src": "_PokemonView-BcJZaQaO.css"
+      },
+      "_PokemonView-jNGFFO0j.js": {
+        "file": "assets/PokemonView-jNGFFO0j.js",
+        "name": "PokemonView",
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/PokemonView-BcJZaQaO.css"
+        ]
+      },
+      "client-main.tsx": {
+        "file": "assets/client-main-DOdr9gvl.js",
+        "name": "client-main",
+        "src": "client-main.tsx",
+        "isEntry": true,
+        "dynamicImports": [
+          "../src/routes/pokemons/__layout.tsx",
+          "../src/routes/about.tsx",
+          "../src/routes/index.tsx",
+          "../src/routes/catch_all/[...slug].tsx",
+          "../src/routes/pokemons/[pokemon]/[type].tsx",
+          "../src/routes/pokemons/[pokemon]/index.tsx"
+        ],
+        "css": [
+          "assets/client-main-BS7N-NIa.css"
+        ]
+      }
+    }"#;
+
     #[test]
     fn correctly_parse_the_manifest_json() {
-        let manifest_example = r#"{
-  "../src/routes/index.tsx": {
-    "file": "assets/index.js",
-    "name": "index",
-    "src": "../src/routes/index.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "client-main.tsx"
-    ],
-    "css": [
-      "assets/index.css"
-    ]
-  },
-  "meta-tags-lib": {
-    "file": "assets/meta-lib.js",
-    "name": "meta-tags-lib",
-    "imports": [
-      "client-main.tsx"
-    ]
-  },
-  "client-main.tsx": {
-    "file": "assets/client-main.js",
-    "name": "client-main",
-    "src": "client-main.tsx",
-    "isEntry": true,
-    "dynamicImports": [
-      "../src/routes/index.tsx",
-      "../src/routes/pokemons/[pokemon].tsx"
-    ],
-    "css": [
-      "assets/client-main.css"
-    ]
-  }
-}"#;
+        let parsed_manifest = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE).unwrap();
 
-        let parsed_manifest =
-            serde_json::from_str::<HashMap<String, BundleInfo>>(manifest_example).unwrap();
+        let manifest = Manifest::from(parsed_manifest);
+        assert_eq!(manifest.bundles.len(), 6);
+        let index_route = manifest.get_bundle_from_pathname("/");
 
-        let mut result = HashMap::new();
-        result.insert(
-            "../src/routes/index.tsx".to_string(),
-            BundleInfo {
-                file: "assets/index.js".to_string(),
-                css: vec!["assets/index.css".to_string()],
-            },
-        );
-        result.insert(
-            "client-main.tsx".to_string(),
-            BundleInfo {
-                file: "assets/client-main.js".to_string(),
-                css: vec!["assets/client-main.css".to_string()],
-            },
+        assert_eq!(
+            index_route.css_files,
+            vec![
+                "assets/index-CynfArjF.css",
+                "assets/client-main-BS7N-NIa.css"
+            ]
         );
 
-        result.insert(
-            "meta-tags-lib".to_string(),
-            BundleInfo {
-                file: "assets/meta-lib.js".to_string(),
-                css: Vec::new(),
-            },
+        assert_eq!(
+            index_route.js_files,
+            vec!["assets/index-B3tnHOzi.js", "assets/client-main-DOdr9gvl.js"]
         );
-
-        assert_eq!(parsed_manifest, result);
     }
 
     #[test]
-    fn should_correctly_remap_the_manifest() {
-        let mut parsed_manifest: HashMap<String, BundleInfo> = HashMap::new();
-        parsed_manifest.insert(
-            "../src/routes/index.tsx".to_string(),
-            BundleInfo {
-                file: "assets/index.js".to_string(),
-                css: vec!["assets/index.css".to_string()],
-            },
-        );
-        parsed_manifest.insert(
-            "../src/routes/about.jsx".to_string(),
-            BundleInfo {
-                file: "assets/about.js".to_string(),
-                css: vec!["assets/about.css".to_string()],
-            },
-        );
-        parsed_manifest.insert(
-            "../src/routes/posts/[post].tsx".to_string(),
-            BundleInfo {
-                file: "assets/posts/[post].js".to_string(),
-                css: vec!["assets/posts/[post].css".to_string()],
-            },
-        );
-        parsed_manifest.insert(
-            "client-main.tsx".to_string(),
-            BundleInfo {
-                file: "assets/main.js".to_string(),
-                css: vec!["assets/main.css".to_string()],
-            },
-        );
+    fn should_load_the_correct_single_dyn_path() {
+        let parsed_manifest = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE).unwrap();
 
-        let remapped = remap_manifest_keys(parsed_manifest);
+        let manifest = Manifest::from(parsed_manifest);
+        let nested_route = manifest.get_bundle_from_pathname("/pokemons/ditto");
 
         assert_eq!(
-            remapped.get("/").unwrap().file,
-            "assets/index.js".to_string()
+            nested_route.css_files,
+            vec![
+                "assets/index-CM86zKWq.css",
+                "assets/client-main-BS7N-NIa.css",
+                "assets/PokemonView-BcJZaQaO.css",
+                "assets/__layout-CXGGqNw5.css"
+            ]
         );
         assert_eq!(
-            remapped.get("/about").unwrap().file,
-            "assets/about.js".to_string()
+            nested_route.js_files,
+            vec![
+                "assets/index-ByRBj7WK.js",
+                "assets/client-main-DOdr9gvl.js",
+                "assets/PokemonView-jNGFFO0j.js",
+                "assets/__layout-2v3JiSeL.js"
+            ]
+        );
+    }
+
+    #[test]
+    fn should_load_the_correct_nested_dyn_path_bundles() {
+        let parsed_manifest = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE).unwrap();
+
+        let manifest = Manifest::from(parsed_manifest);
+        let route = manifest.get_bundle_from_pathname("/pokemons/charizard/fire");
+
+        assert_eq!(
+            route.css_files,
+            vec![
+                "assets/_type_-B8vgxybx.css",
+                "assets/client-main-BS7N-NIa.css",
+                "assets/PokemonView-BcJZaQaO.css",
+                "assets/__layout-CXGGqNw5.css"
+            ]
+        );
+
+        assert_eq!(
+            route.js_files,
+            vec![
+                "assets/_type_-B-sJOcVJ.js",
+                "assets/client-main-DOdr9gvl.js",
+                "assets/PokemonView-jNGFFO0j.js",
+                "assets/__layout-2v3JiSeL.js"
+            ]
+        );
+    }
+    #[test]
+    fn should_load_the_correct_catch_all_bundles() {
+        let parsed_manifest = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE).unwrap();
+
+        let manifest = Manifest::from(parsed_manifest);
+        let route = manifest.get_bundle_from_pathname("/catch_all/some/random/path");
+
+        assert_eq!(
+            route.css_files,
+            vec!["assets/_..-CipbPoTl.css", "assets/client-main-BS7N-NIa.css"]
+        );
+
+        assert_eq!(
+            route.js_files,
+            vec![
+                "assets/_...slug_-CpJyPnPj.js",
+                "assets/client-main-DOdr9gvl.js"
+            ]
+        );
+    }
+    #[test]
+    fn should_load_the_defined_path_bundles() {
+        let parsed_manifest = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE).unwrap();
+
+        let manifest = Manifest::from(parsed_manifest);
+        let route = manifest.get_bundle_from_pathname("/about");
+        assert_eq!(
+            route.css_files,
+            vec![
+                "assets/about-DUhMJ_Ze.css",
+                "assets/client-main-BS7N-NIa.css"
+            ]
         );
         assert_eq!(
-            remapped.get("/posts/[post]").unwrap().file,
-            "assets/posts/[post].js".to_string()
-        );
-        assert_eq!(
-            remapped.get("client-main").unwrap().file,
-            "assets/main.js".to_string()
+            route.js_files,
+            vec!["assets/about-C3UqHfGb.js", "assets/client-main-DOdr9gvl.js"]
         );
     }
 }
