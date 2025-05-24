@@ -98,10 +98,25 @@ impl From<ViteManifest> for Manifest {
             let css_files = [bundle.css.clone(), client_main.css.clone()].concat();
             let js_files = vec![bundle.file.clone(), client_main.file.clone()];
 
-            let route_bundle = RouteBundle {
+            let mut route_bundle = RouteBundle {
                 css_files,
                 js_files,
             };
+
+            // the imports bundle always contains at least the client-main
+            if bundle.imports.len() > 1 {
+                for import in &bundle.imports {
+                    if import == "client-main.tsx" {
+                        continue;
+                    }
+
+                    if let Some(import_bundle) = manifest.get(import) {
+                        route_bundle.js_files.push(import_bundle.file.clone());
+                        route_bundle.css_files.extend(import_bundle.css.clone());
+                    }
+                }
+            }
+
             bundles.insert(route, route_bundle);
         }
 
@@ -355,25 +370,6 @@ mod tests {
             index_route.js_files,
             vec!["assets/index-B3tnHOzi.js", "assets/client-main-DOdr9gvl.js"]
         );
-
-        let nested_route = manifest.get_bundle_from_pathname("/pokemons/ditto");
-
-        assert_eq!(
-            nested_route.css_files,
-            vec![
-                "assets/index-CM86zKWq.css",
-                "assets/client-main-BS7N-NIa.css",
-                "assets/__layout-CXGGqNw5.css"
-            ]
-        );
-        assert_eq!(
-            nested_route.js_files,
-            vec![
-                "assets/index-ByRBj7WK.js",
-                "assets/client-main-DOdr9gvl.js",
-                "assets/__layout-2v3JiSeL.js"
-            ]
-        );
     }
 
     #[test]
@@ -388,6 +384,7 @@ mod tests {
             vec![
                 "assets/index-CM86zKWq.css",
                 "assets/client-main-BS7N-NIa.css",
+                "assets/PokemonView-BcJZaQaO.css",
                 "assets/__layout-CXGGqNw5.css"
             ]
         );
@@ -396,6 +393,7 @@ mod tests {
             vec![
                 "assets/index-ByRBj7WK.js",
                 "assets/client-main-DOdr9gvl.js",
+                "assets/PokemonView-jNGFFO0j.js",
                 "assets/__layout-2v3JiSeL.js"
             ]
         );
@@ -413,7 +411,8 @@ mod tests {
             vec![
                 "assets/_type_-B8vgxybx.css",
                 "assets/client-main-BS7N-NIa.css",
-                "assets/__layout-CXGGqNw5.css",
+                "assets/PokemonView-BcJZaQaO.css",
+                "assets/__layout-CXGGqNw5.css"
             ]
         );
 
@@ -422,6 +421,7 @@ mod tests {
             vec![
                 "assets/_type_-B-sJOcVJ.js",
                 "assets/client-main-DOdr9gvl.js",
+                "assets/PokemonView-jNGFFO0j.js",
                 "assets/__layout-2v3JiSeL.js"
             ]
         );
