@@ -55,7 +55,9 @@ impl Server {
         let _ = GLOBAL_CONFIG.set(config.clone());
 
         if mode == Mode::Prod {
-            load_manifest()
+            if let Err(err) = load_manifest() {
+                tuono_println!("Failed to load vite manifest: {}", err.to_string().red());
+            }
         }
 
         let server_address = format!("{}:{}", config.server.host, config.server.port);

@@ -2,16 +2,10 @@ use crate::config::GLOBAL_CONFIG;
 use crate::manifest::MANIFEST;
 use crate::mode::{GLOBAL_MODE, Mode};
 use erased_serde::Serialize;
-use regex::Regex;
 use serde::Serialize as SerdeSerialize;
 use tuono_internal::config::ServerConfig;
 
 use crate::request::{Location, Request};
-
-fn has_dynamic_path(route: &str) -> bool {
-    let regex = Regex::new(r"\[(.*?)\]").expect("Failed to create the regex");
-    regex.is_match(route)
-}
 
 #[derive(SerdeSerialize)]
 /// This is the payload sent to the client for hydration
@@ -20,9 +14,9 @@ pub struct Payload<'a> {
     data: &'a dyn Serialize,
     mode: Mode,
     #[serde(rename(serialize = "jsBundles"))]
-    js_bundles: Option<Vec<&'a String>>,
+    js_bundles: Option<Vec<String>>,
     #[serde(rename(serialize = "cssBundles"))]
-    css_bundles: Option<Vec<&'a String>>,
+    css_bundles: Option<Vec<String>>,
     #[serde(rename(serialize = "devServerConfig"))]
     dev_server_config: Option<&'a ServerConfig>,
 }
@@ -58,102 +52,11 @@ impl<'a> Payload<'a> {
         serde_json::to_string(&self)
     }
 
-    /// This method adds the route specific bundles to the server
-    /// side rendered HTML.
-    ///
-    /// The same matching algorithm is implemented on the client side in
-    /// this file (packages/tuono/src/router/components/Matches.ts).
-    ///
-    /// Optimizations should occour on both.
     fn add_bundle_sources(&mut self) {
-        // Manifest should always be loaded. The load happen before starting
-        // the server.
-        let manifest = MANIFEST.get().expect("Failed to load manifest");
-
-        // The main bundle should always exist.
-        // The extension should be tsx even with JS only projects.
-        let main_bundle = manifest
-            .get("client-main")
-            .expect("Failed to get client-main bundle");
-
-        let mut js_bundles_sources = vec![&main_bundle.file];
-        let mut css_bundles_sources = main_bundle.css.iter().collect::<Vec<&String>>();
-
-        let pathname = &self.location.pathname();
-
-        let bundle_data = manifest.get(*pathname);
-
-        if let Some(data) = bundle_data {
-            js_bundles_sources.push(&data.file);
-
-            data.css
-                .iter()
-                .for_each(|source| css_bundles_sources.push(source))
-        } else {
-            let dynamic_routes = manifest
-                .keys()
-                .filter(|path| has_dynamic_path(path))
-                .collect::<Vec<&String>>();
-
-            if !dynamic_routes.is_empty() {
-                let path_segments = pathname
-                    .split('/')
-                    .filter(|path| !path.is_empty())
-                    .collect::<Vec<&str>>();
-
-                '_dynamic_routes_loop: for dyn_route in dynamic_routes.iter() {
-                    let dyn_route_segments = dyn_route
-                        .split('/')
-                        .filter(|path| !path.is_empty())
-                        .collect::<Vec<&str>>();
-
-                    let mut route_segments_collector: Vec<&str> = Vec::new();
-
-                    for i in 0..dyn_route_segments.len() {
-                        if dyn_route_segments[i].starts_with("[...") {
-                            route_segments_collector.push(dyn_route_segments[i]);
-
-                            let manifest_key = route_segments_collector.join("/");
-
-                            let route_data = manifest.get(&format!("/{manifest_key}"));
-                            if let Some(data) = route_data {
-                                js_bundles_sources.push(&data.file);
-                                data.css
-                                    .iter()
-                                    .for_each(|source| css_bundles_sources.push(source))
-                            }
-                            break '_dynamic_routes_loop;
-                        }
-                        if path_segments.len() == i {
-                            break;
-                        }
-                        if dyn_route_segments[i] == path_segments[i]
-                            || has_dynamic_path(dyn_route_segments[i])
-                        {
-                            route_segments_collector.push(dyn_route_segments[i])
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if route_segments_collector.len() == path_segments.len() {
-                        let manifest_key = route_segments_collector.join("/");
-
-                        let route_data = manifest.get(&format!("/{manifest_key}"));
-                        if let Some(data) = route_data {
-                            js_bundles_sources.push(&data.file);
-                            data.css
-                                .iter()
-                                .for_each(|source| css_bundles_sources.push(source))
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        self.js_bundles = Some(js_bundles_sources);
-        self.css_bundles = Some(css_bundles_sources);
+        let manifest = MANIFEST.get().expect("Manifest not loaded");
+        let bundles = manifest.get_bundle_from_pathname(self.location.pathname());
+        self.js_bundles = Some(bundles.js_files);
+        self.css_bundles = Some(bundles.css_files);
     }
 }
 
@@ -161,69 +64,66 @@ impl<'a> Payload<'a> {
 mod tests {
 
     use super::*;
+    use crate::manifest::ViteManifest;
     use axum::http::Uri;
-    use std::collections::HashMap;
 
-    use crate::manifest::BundleInfo;
+    const MANIFEST_EXAMPLE: &str = r#"{
+        "../src/routes/index.tsx": {
+            "file": "assets/index-D-yFyCZo.js",
+            "name": "index",
+            "src": "../src/routes/index.tsx",
+            "isDynamicEntry": true,
+            "imports": [
+                "client-main.tsx"
+            ],
+            "css": [
+                "assets/index-CynfArjF.css"
+            ]
+        },
+        "../src/routes/pokemons/[pokemon].tsx": {
+            "file": "assets/_pokemon_-DlFInatQ.js",
+            "name": "_pokemon_",
+            "src": "../src/routes/pokemons/[pokemon].tsx",
+            "isDynamicEntry": true,
+            "imports": [
+                "client-main.tsx"
+            ],
+            "css": [
+                "assets/_pokemon_-BcJZaQaO.css"
+            ]
+        },
+        "../src/routes/pokemons/__layout.tsx": {
+            "file": "assets/__layout-BFnT3M7X.js",
+            "name": "__layout",
+            "src": "../src/routes/pokemons/__layout.tsx",
+            "isDynamicEntry": true,
+            "imports": [
+                "client-main.tsx"
+            ],
+            "css": [
+                "assets/__layout-CXGGqNw5.css"
+            ]
+        },
+        "client-main.tsx": {
+            "file": "assets/client-main-B9g1NVV7.js",
+            "name": "client-main",
+            "src": "client-main.tsx",
+            "isEntry": true,
+            "dynamicImports": [
+                "../src/routes/pokemons/__layout.tsx",
+                "../src/routes/index.tsx",
+                "../src/routes/pokemons/[pokemon].tsx"
+            ],  
+            "css": [
+                "assets/client-main-BS7N-NIa.css"
+            ]
+        } 
+    }"#;
 
     fn prepare_payload(uri: Option<&str>, mode: Mode) -> Payload {
-        let mut manifest_mock = HashMap::new();
-        manifest_mock.insert(
-            "client-main".to_string(),
-            BundleInfo {
-                file: "assets/bundled-file.js".to_string(),
-                css: vec!["assets/bundled-file.css".to_string()],
-            },
-        );
-        manifest_mock.insert(
-            "/".to_string(),
-            BundleInfo {
-                file: "assets/index.js".to_string(),
-
-                css: vec!["assets/index.css".to_string()],
-            },
-        );
-        manifest_mock.insert(
-            "/posts/[post]".to_string(),
-            BundleInfo {
-                file: "assets/posts/[post].js".to_string(),
-
-                css: vec!["assets/posts/[post].css".to_string()],
-            },
-        );
-        manifest_mock.insert(
-            "/posts/[post]/[comment]".to_string(),
-            BundleInfo {
-                file: "assets/posts/[post]/[comment].js".to_string(),
-
-                css: vec!["assets/posts/[post]/[comment].css".to_string()],
-            },
-        );
-        manifest_mock.insert(
-            "/pokemons/[...catch_all]".to_string(),
-            BundleInfo {
-                file: "assets/catch_all.js".to_string(),
-                css: vec!["assets/catch_all.css".to_string()],
-            },
-        );
-
-        manifest_mock.insert(
-            "/posts/custom-post".to_string(),
-            BundleInfo {
-                file: "assets/custom-post.js".to_string(),
-
-                css: vec!["assets/custom-post.css".to_string()],
-            },
-        );
-        manifest_mock.insert(
-            "/about".to_string(),
-            BundleInfo {
-                file: "assets/about.js".to_string(),
-
-                css: vec!["assets/about.css".to_string()],
-            },
-        );
-        MANIFEST.get_or_init(|| manifest_mock);
+        let manifest_mock = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE)
+            .expect("Failed to parse the manifest example");
+        MANIFEST.get_or_init(|| manifest_mock.into());
 
         let uri = uri
             .unwrap_or("http://localhost:3000/")
@@ -250,15 +150,15 @@ mod tests {
         assert_eq!(
             payload.js_bundles,
             Some(vec![
-                &"assets/bundled-file.js".to_string(),
-                &"assets/index.js".to_string()
+                "assets/index-D-yFyCZo.js".to_string(),
+                "assets/client-main-B9g1NVV7.js".to_string()
             ])
         );
         assert_eq!(
             payload.css_bundles,
             Some(vec![
-                &"assets/bundled-file.css".to_string(),
-                &"assets/index.css".to_string()
+                "assets/index-CynfArjF.css".to_string(),
+                "assets/client-main-BS7N-NIa.css".to_string()
             ])
         );
     }
@@ -269,90 +169,5 @@ mod tests {
         let _ = payload.client_payload();
         assert!(payload.js_bundles.is_none());
         assert!(payload.css_bundles.is_none());
-    }
-
-    #[test]
-    fn should_load_the_correct_single_dyn_path_bundles() {
-        let mut payload = prepare_payload(Some("http://localhost:3000/posts/a-post"), Mode::Prod);
-        let _ = payload.client_payload();
-        assert_eq!(
-            payload.js_bundles,
-            Some(vec![
-                &"assets/bundled-file.js".to_string(),
-                &"assets/posts/[post].js".to_string()
-            ])
-        );
-        assert_eq!(
-            payload.css_bundles,
-            Some(vec![
-                &"assets/bundled-file.css".to_string(),
-                &"assets/posts/[post].css".to_string()
-            ])
-        );
-    }
-
-    #[test]
-    fn should_load_the_correct_nested_dyn_path_bundles() {
-        let mut payload = prepare_payload(
-            Some("http://localhost:3000/posts/a-post/a-comment"),
-            Mode::Prod,
-        );
-        let _ = payload.client_payload();
-        assert_eq!(
-            payload.js_bundles,
-            Some(vec![
-                &"assets/bundled-file.js".to_string(),
-                &"assets/posts/[post]/[comment].js".to_string()
-            ])
-        );
-        assert_eq!(
-            payload.css_bundles,
-            Some(vec![
-                &"assets/bundled-file.css".to_string(),
-                &"assets/posts/[post]/[comment].css".to_string()
-            ])
-        );
-    }
-
-    #[test]
-    fn should_load_the_correct_catch_all_bundles() {
-        let mut payload = prepare_payload(
-            Some("http://localhost:3000/pokemons/a-poke/a-poke"),
-            Mode::Prod,
-        );
-        let _ = payload.client_payload();
-        assert_eq!(
-            payload.js_bundles,
-            Some(vec![
-                &"assets/bundled-file.js".to_string(),
-                &"assets/catch_all.js".to_string()
-            ])
-        );
-        assert_eq!(
-            payload.css_bundles,
-            Some(vec![
-                &"assets/bundled-file.css".to_string(),
-                &"assets/catch_all.css".to_string()
-            ])
-        );
-    }
-    #[test]
-    fn should_load_the_defined_path_bundles() {
-        let mut payload = prepare_payload(Some("http://localhost:3000/about"), Mode::Prod);
-        let _ = payload.client_payload();
-        assert_eq!(
-            payload.js_bundles,
-            Some(vec![
-                &"assets/bundled-file.js".to_string(),
-                &"assets/about.js".to_string()
-            ])
-        );
-        assert_eq!(
-            payload.css_bundles,
-            Some(vec![
-                &"assets/bundled-file.css".to_string(),
-                &"assets/about.css".to_string()
-            ])
-        );
     }
 }
