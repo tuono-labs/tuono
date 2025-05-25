@@ -54,6 +54,8 @@ fn clean_route_path(path: String) -> String {
     let path = path
         .replace("../src/routes", "")
         .replace(".tsx", "")
+        .replace(".mdx", "")
+        .replace(".md", "")
         .replace(".jsx", "");
 
     if path == "/index" {
@@ -121,15 +123,31 @@ impl From<ViteManifest> for Manifest {
         }
 
         // Add __layout imports
-        for (key, layout_bundle) in manifest {
-            let route = clean_route_path(key);
+        for (key, layout_bundle) in &manifest {
+            let route = clean_route_path(key.clone());
             if route.contains("__layout") {
                 let path_included_in_layout = route.replace("__layout", "");
+
+                let mut layout_css_files: Vec<String> = Vec::new();
+                let mut layout_js_files: Vec<String> = Vec::new();
+
+                for import in &layout_bundle.imports {
+                    if import == "client-main.tsx" {
+                        continue;
+                    }
+
+                    if let Some(import_bundle) = manifest.get(import) {
+                        layout_js_files.push(import_bundle.file.clone());
+                        layout_css_files.extend(import_bundle.css.clone());
+                    }
+                }
 
                 for (key, route_bundles) in &mut bundles {
                     if key.starts_with(path_included_in_layout.as_str()) {
                         route_bundles.js_files.push(layout_bundle.file.clone());
                         route_bundles.css_files.extend(layout_bundle.css.clone());
+                        route_bundles.js_files.extend(layout_js_files.clone());
+                        route_bundles.css_files.extend(layout_css_files.clone());
                     }
                 }
             }
@@ -249,10 +267,21 @@ mod tests {
         "src": "../src/routes/about.tsx",
         "isDynamicEntry": true,
         "imports": [
-          "client-main.tsx"
+          "client-main.tsx",
+          "_FileWithCssOnly.js"
         ],
         "css": [
           "assets/about-DUhMJ_Ze.css"
+        ]
+      },
+      "_FileWithCssOnly.js": {
+        "file": "assets/FileWithCssOnly.js",
+        "name": "FileWithCssOnly",
+        "imports": [
+          "client-main.tsx"
+        ],
+        "css": [
+          "assets/FileWithCssOnly.css"
         ]
       },
       "../src/routes/catch_all/[...slug].tsx": {
@@ -349,6 +378,26 @@ mod tests {
         ]
       }
     }"#;
+
+    #[test]
+    fn it_correctly_cleans_the_route_path() {
+        let cleaned_path = clean_route_path("../src/routes/index.tsx".to_string());
+        assert_eq!(cleaned_path, "/");
+
+        let cleaned_path =
+            clean_route_path("../src/routes/pokemons/[pokemon]/index.tsx".to_string());
+        assert_eq!(cleaned_path, "/pokemons/[pokemon]");
+
+        let cleaned_path = clean_route_path("../src/routes/pokemons/__layout.tsx".to_string());
+        assert_eq!(cleaned_path, "/pokemons/__layout");
+
+        let cleaned_path =
+            clean_route_path("../src/routes/pokemons/[pokemon]/[type].mdx".to_string());
+        assert_eq!(cleaned_path, "/pokemons/[pokemon]/[type]");
+
+        let cleaned_path = clean_route_path("../src/routes/about.md".to_string());
+        assert_eq!(cleaned_path, "/about");
+    }
 
     #[test]
     fn correctly_parse_the_manifest_json() {
@@ -456,12 +505,17 @@ mod tests {
             route.css_files,
             vec![
                 "assets/about-DUhMJ_Ze.css",
-                "assets/client-main-BS7N-NIa.css"
+                "assets/client-main-BS7N-NIa.css",
+                "assets/FileWithCssOnly.css"
             ]
         );
         assert_eq!(
             route.js_files,
-            vec!["assets/about-C3UqHfGb.js", "assets/client-main-DOdr9gvl.js"]
+            vec![
+                "assets/about-C3UqHfGb.js",
+                "assets/client-main-DOdr9gvl.js",
+                "assets/FileWithCssOnly.js"
+            ]
         );
     }
 }
