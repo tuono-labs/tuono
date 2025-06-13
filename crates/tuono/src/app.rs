@@ -1,9 +1,9 @@
 use crate::mode::Mode;
 use crate::route::Route;
-use glob::{GlobError, glob};
+use glob::{glob, GlobError};
 use http::Method;
 use std::collections::hash_set::HashSet;
-use std::collections::{HashMap, hash_map::Entry};
+use std::collections::{hash_map::Entry, HashMap};
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
@@ -43,10 +43,6 @@ pub struct App {
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
     let file: String = fs::read_to_string(base_path.join("src").join("app.rs"))?;
-    // let file = File::open(base_path.join("src/app.rs"))?;
-    // let mut buf_reader = BufReader::new(file);
-    // let mut contents = String::new();
-    // buf_reader.read_to_string(&mut contents)?;
     Ok(file.contains("pub fn main"))
 }
 
