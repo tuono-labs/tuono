@@ -33,7 +33,7 @@ struct GithubTreeResponse<T> {
 }
 
 fn exit_with_error(message: &str) -> ! {
-    eprintln!("{}", message);
+    eprintln!("{message}");
     std::process::exit(1);
 }
 
@@ -125,7 +125,7 @@ pub fn create_new_project(
     let folder_path = current_dir.join(folder_name);
 
     create_directories(&new_project_files, &folder_path, &template)
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to create directories: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to create directories: {err}")));
 
     for GithubFile {
         element_type, path, ..
@@ -231,19 +231,17 @@ fn update_package_json_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let package_json_path = folder_path.join(PathBuf::from("package.json"));
     let package_json = fs::read_to_string(&package_json_path)
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read package.json: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read package.json: {err}")));
     let package_json = package_json.replace("link:../../packages/tuono", v);
 
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .open(package_json_path)
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open package.json: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open package.json: {err}")));
 
     file.write_all(package_json.as_bytes())
-        .unwrap_or_else(|err| {
-            exit_with_error(&format!("Failed to write to package.json: {}", err))
-        });
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to package.json: {err}")));
 
     Ok(())
 }
@@ -252,7 +250,7 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
     let v = crate_version!();
     let cargo_toml_path = folder_path.join(PathBuf::from("Cargo.toml"));
     let cargo_toml = fs::read_to_string(&cargo_toml_path)
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read Cargo.toml: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to read Cargo.toml: {err}")));
     let cargo_toml = cargo_toml.replace(
         "{ path = \"../../crates/tuono_lib/\" }",
         &format!("\"{v}\""),
@@ -262,10 +260,10 @@ fn update_cargo_toml_version(folder_path: &Path) -> io::Result<()> {
         .write(true)
         .truncate(true)
         .open(cargo_toml_path)
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open Cargo.toml: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to open Cargo.toml: {err}")));
 
     file.write_all(cargo_toml.as_bytes())
-        .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to Cargo.toml: {}", err)));
+        .unwrap_or_else(|err| exit_with_error(&format!("Failed to write to Cargo.toml: {err}")));
 
     Ok(())
 }

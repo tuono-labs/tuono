@@ -15,7 +15,7 @@ pub fn api_core(attrs: TokenStream, item: TokenStream) -> TokenStream {
         .to_lowercase();
 
     let api_fn_name = Ident::new(
-        &format!("{}_tuono_internal_api", http_method),
+        &format!("{http_method}_tuono_internal_api"),
         Span::call_site().into(),
     );
 

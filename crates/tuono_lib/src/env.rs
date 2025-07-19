@@ -16,9 +16,9 @@ pub unsafe fn load_env_vars(mode: Mode) {
         Mode::Prod => "production",
     };
 
-    env_files.push(format!(".env.{}", mode_name));
+    env_files.push(format!(".env.{mode_name}"));
     env_files.push(String::from(".env.local"));
-    env_files.push(format!(".env.{}.local", mode_name));
+    env_files.push(format!(".env.{mode_name}.local"));
 
     let system_env_names: HashSet<String> = env::vars().map(|(k, _)| k).collect();
 

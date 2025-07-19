@@ -169,7 +169,7 @@ impl Route {
         trace!("Requesting the page: {}", url);
         let mut response = match reqwest.get(format!("http://localhost:3000{path}")).send() {
             Ok(response) => response,
-            Err(_) => return Err(format!("Failed to get the response: {}", url)),
+            Err(_) => return Err(format!("Failed to get the response: {url}")),
         };
 
         let file_path = self.output_file_path();
@@ -177,18 +177,14 @@ impl Route {
         let parent_dir = match file_path.parent() {
             Some(parent_dir) => parent_dir,
             None => {
-                return Err(format!(
-                    "Failed to get the parent directory {:?}",
-                    file_path
-                ));
+                return Err(format!("Failed to get the parent directory {file_path:?}"));
             }
         };
 
         if !parent_dir.is_dir() {
             if let Err(err) = create_all(parent_dir, false) {
                 return Err(format!(
-                    "Failed to create the parent directory {:?}\nError: {err}",
-                    parent_dir
+                    "Failed to create the parent directory {parent_dir:?}\nError: {err}"
                 ));
             }
         }
@@ -197,11 +193,11 @@ impl Route {
 
         let mut file = match File::create(&file_path) {
             Ok(file) => file,
-            Err(_) => return Err(format!("Failed to create the file: {:?}", file_path)),
+            Err(_) => return Err(format!("Failed to create the file: {file_path:?}")),
         };
 
         if io::copy(&mut response, &mut file).is_err() {
-            return Err(format!("Failed to write the file: {:?}", file_path));
+            return Err(format!("Failed to write the file: {file_path:?}"));
         }
 
         // Saving also the server response
@@ -214,8 +210,7 @@ impl Route {
                 Some(parent_dir) => parent_dir,
                 None => {
                     return Err(format!(
-                        "Failed to get the parent directory {:?}",
-                        data_file_path
+                        "Failed to get the parent directory {data_file_path:?}"
                     ));
                 }
             };
@@ -223,8 +218,7 @@ impl Route {
             if !data_parent_dir.is_dir() {
                 if let Err(err) = create_all(data_parent_dir, false) {
                     return Err(format!(
-                        "Failed to create the parent directory {:?}\n Error: {err}",
-                        data_parent_dir
+                        "Failed to create the parent directory {data_parent_dir:?}\n Error: {err}"
                     ));
                 }
             }
@@ -253,8 +247,7 @@ impl Route {
                 Ok(file) => file,
                 Err(_) => {
                     return Err(format!(
-                        "Failed to create the JSON file: {:?}",
-                        data_file_path
+                        "Failed to create the JSON file: {data_file_path:?}"
                     ));
                 }
             };
@@ -274,10 +267,10 @@ impl Route {
             .iter()
             .any(|extension| self.path.ends_with(extension))
         {
-            return PathBuf::from(format!("out/static{}", cleaned_path));
+            return PathBuf::from(format!("out/static{cleaned_path}"));
         }
 
-        PathBuf::from(format!("out/static{}/index.html", cleaned_path))
+        PathBuf::from(format!("out/static{cleaned_path}/index.html"))
     }
 }
 

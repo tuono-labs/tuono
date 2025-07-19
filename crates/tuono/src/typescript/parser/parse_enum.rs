@@ -22,7 +22,7 @@ pub fn parse_enum(element: &syn::ItemEnum) -> (String, String) {
 
         match &variant.fields {
             syn::Fields::Named(field) => {
-                parsed_variant = format!("{{\"{}\": {{ ", parsed_variant);
+                parsed_variant = format!("{{\"{parsed_variant}\": {{ ");
                 let mut variant_fields: Vec<String> = Vec::new();
 
                 for field in &field.named {
@@ -79,7 +79,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (enum_name, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(enum_name, "MyEnum");
@@ -101,7 +101,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (enum_name, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(enum_name, "MyEnum");
@@ -125,7 +125,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (_, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(
@@ -147,7 +147,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (_, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(
@@ -167,7 +167,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (_, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(
@@ -187,7 +187,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (_, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(
@@ -209,7 +209,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (enum_name, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(enum_name, "MyEnum");
@@ -229,7 +229,7 @@ mod tests {
             }
         "#;
 
-        let parsed_enum = syn::parse_str::<syn::ItemEnum>(&enum_str).unwrap();
+        let parsed_enum = syn::parse_str::<syn::ItemEnum>(enum_str).unwrap();
         let (_, typescript_definition) = parse_enum(&parsed_enum);
 
         assert_eq!(
