@@ -37,7 +37,7 @@ tuono_internal = {path = "../tuono_internal", version = "0.19.7"}
 # Match the same version used by axum
 tokio-tungstenite = "0.26.0"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
-tungstenite = "0.26.0"
+tungstenite = "0.27.0"
 http = "1.1.0"
 pin-project = "1.1.7"
 tower = "0.5.1"
