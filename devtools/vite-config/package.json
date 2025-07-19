@@ -17,7 +17,7 @@
   "devDependencies": {
     "oxc-transform": "0.77.2",
     "rollup-plugin-preserve-directives": "0.4.0",
-    "unplugin-isolated-decl": "0.13.6",
+    "unplugin-isolated-decl": "0.14.5",
     "vite": "6.1.3",
     "vite-plugin-externalize-deps": "0.9.0"
   }
