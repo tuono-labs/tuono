@@ -120,7 +120,7 @@ mod tests {
         } 
     }"#;
 
-    fn prepare_payload(uri: Option<&str>, mode: Mode) -> Payload {
+    fn prepare_payload(uri: Option<&str>, mode: Mode) -> Payload<'_> {
         let manifest_mock = serde_json::from_str::<ViteManifest>(MANIFEST_EXAMPLE)
             .expect("Failed to parse the manifest example");
         MANIFEST.get_or_init(|| manifest_mock.into());
