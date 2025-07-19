@@ -114,11 +114,11 @@ fn it_successfully_import_mixed_case_routes() {
 
     for method in ["get", "post", "put", "delete", "patch"] {
         temp_tuono_project.add_file_with_content(
-            &format!("./src/routes/api/{}_lower.rs", method),
-            &format!(r"#[tuono_lib::api({})]", method),
+            &format!("./src/routes/api/{method}_lower.rs"),
+            &format!(r"#[tuono_lib::api({method})]"),
         );
         temp_tuono_project.add_file_with_content(
-            &format!("./src/routes/api/{}_upper.rs", method),
+            &format!("./src/routes/api/{method}_upper.rs"),
             &format!(r"#[tuono_lib::api({})]", method.to_uppercase()),
         );
     }
@@ -136,7 +136,7 @@ fn it_successfully_import_mixed_case_routes() {
         fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
 
     for method in ["get", "post", "put", "delete", "patch"] {
-        let expected = format!(r#"use tuono_lib::axum::routing::{};"#, method);
+        let expected = format!(r#"use tuono_lib::axum::routing::{method};"#);
         let imports = temp_main_rs_content.match_indices(&expected);
         assert_eq!(imports.count(), 1);
     }

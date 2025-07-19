@@ -24,9 +24,8 @@ impl GitHubServerMock {
         );
 
         Mock::given(method("GET"))
-            .and(path(&format!(
-                "repos/tuono-labs/tuono/git/ref/tags/v{}",
-                tuono_version
+            .and(path(format!(
+                "repos/tuono-labs/tuono/git/ref/tags/v{tuono_version}"
             )))
             .respond_with(sha_response_template)
             .mount(&server)
@@ -57,7 +56,7 @@ impl GitHubServerMock {
         );
 
         Mock::given(method("GET"))
-            .and(path(&format!("repos/tuono-labs/tuono/git/trees/{}", sha)))
+            .and(path(format!("repos/tuono-labs/tuono/git/trees/{sha}")))
             .respond_with(tree_response_template)
             .mount(&server)
             .await;

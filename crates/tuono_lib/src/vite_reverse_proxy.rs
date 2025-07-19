@@ -26,14 +26,14 @@ pub async fn vite_reverse_proxy(
     let query_string = query
         .0
         .iter()
-        .map(|(k, v)| format!("{}={}", k, v))
+        .map(|(k, v)| format!("{k}={v}"))
         .collect::<Vec<_>>()
         .join("&");
 
     let query_string = if query_string.is_empty() {
         String::new()
     } else {
-        format!("?{}", query_string)
+        format!("?{query_string}")
     };
 
     match client

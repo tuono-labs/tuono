@@ -94,7 +94,7 @@ impl ProcessManager {
         let server_address = format!("{}:{}", config.server.host, config.server.port);
         // Format the server address as a valid URL so that it becomes clickable in the CLI
         // @see https://github.com/tuono-labs/tuono/issues/460
-        let server_base_url = format!("http://{}", server_address);
+        let server_base_url = format!("http://{server_address}");
 
         println!();
         tuono_println!("⚡ Tuono v{}", crate_version!());

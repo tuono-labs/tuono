@@ -164,10 +164,9 @@ impl App {
                 std::net::TcpListener::bind(format!("{}:{}", config.server.host, vite_port));
 
             if let Err(_e) = vite_listener {
-                eprintln!("Error: Failed to bind to port {}", vite_port);
+                eprintln!("Error: Failed to bind to port {vite_port}");
                 eprintln!(
-                    "Please ensure that port {} is not already in use by another process or application.",
-                    vite_port
+                    "Please ensure that port {vite_port} is not already in use by another process or application."
                 );
                 std::process::exit(1);
             }

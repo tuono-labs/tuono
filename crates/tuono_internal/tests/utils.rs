@@ -13,6 +13,12 @@ pub struct TempTuonoProject {
     temp_dir: TempDir,
 }
 
+impl Default for TempTuonoProject {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TempTuonoProject {
     pub fn new() -> Self {
         let original_dir = env::current_dir().expect("Failed to read current_dir");
