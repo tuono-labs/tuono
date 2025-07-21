@@ -15,7 +15,7 @@
     "types": "tsc --noEmit"
   },
   "devDependencies": {
-    "oxc-transform": "0.77.2",
+    "oxc-transform": "0.77.3",
     "rollup-plugin-preserve-directives": "0.4.0",
     "unplugin-isolated-decl": "0.13.6",
     "vite": "6.1.3",
