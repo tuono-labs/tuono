@@ -1,29 +1,12 @@
 // File automatically generated
 // Do not manually change it
 
-use tuono_lib::{tokio, Mode, Server, axum::Router, tuono_internal_init_v8_platform};
-// AXUM_GET_ROUTE_HANDLER
+mod router;
 
-const MODE: Mode = /*MODE*/;
-
-// MODULE_IMPORTS
-
-//MAIN_FILE_IMPORT//
+use tuono_lib::tokio;
 
 #[tokio::main]
 async fn main() {
-    tuono_internal_init_v8_platform();
-    
-    if MODE == Mode::Prod {
-        println!("\n  ⚡ Tuono v/*VERSION*/");
-    }
-
-    //MAIN_FILE_DEFINITION//
-
-    let router = Router::new()
-        // ROUTE_BUILDER
-        //MAIN_FILE_USAGE//;
-
-    Server::init(router, MODE).await.start().await
+    let server = router::init_server().await;
+    server.start().await
 }
-

@@ -4,15 +4,12 @@ use glob::{GlobError, glob};
 use http::Method;
 use std::collections::hash_set::HashSet;
 use std::collections::{HashMap, hash_map::Entry};
-use std::fs::File;
-use std::io;
-use std::io::BufReader;
-use std::io::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
 use std::process::Stdio;
+use std::{fs, io};
 use tracing::error;
 use tuono_internal::config::Config;
 
@@ -40,15 +37,18 @@ pub struct App {
     pub route_map: HashMap<String, Route>,
     pub base_path: PathBuf,
     pub has_app_state: bool,
+    pub has_custom_main: bool,
     pub config: Option<Config>,
 }
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
-    let file = File::open(base_path.join("src/app.rs"))?;
-    let mut buf_reader = BufReader::new(file);
-    let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents)?;
-    Ok(contents.contains("pub fn main"))
+    let file: String = fs::read_to_string(base_path.join("src").join("app.rs"))?;
+    Ok(file.contains("pub fn main"))
+}
+
+fn has_custom_main_file(base_path: PathBuf) -> std::io::Result<bool> {
+    let file: String = fs::read_to_string(base_path.join("src").join("main.rs"))?;
+    Ok(file.contains("async fn main"))
 }
 
 impl App {
@@ -58,7 +58,8 @@ impl App {
         let mut app = App {
             route_map: HashMap::new(),
             base_path: base_path.clone(),
-            has_app_state: has_app_state(base_path).unwrap_or(false),
+            has_app_state: has_app_state(base_path.to_owned()).unwrap_or(false),
+            has_custom_main: has_custom_main_file(base_path).unwrap_or(false),
             config: None,
         };
 

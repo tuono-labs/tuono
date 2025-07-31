@@ -8,6 +8,11 @@ use utils::temp_tuono_project::TempTuonoProject;
 
 const POST_API_FILE: &str = r"#[tuono_lib::api(POST)]";
 const GET_API_FILE: &str = r"#[tuono_lib::api(GET)]";
+const CUSTOM_MAIN_FILE: &str = r"
+async fn main() {
+    // this is custom
+}
+";
 
 fn tracing_message(level: Level, module: &str, message: &str) -> String {
     format!("\x1b[31m{level}\x1b[0m \x1b[2mtuono::{module}\x1b[0m\x1b[2m:\x1b[0m {message}\n")
@@ -33,10 +38,10 @@ fn it_successfully_create_the_index_route() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/index.rs"]"#));
     assert!(temp_main_rs_content.contains("mod index;"));
@@ -59,15 +64,15 @@ fn it_successfully_create_an_api_route() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_router_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
-    assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
-    assert!(temp_main_rs_content.contains("mod api_health_check;"));
+    assert!(temp_router_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
+    assert!(temp_router_rs_content.contains("mod api_health_check;"));
 
-    assert!(temp_main_rs_content.contains(
+    assert!(temp_router_rs_content.contains(
         r#".route("/api/health_check", post(api_health_check::post_tuono_internal_api))"#
     ));
 }
@@ -89,10 +94,10 @@ fn it_successfully_create_multiple_api_for_the_same_file() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/health_check.rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_health_check;"));
@@ -158,10 +163,10 @@ fn it_successfully_create_catch_all_routes() {
         .assert()
         .success();
 
-    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    let temp_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
 
-    let temp_main_rs_content =
-        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+    let temp_main_rs_content = fs::read_to_string(&temp_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
 
     assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/[...all_apis].rs"]"#));
     assert!(temp_main_rs_content.contains("mod api_dyn_catch_all_all_apis;"));
@@ -250,4 +255,74 @@ fn build_fails_with_no_config() {
             "source_builder",
             "Cannot find tuono.config.ts - is this a tuono project?",
         ));
+}
+
+#[test]
+#[serial]
+fn it_uses_custom_main_when_present() {
+    let temp_tuono_project = TempTuonoProject::new();
+    temp_tuono_project.add_file_with_content("./src/main.rs", CUSTOM_MAIN_FILE);
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+    assert!(!temp_tuono_main_rs_path.exists());
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    assert!(temp_tuono_router_rs_path.exists());
+}
+
+#[test]
+#[serial]
+fn it_uses_stateful_get_router_function_when_stateful() {
+    let temp_tuono_project = TempTuonoProject::new();
+    temp_tuono_project.add_file_with_content(
+        "./src/app.rs",
+        r#"
+        pub fn main() -> ApplicationState;
+        "#,
+    );
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    let temp_tuono_router_rs_content = fs::read_to_string(&temp_tuono_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
+    assert!(
+        temp_tuono_router_rs_content
+            .contains(r#"F: Fn(Router<ApplicationState>, ApplicationState) -> Fut,"#)
+    );
+    assert!(
+        temp_tuono_router_rs_content.contains(
+            r#"|router, user_custom_state| async { router.with_state(user_custom_state) }"#
+        )
+    );
+}
+
+#[test]
+#[serial]
+fn it_uses_stateless_get_router_function_when_stateless() {
+    let temp_tuono_project = TempTuonoProject::new();
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_tuono_router_rs_path = temp_tuono_project.path().join(".tuono/router.rs");
+    let temp_tuono_router_rs_content = fs::read_to_string(&temp_tuono_router_rs_path)
+        .expect("Failed to read '.tuono/router.rs' content.");
+    assert!(temp_tuono_router_rs_content.contains(r#"F: Fn(Router) -> Fut,"#));
+    assert!(temp_tuono_router_rs_content.contains(r#"|router| async { router }"#));
 }

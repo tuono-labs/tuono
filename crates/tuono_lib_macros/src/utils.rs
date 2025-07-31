@@ -13,7 +13,7 @@ pub fn create_struct_fn_arg() -> FnArg {
 pub fn import_main_application_state(argument_names: Punctuated<Pat, Comma>) -> Option<Stmt> {
     if !argument_names.is_empty() {
         let local: Stmt = parse_quote!(
-            use crate::tuono_main_state::ApplicationState;
+            use crate::router::tuono_main_state::ApplicationState;
         );
         return Some(local);
     }
