@@ -169,6 +169,8 @@ export const getStylesForComponentId = async (
   
   let fileUrl = path.join(process.cwd(), relativeFilePath)
 
+  // For .mdx files we have to make sure the extension is added to prevent
+  // false negative input in the terminal about the index.mdx file missing. 
   if (fs.existsSync(`${fileUrl}.mdx`)) {
     fileUrl = path.format({ name: fileUrl, ext: '.mdx' })
   }
