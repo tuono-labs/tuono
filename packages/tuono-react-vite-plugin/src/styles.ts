@@ -3,6 +3,7 @@
  *
  * source: https://github.com/remix-run/remix/blob/main/packages/remix-dev/vite/styles.ts
  */
+import fs from 'fs'
 import path from 'path'
 
 import type { ModuleNode, ViteDevServer } from 'vite'
@@ -165,8 +166,14 @@ export const getStylesForComponentId = async (
     routesFolder,
     findFileFromComponentId(componentId || ''),
   )
+  
+  let fileUrl = path.join(process.cwd(), relativeFilePath)
 
-  const fileUrl = path.join(process.cwd(), relativeFilePath)
+  // For .mdx files we have to make sure the extension is added to prevent
+  // false negative input in the terminal about the index.mdx file missing. 
+  if (fs.existsSync(`${fileUrl}.mdx`)) {
+    fileUrl = path.format({ name: fileUrl, ext: '.mdx' })
+  }
 
   return await getStylesForModule(viteDevServer, fileUrl, cssModulesManifest)
 }
