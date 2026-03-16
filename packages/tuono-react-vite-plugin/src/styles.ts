@@ -167,8 +167,21 @@ export const getStylesForComponentId = async (
   )
 
   const fileUrl = path.join(process.cwd(), relativeFilePath)
+  const styles = await getStylesForModule(
+    viteDevServer,
+    fileUrl,
+    cssModulesManifest,
+  )
 
-  return await getStylesForModule(viteDevServer, fileUrl, cssModulesManifest)
+  if (styles !== undefined || path.extname(fileUrl) !== '') {
+    return styles
+  }
+
+  return await getStylesForModule(
+    viteDevServer,
+    `${fileUrl}.mdx`,
+    cssModulesManifest,
+  )
 }
 
 /**
