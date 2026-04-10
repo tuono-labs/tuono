@@ -75,7 +75,6 @@ impl RouteDirectoryInfo {
         !self.middlewares.is_empty()
     }
 
-
     pub fn get_middleware_module_import(&self) -> String {
         let base_path = RouteDirectoryInfo::get_base_path();
         let base_path_str = base_path.to_string_lossy();
@@ -279,7 +278,8 @@ mod tests {
         let mut file = File::create(&middlewares_file).unwrap();
         writeln!(file, "#[tuono_lib::middleware]\nfn test_middleware() {{}}").unwrap();
 
-        let middleware_data = MiddlewareData::new(&middlewares_file.to_string_lossy().to_string()).unwrap();
+        let middleware_data =
+            MiddlewareData::new(&middlewares_file.to_string_lossy().to_string()).unwrap();
         assert_eq!(middleware_data.middlewares, vec!["test_middleware"]);
     }
 
@@ -297,9 +297,14 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let middlewares_file = temp_dir.path().join("middlewares.rs");
         let mut file = File::create(&middlewares_file).unwrap();
-        writeln!(file, "#[tuono_lib::middleware]\nfn test_middleware() {{}}\nfn other_fn() {{}}").unwrap();
+        writeln!(
+            file,
+            "#[tuono_lib::middleware]\nfn test_middleware() {{}}\nfn other_fn() {{}}"
+        )
+        .unwrap();
 
-        let methods = MiddlewareData::read_middleware_methods_from_file(&middlewares_file.to_string_lossy());
+        let methods =
+            MiddlewareData::read_middleware_methods_from_file(&middlewares_file.to_string_lossy());
         assert_eq!(methods, vec!["test_middleware"]);
     }
 }

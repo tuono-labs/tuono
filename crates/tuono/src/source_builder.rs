@@ -218,6 +218,9 @@ impl SourceBuilder {
         for directory in route_directory_info.directories.clone() {
             route_declarations.push_str(&self.create_routes_declaration(&directory));
         }
+        if route_directory_info.has_middlewares() {
+            route_declarations.push_str(&self.add_route_layers(route_directory_info));
+        }
         for (_key, route) in routes {
             let Route { axum_info, .. } = &route;
             if !axum_info.is_some() {
@@ -244,9 +247,7 @@ impl SourceBuilder {
                 }
             }
         }
-        if route_directory_info.has_middlewares() {
-            route_declarations.push_str(&self.add_route_layers(route_directory_info));
-        }
+
         route_declarations.push_str(")\n");
         route_declarations
     }
