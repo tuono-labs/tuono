@@ -1,6 +1,6 @@
 use crate::mode::Mode;
 use crate::route::Route;
-use crate::route_directory_info::RouteDirectoryInfo;
+use crate::route_directory_info::{DebugItemFn, MiddlewareData, RouteDirectoryInfo};
 use glob::{GlobError, glob};
 use http::Method;
 use std::collections::hash_set::HashSet;
@@ -14,6 +14,8 @@ use std::path::PathBuf;
 use std::process::Child;
 use std::process::Command;
 use std::process::Stdio;
+use std::sync::Arc;
+use syn::Item;
 use tracing::error;
 use tuono_internal::config::Config;
 
@@ -46,11 +48,12 @@ pub struct App {
 }
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
-    let file = File::open(base_path.join("src/app.rs"))?;
+    let full_path = base_path.join("src/app.rs");
+    let file = File::open(full_path)?;
     let mut buf_reader = BufReader::new(file);
     let mut contents = String::new();
     buf_reader.read_to_string(&mut contents)?;
-    Ok(contents.contains("pub fn main"))
+    Ok(contents.contains("pub fn main") || contents.contains("pub async fn main"))
 }
 
 impl App {

@@ -7,7 +7,7 @@ services:
       context: ../
       dockerfile: ./docker/Dockerfile
       args:
-        RUST_VERSION: 1.83 # if change, think to update the default ARGs in Dockerfile
+        RUST_VERSION: 1.88 # if change, think to update the default ARGs in Dockerfile
         BASE_OS: bookworm # if change, think to update the default ARGs in Dockerfile
     image: tuono-source-image
     ports:

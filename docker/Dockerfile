@@ -1,7 +1,7 @@
 # ARGs obtained from the compose.yml file
 
 ARG BASE_OS=bookworm
-ARG RUST_VERSION=1.83
+ARG RUST_VERSION=1.88
 
 FROM rust:${RUST_VERSION}-${BASE_OS}
 
@@ -42,8 +42,7 @@ RUN ["corepack", "enable"]
 RUN ["corepack", "install"]
 
 ## Install Node.js dependencies (defined in package.json)
-
-RUN ["pnpm", "install", "--frozen-lockfile"]
+RUN ["pnpm", "install", "--frozen-lockfile", "--config.confirmModulesPurge=false"]
 
 ## Compile and add the directory with compiled binaries to the PATH for direct access
 
