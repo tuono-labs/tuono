@@ -3,22 +3,20 @@ use syn::{Attribute, Meta};
 
 pub fn has_derive_type(attrs: &[Attribute]) -> bool {
     for attr in attrs {
-        if let Meta::List(meta_list) = &attr.meta {
-            if meta_list.path.is_ident("derive") {
+        if let Meta::List(meta_list) = &attr.meta
+            && meta_list.path.is_ident("derive") {
                 for nested_meta in meta_list
                     .parse_args_with(
                         syn::punctuated::Punctuated::<Meta, syn::Token![,]>::parse_terminated,
                     )
                     .unwrap_or_default()
                 {
-                    if let Meta::Path(path) = nested_meta {
-                        if path.is_ident(&TYPE_TRAIT) {
+                    if let Meta::Path(path) = nested_meta
+                        && path.is_ident(&TYPE_TRAIT) {
                             return true;
                         }
-                    }
                 }
             }
-        }
     }
     false
 }

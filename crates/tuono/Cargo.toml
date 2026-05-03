@@ -18,7 +18,7 @@ path = "src/lib.rs"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive", "cargo"] }
-syn = { version = "2.0.100", features = ["full"] }
+syn = { version = "2.0.100", features = ["full","extra-traits"] }
 tracing = "0.1.41"
 tracing-subscriber = {version = "0.3.19", features = ["env-filter"]}
 miette = "7.2.0"
@@ -41,6 +41,7 @@ tuono_internal = {path = "../tuono_internal", version = "0.19.7"}
 spinners = "4.1.1"
 console = "0.16.0"
 convert_case = "0.8.0"
+quote = "1.0.45"
 
 [dev-dependencies]
 wiremock = "0.6.2"

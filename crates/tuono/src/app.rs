@@ -1,5 +1,6 @@
 use crate::mode::Mode;
 use crate::route::Route;
+use crate::route_directory_info::RouteDirectoryInfo;
 use glob::{GlobError, glob};
 use http::Method;
 use std::collections::hash_set::HashSet;
@@ -16,11 +17,11 @@ use std::process::Stdio;
 use tracing::error;
 use tuono_internal::config::Config;
 
-const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
-const IGNORE_FILES: [&str; 1] = ["__layout"];
+pub const IGNORE_EXTENSIONS: [&str; 3] = ["css", "scss", "sass"];
+pub const IGNORE_FILES: [&str; 2] = ["__layout", "middlewares"];
 
 #[cfg(target_os = "windows")]
-const ROUTES_FOLDER_PATH: &str = "\\src\\routes";
+pub const ROUTES_FOLDER_PATH: &str = "\\src\\routes";
 #[cfg(target_os = "windows")]
 const BUILD_JS_SCRIPT: &str = ".\\node_modules\\.bin\\tuono-build-prod.cmd";
 
@@ -28,7 +29,7 @@ const BUILD_JS_SCRIPT: &str = ".\\node_modules\\.bin\\tuono-build-prod.cmd";
 const BUILD_TUONO_CONFIG: &str = ".\\node_modules\\.bin\\tuono-build-config.cmd";
 
 #[cfg(not(target_os = "windows"))]
-const ROUTES_FOLDER_PATH: &str = "/src/routes";
+pub const ROUTES_FOLDER_PATH: &str = "/src/routes";
 #[cfg(not(target_os = "windows"))]
 const BUILD_JS_SCRIPT: &str = "./node_modules/.bin/tuono-build-prod";
 
@@ -41,25 +42,30 @@ pub struct App {
     pub base_path: PathBuf,
     pub has_app_state: bool,
     pub config: Option<Config>,
+    pub route_directory_info: RouteDirectoryInfo,
 }
 
 fn has_app_state(base_path: PathBuf) -> std::io::Result<bool> {
-    let file = File::open(base_path.join("src/app.rs"))?;
+    let full_path = base_path.join("src/app.rs");
+    let file = File::open(full_path)?;
     let mut buf_reader = BufReader::new(file);
     let mut contents = String::new();
     buf_reader.read_to_string(&mut contents)?;
-    Ok(contents.contains("pub fn main"))
+    Ok(contents.contains("pub fn main") || contents.contains("pub async fn main"))
 }
 
 impl App {
     pub fn new() -> Self {
         let base_path = std::env::current_dir().expect("Failed to read current_dir");
-
+        let base_path_str = base_path.to_string_lossy();
+        let routes_path_str = format!("{base_path_str}{ROUTES_FOLDER_PATH}");
+        let routes_path = Path::new(&routes_path_str);
         let mut app = App {
             route_map: HashMap::new(),
             base_path: base_path.clone(),
             has_app_state: has_app_state(base_path).unwrap_or(false),
             config: None,
+            route_directory_info: RouteDirectoryInfo::new(routes_path).unwrap_or_default(),
         };
 
         app.collect_routes();
@@ -270,6 +276,7 @@ mod tests {
             "\\home\\user\\Documents\\tuono\\src\\routes\\about.rs",
             "\\home\\user\\Documents\\tuono\\src\\routes\\index.rs",
             "\\home\\user\\Documents\\tuono\\src\\routes\\posts\\index.rs",
+            "\\home\\user\\Documents\\tuono\\src\\routes\\posts\\middlewares.rs",
             "\\home\\user\\Documents\\tuono\\src\\routes\\posts\\[post].rs",
             "\\home\\user\\Documents\\tuono\\src\\routes\\posts\\handle-this.rs",
             "\\home\\user\\Documents\\tuono\\src\\routes\\posts\\handle-this\\[post].rs",
@@ -283,6 +290,7 @@ mod tests {
             "/home/user/Documents/tuono/src/routes/index.rs",
             "/home/user/Documents/tuono/src/routes/posts/index.rs",
             "/home/user/Documents/tuono/src/routes/posts/[post].rs",
+            "/home/user/Documents/tuono/src/routes/posts/middlewares.rs",
             "/home/user/Documents/tuono/src/routes/posts/handle-this.rs",
             "/home/user/Documents/tuono/src/routes/posts/handle-this/[post].rs",
             "/home/user/Documents/tuono/src/routes/posts/UPPERCASE.rs",

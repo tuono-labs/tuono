@@ -7,10 +7,12 @@ use std::path::PathBuf;
 use clap::crate_version;
 use tracing::error;
 
-use crate::app::App;
+use crate::app::{App, ROUTES_FOLDER_PATH};
 use crate::mode::Mode;
 use crate::route::AxumInfo;
 use crate::route::Route;
+use crate::route_directory_info::MIDDLEWARE_FILENAME;
+use crate::route_directory_info::RouteDirectoryInfo;
 use crate::typescript::TypesJar;
 
 #[cfg(not(target_os = "windows"))]
@@ -108,39 +110,36 @@ impl SourceBuilder {
 
     fn generate_axum_source(&self) -> String {
         let Self { app, mode, .. } = &self;
-
+        let mut main_file_definition: &str = " let router = Router::new()";
+        let mut main_file_usage: &str = ";";
+        let mut mainfile_import: &str = "";
+        let mode_str = mode.as_str();
+        if app.has_app_state {
+            main_file_definition = "let user_custom_state = tuono_main_state::main().await;\n 
+            let router = Router::new()";
+            main_file_usage = ".with_state(user_custom_state);";
+            mainfile_import = r#"#[path="../src/app.rs"]
+            mod tuono_main_state;
+            "#;
+        }
         let src = AXUM_ENTRY_POINT
             .replace("\r", "")
-            .replace("// ROUTE_BUILDER\n", &self.create_routes_declaration())
-            .replace("// MODULE_IMPORTS\n", &self.create_modules_declaration())
+            .replace(
+                "// ROUTE_BUILDER\n",
+                &self.create_routes_declaration(&app.route_directory_info),
+            )
+            .replace(
+                "// MODULE_IMPORTS\n",
+                &self.create_modules_declaration(&app.route_directory_info),
+            )
             .replace("/*VERSION*/", crate_version!())
-            .replace("/*MODE*/", mode.as_str())
             .replace(
-                "//MAIN_FILE_IMPORT//",
-                if app.has_app_state {
-                    r#"#[path="../src/app.rs"]
-                    mod tuono_main_state;
-                    "#
-                } else {
-                    ""
-                },
+                "/*MODE*/",
+                format!("const MODE: Mode = {mode_str};").as_ref(),
             )
-            .replace(
-                "//MAIN_FILE_DEFINITION//",
-                if app.has_app_state {
-                    "let user_custom_state = tuono_main_state::main();"
-                } else {
-                    ""
-                },
-            )
-            .replace(
-                "//MAIN_FILE_USAGE//",
-                if app.has_app_state {
-                    ".with_state(user_custom_state)"
-                } else {
-                    ""
-                },
-            );
+            .replace("//MAIN_FILE_IMPORT//", mainfile_import)
+            .replace("//MAIN_FILE_DEFINITION//", main_file_definition)
+            .replace("//MAIN_FILE_USAGE//", main_file_usage);
 
         let mut import_http_handler = String::new();
 
@@ -182,58 +181,112 @@ impl SourceBuilder {
         self.types_jar.generate_typescript_file(&self.base_path)
     }
 
-    fn create_routes_declaration(&self) -> String {
-        let routes = &self.app.route_map;
+    // Adds calls to .layer() for adding middleware to axum
+    pub fn add_route_layers(&self, route_directory_info: &RouteDirectoryInfo) -> String {
+        let mut layers_str = String::from("");
+
+        if route_directory_info.has_middlewares() {
+            let middleware_import = &route_directory_info.get_middleware_module_import();
+            let layers = &route_directory_info.middlewares.lock().unwrap();
+            for layer in layers.iter() {
+                let middleware_fn_call = layer.fn_call_str.clone();
+                layers_str.push_str(&format!(
+                    r#".layer({middleware_import}::{middleware_fn_call})
+                            "#
+                ));
+            }
+        }
+        layers_str
+    }
+
+    // Adds Routers with routes to axum
+    fn create_routes_declaration(&self, route_directory_info: &RouteDirectoryInfo) -> String {
+        let routes = route_directory_info.routes.clone();
         let mut route_declarations = String::from("// ROUTE_BUILDER\n");
 
-        for (_, route) in routes.iter() {
+        route_declarations.push_str(r#".merge(Router::new()"#);
+        // Group by directory, find dirs with middleware, have that spit out Router::new() with routes and middlewares
+
+        // directories can have their own middlewares and routes, recurse into that directory to get route/middleware info
+        for directory in route_directory_info.directories.clone() {
+            route_declarations.push_str(&self.create_routes_declaration(&directory));
+        }
+        for (_key, route) in routes {
             let Route { axum_info, .. } = &route;
+            if !axum_info.is_some() {
+                continue;
+            }
+            let AxumInfo {
+                axum_route,
+                module_import,
+            } = axum_info.as_ref().unwrap();
+            if !route.is_api() {
+                route_declarations.push_str(&format!(
+                    r#".route("{axum_route}", get({module_import}::tuono_internal_route))"#
+                ));
 
-            if axum_info.is_some() {
-                let AxumInfo {
-                    axum_route,
-                    module_import,
-                } = axum_info.as_ref().unwrap();
-
-                if !route.is_api() {
+                route_declarations.push_str(&format!(
+                    r#".route("/__tuono/data{axum_route}", get({module_import}::tuono_internal_api))"#
+                ));
+            } else {
+                for method in route.api_data.as_ref().unwrap().methods.clone() {
+                    let method = method.to_string().to_lowercase();
                     route_declarations.push_str(&format!(
-                        r#".route("{axum_route}", get({module_import}::tuono_internal_route))"#
+                            r#".route("{axum_route}", {method}({module_import}::{method}_tuono_internal_api))"#
                     ));
-
-                    route_declarations.push_str(&format!(
-                            r#".route("/__tuono/data{axum_route}", get({module_import}::tuono_internal_api))"#
-                    ));
-                } else {
-                    for method in route.api_data.as_ref().unwrap().methods.clone() {
-                        let method = method.to_string().to_lowercase();
-                        route_declarations.push_str(&format!(
-                                r#".route("{axum_route}", {method}({module_import}::{method}_tuono_internal_api))"#
-                        ));
-                    }
                 }
             }
         }
 
+        route_declarations.push_str(")\n");
+
+        // add directory level middleware to routes
+        if route_directory_info.has_middlewares() {
+            route_declarations.push_str(&self.add_route_layers(route_directory_info));
+        }
         route_declarations
     }
 
-    fn create_modules_declaration(&self) -> String {
-        let routes = &self.app.route_map;
-        let mut route_declarations = String::from("// MODULE_IMPORTS\n");
+    fn create_modules_declaration(&self, route_directory_info: &RouteDirectoryInfo) -> String {
+        let routes = &route_directory_info.routes;
+        let mut module_declarations = String::from("// MODULE_IMPORTS\n");
 
+        // add subdirectory module declarations
+        for directory in route_directory_info.directories.clone() {
+            module_declarations.push_str(&self.create_modules_declaration(&directory));
+        }
+
+        // add module import per route
         for (path, route) in routes.iter() {
-            if route.axum_info.is_some() {
-                let AxumInfo { module_import, .. } = route.axum_info.as_ref().unwrap();
+            if let Some(route_auxm_info) = &route.axum_info {
+                let AxumInfo { module_import, .. } = route_auxm_info;
 
-                route_declarations.push_str(&format!(
+                module_declarations.push_str(&format!(
                     r#"#[path="../{ROUTE_FOLDER}{path}.rs"]
                     mod {module_import};
                     "#
-                ))
+                ));
             }
         }
+        // add middleware module import as needed
+        if route_directory_info.has_middlewares() {
+            let path = &route_directory_info.path;
+            let base_path = RouteDirectoryInfo::get_base_path();
+            let base_path_str = base_path.to_string_lossy();
+            let routes_path_str = format!("{base_path_str}{ROUTES_FOLDER_PATH}");
 
-        route_declarations
+            let replaced_path = path.replace(&routes_path_str, "");
+            let module_path: String = format!("{replaced_path}/{MIDDLEWARE_FILENAME}");
+            let module_import = route_directory_info.get_middleware_module_import();
+
+            module_declarations.push_str(&format!(
+                r#"#[path="../{ROUTE_FOLDER}{module_path}.rs"]
+            mod {module_import};
+            "#
+            ));
+        }
+
+        module_declarations
     }
 
     fn build_html_fallback(&self) -> String {

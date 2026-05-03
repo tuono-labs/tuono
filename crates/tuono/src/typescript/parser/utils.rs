@@ -57,15 +57,14 @@ where
     T: Default + FromStr,
 {
     for attr in attrs {
-        if attr.path().is_ident("serde") {
-            if let Ok(meta) = attr.parse_args::<syn::Expr>() {
+        if attr.path().is_ident("serde")
+            && let Ok(meta) = attr.parse_args::<syn::Expr>() {
                 match meta {
                     syn::Expr::Assign(assign) => {
-                        if let syn::Expr::Path(path) = *assign.left {
-                            if !path.path.is_ident(attribute_name) {
+                        if let syn::Expr::Path(path) = *assign.left
+                            && !path.path.is_ident(attribute_name) {
                                 return T::default();
                             }
-                        }
                         if let syn::Expr::Lit(syn::ExprLit {
                             lit: syn::Lit::Str(lit_str),
                             ..
@@ -77,7 +76,6 @@ where
                     _ => return T::default(),
                 }
             }
-        }
     }
     T::default()
 }
@@ -86,13 +84,11 @@ where
 /// `#[serde(skip)]` or `#[serde(skip_serializing)]` attributes.
 pub fn should_skip_element(attrs: &[syn::Attribute]) -> bool {
     for attr in attrs {
-        if attr.path().is_ident("serde") {
-            if let Ok(meta) = attr.parse_args::<syn::Ident>() {
-                if meta == "skip" || meta == "skip_serializing" {
+        if attr.path().is_ident("serde")
+            && let Ok(meta) = attr.parse_args::<syn::Ident>()
+                && (meta == "skip" || meta == "skip_serializing") {
                     return true;
                 }
-            }
-        }
     }
     false
 }

@@ -251,3 +251,105 @@ fn build_fails_with_no_config() {
             "Cannot find tuono.config.ts - is this a tuono project?",
         ));
 }
+
+#[test]
+#[serial]
+fn it_successfully_adds_middleware_to_router() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    temp_tuono_project.add_file_with_content(
+        "./src/routes/middlewares.rs",
+        r#"use tower_http::trace::TraceLayer;
+
+#[tuono_lib::middleware]
+pub fn trace_layer() -> TraceLayer<tower_http::classify::SharedClassifier<tower_http::classify::ServerErrorsAsFailures>> {
+    TraceLayer::new_for_http()
+}"#,
+    );
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+
+    let temp_main_rs_content =
+        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+
+    assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/middlewares.rs"]"#));
+    assert!(temp_main_rs_content.contains("mod middlewares;"));
+    assert!(temp_main_rs_content.contains(".layer(middlewares::trace_layer())"));
+}
+
+#[test]
+#[serial]
+fn it_successfully_adds_multiple_middlewares_to_router() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    temp_tuono_project.add_file_with_content(
+        "./src/routes/middlewares.rs",
+        r#"use tower_http::trace::TraceLayer;
+
+#[tuono_lib::middleware]
+pub fn trace_layer() -> TraceLayer<tower_http::classify::SharedClassifier<tower_http::classify::ServerErrorsAsFailures>> {
+    TraceLayer::new_for_http()
+}
+
+#[tuono_lib::middleware]
+pub fn another_middleware() -> tower_http::cors::CorsLayer {
+    tower_http::cors::CorsLayer::new()
+}"#,
+    );
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+
+    let temp_main_rs_content =
+        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+
+    assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/middlewares.rs"]"#));
+    assert!(temp_main_rs_content.contains("mod middlewares;"));
+    assert!(temp_main_rs_content.contains(".layer(middlewares::trace_layer())"));
+    assert!(temp_main_rs_content.contains(".layer(middlewares::another_middleware())"));
+}
+
+#[test]
+#[serial]
+fn it_successfully_adds_middleware_in_subdirectory() {
+    let temp_tuono_project = TempTuonoProject::new();
+
+    temp_tuono_project.add_file_with_content(
+        "./src/routes/api/middlewares.rs",
+        r#"#[tuono_lib::middleware]
+pub fn api_middleware() -> tower_http::cors::CorsLayer {
+    tower_http::cors::CorsLayer::new()
+}"#,
+    );
+
+    temp_tuono_project.add_file("./src/routes/api/health.rs");
+
+    let mut test_tuono_build = Command::cargo_bin("tuono").unwrap();
+    test_tuono_build
+        .arg("build")
+        .arg("--no-js-emit")
+        .assert()
+        .success();
+
+    let temp_main_rs_path = temp_tuono_project.path().join(".tuono/main.rs");
+
+    let temp_main_rs_content =
+        fs::read_to_string(&temp_main_rs_path).expect("Failed to read '.tuono/main.rs' content.");
+
+    assert!(temp_main_rs_content.contains(r#"#[path="../src/routes/api/middlewares.rs"]"#));
+    assert!(temp_main_rs_content.contains("mod api_middlewares;"));
+    assert!(temp_main_rs_content.contains(".layer(api_middlewares::api_middleware())"));
+}
