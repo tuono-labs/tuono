@@ -110,7 +110,7 @@ impl SourceBuilder {
 
     fn generate_axum_source(&self) -> String {
         let Self { app, mode, .. } = &self;
-        let mut main_file_definition: &str = "";
+        let mut main_file_definition: &str = " let router = Router::new()";
         let mut main_file_usage: &str = ";";
         let mut mainfile_import: &str = "";
         let mode_str = mode.as_str();

@@ -1,8 +1,11 @@
-use axum::{BoxError, error_handling::HandleErrorLayer, http::StatusCode,};
+use tower_http::cors::{Any, CorsLayer};
+use tuono_lib::axum::http::Method;
 
 #[tuono_lib::middleware]
-pub fn api_error_layer() -> HandleErrorLayer  {
-  HandleErrorLayer::new(|_: BoxError| async {
-    StatusCode::REQUEST_TIMEOUT
-})
+pub fn api_cors_layer() -> CorsLayer {
+    CorsLayer::new()
+        // allow `GET` and `POST` when accessing the resource
+        .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::PATCH])
+        // allow requests from any origin
+        .allow_origin(Any)
 }
