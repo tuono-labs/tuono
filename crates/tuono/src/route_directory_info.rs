@@ -37,22 +37,22 @@ impl RouteDirectoryInfo {
                     let sub_dir_info = RouteDirectoryInfo::new(&entry_path)?;
                     directories.push(sub_dir_info);
                 // handle files
-                } else if entry_path.is_file() {
-                    if let Some(name) = entry_path.file_name() {
-                        let name_str = name.to_string_lossy().to_string();
-                        // check if middlewares file
-                        if name_str == format!("{MIDDLEWARE_FILENAME}.rs") {
-                            // scan middleware file for middleware layer functions
-                            let middleware_data: MiddlewareData = MiddlewareData::new(
-                                &entry_path.to_str().expect("Invalid filepath").to_string(),
-                            )
-                            .unwrap_or_default();
-                            middlewares = middleware_data.middlewares.lock().unwrap().to_vec(); //.unwrap_or_default();
-                        } else {
-                            // Generate Routes from file, add to routes
-                            if RouteDirectoryInfo::should_collect_route(&entry_path) {
-                                routes = RouteDirectoryInfo::collect_route(entry_path, routes);
-                            }
+                } else if entry_path.is_file()
+                    && let Some(name) = entry_path.file_name()
+                {
+                    let name_str = name.to_string_lossy().to_string();
+                    // check if middlewares file
+                    if name_str == format!("{MIDDLEWARE_FILENAME}.rs") {
+                        // scan middleware file for middleware layer functions
+                        let middleware_data: MiddlewareData = MiddlewareData::new(
+                            &entry_path.to_str().expect("Invalid filepath").to_string(),
+                        )
+                        .unwrap_or_default();
+                        middlewares = middleware_data.middlewares.lock().unwrap().to_vec(); //.unwrap_or_default();
+                    } else {
+                        // Generate Routes from file, add to routes
+                        if RouteDirectoryInfo::should_collect_route(&entry_path) {
+                            routes = RouteDirectoryInfo::collect_route(entry_path, routes);
                         }
                     }
                 }
@@ -95,7 +95,7 @@ impl RouteDirectoryInfo {
             .replace('.', "_dot_")
             .replace('-', "_hyphen_")
             .to_lowercase();
-        if module_import != "" {
+        if !module_import.is_empty() {
             module_import += "_"
         }
 
@@ -106,7 +106,7 @@ impl RouteDirectoryInfo {
         std::env::current_dir().expect("Failed to read current_dir")
     }
 
-    pub fn should_collect_route(entry: &PathBuf) -> bool {
+    pub fn should_collect_route(entry: &Path) -> bool {
         let file_extension = entry.extension().expect("Failed to read file extension");
         let file_name = entry.file_stem().expect("Failed to read file name");
 
@@ -181,9 +181,9 @@ impl DebugItemFn {
 
 impl From<ItemFn> for DebugItemFn {
     fn from(item: ItemFn) -> Self {
-        return DebugItemFn {
+        DebugItemFn {
             fn_call_str: DebugItemFn::get_fn_call_to_str(&item),
-        };
+        }
     }
 }
 
@@ -194,10 +194,10 @@ pub struct MiddlewareData {
 
 impl MiddlewareData {
     pub fn new(path: &String) -> Option<Self> {
-        if !(std::fs::exists(&path).unwrap_or_default()) {
+        if !(std::fs::exists(path).unwrap_or_default()) {
             return None;
         }
-        let middlewares = MiddlewareData::read_middleware_methods_from_file(&path);
+        let middlewares = MiddlewareData::read_middleware_methods_from_file(path);
 
         Some(MiddlewareData { middlewares })
     }
@@ -220,13 +220,13 @@ impl MiddlewareData {
         let mut result = Vec::new();
 
         for item in syntax.items {
-            if let Item::Fn(func) = item {
-                if MiddlewareData::has_middleware_attr(&func.attrs) {
-                    result.push(DebugItemFn::from(func));
-                }
+            if let Item::Fn(func) = item
+                && MiddlewareData::has_middleware_attr(&func.attrs)
+            {
+                result.push(DebugItemFn::from(func));
             }
         }
-        return Arc::new(Mutex::new(result));
+        Arc::new(Mutex::new(result))
     }
 }
 

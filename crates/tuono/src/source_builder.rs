@@ -196,7 +196,7 @@ impl SourceBuilder {
                 ));
             }
         }
-        return layers_str;
+        layers_str
     }
 
     // Adds Routers with routes to axum
@@ -258,8 +258,8 @@ impl SourceBuilder {
 
         // add module import per route
         for (path, route) in routes.iter() {
-            if route.axum_info.is_some() {
-                let AxumInfo { module_import, .. } = route.axum_info.as_ref().unwrap();
+            if let Some(route_auxm_info) = &route.axum_info {
+                let AxumInfo { module_import, .. } = route_auxm_info;
 
                 module_declarations.push_str(&format!(
                     r#"#[path="../{ROUTE_FOLDER}{path}.rs"]
