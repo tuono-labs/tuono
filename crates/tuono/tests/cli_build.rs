@@ -204,6 +204,7 @@ fn it_fails_without_installed_build_config_script() {
 fn it_fails_without_installed_build_script() {
     let temp_tuono_project = TempTuonoProject::new();
     temp_tuono_project.add_file_with_content(BUILD_TUONO_CONFIG, "#!/bin/bash");
+    #[cfg(not(target_os = "windows"))]
     Command::new("chmod")
         .arg("+x")
         .arg(BUILD_TUONO_CONFIG)
